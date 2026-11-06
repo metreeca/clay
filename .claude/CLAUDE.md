@@ -84,18 +84,6 @@ has to know to put the package to work, stubbed as `{TBD: usage overview and exa
 the root of the package reference, `https://metreeca.github.io/clay/modules/_metreeca_<package>.html`, and **NEVER**
 the site root, a module page, or a table of them.
 
-# Skills
-
-These skills carry the conventions this repository is held to, whether they sit in `.claude/skills/` or have since
-moved to the personal set. Each states the model it governs and what it takes precedence over, so the routing survives
-the move:
-
-| Skill              | When to activate                                                             |
-|--------------------|------------------------------------------------------------------------------|
-| `preact-developer` | Writing or reviewing a widget, a hook or a custom element                    |
-| `css-developer`    | Writing or reviewing a stylesheet, or introducing a token, colour or measure |
-| `a11y-developer`   | Creating or revising a widget, or adding a role, `aria-*`, tabindex or keys  |
-
 # Design Precedent
 
 [Atlassian](https://atlassian.design/) is the design system Clay is closest to. Check it before settling a component
