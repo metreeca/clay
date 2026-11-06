@@ -1,0 +1,58 @@
+/*
+ * Copyright © 2025-2026 Metreeca srl
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+import { symlinks } from "@metreeca/rack/vite";
+import { defineConfig } from "vitest/config";
+
+export default defineConfig({
+
+	plugins: [
+		symlinks({ conditions: "@metreeca/source" })
+	],
+
+	test: {
+
+		/**
+		 * Allows workspace packages without test files to pass cleanly during `npm run check --workspaces`.
+		 */
+		passWithNoTests: true,
+
+		/**
+		 * Keeps DOM tests off the network: a link a test leaves to its default behaviour, such as one targeting
+		 * `_blank`, would otherwise open a page loading its URL from a server that does not exist.
+		 */
+		environmentOptions: {
+			happyDOM: {
+				settings: {
+					navigation: {
+						disableChildPageNavigation: true
+					}
+				}
+			}
+		},
+
+		/**
+		 * Type-tests each package against its own compiler options: `npm run check` runs vitest from every workspace
+		 * package in turn, so the path resolves against the package being checked, never against this file.
+		 */
+		typecheck: {
+			include: ["**/src/**/*.test-d.ts"],
+			tsconfig: "tsconfig.json"
+		}
+
+	}
+
+});

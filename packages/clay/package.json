@@ -1,0 +1,57 @@
+{
+  "name": "@metreeca/clay",
+  "version": "0.1.0",
+  "description": "Preact contexts and hooks for @metreeca/clay interfaces.",
+  "keywords": [
+    "typescript",
+    "preact",
+    "ui"
+  ],
+  "homepage": "https://metreeca.github.io/clay/",
+  "bugs": {
+    "url": "https://github.com/metreeca/clay/issues",
+    "email": "info@metreeca.com"
+  },
+  "license": "Apache-2.0",
+  "author": {
+    "name": "Metreeca",
+    "email": "info@metreeca.com",
+    "url": "https://www.metreeca.com/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/metreeca/clay.git",
+    "directory": "packages/clay"
+  },
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "@metreeca/source": "./src/index.ts",
+      "default": "./dist/index.js"
+    },
+    "./*.core": null
+  },
+  "files": [
+    "README.md",
+    "LICENSE",
+    "dist"
+  ],
+  "engines": {
+    "node": ">=22.22.0"
+  },
+  "scripts": {
+    "clean": "ush rm dist docs node_modules '*.tsbuildinfo'",
+    "build": "tsc -b tsconfig.build.json",
+    "check": "npx vitest --config ../../vitest.config.ts --root . --typecheck --passWithNoTests run"
+  },
+  "devDependencies": {
+    "preact": "^10.29.8",
+    "typescript": "^6.0.3",
+    "vite": "^8.3.5",
+    "vitest": "^5.0.5"
+  },
+  "peerDependencies": {
+    "preact": "^10.27.2"
+  }
+}
