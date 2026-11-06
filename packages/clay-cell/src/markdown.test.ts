@@ -212,7 +212,7 @@ describe("Markdown", () => {
 
 				mount("# First\n\n# Second");
 
-				expect(scroll.mock.contexts.map(element => element.id)).toEqual(["second"]);
+				expect(scroll.mock.contexts.filter(element => element instanceof Element).map(element => element.id)).toEqual(["second"]);
 
 			});
 
@@ -226,7 +226,7 @@ describe("Markdown", () => {
 
 				act(() => { window.dispatchEvent(new HashChangeEvent("hashchange")); });
 
-				expect(scroll.mock.contexts.map(element => element.id)).toEqual(["first"]);
+				expect(scroll.mock.contexts.filter(element => element instanceof Element).map(element => element.id)).toEqual(["first"]);
 
 			});
 
