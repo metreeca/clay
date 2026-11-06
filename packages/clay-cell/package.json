@@ -1,7 +1,7 @@
 {
   "name": "@metreeca/clay-cell",
   "version": "0.1.0",
-  "description": "Preact widgets and controls for @metreeca/clay interfaces.",
+  "description": "Preact widgets and controls for @metreeca/clay.",
   "keywords": [
     "typescript",
     "preact",

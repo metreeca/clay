@@ -2,15 +2,15 @@
 
 [![npm](https://img.shields.io/npm/v/@metreeca/clay)](https://www.npmjs.com/package/@metreeca/clay)
 
-Preact contexts and hooks for [@metreeca/clay](https://github.com/metreeca/clay) interfaces.
+Preact contexts and hooks for [@metreeca/clay](https://github.com/metreeca/clay).
 
 App-wide services shared by the components of an interface: the app identity, client-side routing, a shared fetch
 client, a status board for operations and issues, static assets and Web Storage state. An app provides each service once
 where the interface is assembled, and every component below it reaches the service through a hook. The package also
 hands out the element the app renders into, already fitted to the page and stable across hot reloads.
 
-The package also lets a Preact component adopt a framework-agnostic `@metreeca/core` state object as its own state, so
-behaviour defined once drives every component built on it, whatever each one renders.
+Components can adopt a framework-agnostic `@metreeca/core` state object as their own state, so behaviour defined once
+drives every component built on it, whatever each one renders, and is tested once without a DOM.
 
 # Installation
 

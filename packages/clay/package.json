@@ -1,7 +1,7 @@
 {
   "name": "@metreeca/clay",
   "version": "0.1.0",
-  "description": "Preact contexts and hooks for @metreeca/clay interfaces.",
+  "description": "Preact contexts and hooks for @metreeca/clay.",
   "keywords": [
     "typescript",
     "preact",

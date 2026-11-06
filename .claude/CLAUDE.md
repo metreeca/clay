@@ -68,7 +68,7 @@ Packages are named after what they contribute, not after the library they contri
 
 Every package states its summary in three places, which **MUST** be kept aligned:
 
-- `packages/<package>/package.json` `description` - `<summary> for @metreeca/clay interfaces.`
+- `packages/<package>/package.json` `description` - `<summary> for @metreeca/clay.`
 - `packages/<package>/README.md`, first line after the badge - the same sentence, with `@metreeca/clay` linked to the
   project repository
 - the root `README.md` package table - `<summary>` with the rendering layer left off, since the rows sit under prose

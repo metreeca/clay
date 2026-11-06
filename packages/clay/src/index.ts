@@ -15,7 +15,7 @@
  */
 
 /**
- * App identity and render root.
+ * Preact contexts and hooks.
  *
  * Provides what the app states about itself, so a component carries the app identity wherever it is assembled without
  * being handed it. Also provides the element the app renders into, already fitted to the page, so a screen that fills

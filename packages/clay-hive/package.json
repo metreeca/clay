@@ -1,7 +1,7 @@
 {
   "name": "@metreeca/clay-hive",
   "version": "0.1.0",
-  "description": "Preact layouts and containers for @metreeca/clay interfaces.",
+  "description": "Preact layouts and containers for @metreeca/clay.",
   "keywords": [
     "typescript",
     "preact",

@@ -2,13 +2,13 @@
 
 [![npm](https://img.shields.io/npm/v/@metreeca/clay-hive)](https://www.npmjs.com/package/@metreeca/clay-hive)
 
-Preact layouts and containers for [@metreeca/clay](https://github.com/metreeca/clay) interfaces.
+Preact layouts and containers for [@metreeca/clay](https://github.com/metreeca/clay).
 
 Container components that arrange widgets into screens: a frame for the whole screen, stacks and strips, themed boxes
 and cards, tabs, property panels, transient notices and failure boundaries. A token scope retunes the design system
 over the area it encloses, so a part of a screen takes a look of its own without a stylesheet.
 
-Styling is structural only: what an arrangement needs to work, with the values behind colour, type and spacing left to
+Styling is structural only: what an arrangement needs to work, with colour, type and spacing left to
 [@metreeca/skin](https://github.com/metreeca/skin) or to whoever styles the app.
 
 # Installation

@@ -12,9 +12,9 @@ components work without it, and follow the platform colour scheme and the app br
 # Installation
 
 ```shell
-npm install @metreeca/skin            # design system package, optional
-npm install @metreeca/clay            # Preact contexts and hooks
-npm install @metreeca/clay-<layer>    # Preact package, one per component layer
+npm install @metreeca/skin            # design system stylesheet, optional
+npm install @metreeca/clay            # contexts and hooks
+npm install @metreeca/clay-<package>  # one per package the app takes up
 ```
 
 > [!WARNING]
@@ -22,7 +22,7 @@ npm install @metreeca/clay-<layer>    # Preact package, one per component layer
 > TypeScript consumers must use `"moduleResolution": "nodenext"/"node16"/"bundler"` in `tsconfig.json`.
 > The legacy `"node"` resolver is not supported.
 
-Add a package for each component layer an app assembles its screens from, with the peer dependencies its README lists.
+Add the widgets and layouts the app's screens need, each from its own package, with the peer dependencies it lists.
 
 An app brands the [@metreeca/skin] stylesheet by overriding its tokens: its
 [theming guide](https://github.com/metreeca/skin#theming) covers colours, faces, spacing and every other token family.
@@ -45,8 +45,7 @@ An app brands the [@metreeca/skin] stylesheet by overriding its tokens: its
 
 > [!NOTE]
 >
-> Each package documents its own API in its README and API reference; for complete coverage, see the
-> [API reference](https://metreeca.github.io/clay/).
+> Each package documents its API in the [API reference](https://metreeca.github.io/clay/).
 
 # Support
 
