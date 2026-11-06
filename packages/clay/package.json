@@ -30,7 +30,30 @@
       "@metreeca/source": "./src/index.ts",
       "default": "./dist/index.js"
     },
-    "./*.core": null
+    "./asset": {
+      "@metreeca/source": "./src/asset.ts",
+      "default": "./dist/asset.js"
+    },
+    "./board": {
+      "@metreeca/source": "./src/board.ts",
+      "default": "./dist/board.js"
+    },
+    "./fetch": {
+      "@metreeca/source": "./src/fetch.ts",
+      "default": "./dist/fetch.js"
+    },
+    "./model": {
+      "@metreeca/source": "./src/model.ts",
+      "default": "./dist/model.js"
+    },
+    "./router": {
+      "@metreeca/source": "./src/router.ts",
+      "default": "./dist/router.js"
+    },
+    "./storage": {
+      "@metreeca/source": "./src/storage.ts",
+      "default": "./dist/storage.js"
+    }
   },
   "files": [
     "README.md",
@@ -43,12 +66,16 @@
   "scripts": {
     "clean": "ush rm dist docs node_modules '*.tsbuildinfo'",
     "build": "tsc -b tsconfig.build.json",
-    "check": "npx vitest --config ../../vitest.config.ts --root . --typecheck --passWithNoTests run"
+    "check": "npx vitest --config ../../vitest.config.ts --root . --typecheck --passWithNoTests --environment happy-dom run"
+  },
+  "dependencies": {
+    "@metreeca/core": "^0.13.0",
+    "@metreeca/http": "^0.5.0"
   },
   "devDependencies": {
+    "happy-dom": "^21.0.4",
     "preact": "^10.29.8",
     "typescript": "^6.0.3",
-    "vite": "^8.3.5",
     "vitest": "^5.0.5"
   },
   "peerDependencies": {

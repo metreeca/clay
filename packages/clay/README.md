@@ -4,6 +4,9 @@
 
 Preact contexts and hooks for [@metreeca/clay](https://github.com/metreeca/clay) interfaces.
 
+The contexts a Clay app provides and the hooks its components consume them with, along with the binding that turns a
+framework-agnostic `@metreeca/core` state object into the state of a Preact component.
+
 # Installation
 
 ```shell
@@ -15,6 +18,11 @@ npm install @metreeca/clay  # this package
 >
 > TypeScript consumers must use `"moduleResolution": "nodenext"/"node16"/"bundler"` in `tsconfig.json`.
 > The legacy `"node"` resolver is not supported.
+
+> [!WARNING]
+>
+> Importing what the app states about itself reads the document, so it belongs to a browser: a consumer without one, a
+> test or a server render, has to supply a DOM before the import runs.
 
 # Usage
 
