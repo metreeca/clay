@@ -45,21 +45,21 @@
  *
  * A pattern other than the catch-all starts with `/`, and every pattern is matched against the whole route:
  *
- * | Pattern                | Kind      | Matches                      | Section sees |
- * |------------------------|-----------|------------------------------|--------------|
- * | `/`                    | root      | `/` alone                    | `/`          |
- * | `/collection/resource` | exact     | `/collection/resource` alone | `/`          |
- * | `/collection/:slug`    | exact     | `/collection/{slug}`         | `/`          |
- * | `/collection/`         | subtree   | `/collection/`               | `/`          |
- * |                        |           | `/collection/{path}`         | `/{path}`    |
- * | `/collection/;view`    | annexed   | `/collection/;view` alone    | `/`          |
- * | `/collection/:slug;v`  | annexed   | `/collection/{slug};v` alone | `/`          |
- * | `*`                    | catch-all | any route                    | the route    |
+ * | Pattern             | Kind      | Matches                   | Section sees |
+ * |---------------------|-----------|---------------------------|--------------|
+ * | `/`                 | root      | `/` alone                 | `/`          |
+ * | `/section/page`     | exact     | `/section/page` alone     | `/`          |
+ * | `/section/:slug`    | exact     | `/section/{slug}`         | `/`          |
+ * | `/section/`         | subtree   | `/section/`               | `/`          |
+ * |                     |           | `/section/{path}`         | `/{path}`    |
+ * | `/section/;view`    | annexed   | `/section/;view` alone    | `/`          |
+ * | `/section/:slug;v`  | annexed   | `/section/{slug};v` alone | `/`          |
+ * | `*`                 | catch-all | any route                 | the route    |
  *
  * - **Named steps**: `:slug` standing for a whole path step matches any non-empty step, where `slug` is a sequence of
  *   word characters: `/users/:id` matches `/users/123`, but neither `/users/` nor `/users/123/posts`
  * - **Subtrees**: a pattern ending with `/`, except the root `/`, matches the route up to it and every route below it
- * - **Annexes**: a pattern ending with a non-empty annex, as `/;info`, `/resource;info` or `/collection/;info`, matches
+ * - **Annexes**: a pattern ending with a non-empty annex, as `/;info`, `/page;info` or `/section/;info`, matches
  *   the route only while it carries exactly that annex, and never acts as a subtree; a pattern without annex matches
  *   whatever annex the route carries, so an annexed pattern goes before the plain pattern it refines
  * - **Catch-all**: `*` matches any route; placed last, it handles the routes the patterns before it leave unhandled,
@@ -91,28 +91,28 @@
  *
  * A route may carry an annex, an opaque string attached to its last step after a `;`, as in `/courses/;grid` or
  * `/courses/123;lessons`. An annex keeps view state in the location, such as the presentation a view is switched to,
- * where the query is already taken by collection filters and the hash by heading anchors.
+ * where the query is already taken by list filters and the hash by heading anchors.
  *
  * The `;` separator follows the per-segment parameter practice noted in
  * [RFC 3986 §3.3](https://www.rfc-editor.org/rfc/rfc3986#section-3.3), which allows it unencoded within a path step
  * and leaves its meaning to the application; an encoded `%3B` is part of the step, as
  * [RFC 3986 §2.2](https://www.rfc-editor.org/rfc/rfc3986#section-2.2) tells reserved characters and their encodings
- * apart. The annex is confined to the last step, so that the route without it is the plain IRI of the resource on show.
+ * apart. The annex is confined to the last step, so that the route without it is the plain address of the page on show.
  *
  * The annex takes part in matching only for patterns naming one, as described under *Route Patterns*:
  * {@link useRoute} returns the route without its annex, and {@link useAnnex} the annex alone. As with the query, the
  * view parses the annex itself; a bare `;` carries an empty annex, read as none.
  *
- * On a root or a collection the annex follows the trailing `/`: `/courses;grid` is the route `/courses`, matched as
- * such rather than as the collection `/courses/`, so a collection carries its annex as `/courses/;grid`.
+ * On a root or a subtree the annex follows the trailing `/`: `/courses;grid` is the route `/courses`, matched as such
+ * rather than as the subtree `/courses/`, so a subtree carries its annex as `/courses/;grid`.
  *
  * A change to the annex alone renders the components reading it again, without mounting the views afresh, so a view
  * switching presentation keeps the state it reached, unless it moves the route to a view of another pattern.
  *
  * A view moves to another annex through a route built from {@link useRoute}, as `${route};table`, rather than through
  * a relative `;table`: [RFC 3986 §5.2.3](https://www.rfc-editor.org/rfc/rfc3986#section-5.2.3) resolves a relative
- * path by replacing the last step of the base, so `;table` sets the annex of a root or a collection, but moves the
- * resource `/courses/123` to `/courses/;table`. The router resolves references as the RFC prescribes, like the
+ * path by replacing the last step of the base, so `;table` sets the annex of a root or a subtree, but moves the
+ * route `/courses/123` to `/courses/;table`. The router resolves references as the RFC prescribes, like the
  * browser does, so a link lands on the same page whether followed by the router, opened in a new tab or copied. Being
  * a path, the annexed route leaves the query and the hash behind, so a view keeping its filters across a change of
  * annex restores them from its own state, such as the history state, rather than from the location.

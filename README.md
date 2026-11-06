@@ -2,8 +2,12 @@
 
 Minimalist component toolkit for Preact interfaces.
 
-Screens are composed in JSX from general-purpose widgets and layouts, with no commitment to a data model. The
-[@metreeca/skin] design system is optional: components work without it and follow the platform colour scheme with it.
+Interfaces are composed in JSX from general-purpose widgets, layouts and movable items, wired to app-wide services
+such as routing and a shared fetch client. Components carry no commitment to a data model: an app feeds them whatever
+data it handles, and keeps the behaviour it owns in framework-agnostic `@metreeca/core` state objects.
+
+Components read their colours, faces and spacing from the [@metreeca/skin] token contract. Its stylesheet is optional:
+components work without it, and follow the platform colour scheme and the app branding with it.
 
 # Installation
 
@@ -18,10 +22,11 @@ npm install @metreeca/clay-<layer>    # Preact package, one per component layer
 > TypeScript consumers must use `"moduleResolution": "nodenext"/"node16"/"bundler"` in `tsconfig.json`.
 > The legacy `"node"` resolver is not supported.
 
-Add a binding package for each component layer an app assembles its screens from. Bindings render with Preact and take
-it as a peer dependency: check the package README for what each one expects. The [@metreeca/skin] design system is
-optional and styles whatever a binding renders. An app brands it by overriding its tokens, as its
-[theming guide](https://github.com/metreeca/skin#theming) explains for colours, faces and every other family.
+Add a package for each component layer an app assembles its screens from. Every package renders with Preact and takes it
+as a peer dependency: check the package README for anything else a layer expects from the app.
+
+An app brands the [@metreeca/skin] stylesheet by overriding its tokens: its
+[theming guide](https://github.com/metreeca/skin#theming) covers colours, faces, spacing and every other token family.
 
 | Package               | Description                          |
 |-----------------------|--------------------------------------|

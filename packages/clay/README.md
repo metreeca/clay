@@ -4,8 +4,12 @@
 
 Preact contexts and hooks for [@metreeca/clay](https://github.com/metreeca/clay) interfaces.
 
-The contexts a Clay app provides and the hooks its components consume them with, along with the binding that turns a
-framework-agnostic `@metreeca/core` state object into the state of a Preact component.
+App-wide services shared by the components of an interface: the app identity, client-side routing, a shared fetch
+client, a status board for operations and issues, static assets and Web Storage state. An app provides each service once
+where the interface is assembled, and every component below it reaches the service through a hook.
+
+The package also lets a Preact component adopt a framework-agnostic `@metreeca/core` state object as its own state, so
+behaviour defined once drives every component built on it, whatever each one renders.
 
 # Installation
 
@@ -21,8 +25,8 @@ npm install @metreeca/clay  # this package
 
 > [!WARNING]
 >
-> Importing what the app states about itself reads the document, so it belongs to a browser: a consumer without one, a
-> test or a server render, has to supply a DOM before the import runs.
+> Importing the package root reads the app identity from the document, so it needs a browser: a test or a server render
+> has to supply a DOM before the import runs, as a test environment such as happy-dom does.
 
 # Usage
 

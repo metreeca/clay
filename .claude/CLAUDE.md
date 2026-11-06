@@ -11,25 +11,23 @@
 
 # Overview
 
-Metreeca Clay is the general-purpose component layer of the Metreeca stack: the widgets, layouts and hooks an
-interface is assembled from, with no commitment to a data model. The monorepo collects the rendering-layer packages,
-each sitting directly under `packages/` (for example `packages/clay/`).
+Metreeca Clay is the general-purpose component layer of the Metreeca stack: the app-wide services, widgets, layouts
+and movable items an interface is assembled from, with no commitment to a data model. The monorepo collects the
+rendering-layer packages, each sitting directly under `packages/` (for example `packages/clay/`).
 
-Linked data views and forms belong to `@metreeca/tile`, which builds on this repository: Clay **NEVER** depends on
-`@metreeca/blue`, `@metreeca/qest` or `@metreeca/keep`, and a component needing a shape or a query belongs there.
+Clay **NEVER** depends on `@metreeca/blue`, `@metreeca/qest` or `@metreeca/keep`: a component needing a shape or a
+query is out of scope, and belongs to a linked data layer built outside this repository.
 
 # References
 
 - [Preact](https://preactjs.com/guide/v10/getting-started) - Fast 3kB alternative to React with the same API, the
-  rendering layer every binding package renders with and takes as a peer dependency
+  rendering layer every package renders with and takes as a peer dependency
 - [@metreeca/core](https://github.com/metreeca/core) - Core utilities and shared types, providing the state primitives
   the headless components are built on
 - [@metreeca/http](https://github.com/metreeca/http) - Composable middleware for the standard fetch API, providing the
-  client the shared fetch hooks wrap
+  client the shared fetch context wraps
 - [@metreeca/skin](https://github.com/metreeca/skin) - Essential design tokens and styles, providing the token contract
   and the stylesheet every component sheet reads from
-- [@metreeca/tile](https://github.com/metreeca/tile) - Minimalist model-driven UI toolkit for linked data resources, the
-  linked data layer built on this repository
 
 # NPM Scripts
 
@@ -43,7 +41,7 @@ Linked data views and forms belong to `@metreeca/tile`, which builds on this rep
 
 # Package Layout
 
-The root `package.json` `workspaces` glob (`packages/*`) covers the framework packages, each in its own directory
+The root `package.json` `workspaces` glob (`packages/*`) covers the packages, each in its own directory
 immediately under `packages/` (for example `packages/clay`).
 
 A package compiles against its siblings through their `dist`, so each `tsconfig.build.json` is `composite` and names
@@ -54,10 +52,11 @@ behind. The build is incremental, its cache being the `tsconfig.build.tsbuildinf
 alongside `dist`: deleting `dist` by hand leaves that cache claiming the outputs are current, and the next build
 emits nothing.
 
-Headless packages carry **NO** dependency on a rendering framework: Preact, and any other rendering layer added later,
-appears **ONLY** in its own binding packages (`clay` for the contexts and hooks a component is wired to, `clay-cell`
-and `clay-hive` for the leaf and container components it is assembled from, `clay-move` for the items a reader moves
-and the drag and drop bindings behind them). The drag and drop library behind `clay-move` appears **ONLY** there, and
+Every package is a Preact binding: `clay` for the app-wide services a component is wired to, `clay-cell` and
+`clay-hive` for the leaf and container components it is assembled from, `clay-move` for the items a reader moves and
+the drag and drop bindings behind them. Headless behaviour carries **NO** dependency on a rendering framework: it
+lives in `@metreeca/core` and in `*.core.ts` modules, and any other rendering layer added later gets binding packages
+of its own. The drag and drop library behind `clay-move` appears **ONLY** there, and
 is **NEVER** handed out: a consumer moves items through the `clay-move` widgets. A binding package adds observation
 and rendering over state it never redefines: behaviour lives in framework-agnostic `@metreeca/core` state objects, so
 a second binding reaches the same behaviour without restating it.
@@ -177,8 +176,7 @@ against `src/` without a prior build. Packages installed from the registry keep 
 > while their packages ship no `src/`, and Vite does not fall back to `default` on a missing target, so a global
 > condition breaks every package installed from the registry that declares it, as happens under `npm ci` in CI.
 
-Headless state is tested without a DOM: a test that needs one belongs to a binding package, which supplies its own
-environment.
+Headless state is tested without a DOM: a widget test that needs one supplies its own environment.
 
 # Version Management
 

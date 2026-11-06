@@ -15,7 +15,7 @@
  */
 
 /**
- * Resource summary card samples.
+ * Summary card samples.
  *
  * @module
  */
@@ -26,17 +26,17 @@ import "./index.css";
 
 
 /**
- * Creates the resource summary card section.
+ * Creates the summary card section.
  *
  * Shows a run of entries, including one with no image whose description runs on under the tags.
  *
- * @returns The resource summary card section
+ * @returns The summary card section
  */
 export function Cards() {
 	return <>
 
-		<p>A card sums up a resource: its title over a description, beside its tags over an image standing for it at the
-			end of the card; a description with no image beneath the side column runs on under the tags.</p>
+		<p>A card sums up an item: its title over a description, beside its tags over an image standing for it at the end
+			of the card; a description with no image beneath the side column runs on under the tags.</p>
 
 		<div class="frames">
 			<Frame label="as it stands">

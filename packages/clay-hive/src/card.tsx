@@ -15,10 +15,10 @@
  */
 
 /**
- * Resource summary card.
+ * Summary card.
  *
- * Sums up a resource in a single block: its title and tags over a description, beside an image standing for it. A
- * list of search results or related resources then reads as a run of cards without a layout written for each entry.
+ * Sums up an item in a single block: its title and tags over a description, beside an image standing for it. A list
+ * of search results or related items then reads as a run of cards without a layout written for each entry.
  *
  * @module
  */
@@ -29,7 +29,7 @@ import "./card.css";
 
 
 /**
- * Creates a resource summary card.
+ * Creates a summary card.
  *
  * Sets the title over the description in a main column, and the tags over the image in a side column at the end of
  * the card, sized to its content up to the cap set by the `--clay-card-side-max-width` knob. A description with no
@@ -37,7 +37,7 @@ import "./card.css";
  * them reads as a list of entries rather than as one block of text, with no layout written for each entry.
  *
  * Empty parts are left out, and a card left with none renders nothing, so a screen hands over whatever it knows about
- * a resource without first checking what is missing. A part is empty when it is `undefined`, `null`, an empty string
+ * an item without first checking what is missing. A part is empty when it is `undefined`, `null`, an empty string
  * or a boolean, as left by a conditional such as `label && <Link/>`; any other part is shown, `0` included.
  *
  * @param options The widget configuration
@@ -56,17 +56,17 @@ export function Card({
 }: {
 
 	/**
-	 * The title naming the resource, at the top of the main column.
+	 * The title naming the item, at the top of the main column.
 	 */
 	title?: ComponentChildren
 
 	/**
-	 * The tags classifying the resource, at the top of the side column across from the title.
+	 * The tags classifying the item, at the top of the side column across from the title.
 	 */
 	tags?: ComponentChildren
 
 	/**
-	 * The image standing for the resource, under the tags in the side column. A string is taken as the URL of a
+	 * The image standing for the item, under the tags in the side column. A string is taken as the URL of a
 	 * decorative picture, left out of the accessibility tree and of the layout if it fails to load; anything else, such
 	 * as an icon or initials, is shown as given, in the label colour the card sets for the tags above it.
 	 */
@@ -80,7 +80,7 @@ export function Card({
 
 
 	/**
-	 * The description of the resource, under the title in the main column.
+	 * The description of the item, under the title in the main column.
 	 */
 	children?: ComponentChildren
 

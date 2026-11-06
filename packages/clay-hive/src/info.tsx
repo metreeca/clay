@@ -17,8 +17,8 @@
 /**
  * Property panel.
  *
- * Lists the properties of a resource, each value beside the label naming it. A sidebar or the body of a page then
- * shows what is known about a resource without a table laid out for the purpose.
+ * Lists the properties of an item, each value beside the label naming it. A sidebar or the body of a page then shows
+ * what is known about an item, without a table laid out for the purpose or a layout written for each property.
  *
  * @module
  */
@@ -33,7 +33,7 @@ import "./info.css";
  *
  * Lists properties as label and value pairs, read by assistive technology as the terms and definitions of a single
  * list. Properties with an empty value are left out, and a panel left with none renders nothing, so a screen hands
- * over whatever it knows about a resource without first checking what is missing. A value is empty when it is
+ * over whatever it knows about an item without first checking what is missing. A value is empty when it is
  * `undefined`, `null` or an empty string; any other value is shown, `0` included, and a boolean reads as its name.
  *
  * Consecutive panels are set apart by a rule, so a screen groups related properties by giving each group a panel.

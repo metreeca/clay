@@ -4,7 +4,9 @@
 
 Preact widgets and controls for [@metreeca/clay](https://github.com/metreeca/clay) interfaces.
 
-Leaf widgets for showing and editing values, and the props and handlers a custom widget builds on.
+Leaf widgets an interface shows content and offers actions with: buttons, links and icons, notices and placeholders,
+breadcrumb trails, incremental loading triggers, the app logo, and Markdown documents with their table of contents.
+A custom widget builds its own controls on the class and keyboard helpers the widgets share.
 
 Styling is structural only: what a widget needs to work, with colour, type and spacing left to
 [@metreeca/skin](https://github.com/metreeca/skin) or to whoever styles the app.

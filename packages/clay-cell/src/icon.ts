@@ -53,10 +53,10 @@
  * **Role Glyphs**
  *
  * Alongside them, the namespace carries role names, standing for what a control does rather than for what it draws.
- * A control takes the role that matches its action, not the glyph that looks right: every control creating a
- * resource takes `Create`, wherever it appears, so one screen never says with a plus what another says with a
- * pencil, and repointing a role at a different glyph restyles all of them at once. An action no role covers takes a
- * standard glyph until a role is added for it.
+ * A control takes the role that matches its action, not the glyph that looks right: every control creating an item
+ * takes `Create`, wherever it appears, so one screen never says with a plus what another says with a pencil, and
+ * repointing a role at a different glyph restyles all of them at once. An action no role covers takes a standard
+ * glyph until a role is added for it, and then switches to that role along with every other control sharing it.
  *
  * ```tsx
  * <button onClick={create}><Icon.Create/> New Item</button>    // creating, wherever it appears
@@ -73,7 +73,7 @@
  * | `LogOut`         | ends the current one                                         |
  * | **Navigation**   | where a control leads                                        |
  * | `Link`           | marks an address, whether it leads inside the app or out     |
- * | `Open`           | steps into a resource                                        |
+ * | `Open`           | steps into an item                                           |
  * | `Back`           | returns to the step before                                   |
  * | **Disclosure**   | how much of a section is on show                             |
  * | `Expand`         | reveals a section folded away                                |
@@ -90,9 +90,9 @@
  * | **Collections**  | what a set holds                                             |
  * | `Insert`         | adds an entry to a collection                                |
  * | `Remove`         | takes one out again                                          |
- * | **Records**      | the life of a single resource                                |
- * | `Create`         | brings a new resource into being                             |
- * | `Update`         | edits the resource on show                                   |
+ * | **Records**      | the life of a single item                                    |
+ * | `Create`         | brings a new item into being                                 |
+ * | `Update`         | edits the item on show                                       |
  * | `Save`           | writes the edits back                                        |
  * | `Delete`         | destroys it                                                  |
  * | `Reload`         | retrieves it again, after a failure or a change              |
@@ -109,10 +109,10 @@
  * | `Info`           | carries an aside the reader may skip                         |
  * | `Alert`          | warns of a consequence worth weighing first                  |
  * | `Help`           | offers guidance on the task at hand                          |
- * | **Failures**     | why a resource did not come back                             |
+ * | **Failures**     | why what was asked for did not come back                     |
  * | `Unauthorized`   | stands where the reader has yet to identify themselves       |
  * | `Forbidden`      | stands where they have, and are still not allowed in         |
- * | `NotFound`       | stands where the resource asked for does not exist           |
+ * | `NotFound`       | stands where what was asked for does not exist               |
  * | `Gone`           | stands where it existed and has since been withdrawn         |
  * | `Error`          | stands where the server failed to answer at all              |
  *

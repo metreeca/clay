@@ -37,7 +37,7 @@ import "./index.css";
 export function Infos() {
 	return <>
 
-		<p>A panel lists the properties of a resource, each value beside the label naming it. In the body of a page the
+		<p>A panel lists the properties of an item, each value beside the label naming it. In the body of a page the
 			labels and the values meet in the middle; in a sidebar they are spread from edge to edge. A property with no
 			value is left out, and consecutive panels are set apart by a rule.</p>
 
