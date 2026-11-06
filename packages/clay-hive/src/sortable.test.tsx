@@ -18,7 +18,7 @@ import { type ComponentChildren, type JSX, render } from "preact";
 import { useState } from "preact/hooks";
 import { act } from "preact/test-utils";
 import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
-import { type Move } from "./sortable.core.js";
+import { type Move } from "@metreeca/move/sortable";
 import { Sortable } from "./sortable.js";
 
 
@@ -671,7 +671,7 @@ describe("Sortable", () => {
 
 		it("sends an item refused outright back at once, announcing the refusal", async () => {
 
-			const onMove = vi.fn(() => false);
+			const onMove = vi.fn((): false => false);
 			const sortable = await mount(<Board onMove={onMove}/>);
 
 			await carry(sortable, "test", "ArrowUp");

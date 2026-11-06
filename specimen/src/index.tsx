@@ -32,7 +32,6 @@ import { mock } from "@metreeca/http/mock";
 import { Root } from "@metreeca/specimen/index.core.js";
 import { ClayCell, ClayCellPath } from "@metreeca/specimen/clay-cell/index.js";
 import { ClayHive, ClayHivePath } from "@metreeca/specimen/clay-hive/index.js";
-import { ClayMove, ClayMovePath } from "@metreeca/specimen/clay-move/index.js";
 import { render } from "preact";
 import "./index.css";
 
@@ -53,8 +52,7 @@ function Specimen() {
 				[Root]: ClayCellPath,
 
 				[ClayCellPath]: <ClayCell/>,
-				[ClayHivePath]: <ClayHive/>,
-				[ClayMovePath]: <ClayMove/>
+				[ClayHivePath]: <ClayHive/>
 
 			}}</Routes>
 

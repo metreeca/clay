@@ -42,7 +42,8 @@ query is out of scope, and belongs to a linked data layer built outside this rep
 # Package Layout
 
 The root `package.json` `workspaces` glob (`packages/*`) covers the packages, each in its own directory
-immediately under `packages/` (for example `packages/clay`).
+immediately under `packages/` (for example `packages/clay`). The private `specimen` is a workspace too, so it
+installs the packages from their working trees rather than from the registry, and shares the root lockfile.
 
 A package compiles against its siblings through their `dist`, so each `tsconfig.build.json` is `composite` and names
 those siblings under `references`, and the package `build` runs `tsc -b`: the compiler settles the order and brings a
@@ -53,16 +54,15 @@ alongside `dist`: deleting `dist` by hand leaves that cache claiming the outputs
 emits nothing.
 
 Every package is a Preact binding: `clay` for the app-wide services a component is wired to, `clay-cell` and
-`clay-hive` for the leaf and container components it is assembled from, `clay-move` for the items a reader moves and
-the drag and drop bindings behind them. Headless behaviour carries **NO** dependency on a rendering framework: it
-lives in `@metreeca/core` and in `*.core.ts` modules, and any other rendering layer added later gets binding packages
-of its own. The drag and drop library behind `clay-move` appears **ONLY** there, and
-is **NEVER** handed out: a consumer moves items through the `clay-move` widgets. A binding package adds observation
-and rendering over state it never redefines: behaviour lives in framework-agnostic `@metreeca/core` state objects, so
-a second binding reaches the same behaviour without restating it.
+`clay-hive` for the leaf and container components it is assembled from, the movable items included. Headless
+behaviour carries **NO** dependency on a rendering framework: it lives in `@metreeca/core` and in `*.core.ts` modules,
+and any other rendering layer added later gets binding packages of its own. Drag and drop state and bindings live in
+[@metreeca/move](https://github.com/metreeca/move), which the `clay-hive` widgets `Placeable` and `Sortable` render.
+A binding package adds observation and rendering over state it never redefines: behaviour lives in
+framework-agnostic `@metreeca/core` state objects, so a second binding reaches the same behaviour without restating
+it.
 
-Packages are named after what they contribute, not after the library they contribute it with: `clay-move`, not
-`clay-dnd`.
+Packages are named after what they contribute, not after the library they contribute it with: `move`, not `dnd`.
 
 # Package Summaries
 
@@ -132,7 +132,7 @@ drops a symbol whose module is excluded, re-exported or not, so excluding these 
 A binding package whose widgets draw the same parts alike keeps them in an `index.tsx` module: it holds rendering,
 never behaviour, offers consumers nothing, and so is left out of the reference by `typedoc.json` and blocked by a
 `"./index": null` entry, the package declaring no root entry point. Its rules sit in the package `index.css`
-stylesheet, which the module imports. `clay-move` keeps there the item a reader moves by its grip or by its whole
+stylesheet, which the module imports. `clay-hive` keeps there the item a reader moves by its grip or by its whole
 surface and the status announcing a move refused, which `Placeable` and `Sortable` both draw.
 
 A module handing out a third-party catalogue under names of its own keeps the bare re-exports in a sibling `*.core.ts`

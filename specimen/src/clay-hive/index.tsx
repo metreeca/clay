@@ -21,7 +21,9 @@ import { Boxes } from "@metreeca/specimen/clay-hive/boxes.js";
 import { Cards } from "@metreeca/specimen/clay-hive/cards.js";
 import { Infos } from "@metreeca/specimen/clay-hive/infos.js";
 import { Layouts } from "@metreeca/specimen/clay-hive/layouts.js";
+import { Placeables } from "@metreeca/specimen/clay-hive/placeables.js";
 import { Shells } from "@metreeca/specimen/clay-hive/shells.js";
+import { Sorting } from "@metreeca/specimen/clay-hive/sorting.js";
 import { Stacks } from "@metreeca/specimen/clay-hive/stacks.js";
 import { Strips } from "@metreeca/specimen/clay-hive/strips.js";
 import { Styles } from "@metreeca/specimen/clay-hive/styles.js";
@@ -46,6 +48,8 @@ export function ClayHive() {
 		Layout: <Layouts/>,
 		Info: <Infos/>,
 		Card: <Cards/>,
+		Sortable: <div class="movables"><Sorting/></div>,
+		Placeable: <div class="movables"><Placeables/></div>,
 		Style: <Styles/>,
 		Toast: <Toasts/>,
 		Empty: <></>

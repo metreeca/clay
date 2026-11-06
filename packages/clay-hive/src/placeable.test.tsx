@@ -18,7 +18,7 @@ import { type ComponentChildren, type JSX, render } from "preact";
 import { useState } from "preact/hooks";
 import { act } from "preact/test-utils";
 import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
-import { type Move } from "./placeable.core.js";
+import { type Move } from "@metreeca/move/placeable";
 import { Placeable } from "./placeable.js";
 
 
@@ -64,7 +64,7 @@ describe("Placeable", () => {
 		card?: (issue: Issue) => ComponentChildren
 		items?: readonly Issue[]
 
-		onMove?: (move: Move) => void | Promise<unknown>
+		onMove?: (move: Move) => void | false | Promise<unknown>
 
 	}) {
 		return <Placeable name="Issues" surface={surface} items={items} card={card} onMove={onMove}>{cell =>
@@ -678,6 +678,7 @@ describe("Placeable", () => {
 
 		it("leaves the fields named by a fallback list of roles to the pointer", async () => {
 
+			// @ts-expect-error a fallback list of roles is valid ARIA, while Preact types a single role
 			const board = await mount(<Grid surface card={issue => <>{issue.title}<span role="searchbox textbox" tabIndex={0} aria-label="Note"/></>}/>);
 
 			expect(await point(content(board, "Alpha")?.querySelector("span") ?? null)).toBe(false);
@@ -701,7 +702,7 @@ describe("Placeable", () => {
 
 		it("leaves a card refused outright where it was, announcing the refusal", async () => {
 
-			const onMove = vi.fn(() => false);
+			const onMove = vi.fn((): false => false);
 			const board = await mount(<Grid onMove={onMove}/>);
 
 			await carry(board, "Beta", "ArrowRight");

@@ -21,11 +21,11 @@
  */
 
 import { Style } from "@metreeca/clay-hive/style";
-import { Placeable } from "@metreeca/clay-move/placeable";
+import { Placeable } from "@metreeca/clay-hive/placeable";
 import { css, skin } from "@metreeca/skin";
 import { Fragment } from "preact";
 import { useState } from "preact/hooks";
-import "./index.css";
+import "./movables.css";
 
 
 const types = ["Bug", "Task"];

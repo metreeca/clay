@@ -1,4 +1,5 @@
 {
+  "name": "@metreeca/specimen",
   "version": "0.1.0",
   "type": "module",
   "engines": {
@@ -6,7 +7,6 @@
   },
   "scripts": {
     "clean": "ush rm dist node_modules",
-    "setup": "npm ci && ush ln ../..",
     "build": "vite build",
     "watch": "vite --open"
   },
@@ -14,7 +14,6 @@
     "@metreeca/clay": "^0.1.0",
     "@metreeca/clay-cell": "^0.1.0",
     "@metreeca/clay-hive": "^0.1.0",
-    "@metreeca/clay-move": "^0.1.0",
     "@metreeca/http": "^0.5.0",
     "@metreeca/skin": "^0.1.0",
     "lucide-preact": "^1.47.0",

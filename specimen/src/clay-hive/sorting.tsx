@@ -20,9 +20,9 @@
  * @module
  */
 
-import { Sortable } from "@metreeca/clay-move/sortable";
+import { Sortable } from "@metreeca/clay-hive/sortable";
 import { useState } from "preact/hooks";
-import "./index.css";
+import "./movables.css";
 
 
 type Lists = Readonly<Record<string, readonly string[]>>;

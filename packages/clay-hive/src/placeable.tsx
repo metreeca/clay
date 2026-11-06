@@ -29,9 +29,9 @@ import { useModel } from "@metreeca/clay/model";
 import { isString, opt, type Optional } from "@metreeca/core";
 import { type ComponentChildren, createElement } from "preact";
 import { useId } from "preact/hooks";
-import { DragDrop, useDroppable } from "./index.core.js";
+import { DragDrop, useDroppable } from "@metreeca/move";
 import { entry, Movable, Status } from "./index.js";
-import { arrange, type Card, createPlaceable, type Move, type Place, same } from "./placeable.core.js";
+import { arrange, type Card, createPlaceable, type Move, type Place, same } from "@metreeca/move/placeable";
 import "./placeable.css";
 
 

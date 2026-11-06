@@ -31,7 +31,7 @@ import { Icon } from "@metreeca/clay-cell/icon";
 import { opt, type Optional } from "@metreeca/core";
 import { type ComponentChildren } from "preact";
 import { useEffect, useId } from "preact/hooks";
-import { type SortableOptions, useSortable } from "./index.core.js";
+import { type SortableOptions, useSortable } from "@metreeca/move";
 import "./index.css";
 
 

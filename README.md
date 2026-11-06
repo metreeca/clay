@@ -27,12 +27,11 @@ Add a package for each component layer an app assembles its screens from, with t
 An app brands the [@metreeca/skin] stylesheet by overriding its tokens: its
 [theming guide](https://github.com/metreeca/skin#theming) covers colours, faces, spacing and every other token family.
 
-| Package               | Description                          |
-|-----------------------|--------------------------------------|
-| [@metreeca/clay]      | Contexts and hooks                   |
-| [@metreeca/clay-cell] | Widgets and controls                 |
-| [@metreeca/clay-hive] | Layouts and containers               |
-| [@metreeca/clay-move] | Movable items and the move lifecycle |
+| Package               | Description            |
+|-----------------------|------------------------|
+| [@metreeca/clay]      | Contexts and hooks     |
+| [@metreeca/clay-cell] | Widgets and controls   |
+| [@metreeca/clay-hive] | Layouts and containers |
 
 [@metreeca/skin]: https://metreeca.github.io/skin/
 
@@ -41,8 +40,6 @@ An app brands the [@metreeca/skin] stylesheet by overriding its tokens: its
 [@metreeca/clay-cell]: https://metreeca.github.io/clay/modules/_metreeca_clay-cell.html
 
 [@metreeca/clay-hive]: https://metreeca.github.io/clay/modules/_metreeca_clay-hive.html
-
-[@metreeca/clay-move]: https://metreeca.github.io/clay/modules/_metreeca_clay-move.html
 
 # Usage
 

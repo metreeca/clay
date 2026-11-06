@@ -4,16 +4,17 @@
   "description": "Minimalist UI toolkit for Preact.",
   "type": "module",
   "workspaces": [
-    "packages/*"
+    "packages/*",
+    "specimen"
   ],
   "scripts": {
-    "clean": "npm run clean --workspaces && npm --prefix specimen run clean && ush rm dist docs node_modules",
+    "clean": "npm run clean --workspaces && ush rm dist docs node_modules",
     "prime": "npm ci",
-    "setup": "npm ci && ush ln && npm --prefix specimen run setup",
+    "setup": "npm ci && ush ln",
     "build": "npm run build --workspaces && ush rm docs && npx typedoc",
-    "check": "npm run check --workspaces",
+    "check": "npm run check --workspaces --if-present",
     "proof": "npm run build && npx wds --root-dir docs --open",
-    "watch": "npm --prefix specimen run watch"
+    "watch": "npm run watch -w specimen"
   },
   "devDependencies": {
     "@metreeca/rack": "^0.6.0",

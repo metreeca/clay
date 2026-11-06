@@ -36,6 +36,9 @@
     "@metreeca/http": {
       "*": "https://metreeca.github.io/http/"
     },
+    "@metreeca/move": {
+      "*": "https://metreeca.github.io/move/"
+    },
     "@metreeca/skin": {
       "*": "https://metreeca.github.io/skin/"
     },
@@ -65,8 +68,7 @@
     ],
     "exclude": [
       "**/packages/clay-cell/src/icon.core.ts",
-      "**/packages/clay-move/src/index.core.ts",
-      "**/packages/clay-move/src/index.tsx",
+      "**/packages/clay-hive/src/index.tsx",
       "**/*.test.ts",
       "**/*.test.tsx",
       "**/*.test-d.ts"

@@ -24,7 +24,6 @@ import { Shell } from "@metreeca/clay-hive/shell";
 import { Style } from "@metreeca/clay-hive/style";
 import { ClayCellPath } from "@metreeca/specimen/clay-cell/index.js";
 import { ClayHivePath } from "@metreeca/specimen/clay-hive/index.js";
-import { ClayMovePath } from "@metreeca/specimen/clay-move/index.js";
 import type { ComponentChildren } from "preact";
 import { useState } from "preact/hooks";
 
@@ -107,7 +106,6 @@ export function Page({
 
 			<Link active look="strong" href={`${ClayCellPath}*`}>Widgets and Controls</Link>
 			<Link active look="strong" href={`${ClayHivePath}*`}>Layouts and Containers</Link>
-			<Link active look="strong" href={`${ClayMovePath}*`}>Movable Items</Link>
 
 		</>}
 
