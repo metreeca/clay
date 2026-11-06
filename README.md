@@ -1,6 +1,6 @@
 # @metreeca/clay
 
-Minimalist component toolkit for Preact interfaces.
+Minimalist UI toolkit for Preact.
 
 Interfaces are composed in JSX from general-purpose widgets, layouts and movable items, wired to app-wide services
 such as routing and a shared fetch client. Components carry no commitment to a data model: an app feeds them whatever
