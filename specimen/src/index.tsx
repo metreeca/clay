@@ -24,8 +24,8 @@
  */
 
 import "@metreeca/skin/presets/roboto.css";
+import { host } from "@metreeca/clay";
 import { Fetch } from "@metreeca/clay/fetch";
-import { host } from "@metreeca/clay-hive";
 import { Router, Routes } from "@metreeca/clay/router";
 import { createFetch } from "@metreeca/http";
 import { mock } from "@metreeca/http/mock";
