@@ -28,6 +28,6 @@ export function TileGrid({
 
 }) {
 
-	return createElement("tile-grid", {}, children);
+	return createElement("clay-grid", {}, children);
 
 }

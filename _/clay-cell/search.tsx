@@ -66,7 +66,7 @@ export function TileSearch({
 	}
 
 
-	return createElement("tile-search", {
+	return createElement("clay-search", {
 
 		disabled: disabled ? "disabled" : undefined
 

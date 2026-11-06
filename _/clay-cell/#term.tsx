@@ -41,7 +41,7 @@ export function TileTerm({
 
 	const label=string(children);
 
-	return createElement("tile-term", {
+	return createElement("clay-term", {
 
 		class: disabled ? "disabled" : undefined
 

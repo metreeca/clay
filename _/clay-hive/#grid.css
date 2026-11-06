@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-tile-grid {
+clay-grid {
 
     --cols: 2;
     --gap: 1em;

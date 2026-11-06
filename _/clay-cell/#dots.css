@@ -16,13 +16,13 @@
 
 :root {
 
-    --tile-dots-size: inherit;
-    --tile-dots-color: inherit;
-    --tile-dots-period: inherit;
+    --clay-dots-size: inherit;
+    --clay-dots-color: inherit;
+    --clay-dots-period: inherit;
 
 }
 
-tile-dots {
+clay-dots {
 
     display: grid;
 
@@ -40,17 +40,17 @@ tile-dots {
 
             display: inline-block;
 
-            width: var(--tile-dots-size);
-            height: var(--tile-dots-size);
+            width: var(--clay-dots-size);
+            height: var(--clay-dots-size);
 
             border-radius: 50%;
 
-            background-color: var(--tile-dots-color);
+            background-color: var(--clay-dots-color);
 
             opacity: 0.5;
 
             animation-fill-mode: both;
-            animation: tile-dots var(--tile-dots-period) infinite ease-in-out;
+            animation: clay-dots var(--clay-dots-period) infinite ease-in-out;
         }
 
         &::before,
@@ -60,20 +60,20 @@ tile-dots {
         }
 
         &::before {
-            left: calc(-1.25 * var(--tile-dots-size));
-            animation-delay: calc(-0.33 * var(--tile-dots-period));
+            left: calc(-1.25 * var(--clay-dots-size));
+            animation-delay: calc(-0.33 * var(--clay-dots-period));
         }
 
         &::after {
-            right: calc(-1.25 * var(--tile-dots-size));
-            animation-delay: calc(0.33 * var(--tile-dots-period));
+            right: calc(-1.25 * var(--clay-dots-size));
+            animation-delay: calc(0.33 * var(--clay-dots-period));
         }
 
     }
 
 }
 
-@keyframes tile-dots {
+@keyframes clay-dots {
     0%, 100% {
         opacity: 0.1;
     }

@@ -30,6 +30,6 @@ export function TileMenu({
 
 }) {
 
-	return createElement("tile-menu", {}, children);
+	return createElement("clay-menu", {}, children);
 
 }

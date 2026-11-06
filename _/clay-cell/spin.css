@@ -16,18 +16,18 @@
 
 :root {
 
-    --tile-spin-size: 1em;
-    --tile-spin-thickness: max(0.1rem, calc(var(--tile-spin-size) / 50));
-    --tile-spin-color: #CCC;
-    --tile-spin-period: 1s;
+    --clay-spin-size: 1em;
+    --clay-spin-thickness: max(0.1rem, calc(var(--clay-spin-size) / 50));
+    --clay-spin-color: #CCC;
+    --clay-spin-period: 1s;
 
 }
 
-tile-spin {
+clay-spin {
 
     display: grid;
 
-    font-size: var(--tile-spin-size);
+    font-size: var(--clay-spin-size);
 
     background-color: transparent;
 
@@ -35,10 +35,10 @@ tile-spin {
 
         margin: auto;
 
-        color: var(--tile-spin-color);
-        stroke-width: var(--tile-spin-thickness);
+        color: var(--clay-spin-color);
+        stroke-width: var(--clay-spin-thickness);
 
-        animation: tile-spin var(--tile-spin-period) infinite linear;
+        animation: clay-spin var(--clay-spin-period) infinite linear;
 
     }
 
@@ -48,7 +48,7 @@ tile-spin {
 
 }
 
-@keyframes tile-spin {
+@keyframes clay-spin {
     0% {
         transform: rotate(0deg);
     }

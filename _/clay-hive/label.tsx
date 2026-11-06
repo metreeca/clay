@@ -46,7 +46,7 @@ export function TileLabel({
 	children?: ReactNode
 
 }) {
-	return createElement("tile-label", {
+	return createElement("clay-label", {
 
 		class: classes({ rule, wide, side })
 

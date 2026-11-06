@@ -57,7 +57,7 @@ export function TileTree({
 	}
 
 
-	return createElement("tile-tree", {
+	return createElement("clay-tree", {
 
 		class: classes({ expanded: expanded_ })
 

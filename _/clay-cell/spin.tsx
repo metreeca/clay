@@ -47,7 +47,7 @@ export function TileSpin({
 
 }) {
 
-	return createElement("tile-spin", {
+	return createElement("clay-spin", {
 
 		title: title || onClick ? "Cancel" : undefined,
 
@@ -55,10 +55,10 @@ export function TileSpin({
 
 		style: {
 
-			"--tile-spin-size": size,
-			"--tile-spin-thickness": thickness,
-			"--tile-spin-color": color,
-			"--tile-spin-period": period
+			"--clay-spin-size": size,
+			"--clay-spin-thickness": thickness,
+			"--clay-spin-color": color,
+			"--clay-spin-period": period
 
 		}
 

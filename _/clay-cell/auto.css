@@ -15,7 +15,7 @@
  */
 
 
-tile-auto {
+clay-auto {
 
     --radius: 0.25em;
 
@@ -75,7 +75,7 @@ tile-auto {
 
         box-shadow: 0 0 0 0.25em var(--skin--background-color);
 
-        & > tile-spin,
+        & > clay-spin,
         & > small {
             margin: 0.25em 0.5em;
         }

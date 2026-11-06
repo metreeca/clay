@@ -34,13 +34,13 @@ export function TileDots({
 
 }) {
 
-	return createElement("tile-dots", {
+	return createElement("clay-dots", {
 
 		style: {
 
-			"--tile-dots-size": size,
-			"--tile-dots-color": color,
-			"--tile-dots-period": period
+			"--clay-dots-size": size,
+			"--clay-dots-color": color,
+			"--clay-dots-period": period
 
 		}
 

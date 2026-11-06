@@ -91,7 +91,7 @@ export function TileAuto<V extends Value>({
 
 	}
 
-	return createElement("tile-auto", {
+	return createElement("clay-auto", {
 
 		onKeyDown: keys({
 
@@ -199,7 +199,7 @@ export function TileAuto<V extends Value>({
 
 				select(options[e.currentTarget.selectedIndex]);
 
-				focus(e.currentTarget.closest("tile-auto")?.querySelector("input"));
+				focus(e.currentTarget.closest("clay-auto")?.querySelector("input"));
 
 			}}
 
@@ -209,7 +209,7 @@ export function TileAuto<V extends Value>({
 
 					select(options[e.currentTarget.selectedIndex]);
 
-					focus(e.currentTarget.closest("tile-auto")?.querySelector("input"));
+					focus(e.currentTarget.closest("clay-auto")?.querySelector("input"));
 
 				}
 
