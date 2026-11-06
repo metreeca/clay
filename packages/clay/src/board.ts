@@ -36,7 +36,6 @@
 
 import { assert } from "@metreeca/core";
 import { some, type Some } from "@metreeca/core/arrays";
-import type { IRI } from "@metreeca/core/resource";
 import { equals, immutable } from "@metreeca/core/values";
 import { isProblem, type Problem, toProblem } from "@metreeca/http/success";
 import { type ComponentChildren, createContext, createElement } from "preact";
@@ -168,7 +167,7 @@ export interface Post {
 	/**
 	 * The identity of this post, which a source posting it again updates it by.
 	 */
-	readonly instance: IRI;
+	readonly instance: string;
 
 	/**
 	 * What the system says has happened.
