@@ -25,13 +25,19 @@
  * @module
  */
 
-import { type Draggable, KeyboardSensor, PointerActivationConstraints, PointerSensor } from "@dnd-kit/dom";
 import { keys } from "@metreeca/clay-cell";
 import { Icon } from "@metreeca/clay-cell/icon";
 import { opt, type Optional } from "@metreeca/core";
 import { type ComponentChildren } from "preact";
 import { useEffect, useId } from "preact/hooks";
-import { type SortableOptions, useSortable } from "@metreeca/move";
+import {
+	type Draggable,
+	KeyboardSensor,
+	PointerActivationConstraints,
+	PointerSensor,
+	type SortableOptions,
+	useSortable
+} from "@metreeca/move";
 import "./index.css";
 
 

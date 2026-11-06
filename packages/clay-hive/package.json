@@ -53,10 +53,6 @@
     "check": "npx vitest --config ../../vitest.config.ts --root . --typecheck --passWithNoTests --environment happy-dom run"
   },
   "dependencies": {
-    "@dnd-kit/abstract": "^0.5.0",
-    "@dnd-kit/collision": "^0.5.0",
-    "@dnd-kit/dom": "^0.5.0",
-    "@dnd-kit/state": "^0.5.0",
     "@metreeca/clay": "^0.1.0",
     "@metreeca/clay-cell": "^0.1.0",
     "@metreeca/core": "^0.13.0",

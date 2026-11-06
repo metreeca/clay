@@ -23,15 +23,12 @@
  * @module
  */
 
-import { CollisionPriority } from "@dnd-kit/abstract";
-import { pointerIntersection } from "@dnd-kit/collision";
-import { isSortable } from "@dnd-kit/dom/sortable";
 import { useModel } from "@metreeca/clay/model";
 import { isString, opt, type Optional } from "@metreeca/core";
 import { equals } from "@metreeca/core/values";
 import { type ComponentChildren, createElement } from "preact";
 import { useId } from "preact/hooks";
-import { DragDrop, useDroppable } from "@metreeca/move";
+import { CollisionPriority, DragDrop, isSortable, pointerIntersection, useDroppable } from "@metreeca/move";
 import { entry, Movable, Status } from "./index.js";
 import { createSortable, locate, type Move } from "@metreeca/move/sortable";
 import "./sortable.css";
