@@ -67,8 +67,8 @@
       "src/**/*.{ts,tsx}"
     ],
     "exclude": [
-      "**/packages/clay-cell/src/icon.core.ts",
-      "**/packages/clay-hive/src/index.tsx",
+      "**/packages/clay-widgets/src/icon.core.ts",
+      "**/packages/clay-dnd/src/index.tsx",
       "**/*.test.ts",
       "**/*.test.tsx",
       "**/*.test-d.ts"

@@ -30,8 +30,9 @@ import { Router, Routes } from "@metreeca/clay/router";
 import { createFetch } from "@metreeca/http";
 import { mock } from "@metreeca/http/mock";
 import { Root } from "@metreeca/specimen/index.core.js";
-import { ClayCell, ClayCellPath } from "@metreeca/specimen/clay-cell/index.js";
-import { ClayHive, ClayHivePath } from "@metreeca/specimen/clay-hive/index.js";
+import { ClayDnd, ClayDndPath } from "@metreeca/specimen/clay-dnd/index.js";
+import { ClayMarkdown, ClayMarkdownPath } from "@metreeca/specimen/clay-markdown/index.js";
+import { ClayWidgets, ClayWidgetsPath } from "@metreeca/specimen/clay-widgets/index.js";
 import { render } from "preact";
 import "./index.css";
 
@@ -49,10 +50,11 @@ function Specimen() {
 
 			<Routes>{{
 
-				[Root]: ClayCellPath,
+				[Root]: ClayWidgetsPath,
 
-				[ClayCellPath]: <ClayCell/>,
-				[ClayHivePath]: <ClayHive/>
+				[ClayWidgetsPath]: <ClayWidgets/>,
+				[ClayMarkdownPath]: <ClayMarkdown/>,
+				[ClayDndPath]: <ClayDnd/>
 
 			}}</Routes>
 

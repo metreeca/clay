@@ -53,16 +53,38 @@ behind. The build is incremental, its cache being the `tsconfig.build.tsbuildinf
 alongside `dist`: deleting `dist` by hand leaves that cache claiming the outputs are current, and the next build
 emits nothing.
 
-Every package is a Preact binding: `clay` for the app-wide services a component is wired to, `clay-cell` and
-`clay-hive` for the leaf and container components it is assembled from, the movable items included. Headless
-behaviour carries **NO** dependency on a rendering framework: it lives in `@metreeca/core` and in `*.core.ts` modules,
-and any other rendering layer added later gets binding packages of its own. Drag and drop state and bindings live in
-[@metreeca/move](https://github.com/metreeca/move), which the `clay-hive` widgets `Placeable` and `Sortable` render.
-A binding package adds observation and rendering over state it never redefines: behaviour lives in
+Every package is a Preact binding: `clay` for the app-wide services a component is wired to, `clay-widgets` for the
+widgets, layouts and glyphs an interface is assembled from, `clay-markdown` for Markdown documents, and `clay-dnd` for
+the boards and lists a reader rearranges by drag and drop.
+Headless behaviour carries **NO** dependency on a rendering framework: it lives in `@metreeca/core` and in `*.core.ts`
+modules, and any other rendering layer added later gets binding packages of its own. Drag and drop state and bindings
+live in [@metreeca/move](https://github.com/metreeca/move), which the `clay-dnd` widgets `Placeable` and `Sortable`
+render. A binding package adds observation and rendering over state it never redefines: behaviour lives in
 framework-agnostic `@metreeca/core` state objects, so a second binding reaches the same behaviour without restating
 it.
 
-Packages are named after what they contribute, not after the library they contribute it with: `move`, not `dnd`.
+## Package Distribution
+
+A package boundary is drawn only where it spares a consumer something: an install, a peer dependency, or a release to
+track. Bundle weight never justifies a split, since every module keeps its own subpath export and an app bundles only
+what it imports.
+
+- **One widget core**: widgets and layouts share `clay-widgets` whatever their role. A leaf/container split spares
+  nobody anything, since containers build on leaves and an app taking one installs both, and it forces a placement call
+  on every new widget. Concern groups fail the same test: they depend on one another and share no third-party stack,
+  so they multiply manifests, versions and changelogs for no install saving. One package per component pays off only
+  where components are adopted one by one, which a toolkit of this size does not see.
+- **Heavy stacks apart**: a module group gets a package of its own when it is the only reason its neighbours would
+  install a third-party stack. `clay-markdown` carries the Markdown processing pipeline and `clay-dnd` the drag and drop
+  engine, keeping the widget core down to Preact, the glyph catalogue and the Metreeca foundations.
+- **Glyphs inside**: the `icon` module stays in `clay-widgets`. It is a role mapping over a glyph catalogue taken as a
+  peer dependency, so a package of its own would spare nothing: every widget package needs it, and the catalogue
+  reaches every widget consumer either way.
+- **Services unchanged**: `clay` holds the app-wide contexts and hooks every other package builds on.
+
+A package holding a collection takes a plural name (`clay-widgets`), and one holding a single capability takes the
+name of that capability (`clay-markdown`, `clay-dnd`). Packages are named after what they contribute, never
+after the library they contribute it with: `dnd` names the capability, not the engine behind it.
 
 # Package Summaries
 
@@ -132,13 +154,13 @@ drops a symbol whose module is excluded, re-exported or not, so excluding these 
 A binding package whose widgets draw the same parts alike keeps them in an `index.tsx` module: it holds rendering,
 never behaviour, offers consumers nothing, and so is left out of the reference by `typedoc.json` and blocked by a
 `"./index": null` entry, the package declaring no root entry point. Its rules sit in the package `index.css`
-stylesheet, which the module imports. `clay-hive` keeps there the item a reader moves by its grip or by its whole
+stylesheet, which the module imports. `clay-dnd` keeps there the item a reader moves by its grip or by its whole
 surface and the status announcing a move refused, which `Placeable` and `Sortable` both draw.
 
 A module handing out a third-party catalogue under names of its own keeps the bare re-exports in a sibling `*.core.ts`
 module, left out of the reference by `typedoc.json`, which names each such module: the documented module beside it is
-the only path a consumer imports, and carries the comment the catalogue is described by. `icon.ts` documents the
-`Icon` namespace it hands out, `icon.core.ts` names the glyph each role stands for.
+the only path a consumer imports, and carries the comment the catalogue is described by. `icon.ts`
+documents the `Icon` namespace it hands out, `icon.core.ts` names the glyph each role stands for.
 
 A widget renders a `<clay-*>` custom element through `createElement`, with its rules in a sibling stylesheet the module
 imports. The prefix is carried by the element, which the DOM requires to be hyphenated, and **NEVER** by the exported

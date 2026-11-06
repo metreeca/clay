@@ -15,15 +15,16 @@
  */
 
 import { app } from "@metreeca/clay";
-import { Button } from "@metreeca/clay-cell/button";
-import { Icon } from "@metreeca/clay-cell/icon";
-import { Link } from "@metreeca/clay-cell/link";
-import { Logo } from "@metreeca/clay-cell/logo";
+import { Button } from "@metreeca/clay-widgets/button";
+import { Icon } from "@metreeca/clay-widgets/icon";
+import { Link } from "@metreeca/clay-widgets/link";
+import { Logo } from "@metreeca/clay-widgets/logo";
 import { useFetch } from "@metreeca/clay/fetch";
-import { Shell } from "@metreeca/clay-hive/shell";
-import { Style } from "@metreeca/clay-hive/style";
-import { ClayCellPath } from "@metreeca/specimen/clay-cell/index.js";
-import { ClayHivePath } from "@metreeca/specimen/clay-hive/index.js";
+import { Shell } from "@metreeca/clay-widgets/shell";
+import { Style } from "@metreeca/clay-widgets/style";
+import { ClayDndPath } from "@metreeca/specimen/clay-dnd/index.js";
+import { ClayMarkdownPath } from "@metreeca/specimen/clay-markdown/index.js";
+import { ClayWidgetsPath } from "@metreeca/specimen/clay-widgets/index.js";
 import type { ComponentChildren } from "preact";
 import { useState } from "preact/hooks";
 
@@ -104,8 +105,9 @@ export function Page({
 				onClick={() => setWide(!wide)}
 			/>
 
-			<Link active look="strong" href={`${ClayCellPath}*`}>Widgets and Controls</Link>
-			<Link active look="strong" href={`${ClayHivePath}*`}>Layouts and Containers</Link>
+			<Link active look="strong" href={`${ClayWidgetsPath}*`}>Widgets</Link>
+			<Link active look="strong" href={`${ClayMarkdownPath}*`}>Markdown</Link>
+			<Link active look="strong" href={`${ClayDndPath}*`}>Drag and Drop</Link>
 
 		</>}
 
