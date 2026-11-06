@@ -17,6 +17,7 @@
     "@metreeca/clay-move": "^0.1.0",
     "@metreeca/http": "^0.5.0",
     "@metreeca/skin": "^0.1.0",
+    "lucide-preact": "^1.47.0",
     "preact": "^10.29.8"
   },
   "devDependencies": {

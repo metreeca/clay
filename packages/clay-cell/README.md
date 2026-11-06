@@ -14,8 +14,9 @@ Styling is structural only: what a widget needs to work, with colour, type and s
 # Installation
 
 ```shell
-npm install preact               # peer dependency
 npm install @metreeca/clay-cell  # this package
+npm install preact               # peer dependency
+npm install lucide-preact        # peer dependency
 ```
 
 > [!WARNING]

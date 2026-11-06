@@ -15,8 +15,8 @@ behaviour defined once drives every component built on it, whatever each one ren
 # Installation
 
 ```shell
-npm install preact          # peer dependency
 npm install @metreeca/clay  # this package
+npm install preact          # peer dependency
 ```
 
 > [!WARNING]

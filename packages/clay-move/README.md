@@ -14,8 +14,9 @@ Gestures run on [dnd-kit](https://dndkit.com/), which stays internal: consumers 
 # Installation
 
 ```shell
-npm install preact               # peer dependency
 npm install @metreeca/clay-move  # this package
+npm install preact               # peer dependency
+npm install lucide-preact        # peer dependency
 ```
 
 > [!WARNING]

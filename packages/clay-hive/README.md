@@ -14,8 +14,9 @@ Styling is structural only: what an arrangement needs to work, with the values b
 # Installation
 
 ```shell
-npm install preact               # peer dependency
 npm install @metreeca/clay-hive  # this package
+npm install preact               # peer dependency
+npm install lucide-preact        # peer dependency
 ```
 
 > [!WARNING]

@@ -22,8 +22,7 @@ npm install @metreeca/clay-<layer>    # Preact package, one per component layer
 > TypeScript consumers must use `"moduleResolution": "nodenext"/"node16"/"bundler"` in `tsconfig.json`.
 > The legacy `"node"` resolver is not supported.
 
-Add a package for each component layer an app assembles its screens from. Every package renders with Preact and takes it
-as a peer dependency: check the package README for anything else a layer expects from the app.
+Add a package for each component layer an app assembles its screens from, with the peer dependencies its README lists.
 
 An app brands the [@metreeca/skin] stylesheet by overriding its tokens: its
 [theming guide](https://github.com/metreeca/skin#theming) covers colours, faces, spacing and every other token family.
