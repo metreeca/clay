@@ -1,0 +1,30 @@
+{
+  "compilerOptions": {
+    "paths": {
+      "@metreeca/specimen/*": [
+        "./src/*"
+      ]
+    },
+    "customConditions": [
+      "@metreeca/source"
+    ],
+    "noEmit": true,
+    "strict": true,
+    "target": "ES2022",
+    "lib": [
+      "ES2022",
+      "DOM",
+      "DOM.Iterable"
+    ],
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "jsx": "react-jsx",
+    "jsxImportSource": "preact",
+    "isolatedModules": true,
+    "skipLibCheck": true
+  },
+  "include": [
+    "src",
+    "vite.config.ts"
+  ]
+}

@@ -39,6 +39,7 @@ Linked data views and forms belong to `@metreeca/tile`, which builds on this rep
 - **`npm run build`** - Compile sources and generate docs
 - **`npm run check`** - Run the test suite
 - **`npm run proof`** - Build and serve docs
+- **`npm run watch`** - Serve the specimen page with live reload
 
 # Package Layout
 
@@ -53,10 +54,16 @@ behind. The build is incremental, its cache being the `tsconfig.build.tsbuildinf
 alongside `dist`: deleting `dist` by hand leaves that cache claiming the outputs are current, and the next build
 emits nothing.
 
-Behaviour lives in framework-agnostic `@metreeca/core` state objects: a binding package adds observation and
-rendering over state it never redefines, so a second binding reaches the same behaviour without restating it.
+Headless packages carry **NO** dependency on a rendering framework: Preact, and any other rendering layer added later,
+appears **ONLY** in its own binding packages (`clay` for the contexts and hooks a component is wired to, `clay-cell`
+and `clay-hive` for the leaf and container components it is assembled from, `clay-move` for the items a reader moves
+and the drag and drop bindings behind them). The drag and drop library behind `clay-move` appears **ONLY** there, and
+is **NEVER** handed out: a consumer moves items through the `clay-move` widgets. A binding package adds observation
+and rendering over state it never redefines: behaviour lives in framework-agnostic `@metreeca/core` state objects, so
+a second binding reaches the same behaviour without restating it.
 
-Packages are named after what they contribute, not after the library they contribute it with.
+Packages are named after what they contribute, not after the library they contribute it with: `clay-move`, not
+`clay-dnd`.
 
 # Package Summaries
 
@@ -138,7 +145,8 @@ drops a symbol whose module is excluded, re-exported or not, so excluding these 
 A binding package whose widgets draw the same parts alike keeps them in an `index.tsx` module: it holds rendering,
 never behaviour, offers consumers nothing, and so is left out of the reference by `typedoc.json` and blocked by a
 `"./index": null` entry, the package declaring no root entry point. Its rules sit in the package `index.css`
-stylesheet, which the module imports.
+stylesheet, which the module imports. `clay-move` keeps there the item a reader moves by its grip or by its whole
+surface and the status announcing a move refused, which `Placeable` and `Sortable` both draw.
 
 A module handing out a third-party catalogue under names of its own keeps the bare re-exports in a sibling `*.core.ts`
 module, left out of the reference by `typedoc.json`, which names each such module: the documented module beside it is

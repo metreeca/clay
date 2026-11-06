@@ -7,12 +7,13 @@
     "packages/*"
   ],
   "scripts": {
-    "clean": "npm run clean --workspaces && ush rm dist docs node_modules",
+    "clean": "npm run clean --workspaces && npm --prefix specimen run clean && ush rm dist docs node_modules",
     "prime": "npm ci",
-    "setup": "npm ci && ush ln",
+    "setup": "npm ci && ush ln && npm --prefix specimen run setup",
     "build": "npm run build --workspaces && ush rm docs && npx typedoc",
     "check": "npm run check --workspaces",
-    "proof": "npm run build && npx wds --root-dir docs --open"
+    "proof": "npm run build && npx wds --root-dir docs --open",
+    "watch": "npm --prefix specimen run watch"
   },
   "devDependencies": {
     "@metreeca/rack": "^0.6.0",

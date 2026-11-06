@@ -1,0 +1,29 @@
+{
+  "version": "0.1.0",
+  "type": "module",
+  "engines": {
+    "node": ">=22.22.0"
+  },
+  "scripts": {
+    "clean": "ush rm dist node_modules",
+    "setup": "npm ci && ush ln ../..",
+    "build": "vite build",
+    "watch": "vite --open"
+  },
+  "dependencies": {
+    "@metreeca/clay": "^0.1.0",
+    "@metreeca/clay-cell": "^0.1.0",
+    "@metreeca/clay-hive": "^0.1.0",
+    "@metreeca/clay-move": "^0.1.0",
+    "@metreeca/http": "^0.5.0",
+    "@metreeca/skin": "^0.1.0",
+    "preact": "^10.29.8"
+  },
+  "devDependencies": {
+    "@metreeca/rack": "^0.6.0",
+    "@preact/preset-vite": "^2.10.6",
+    "typescript": "^6.0.3",
+    "vite": "^8.3.5"
+  },
+  "private": true
+}
