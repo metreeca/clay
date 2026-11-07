@@ -73,7 +73,7 @@ export interface TocEntry {
  *
  * While the page scrolls, the link whose section the reader is in is marked as the current location, which the design
  * system sets in the strong accent and weight and assistive technology reads as such: the section is the last one, in
- * page order, whose start has been scrolled up to a reading line standing a third of the way down the viewport, and
+ * page order, whose start has been scrolled up to a reading line standing a third of the way down the view, and
  * once the page is scrolled to its end, the last one whose start is in view, so a short closing section is still
  * reached. No link is marked above the first section. Only links naming an element on the page by fragment take part;
  * any other link is listed and never marked, as it names no section the scroll position could put the reader in.
@@ -88,8 +88,10 @@ export interface TocEntry {
  * row of its links scrolled across, group labels left out, so it takes one line above the content rather than a column
  * beside it, and every link stays reachable by pointer and keyboard alike in either form.
  *
- * The outline follows the scroll position of the document, so it serves a page scrolling as a whole, such as one laid
- * out in a {@link @metreeca/clay-widgets!shell.Shell shell}, rather than a box scrolling within it.
+ * The outline follows the box its sections scroll in, whatever lays the page out: the nearest scrolling ancestor of
+ * the first section on the page, such as the content column of a {@link @metreeca/clay-widgets!shell.Shell shell}, or
+ * the document where no ancestor scrolls. The reading line and the end of the page are measured on the part of that
+ * box left in view, short of its scroll padding, so a header standing over the box is not counted as room to read in.
  *
  * @param options The widget configuration
  *
@@ -158,14 +160,35 @@ export function Toc({
 			choose();
 		}
 
+		/*
+		 * A box scrolling sends its event to itself alone, which the capture phase on the document hears on the way
+		 * down; the document scrolling sends its own on to the window, where it is heard as well. Following twice lands
+		 * where following once does, so the page scrolling heard on both costs nothing.
+		 */
+
+		document.addEventListener("scroll", update, { passive: true, capture: true });
 		window.addEventListener("scroll", update, { passive: true });
 		window.addEventListener("resize", update, { passive: true });
+
+		/*
+		 * Sections moving without a scroll, as the page settles its styles, fonts and images after mounting or grows
+		 * under the reader, move the reading line across them all the same, so the outline follows their sizes too.
+		 */
+
+		const settle = typeof ResizeObserver === "undefined" ? undefined : new ResizeObserver(() => {
+			if ( !latest.pinned ) { update(); }
+		});
+
+		latest.sections.forEach(id => opt(document.getElementById(id) ?? undefined, element => settle?.observe(element)));
 		window.addEventListener("hashchange", choose);
 
 		Gestures.forEach(gesture => window.addEventListener(gesture, release, { passive: true, capture: true }));
 
 		return () => {
 
+			settle?.disconnect();
+
+			document.removeEventListener("scroll", update, { capture: true });
 			window.removeEventListener("scroll", update);
 			window.removeEventListener("resize", update);
 			window.removeEventListener("hashchange", choose);
@@ -193,30 +216,67 @@ const Gestures: readonly (keyof WindowEventMap)[] = ["wheel", "touchmove", "poin
 
 
 /**
- * Measures where the sections stand in the viewport, and whether the page has been scrolled to its end.
+ * Measures where the sections stand in the part of their scrolling box left in view, and whether the box has been
+ * scrolled to its end, leaving no section below the reading line a way to reach it.
+ *
+ * The box is the nearest scrolling ancestor of the first section on the page, or the document where none scrolls; the
+ * part left in view stops short of its scroll padding, which is where whatever stands over the box is accounted for.
  */
 function view(sections: readonly string[]): View {
 
+	const elements = sections.flatMap((id): readonly (readonly [string, HTMLElement])[] => {
+
+		const element = document.getElementById(id);
+
+		return element ? [[id, element]] : [];
+
+	});
+	const box = opt(elements[0]?.[1], scroller);
+
 	const root = document.documentElement;
+	const style = getComputedStyle(box ?? root);
+
+	const start = parseFloat(style.scrollPaddingTop) || 0; // ;(NaN) `auto` pads nothing
+	const end = parseFloat(style.scrollPaddingBottom) || 0;
+
+	const top = (box ? box.getBoundingClientRect().top : 0) + start;
+	const client = box ? box.clientHeight : window.innerHeight;
+	const scrolled = box ? box.scrollTop : window.scrollY;
+	const total = box ? box.scrollHeight : root.scrollHeight;
+
+	const height = client - start - end;
 
 	return {
 
-		tops: Object.fromEntries(sections.flatMap((id): readonly (readonly [string, number])[] => {
+		tops: Object.fromEntries(elements.map(([id, element]) => [id, element.getBoundingClientRect().top - top])),
 
-			const element = document.getElementById(id);
+		line: height * TocLine,
+		height,
 
-			return element ? [[id, element.getBoundingClientRect().top]] : [];
+		// a box with nothing to scroll is at its start as much as at its end, and is read by the reading line
 
-		})),
-
-		line: window.innerHeight * TocLine,
-		height: window.innerHeight,
-
-		// a page with nothing to scroll is at its start as much as at its end, and is read by the reading line
-
-		end: window.scrollY > 0 && window.scrollY + window.innerHeight >= root.scrollHeight - 1
+		end: scrolled > 0 && scrolled + client >= total - 1
 
 	};
+
+}
+
+/**
+ * Locates the box an element scrolls in.
+ *
+ * A box letting its content scroll across computes as scrolling down as well, whether or not its content runs past its
+ * height, so a box counts only once it has more content than height: a body scrolling a wide table across while the
+ * column around it scrolls down is passed over for the column, which is what the reader actually scrolls.
+ *
+ * @returns The nearest ancestor of `element` scrolling its content vertically, or `undefined` if the document does
+ */
+function scroller(element: Element): Optional<HTMLElement> {
+
+	const parent = element.parentElement;
+
+	return parent === null || parent === document.body || parent === document.documentElement ? undefined
+		: /^(auto|scroll|overlay)$/.test(getComputedStyle(parent).overflowY) && parent.scrollHeight > parent.clientHeight ? parent
+			: scroller(parent);
 
 }
 

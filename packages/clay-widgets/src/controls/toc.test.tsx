@@ -381,6 +381,95 @@ describe("Toc", () => {
 
 	});
 
+	describe("scrolling box", () => {
+
+		/**
+		 * Mounts the outline beside sections scrolling within a box standing 100 pixels below the top of the viewport,
+		 * 600 pixels tall with 60 pixels of scroll padding at its top, so its reading line stands at 100 + 60 + 540 / 3.
+		 */
+		async function boxed(tops: Readonly<Record<string, number>>, end = false): Promise<void> {
+
+			act(() => render(<>
+				<div id="box" style={{ overflowY: "auto", scrollPaddingTop: "60px" }}>
+					{Object.keys(tops).map(id => <h2 key={id} id={id}>{id}</h2>)}
+				</div>
+				<Toc name="Contents" entries={entries}/>
+			</>, document.body));
+
+			const box = document.getElementById("box");
+
+			if ( box ) {
+				vi.spyOn(box, "getBoundingClientRect").mockReturnValue(new DOMRect(0, 100, 800, 600));
+				vi.spyOn(box, "clientHeight", "get").mockReturnValue(600);
+				vi.spyOn(box, "scrollHeight", "get").mockReturnValue(2000);
+				vi.spyOn(box, "scrollTop", "get").mockReturnValue(end ? 1400 : 0);
+			}
+
+			Object.entries(tops).forEach(([id, top]) => place(id, top));
+
+			await act(async () => { box?.dispatchEvent(new Event("scroll")); });
+
+		}
+
+
+		it("follows sections scrolling within a box rather than the window", async () => {
+
+			await boxed({ colours: 200, spacing: 360 });
+
+			expect(marked()).toEqual(["Colours"]);
+
+		});
+
+		it("measures the reading line on the part of the box left in view", async () => {
+
+			await boxed({ colours: 200, spacing: 330 });
+
+			expect(marked()).toEqual(["Spacing"]);
+
+		});
+
+		it("passes over a box scrolling its content across alone for the box scrolling it down", async () => {
+
+			act(() => render(<>
+				<div id="box" style={{ overflowY: "auto", scrollPaddingTop: "60px" }}>
+					<div id="wide" style={{ overflowX: "auto" }}>
+						{["colours", "spacing"].map(id => <h2 key={id} id={id}>{id}</h2>)}
+					</div>
+				</div>
+				<Toc name="Contents" entries={entries}/>
+			</>, document.body));
+
+			const box = document.getElementById("box");
+			const wide = document.getElementById("wide");
+
+			if ( box && wide ) {
+				vi.spyOn(box, "getBoundingClientRect").mockReturnValue(new DOMRect(0, 100, 800, 600));
+				vi.spyOn(box, "clientHeight", "get").mockReturnValue(600);
+				vi.spyOn(box, "scrollHeight", "get").mockReturnValue(2000);
+				vi.spyOn(wide, "getBoundingClientRect").mockReturnValue(new DOMRect(0, -500, 800, 2000));
+				vi.spyOn(wide, "clientHeight", "get").mockReturnValue(2000);
+				vi.spyOn(wide, "scrollHeight", "get").mockReturnValue(2000);
+			}
+
+			place("colours", 200);
+			place("spacing", 360);
+
+			await act(async () => { box?.dispatchEvent(new Event("scroll")); });
+
+			expect(marked()).toEqual(["Colours"]);
+
+		});
+
+		it("marks the last section in view once the box is scrolled to its end", async () => {
+
+			await boxed({ colours: -800, spacing: 600 }, true);
+
+			expect(marked()).toEqual(["Spacing"]);
+
+		});
+
+	});
+
 	describe("choice", () => {
 
 		it("marks the section a followed link names, whatever the scroll position", async () => {
