@@ -289,7 +289,10 @@ export interface Router {
  * Takes over plain clicks anywhere in the page, leaving clicks with a modifier key or already handled to the browser:
  *
  * - a link to the same site is followed without reloading the page, unless it points at a fragment of the current
- *   page or targets another browsing context through a `target` attribute other than `_self`
+ *   page or targets another browsing context through a `target` attribute other than `_self`; a link leading to
+ *   another route, or back to the current place, then lands the page as a page loaded afresh would, at its top or on
+ *   the element its fragment names once the view shows it, so the reader is never left halfway down the view they
+ *   left; a link changing the query or the annex alone, as a filter or an alternate view does, keeps them in place
  * - a link to another site opens in a new browsing context
  * - an image outside any link toggles its `active` attribute, which the `@metreeca/skin` stylesheet reads to show it
  *   over the whole viewport; an image inside a link is left to the link
@@ -323,6 +326,26 @@ export function Router({
 	const query = place.replace(/^[^?]*/, "");
 
 	const sync = () => setPlace(here()); // renders again only if the place actually changed
+
+	/*
+	 * A followed link lands the page once the view it leads to has rendered, which is when the element its fragment
+	 * names exists; the landing is a fresh object every time, so following the same link twice lands twice.
+	 */
+
+	const [landing, setLanding] = useState<Readonly<{ hash: string }>>();
+
+	useEffect(() => {
+
+		if ( landing ) {
+
+			const target = landing.hash ? document.getElementById(decodeURIComponent(landing.hash.slice(1))) : null;
+
+			window.scrollTo(0, 0);
+			target?.scrollIntoView();
+
+		}
+
+	}, [landing]);
 
 
 	useEffect(() => {
@@ -365,6 +388,8 @@ export function Router({
 
 				if ( route ) {
 
+					const before = here();
+
 					try {
 
 						history.pushState(undefined, document.title, route);
@@ -372,6 +397,10 @@ export function Router({
 					} finally {
 
 						sync();
+
+						if ( lands(before, here()) ) {
+							setLanding({ hash: new URL(href).hash });
+						}
 
 					}
 
@@ -770,6 +799,26 @@ export function useAnnex(): string {
  *
  * @returns The route without the annex, and the annex following the first `;` of the last step, empty if none
  */
+/**
+ * Tells whether following a link lands the page afresh: a link leading to another route does, and so does one leading
+ * back to the current place, while one changing the query or the annex alone keeps the reader where they stood.
+ *
+ * @param before The place, path and query, the link was followed from
+ * @param after The place the link led to
+ *
+ * @returns `true` if the route changed, or if neither the query nor the annex did
+ */
+function lands(before: string, after: string): boolean {
+
+	const parts = (place: string) => ({ ...split(place.replace(/\?.*$/, "")), query: place.replace(/^[^?]*/, "") });
+
+	const from = parts(before);
+	const to = parts(after);
+
+	return from.route !== to.route || from.query === to.query && from.annex === to.annex;
+
+}
+
 function split(route: string): Readonly<{ route: string, annex: string }> {
 
 	const [, steps = route, annex = ""] = /^(.*?\/[^/;]*)(?:;([^/]*))?$/.exec(route) ?? [];

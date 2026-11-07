@@ -93,6 +93,130 @@ describe("Router", () => {
 
 	});
 
+	describe("scrolling", () => {
+
+		afterEach(() => {
+			vi.restoreAllMocks();
+		});
+
+
+		it("should bring the page to the top when following a link", async () => {
+
+			const scroll = vi.spyOn(window, "scrollTo").mockImplementation(() => {});
+
+			mount({
+				"/": createElement("a", { href: "/other" }, "link"),
+				"/other": createElement("p", {}, "other")
+			});
+
+			await act(async () => document.querySelector("a")?.click());
+
+			expect(scroll).toHaveBeenCalledWith(0, 0);
+
+		});
+
+		it("should bring the page to the top when following a link to the current route", async () => {
+
+			history.replaceState(null, "", "/#part");
+
+			const scroll = vi.spyOn(window, "scrollTo").mockImplementation(() => {});
+
+			mount({ "/": createElement("a", { href: "/" }, "home") });
+
+			await act(async () => document.querySelector("a")?.click());
+
+			expect(location.hash).toBe("");
+			expect(scroll).toHaveBeenCalledWith(0, 0);
+
+		});
+
+		it("should bring the element the fragment names into view when following a link", async () => {
+
+			vi.spyOn(window, "scrollTo").mockImplementation(() => {});
+
+			const reveal = vi.spyOn(Element.prototype, "scrollIntoView").mockImplementation(() => {});
+
+			mount({
+				"/": createElement("a", { href: "/other#part" }, "link"),
+				"/other": createElement("section", {}, createElement("h2", { id: "part" }, "part"))
+			});
+
+			await act(async () => document.querySelector("a")?.click());
+
+			expect(reveal.mock.contexts.map(element => element instanceof Element ? element.id : undefined)).toEqual(["part"]);
+
+		});
+
+		it("should leave the scroll position alone on a link changing the query alone", async () => {
+
+			history.replaceState(null, "", "/items?sort=name");
+
+			const scroll = vi.spyOn(window, "scrollTo").mockImplementation(() => {});
+
+			mount({ "/items": createElement("a", { href: "/items?sort=date" }, "by date") });
+
+			await act(async () => document.querySelector("a")?.click());
+
+			expect(location.search).toBe("?sort=date");
+			expect(scroll).not.toHaveBeenCalled();
+
+		});
+
+		it("should leave the scroll position alone on a link changing the annex alone", async () => {
+
+			history.replaceState(null, "", "/items");
+
+			const scroll = vi.spyOn(window, "scrollTo").mockImplementation(() => {});
+
+			mount({ "/items": createElement("a", { href: "/items;table" }, "table") });
+
+			await act(async () => document.querySelector("a")?.click());
+
+			expect(location.pathname).toBe("/items;table");
+			expect(scroll).not.toHaveBeenCalled();
+
+		});
+
+		it("should leave the scroll position alone on browser history navigation", async () => {
+
+			const scroll = vi.spyOn(window, "scrollTo").mockImplementation(() => {});
+
+			mount({ "/": createElement("p", {}, "home"), "/other": createElement("p", {}, "other") });
+
+			await act(async () => {
+				history.replaceState(null, "", "/other");
+				window.dispatchEvent(new PopStateEvent("popstate"));
+			});
+
+			expect(scroll).not.toHaveBeenCalled();
+
+		});
+
+		it("should leave the scroll position alone when navigating programmatically", async () => {
+
+			const scroll = vi.spyOn(window, "scrollTo").mockImplementation(() => {});
+
+			const Navigator: FunctionComponent = () => {
+
+				const navigate = useRouter();
+
+				useEffect(() => navigate("/other"), []);
+
+				return null;
+
+			};
+
+			mount({ "/": createElement(Navigator, {}), "/other": createElement("p", {}, "other") });
+
+			await act(async () => {});
+
+			expect(text()).toBe("other");
+			expect(scroll).not.toHaveBeenCalled();
+
+		});
+
+	});
+
 	describe("history", () => {
 
 		it("should render again on browser history navigation", async () => {
