@@ -81,14 +81,6 @@
       "@metreeca/source": "./src/controls/more.css",
       "default": "./dist/controls/more.css"
     },
-    "./note": {
-      "@metreeca/source": "./src/controls/note.tsx",
-      "default": "./dist/controls/note.js"
-    },
-    "./note.css": {
-      "@metreeca/source": "./src/controls/note.css",
-      "default": "./dist/controls/note.css"
-    },
     "./path": {
       "@metreeca/source": "./src/controls/path.tsx",
       "default": "./dist/controls/path.js"
@@ -184,6 +176,14 @@
     "./info.css": {
       "@metreeca/source": "./src/content/info.css",
       "default": "./dist/content/info.css"
+    },
+    "./note": {
+      "@metreeca/source": "./src/content/note.tsx",
+      "default": "./dist/content/note.js"
+    },
+    "./note.css": {
+      "@metreeca/source": "./src/content/note.css",
+      "default": "./dist/content/note.css"
     },
     "./style": {
       "@metreeca/source": "./src/content/style.tsx",
