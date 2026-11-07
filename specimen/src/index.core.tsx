@@ -41,9 +41,9 @@ import { useEffect, useState } from "preact/hooks";
 
 export const Root = "/";
 
+export const ClayPath = "/clay/";
 export const ClayWidgetsPath = "/clay-widgets/";
 export const ClayMarkdownPath = "/clay-markdown/";
-export const TransferPath = "/transfer/";
 
 
 /**
@@ -135,9 +135,9 @@ export function Page({
 		meta={<>
 
 			<nav class="packages" aria-label="Packages">
+				<Link active look="subtle" href={`${ClayPath}*`}>Hooks</Link>
 				<Link active look="subtle" href={`${ClayWidgetsPath}*`}>Widgets</Link>
 				<Link active look="subtle" href={`${ClayMarkdownPath}*`}>Markdown</Link>
-				<Link active look="subtle" href={`${TransferPath}*`}>Transfer</Link>
 			</nav>
 
 			<Button

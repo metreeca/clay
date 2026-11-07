@@ -15,27 +15,27 @@
  */
 
 /**
- * Board sample.
+ * Column samples.
  *
  * @module
  */
 
 import { type Drop, useSource, useTarget } from "@metreeca/clay/transfer";
 import { Icon } from "@metreeca/clay-widgets/icon";
-import { Moves, opening } from "@metreeca/specimen/transfer/moves.js";
+import { Moves, opening } from "@metreeca/specimen/clay/moves.js";
 import { useId, useState } from "preact/hooks";
 import "./transfer.css";
 
 
 const Issue = "application/x-specimen-issue";
 
-const columns = ["To do", "Doing", "Done"];
+const columns = ["To Do", "Doing", "Done"];
 
 const issues = [
-	{ id: "1", column: "To do", title: "Fix the login timeout" },
+	{ id: "1", column: "To Do", title: "Fix the login timeout" },
 	{ id: "2", column: "Doing", title: "Trim the export headers" },
-	{ id: "3", column: "To do", title: "Draft the release notes" },
-	{ id: "4", column: "To do", title: "Book the review room" },
+	{ id: "3", column: "To Do", title: "Draft the release notes" },
+	{ id: "4", column: "To Do", title: "Book the review room" },
 	{ id: "5", column: "Done", title: "Collect the figures" }
 ];
 
@@ -43,15 +43,15 @@ type Issue = typeof issues[number];
 
 
 /**
- * Creates the board section.
+ * Creates the columns section.
  *
  * Shows a kanban board whose cards are dragged by their whole surface, each with a `More` button offering the same
  * moves without dragging. Moves wait on a simulated store, which takes a moment to settle each one and refuses any
  * issue skipping straight from to do to done.
  *
- * @returns The board section
+ * @returns The columns section
  */
-export function Board() {
+export function Columns() {
 
 	const [items, setItems] = useState(issues);
 
@@ -59,7 +59,7 @@ export function Board() {
 
 		const issue = items.find(item => item.id === id);
 
-		return issue === undefined || issue.column === "To do" && column === "Done" ? false
+		return issue === undefined || issue.column === "To Do" && column === "Done" ? false
 			: new Promise<void>(resolve => setTimeout(resolve, 800)).then(() =>
 				setItems(items => items.map(item => item.id === id ? { ...item, column } : item))
 			);

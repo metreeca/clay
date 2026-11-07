@@ -38,7 +38,7 @@ export function ClayMarkdown() {
 	return <Page
 
 		eyebrow="@metreeca/clay-markdown"
-		title="Markdown documents"
+		title="Markdown Documents"
 		lead={<>
 			Markdown rendered as a page of its own, with a table of contents following the reader and front matter read
 			as values.

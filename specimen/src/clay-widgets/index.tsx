@@ -71,7 +71,7 @@ export function ClayWidgets() {
 	return <Page
 
 		eyebrow="@metreeca/clay-widgets"
-		title="Widgets, layouts and glyphs"
+		title="Widgets, Layouts and Glyphs"
 		lead={<>
 			The pieces an interface is assembled from, each drawn from the design system tokens alone. Every sample on
 			this page is a live widget, laid out in the very shell it documents.

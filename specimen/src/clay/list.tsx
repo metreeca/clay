@@ -22,7 +22,7 @@
 
 import { type Drop, type Edge, useSource, useTarget } from "@metreeca/clay/transfer";
 import { Icon } from "@metreeca/clay-widgets/icon";
-import { Moves, opening } from "@metreeca/specimen/transfer/moves.js";
+import { Moves, opening } from "@metreeca/specimen/clay/moves.js";
 import { useId, useState } from "preact/hooks";
 import "./transfer.css";
 
