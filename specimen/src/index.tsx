@@ -27,12 +27,13 @@ import "@metreeca/skin/presets/roboto.css";
 import { host } from "@metreeca/clay";
 import { Fetch } from "@metreeca/clay/fetch";
 import { Router, Routes } from "@metreeca/clay/router";
+import { Transfer } from "@metreeca/clay/transfer";
 import { createFetch } from "@metreeca/http";
 import { mock } from "@metreeca/http/mock";
 import { Root } from "@metreeca/specimen/index.core.js";
-import { ClayDnd, ClayDndPath } from "@metreeca/specimen/clay-dnd/index.js";
 import { ClayMarkdown, ClayMarkdownPath } from "@metreeca/specimen/clay-markdown/index.js";
 import { ClayWidgets, ClayWidgetsPath } from "@metreeca/specimen/clay-widgets/index.js";
+import { TransferPath, Transfers } from "@metreeca/specimen/transfer/index.js";
 import { render } from "preact";
 import "./index.css";
 
@@ -46,19 +47,23 @@ function Specimen() {
 
 	return <Fetch fetch={createFetch(mock({ delay: 1000 }))}>
 
-		<Router>
+		<Transfer>
 
-			<Routes>{{
+			<Router>
 
-				[Root]: ClayWidgetsPath,
+				<Routes>{{
 
-				[ClayWidgetsPath]: <ClayWidgets/>,
-				[ClayMarkdownPath]: <ClayMarkdown/>,
-				[ClayDndPath]: <ClayDnd/>
+					[Root]: ClayWidgetsPath,
 
-			}}</Routes>
+					[ClayWidgetsPath]: <ClayWidgets/>,
+					[ClayMarkdownPath]: <ClayMarkdown/>,
+					[TransferPath]: <Transfers/>
 
-		</Router>
+				}}</Routes>
+
+			</Router>
+
+		</Transfer>
 
 	</Fetch>;
 

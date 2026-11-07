@@ -24,20 +24,11 @@
       "SyntaxError": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/SyntaxError",
       "TypeError": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/TypeError"
     },
-    "@dnd-kit/abstract": {
-      "*": "https://dndkit.com/"
-    },
-    "@dnd-kit/dom": {
-      "*": "https://dndkit.com/"
-    },
     "@metreeca/core": {
       "*": "https://metreeca.github.io/core/"
     },
     "@metreeca/http": {
       "*": "https://metreeca.github.io/http/"
-    },
-    "@metreeca/move": {
-      "*": "https://metreeca.github.io/move/"
     },
     "@metreeca/skin": {
       "*": "https://metreeca.github.io/skin/"
@@ -68,7 +59,6 @@
     ],
     "exclude": [
       "**/packages/clay-widgets/src/icon.core.ts",
-      "**/packages/clay-dnd/src/index.tsx",
       "**/*.test.ts",
       "**/*.test.tsx",
       "**/*.test-d.ts"

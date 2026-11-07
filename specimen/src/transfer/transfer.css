@@ -1,0 +1,213 @@
+/*
+ * Copyright © 2023-2026 Metreeca srl
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/**** Transfer Samples ************************************************************************************************/
+
+/*
+ * Each sample draws its own visuals from the transfer state, reading the design system roles alone: the item lifted
+ * while dragged, faded while waiting, and the target lit while something it takes is over it.
+ */
+
+.transfer-item {
+
+    display: flex;
+    align-items: center;
+    gap: var(--skin--spacing-050);
+
+    margin: 0;
+    padding: var(--skin--spacing-075) var(--skin--spacing-100);
+
+    background-color: var(--skin--background-color-raised);
+    box-shadow: var(--skin--box-shadow-raised);
+    border-radius: var(--skin--border-radius);
+
+    transition-property: opacity;
+    transition-duration: var(--skin--duration-normal);
+
+    &[data-surface] {
+        cursor: grab;
+    }
+
+    &[data-state="dragging"] {
+        opacity: var(--skin--opacity-disabled);
+    }
+
+    &[data-state="dropping"] {
+        box-shadow: var(--skin--box-shadow-overlay);
+    }
+
+    &[data-state="pending"] {
+        opacity: var(--skin--opacity-loading);
+    }
+
+    /*
+     * The drop indicator is a line on the side the item will land on, drawn at twice the border width in the selected
+     * role, which holds the 3:1 a non-text mark takes on every surface it stands against.
+     */
+
+    &[data-edge="before"] {
+        box-shadow: 0 calc(-2 * var(--skin--border-width)) 0 var(--skin--color-selected), var(--skin--box-shadow-raised);
+    }
+
+    &[data-edge="after"] {
+        box-shadow: 0 calc(2 * var(--skin--border-width)) 0 var(--skin--color-selected), var(--skin--box-shadow-raised);
+    }
+
+    & > span:not(.transfer-grip, .moves) {
+        flex-grow: 1;
+        overflow-wrap: anywhere;
+    }
+
+}
+
+.transfer-grip {
+    cursor: grab;
+    color: var(--skin--color-label);
+}
+
+.moves {
+
+    position: relative;
+
+    & > button {
+
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+
+        /* the 24 CSS px WCAG 2.5.8 sets as the least target size, a fixed figure no token states */
+
+        min-width: 24px;
+        min-height: 24px;
+
+        padding: var(--skin--spacing-025);
+
+        border: none;
+        background-color: transparent;
+        color: var(--skin--color-label);
+
+        &:hover {
+            background-color: var(--skin--background-color-hover);
+        }
+
+        &:focus-visible {
+            outline: var(--skin--outline-focus);
+        }
+
+    }
+
+    & > [role="menu"] {
+
+        position: absolute;
+        inset-inline-end: 0;
+        z-index: 1;
+
+        margin: 0;
+        padding: var(--skin--spacing-025) 0;
+
+        list-style: none;
+
+        background-color: var(--skin--background-color-overlay);
+        box-shadow: var(--skin--box-shadow-overlay);
+        border-radius: var(--skin--border-radius);
+
+        & button {
+
+            display: block;
+            width: 100%;
+
+            padding: var(--skin--spacing-050) var(--skin--spacing-100);
+
+            border: none;
+            background-color: transparent;
+            text-align: start;
+            white-space: nowrap;
+
+            &:hover {
+                background-color: var(--skin--background-color-hover);
+            }
+
+            &:focus-visible {
+                outline: var(--skin--outline-focus);
+            }
+
+        }
+
+    }
+
+}
+
+.transfer-board {
+
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--skin--spacing-100);
+
+    & > section {
+
+        padding: var(--skin--spacing-100);
+
+        background-color: var(--skin--background-color-sunken);
+        border-radius: var(--skin--border-radius);
+        outline: var(--skin--border-width) solid transparent;
+
+        &[data-target] {
+            background-color: var(--skin--background-color-selected);
+            outline-color: var(--skin--color-selected);
+        }
+
+        & > ul {
+            display: flex;
+            flex-direction: column;
+            gap: var(--skin--spacing-075);
+            min-height: calc(2 * var(--skin--spacing-250)); /* an empty column still takes drops */
+            margin: 0;
+            padding: 0;
+        }
+
+    }
+
+}
+
+.transfer-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--skin--spacing-075);
+    padding: 0;
+}
+
+.transfer-uploads {
+
+    display: flex;
+    flex-direction: column;
+    gap: var(--skin--spacing-075);
+
+    padding: var(--skin--spacing-200);
+
+    border: var(--skin--border-width) dashed var(--skin--border-color-field);
+    border-radius: var(--skin--border-radius);
+
+    /*
+     * The zone under a drag turns its dashed outline solid and thicker, so the state reads by shape as well as colour.
+     */
+
+    &[data-target] {
+        background-color: var(--skin--background-color-selected);
+        border: calc(2 * var(--skin--border-width)) solid var(--skin--color-selected);
+        padding: calc(var(--skin--spacing-200) - var(--skin--border-width));
+    }
+
+}

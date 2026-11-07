@@ -24,11 +24,11 @@
  */
 
 import { useModel } from "@metreeca/clay/model";
+import { useRoving } from "@metreeca/clay/roving";
 import { opt, type Optional } from "@metreeca/core";
 import { type ComponentChildren, createElement } from "preact";
 import { useEffect, useId, useState } from "preact/hooks";
-import { keys } from "./index.js";
-import { createTabs, type Tabs } from "./tabs.core.js";
+import { createTabs } from "./tabs.core.js";
 import "./tabs.css";
 
 
@@ -106,9 +106,7 @@ export function Tabs({
 		labels,
 		active,
 
-		select,
-		next,
-		back
+		select
 
 	} = useModel(() => createTabs({
 
@@ -120,6 +118,10 @@ export function Tabs({
 
 	const order = Object.keys(labels);
 	const enabled = order.filter(label => labels[label]);
+
+	const { tabIndex, onKeyDown } = useRoving({
+		items: enabled, active, id: label => tab(order.indexOf(label)), orientation: "horizontal", wrap: true, onMove: select
+	});
 
 	/*
 	 * Whether the labels fit is settled by layout rather than by a measure of the window, so the strip is measured as
@@ -152,15 +154,7 @@ export function Tabs({
 			id={strip}
 			role="tablist"
 
-			onKeyDown={keys({
-
-				ArrowRight: moving(next),
-				ArrowLeft: moving(back),
-
-				Home: moving(() => select(enabled[0])),
-				End: moving(() => select(enabled[enabled.length-1]))
-
-			})}
+			onKeyDown={onKeyDown}
 
 		>{order.map((label, index) =>
 
@@ -173,7 +167,7 @@ export function Tabs({
 				id={tab(index)}
 				key={label}
 				role="tab"
-				tabIndex={label === active ? 0 : -1}
+				tabIndex={labels[label] ? tabIndex(label) : -1}
 
 				onClick={() => select(label)} // a disabled label is refused by the model, leaving the strip as it was
 
@@ -242,19 +236,6 @@ export function Tabs({
 			>{panels[label]}</div>
 		)
 	);
-
-
-	// every tab is rendered, so the one a key moves to is already in the document and takes the focus at once
-
-	function moving(transition: () => Tabs) {
-		return () => {
-
-			const moved = transition().active;
-
-			document.getElementById(tab(opt(moved, label => order.indexOf(label), -1)))?.focus();
-
-		};
-	}
 
 
 	// ids are built on the position of a panel, a label being free to carry the spaces an id reference cannot

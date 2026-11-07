@@ -27,12 +27,11 @@ Add the widgets and layouts the app's screens need, each from its own package, w
 An app brands the [@metreeca/skin] stylesheet by overriding its tokens: its
 [theming guide](https://github.com/metreeca/skin#theming) covers colours, faces, spacing and every other token family.
 
-| Package                   | Description           |
-|---------------------------|-----------------------|
-| [@metreeca/clay]          | Contexts and hooks    |
-| [@metreeca/clay-widgets]  | Widgets and layouts   |
-| [@metreeca/clay-markdown] | Markdown documents    |
-| [@metreeca/clay-dnd]      | Drag and drop widgets |
+| Package                   | Description         |
+|---------------------------|---------------------|
+| [@metreeca/clay]          | Contexts and hooks  |
+| [@metreeca/clay-widgets]  | Widgets and layouts |
+| [@metreeca/clay-markdown] | Markdown documents  |
 
 [@metreeca/skin]: https://metreeca.github.io/skin/
 
@@ -41,8 +40,6 @@ An app brands the [@metreeca/skin] stylesheet by overriding its tokens: its
 [@metreeca/clay-widgets]: https://metreeca.github.io/clay/modules/_metreeca_clay-widgets.html
 
 [@metreeca/clay-markdown]: https://metreeca.github.io/clay/modules/_metreeca_clay-markdown.html
-
-[@metreeca/clay-dnd]: https://metreeca.github.io/clay/modules/_metreeca_clay-dnd.html
 
 # Usage
 

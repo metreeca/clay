@@ -22,7 +22,7 @@ import { Logo } from "@metreeca/clay-widgets/logo";
 import { useFetch } from "@metreeca/clay/fetch";
 import { Shell } from "@metreeca/clay-widgets/shell";
 import { Style } from "@metreeca/clay-widgets/style";
-import { ClayDndPath } from "@metreeca/specimen/clay-dnd/index.js";
+import { TransferPath } from "@metreeca/specimen/transfer/index.js";
 import { ClayMarkdownPath } from "@metreeca/specimen/clay-markdown/index.js";
 import { ClayWidgetsPath } from "@metreeca/specimen/clay-widgets/index.js";
 import type { ComponentChildren } from "preact";
@@ -107,7 +107,7 @@ export function Page({
 
 			<Link active look="strong" href={`${ClayWidgetsPath}*`}>Widgets</Link>
 			<Link active look="strong" href={`${ClayMarkdownPath}*`}>Markdown</Link>
-			<Link active look="strong" href={`${ClayDndPath}*`}>Drag and Drop</Link>
+			<Link active look="strong" href={`${TransferPath}*`}>Transfer</Link>
 
 		</>}
 

@@ -61,6 +61,9 @@ export { X as Cancel } from "lucide-preact";
 export { X as Close } from "lucide-preact";
 export { X as Dismiss } from "lucide-preact";
 
+export { GripVertical as Grip } from "lucide-preact";
+export { Ellipsis as More } from "lucide-preact";
+
 export { Menu } from "lucide-preact";
 export { X as Done } from "lucide-preact";
 

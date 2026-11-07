@@ -50,10 +50,19 @@
       "@metreeca/source": "./src/router.ts",
       "default": "./dist/router.js"
     },
+    "./roving": {
+      "@metreeca/source": "./src/roving.ts",
+      "default": "./dist/roving.js"
+    },
     "./storage": {
       "@metreeca/source": "./src/storage.ts",
       "default": "./dist/storage.js"
-    }
+    },
+    "./transfer": {
+      "@metreeca/source": "./src/transfer.ts",
+      "default": "./dist/transfer.js"
+    },
+    "./*.core": null
   },
   "files": [
     "README.md",

@@ -101,6 +101,9 @@
  * | `Cancel`         | abandons it, leaving things as they stood                    |
  * | `Close`          | dismisses what is on show, deciding nothing                  |
  * | `Dismiss`        | sets aside a notice or a failure, returning to the screen    |
+ * | **Items**        | acting on a single entry                                     |
+ * | `Grip`           | moves an entry, dragged or pressed for the moves open to it  |
+ * | `More`           | opens the actions an entry offers                            |
  * | **Modes**        | entering and leaving a way of working                        |
  * | `Menu`           | opens what a screen keeps out of the way until asked         |
  * | `Done`           | leaves a mode, whatever it was entered for                   |

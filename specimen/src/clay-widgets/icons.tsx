@@ -105,6 +105,11 @@ const areas: ReadonlyArray<Area> = [
 		[ "Close", Icon.Close ]
 	] ],
 
+	[ "Items", [
+		[ "Grip", Icon.Grip ],
+		[ "More", Icon.More ]
+	] ],
+
 	[ "Modes", [
 		[ "Menu", Icon.Menu ],
 		[ "Done", Icon.Done ]

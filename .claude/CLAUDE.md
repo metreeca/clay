@@ -54,12 +54,10 @@ alongside `dist`: deleting `dist` by hand leaves that cache claiming the outputs
 emits nothing.
 
 Every package is a Preact binding: `clay` for the app-wide services a component is wired to, `clay-widgets` for the
-widgets, layouts and glyphs an interface is assembled from, `clay-markdown` for Markdown documents, and `clay-dnd` for
-the boards and lists a reader rearranges by drag and drop.
+widgets, layouts and glyphs an interface is assembled from, and `clay-markdown` for Markdown documents.
 Headless behaviour carries **NO** dependency on a rendering framework: it lives in `@metreeca/core` and in `*.core.ts`
-modules, and any other rendering layer added later gets binding packages of its own. Drag and drop state and bindings
-live in [@metreeca/move](https://github.com/metreeca/move), which the `clay-dnd` widgets `Placeable` and `Sortable`
-render. A binding package adds observation and rendering over state it never redefines: behaviour lives in
+modules, and any other rendering layer added later gets binding packages of its own. A binding package adds
+observation and rendering over state it never redefines: behaviour lives in
 framework-agnostic `@metreeca/core` state objects, so a second binding reaches the same behaviour without restating
 it.
 
@@ -75,16 +73,30 @@ what it imports.
   so they multiply manifests, versions and changelogs for no install saving. One package per component pays off only
   where components are adopted one by one, which a toolkit of this size does not see.
 - **Heavy stacks apart**: a module group gets a package of its own when it is the only reason its neighbours would
-  install a third-party stack. `clay-markdown` carries the Markdown processing pipeline and `clay-dnd` the drag and drop
-  engine, keeping the widget core down to Preact, the glyph catalogue and the Metreeca foundations.
+  install a third-party stack. `clay-markdown` carries the Markdown processing pipeline, keeping the widget core down
+  to Preact, the glyph catalogue and the Metreeca foundations.
 - **Glyphs inside**: the `icon` module stays in `clay-widgets`. It is a role mapping over a glyph catalogue taken as a
   peer dependency, so a package of its own would spare nothing: every widget package needs it, and the catalogue
   reaches every widget consumer either way.
-- **Services unchanged**: `clay` holds the app-wide contexts and hooks every other package builds on.
+- **Services unchanged**: `clay` holds the app-wide contexts and hooks every other package builds on, headless hooks
+  included: a capability reduced to a context and hooks, with no third-party stack, is a module of `clay` rather than
+  a package of its own, as `transfer` is.
 
 A package holding a collection takes a plural name (`clay-widgets`), and one holding a single capability takes the
-name of that capability (`clay-markdown`, `clay-dnd`). Packages are named after what they contribute, never
-after the library they contribute it with: `dnd` names the capability, not the engine behind it.
+name of that capability (`clay-markdown`). Packages and modules are named after what they contribute, never after the
+library or the gesture they contribute it with: `transfer` names moving items, whether by drag or by menu.
+
+# Transfers
+
+`@metreeca/clay/transfer` carries state and behaviour only: every widget moving things draws its own grip, menu, drop
+indicator and drag states, reading the existing `@metreeca/skin` roles, with no tokens of its own. The design record
+behind it (no keyboard dragging, menus as the single-pointer path, native drag and drop, MIME types as kinds) is in the
+module documentation, which also lists what the module guarantees and what each widget still owes for WCAG 2.2 AA.
+
+- A widget offers every move it allows through a visible control: the grip doubling as the menu button where moving is
+  the item's sole action, or a `More` button where the item is dragged by its whole surface; never both on one item
+- A widget accepting files beside a drop zone offers a native file input as well, WCAG 2.5.7 asking a single-pointer
+  path for every drag
 
 # Package Summaries
 
@@ -154,8 +166,7 @@ drops a symbol whose module is excluded, re-exported or not, so excluding these 
 A binding package whose widgets draw the same parts alike keeps them in an `index.tsx` module: it holds rendering,
 never behaviour, offers consumers nothing, and so is left out of the reference by `typedoc.json` and blocked by a
 `"./index": null` entry, the package declaring no root entry point. Its rules sit in the package `index.css`
-stylesheet, which the module imports. `clay-dnd` keeps there the item a reader moves by its grip or by its whole
-surface and the status announcing a move refused, which `Placeable` and `Sortable` both draw.
+stylesheet, which the module imports.
 
 A module handing out a third-party catalogue under names of its own keeps the bare re-exports in a sibling `*.core.ts`
 module, left out of the reference by `typedoc.json`, which names each such module: the documented module beside it is

@@ -14,24 +14,32 @@
  * limitations under the License.
  */
 
+/**
+ * Transfer samples.
+ *
+ * @module
+ */
+
 import { Link } from "@metreeca/clay-widgets/link";
 import { Routes } from "@metreeca/clay/router";
 import { Page } from "@metreeca/specimen/index.core.js";
-import { Placeables } from "@metreeca/specimen/clay-dnd/placeables.js";
-import { Sorting } from "@metreeca/specimen/clay-dnd/sorting.js";
+import { Board } from "@metreeca/specimen/transfer/board.js";
+import { List } from "@metreeca/specimen/transfer/list.js";
+import { Uploads } from "@metreeca/specimen/transfer/uploads.js";
 
 
-export const ClayDndPath = "/clay-dnd/";
+export const TransferPath = "/transfer/";
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-export function ClayDnd() {
+export function Transfers() {
 
 	const sections = {
 
-		Sortable: <div class="movables"><Sorting/></div>,
-		Placeable: <div class="movables"><Placeables/></div>
+		Board: <Board/>,
+		List: <List/>,
+		Uploads: <Uploads/>
 
 	};
 
@@ -42,7 +50,7 @@ export function ClayDnd() {
 		tray={<>
 
 			{Object.keys(sections).map(label =>
-				<Link key={label} active look="subtle" href={`${ClayDndPath}${path(label)}`}>{label}</Link>
+				<Link key={label} active look="subtle" href={`${TransferPath}${path(label)}`}>{label}</Link>
 			)}
 
 		</>}
@@ -50,7 +58,7 @@ export function ClayDnd() {
 
 		<Routes>{{
 
-			"/": `/${path("Sortable")}`,
+			"/": `/${path("Board")}`,
 
 			...Object.fromEntries(Object.entries(sections).map(([label, view]) => [`/${path(label)}`, view]))
 
