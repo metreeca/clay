@@ -198,22 +198,30 @@ clay-shell {
          * scrollbar keeps its full height; the gutters keep content clear of it.
          */
 
+        /*
+         * The mask stays solid a pixel past each bar, so the rule closing a bar off is never caught by the fade however
+         * the bar's edge falls between device pixels.
+         */
+
+        --clay-shell-mask-head: calc(var(--clay-shell-head-size) + 1px);
+        --clay-shell-mask-foot: calc(var(--clay-shell-foot-size) + 1px);
+
         mask-image:
             linear-gradient(to bottom,
-                rgb(0 0 0) 0 var(--clay-shell-head-size),
-                rgb(0 0 0 / 0%) var(--clay-shell-head-size),
-                rgb(0 0 0 / 6%) calc(var(--clay-shell-head-size) + 0.2 * var(--clay-shell-fade-top-size)),
-                rgb(0 0 0 / 32%) calc(var(--clay-shell-head-size) + 0.4 * var(--clay-shell-fade-top-size)),
-                rgb(0 0 0 / 68%) calc(var(--clay-shell-head-size) + 0.6 * var(--clay-shell-fade-top-size)),
-                rgb(0 0 0 / 94%) calc(var(--clay-shell-head-size) + 0.8 * var(--clay-shell-fade-top-size)),
-                rgb(0 0 0) calc(var(--clay-shell-head-size) + var(--clay-shell-fade-top-size)),
-                rgb(0 0 0) calc(100% - var(--clay-shell-foot-size) - var(--clay-shell-fade-bottom-size)),
-                rgb(0 0 0 / 94%) calc(100% - var(--clay-shell-foot-size) - 0.8 * var(--clay-shell-fade-bottom-size)),
-                rgb(0 0 0 / 68%) calc(100% - var(--clay-shell-foot-size) - 0.6 * var(--clay-shell-fade-bottom-size)),
-                rgb(0 0 0 / 32%) calc(100% - var(--clay-shell-foot-size) - 0.4 * var(--clay-shell-fade-bottom-size)),
-                rgb(0 0 0 / 6%) calc(100% - var(--clay-shell-foot-size) - 0.2 * var(--clay-shell-fade-bottom-size)),
-                rgb(0 0 0 / 0%) calc(100% - var(--clay-shell-foot-size)),
-                rgb(0 0 0) calc(100% - var(--clay-shell-foot-size)) 100%
+                rgb(0 0 0) 0 var(--clay-shell-mask-head),
+                rgb(0 0 0 / 0%) var(--clay-shell-mask-head),
+                rgb(0 0 0 / 6%) calc(var(--clay-shell-mask-head) + 0.2 * var(--clay-shell-fade-top-size)),
+                rgb(0 0 0 / 32%) calc(var(--clay-shell-mask-head) + 0.4 * var(--clay-shell-fade-top-size)),
+                rgb(0 0 0 / 68%) calc(var(--clay-shell-mask-head) + 0.6 * var(--clay-shell-fade-top-size)),
+                rgb(0 0 0 / 94%) calc(var(--clay-shell-mask-head) + 0.8 * var(--clay-shell-fade-top-size)),
+                rgb(0 0 0) calc(var(--clay-shell-mask-head) + var(--clay-shell-fade-top-size)),
+                rgb(0 0 0) calc(100% - var(--clay-shell-mask-foot) - var(--clay-shell-fade-bottom-size)),
+                rgb(0 0 0 / 94%) calc(100% - var(--clay-shell-mask-foot) - 0.8 * var(--clay-shell-fade-bottom-size)),
+                rgb(0 0 0 / 68%) calc(100% - var(--clay-shell-mask-foot) - 0.6 * var(--clay-shell-fade-bottom-size)),
+                rgb(0 0 0 / 32%) calc(100% - var(--clay-shell-mask-foot) - 0.4 * var(--clay-shell-fade-bottom-size)),
+                rgb(0 0 0 / 6%) calc(100% - var(--clay-shell-mask-foot) - 0.2 * var(--clay-shell-fade-bottom-size)),
+                rgb(0 0 0 / 0%) calc(100% - var(--clay-shell-mask-foot)),
+                rgb(0 0 0) calc(100% - var(--clay-shell-mask-foot)) 100%
             ),
             linear-gradient(rgb(0 0 0), rgb(0 0 0));
 
@@ -245,7 +253,8 @@ clay-shell {
 
     /*
      * The tray is closed off from the content by a rule running the full height of the frame, the bars standing on the
-     * page with no rule of their own, its parts held clear of its edges by its gutter.
+     * page with no rule of their own, content fading out as it reaches them; its parts are held clear of its edges by
+     * its gutter.
      */
 
     & > aside {

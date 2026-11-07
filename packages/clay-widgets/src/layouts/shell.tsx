@@ -216,9 +216,11 @@ export function Shell({
 
 	useEffect(() => opt(document.getElementById(frame) ?? undefined, element => {
 
+		// whole pixels, so neither bar rounds to a height of its own and the rules of the two land on the same line
+
 		const level = () => {
-			element.style.setProperty("--clay-shell-head-size", `${natural(element, "header")}px`);
-			element.style.setProperty("--clay-shell-foot-size", `${natural(element, "footer")}px`);
+			element.style.setProperty("--clay-shell-head-size", `${Math.ceil(natural(element, "header"))}px`);
+			element.style.setProperty("--clay-shell-foot-size", `${Math.ceil(natural(element, "footer"))}px`);
 		};
 
 		const observer = new ResizeObserver(level);
