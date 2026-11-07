@@ -292,7 +292,9 @@ export interface Router {
  *   page or targets another browsing context through a `target` attribute other than `_self`; a link leading to
  *   another route, or back to the current place, then lands the page as a page loaded afresh would, at its top or on
  *   the element its fragment names once the view shows it, so the reader is never left halfway down the view they
- *   left; a link changing the query or the annex alone, as a filter or an alternate view does, keeps them in place
+ *   left; the top is the start of the document and of the `main` landmark alike, so an app scrolling its content in a
+ *   box of its own lands there as well; a link changing the query or the annex alone, as a filter or an alternate
+ *   view does, keeps the reader in place on whatever they were reading before following it
  * - a link to another site opens in a new browsing context
  * - an image outside any link toggles its `active` attribute, which the `@metreeca/skin` stylesheet reads to show it
  *   over the whole viewport; an image inside a link is left to the link
@@ -341,6 +343,8 @@ export function Router({
 			const target = landing.hash ? document.getElementById(decodeURIComponent(landing.hash.slice(1))) : null;
 
 			window.scrollTo(0, 0);
+			document.querySelector("main")?.scrollTo(0, 0); // an app may scroll its content in a box of its own
+
 			target?.scrollIntoView();
 
 		}

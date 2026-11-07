@@ -115,6 +115,24 @@ describe("Router", () => {
 
 		});
 
+		it("should bring the main landmark to its top when following a link", async () => {
+
+			vi.spyOn(window, "scrollTo").mockImplementation(() => {});
+
+			const scroll = vi.spyOn(HTMLElement.prototype, "scrollTo").mockImplementation(() => {});
+
+			mount({
+				"/": createElement("main", {}, createElement("a", { href: "/other" }, "link")),
+				"/other": createElement("main", {}, "other")
+			});
+
+			await act(async () => document.querySelector("a")?.click());
+
+			expect(scroll.mock.contexts.map(element => element instanceof Element ? element.localName : undefined))
+				.toEqual(["main"]);
+
+		});
+
 		it("should bring the page to the top when following a link to the current route", async () => {
 
 			history.replaceState(null, "", "/#part");
