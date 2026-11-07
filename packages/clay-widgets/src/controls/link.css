@@ -151,21 +151,21 @@ clay-link > a[active] {
 }
 
 /*
- * The quiet step keeps the mark as quiet as the link, thinner and drawn closer to the text it sits under. Both forms
+ * The quiet step keeps the mark as quiet as the link, thinner but drawn at the ordinary gap below the text. Both forms
  * of the step are restated, as for the looks above: the attribute stated on the link, and the look the area around it
  * is written in, read through a style query that takes rules of its own and cannot share a selector with the first.
  */
 
 clay-link[look="subtle"] > a[active] {
     text-decoration-thickness: calc(2 * var(--skin--border-width));
-    text-underline-offset: 0.05em; /* Optical nudge, a third of the ordinary gap below the baseline. */
+    text-underline-offset: 0.15em; /* The ordinary gap below the baseline, clear of the text it marks. */
 }
 
 @container style(--skin--look: subtle) {
 
     clay-link:not([look]) > a[active] {
         text-decoration-thickness: calc(2 * var(--skin--border-width));
-        text-underline-offset: 0.05em; /* Optical nudge, a third of the ordinary gap below the baseline. */
+        text-underline-offset: 0.15em; /* The ordinary gap below the baseline, clear of the text it marks. */
     }
 
 }
