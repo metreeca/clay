@@ -50,12 +50,3 @@ clay-markdown {
     }
 
 }
-
-/*
- * The table of contents is a navigation landmark of nested lists, which the design system sets as an outline like any
- * other on the page, current entry included, so this sheet only lays its element out as a block of its own.
- */
-
-clay-toc {
-    display: block;
-}

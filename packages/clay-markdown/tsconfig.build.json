@@ -4,6 +4,11 @@
     "composite": true,
     "customConditions": []
   },
+  "references": [
+    {
+      "path": "../clay-widgets/tsconfig.build.json"
+    }
+  ],
   "exclude": [
     "**/*.test.ts",
     "**/*.test.tsx",

@@ -23,12 +23,13 @@
  * @module
  */
 
+import { Toc, type TocEntry } from "@metreeca/clay-widgets/toc";
 import type { Element, Root as Tree } from "hast";
 import { headingRank } from "hast-util-heading-rank";
 import { toJsxRuntime } from "hast-util-to-jsx-runtime";
 import type { Root } from "mdast";
 import { type ComponentChildren, createElement } from "preact";
-import { useEffect, useMemo, useState } from "preact/hooks";
+import { useEffect, useMemo } from "preact/hooks";
 import { Fragment, jsx, jsxs } from "preact/jsx-runtime";
 import rehypeHighlight from "rehype-highlight";
 import rehypeSlug from "rehype-slug";
@@ -60,11 +61,6 @@ const SafeProtocol = /^(https?|ircs?|mailto|xmpp)$/i;
  * An image source ending with a percentage of the width of the block holding the image, from `#1` to `#100`.
  */
 const WidthHint = /^(.*)#([1-9]\d?|100)$/;
-
-/**
- * The share of the viewport height, from its top, a heading has to be scrolled into for its section to read as current.
- */
-const Band = 1 / 3;
 
 /**
  * The levels of the outline the table of contents lists, deeper headings left out.
@@ -198,40 +194,11 @@ export function Markdown({
 
 	}, [meta]);
 
-	/*
-	 * The section in view follows the scroll position of the page, which no render owns, so the outline reads it from
-	 * the headings of the document on the page as it mounts and whenever the page scrolls.
-	 */
-
-	const [current, setCurrent] = useState<string>();
-
-	useEffect(() => {
-
-		if ( meta === "toc" ) {
-
-			const ids = flatten(nest(headings(transform(children)))).map(heading => String(heading.properties.id));
-			const follow = () => setCurrent(passed(ids));
-
-			follow();
-
-			window.addEventListener("scroll", follow, { passive: true });
-
-			return () => window.removeEventListener("scroll", follow);
-
-		} else {
-
-			return undefined;
-
-		}
-
-	}, [meta, children]);
-
-
 	return useMemo(() => meta === undefined ? createElement("clay-markdown", {}, render(transform(children)))
-		: meta === "toc" ? outline(transform(children), current, name)
+		: meta === "toc" ? outline(transform(children), name)
 			: typeof meta === "function" ? meta(entries(children))
 				: entries(children)[meta]
-	, [meta, children, current, name]);
+	, [meta, children, name]);
 
 }
 
@@ -280,31 +247,16 @@ function transform(text: string): Tree {
  *
  * The ids are left to the document, so an outline shown beside it adds no duplicate ids to the page.
  */
-function outline(tree: Tree, current: string | undefined, name: string | undefined): ComponentChildren {
+function outline(tree: Tree, name: string | undefined): ComponentChildren {
 
 	const sections = nest(headings(tree));
 
-	return sections.length > 0
-		? createElement("clay-toc", {}, <nav aria-label={name}>{list(sections, current)}</nav>)
-		: null;
+	return sections.length > 0 ? <Toc name={name} entries={contents(sections)}/> : null;
 
 }
 
 function headings(tree: Tree): readonly Element[] {
 	return tree.children.filter((node): node is Element => headingRank(node) !== undefined);
-}
-
-/**
- * Locates the last heading scrolled into the top band of the viewport, among those the page holds.
- *
- * @returns The id of the heading, or `undefined` above the first heading or for headings missing from the page
- */
-function passed(ids: readonly string[]): string | undefined {
-
-	const band = window.innerHeight * Band;
-
-	return ids.filter(id => (document.getElementById(id)?.getBoundingClientRect().top ?? Infinity) <= band).at(-1);
-
 }
 
 /**
@@ -322,26 +274,15 @@ function nest(headings: readonly Element[], level: number = 1): readonly Section
 
 }
 
-function flatten(sections: readonly Section[]): readonly Element[] {
-	return sections.flatMap(({ heading, nested }) => [heading, ...flatten(nested)]);
-}
-
-function list(sections: readonly Section[], current: string | undefined): ComponentChildren {
-	return <ul>{sections.map(section => entry(section, current))}</ul>;
-}
-
-function entry({ heading, nested }: Section, current: string | undefined): ComponentChildren {
-
-	const id = String(heading.properties.id);
-	const href = `#${id}`;
-
-	return <li key={href}>
-		<a href={href} aria-current={id === current ? "location" : undefined}>
-			{render({ type: "root", children: heading.children })}
-		</a>
-		{nested.length > 0 && list(nested, current)}
-	</li>;
-
+/**
+ * Turns sections into the entries of a table of contents, each linking to its heading by the id the document gives it.
+ */
+function contents(sections: readonly Section[]): readonly TocEntry[] {
+	return sections.map(({ heading, nested }) => ({
+		label: render({ type: "root", children: heading.children }),
+		href: `#${String(heading.properties.id)}`,
+		entries: contents(nested)
+	}));
 }
 
 /**

@@ -406,8 +406,8 @@ describe("Markdown", () => {
 			/**
 			 * Renders the document and its table of contents side by side, as a page showing both does.
 			 */
-			function page(): void {
-				act(() => render(createElement(Fragment, {},
+			async function page(): Promise<void> {
+				await act(async () => render(createElement(Fragment, {},
 					createElement(Markdown, { children: text }),
 					createElement(Markdown, { meta: "toc", children: text })
 				), document.body));
@@ -422,8 +422,11 @@ describe("Markdown", () => {
 				});
 			}
 
-			function scroll(): void {
-				act(() => { window.dispatchEvent(new Event("scroll")); });
+			/**
+			 * Scrolls the page, waiting out the render the outline takes after it, as its model notifies asynchronously.
+			 */
+			async function scroll(): Promise<void> {
+				await act(async () => { window.dispatchEvent(new Event("scroll")); });
 			}
 
 			function current(): string[] {
@@ -434,7 +437,7 @@ describe("Markdown", () => {
 
 				place({ a: -400, b: 10, c: 900 });
 
-				page();
+				await page();
 
 				expect(current()).toEqual(["B"]);
 
@@ -444,7 +447,7 @@ describe("Markdown", () => {
 
 				place({ a: 700, b: 900, c: 1100 });
 
-				page();
+				await page();
 
 				expect(current()).toEqual([]);
 
@@ -454,11 +457,11 @@ describe("Markdown", () => {
 
 				place({ a: 10, b: 600, c: 900 });
 
-				page();
+				await page();
 
 				place({ a: -900, b: -600, c: 50 });
 
-				scroll();
+				await scroll();
 
 				expect(current()).toEqual(["C"]);
 
@@ -478,13 +481,13 @@ describe("Markdown", () => {
 
 				place({ a: 700, b: 900, c: 1100 });
 
-				page();
+				await page();
 
 				const getter = vi.spyOn(document, "getElementById");
 
 				act(() => render(null, document.body));
 
-				scroll();
+				await scroll();
 
 				expect(getter).not.toHaveBeenCalled();
 
