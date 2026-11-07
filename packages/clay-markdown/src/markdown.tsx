@@ -41,7 +41,6 @@ import remarkRehype from "remark-rehype";
 import { unified } from "unified";
 import { visit } from "unist-util-visit";
 import "./markdown.css";
-import { type Entry, Toc } from "./toc.js";
 
 
 /*
@@ -107,7 +106,9 @@ export interface Meta {
  * - **document**, the default: the text in full, with GitHub Flavored Markdown tables, task lists and footnotes,
  *   GitHub alerts (`> [!NOTE]`), emoji shortcodes, fenced code highlighted by language and stripped of surrounding
  *   blank lines, and headings carrying the ids GitHub would give them, so links into the document resolve
- * - **table of contents**: the headings alone, as a {@link toc.Toc Toc} linking each to the matching heading
+ * - **table of contents**: the headings alone, as a navigation landmark of nested lists linking each to the matching
+ *   heading, top-level sections set strong and their subsections indented beneath them, deeper levels left out, so
+ *   the outline reads as quiet navigation beside the document; nothing at all for a text without headings
  * - **front matter**: the values the YAML front matter declares, the text itself left unrendered
  *
  * Links to Markdown files are rewritten to the route serving them, `guide.md` to `guide` and `index.md` to the folder
@@ -173,7 +174,7 @@ export function Markdown({
 
 
 	return useMemo(() => meta === undefined ? createElement("clay-markdown", {}, render(transform(children)))
-		: meta === "toc" ? <Toc entries={outline(transform(children))}/>
+		: meta === "toc" ? outline(transform(children))
 			: typeof meta === "function" ? meta(entries(children))
 				: entries(children)[meta]
 	, [meta, children]);
@@ -204,19 +205,27 @@ function transform(text: string): Tree {
 }
 
 /**
- * Reduces a document to its table of contents, one entry for each heading, linking to that heading and holding the
+ * Reduces a document to its table of contents, one entry for each heading, linking to that heading and listing the
  * entries of the headings it introduces, so the outline mirrors the nesting a reader sees in the document itself.
  *
  * The ids are left to the document, so an outline shown beside it adds no duplicate ids to the page.
  */
-function outline(tree: Tree): readonly Entry[] {
-	return sections(tree.children.filter((node): node is Element => headingRank(node) !== undefined));
+function outline(tree: Tree): ComponentChildren {
+
+	const headings = tree.children.filter((node): node is Element => headingRank(node) !== undefined);
+
+	return headings.length > 0 ? createElement("clay-toc", {}, <nav>{list(headings)}</nav>) : null;
+
+}
+
+function list(headings: readonly Element[]): ComponentChildren {
+	return <ul>{sections(headings)}</ul>;
 }
 
 /**
  * Nests headings, each holding the headings that follow it up to the next one of the same or a higher level.
  */
-function sections(headings: readonly Element[]): readonly Entry[] {
+function sections(headings: readonly Element[]): readonly ComponentChildren[] {
 
 	const [heading, ...rest] = headings;
 
@@ -227,12 +236,15 @@ function sections(headings: readonly Element[]): readonly Entry[] {
 
 }
 
-function section(heading: Element, nested: readonly Element[]): Entry {
-	return {
-		label: render({ type: "root", children: heading.children }),
-		href: `#${heading.properties.id}`,
-		entries: sections(nested)
-	};
+function section(heading: Element, nested: readonly Element[]): ComponentChildren {
+
+	const href = `#${heading.properties.id}`;
+
+	return <li key={href}>
+		<a href={href}>{render({ type: "root", children: heading.children })}</a>
+		{nested.length > 0 && list(nested)}
+	</li>;
+
 }
 
 /**

@@ -17,7 +17,7 @@
 /*
  * A Markdown document is plain markup, which the design system styles as it styles the same markup anywhere else on
  * the page, GitHub alerts and highlighted fenced code included. This sheet adds only the sizing of images hinted to a
- * share of the width, leaving the outline of a document to the table of contents widget drawing it.
+ * share of the width, and the look of the table of contents outlining a document by its headings.
  */
 
 clay-markdown {
@@ -32,6 +32,60 @@ clay-markdown {
 
     & img:not([active]) {
         width: var(--clay-markdown-width, auto);
+    }
+
+}
+
+/*
+ * An outline reads as quiet navigation beside the document: links in the text colour stacked without markers,
+ * top-level sections strong, their subsections smaller and indented beneath them, deeper levels left out, and a wider
+ * gap closing each section that lists subsections, so its group reads apart from the section following it.
+ */
+
+clay-toc {
+
+    display: block;
+
+    & > nav {
+
+        & ul {
+
+            padding-left: 0;
+            margin-bottom: 0;
+
+            list-style: none;
+
+        }
+
+        & li + li, & li > ul {
+            margin-top: var(--skin--spacing-025);
+        }
+
+        & > ul > li:has(> ul) + li {
+            margin-top: var(--skin--spacing-050);
+        }
+
+        & a {
+            font-weight: var(--skin--font-weight-strong);
+            color: var(--skin--color);
+        }
+
+        & ul ul {
+
+            padding-left: var(--skin--spacing-050);
+
+            font-size: var(--skin--font-size-small);
+
+            & a {
+                font-weight: var(--skin--font-weight);
+            }
+
+            & ul {
+                display: none;
+            }
+
+        }
+
     }
 
 }

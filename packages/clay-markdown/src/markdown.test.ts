@@ -280,6 +280,22 @@ describe("Markdown", () => {
 
 		});
 
+		it("should render no nested list for a heading introducing none", async () => {
+
+			mount("# A\n\n# B", "toc");
+
+			expect(document.querySelectorAll("clay-toc li > ul").length).toBe(0);
+
+		});
+
+		it("should render rich heading content in labels", async () => {
+
+			mount("# The `Toc` widget", "toc");
+
+			expect(texts("clay-toc a > code")).toEqual(["Toc"]);
+
+		});
+
 		it("should render no heading elements", async () => {
 
 			mount("# A\n\n## B", "toc");
