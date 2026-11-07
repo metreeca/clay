@@ -78,7 +78,7 @@
         & > strong {
             font-family: var(--skin--font-family-heading);
             font-size: var(--skin--scaling-200);
-            line-height: 1.1; /* Optical leading for display figures. */
+            line-height: var(--skin--line-height-display);
         }
 
         & > span {

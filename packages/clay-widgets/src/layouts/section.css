@@ -47,55 +47,19 @@ clay-section {
 
     }
 
+    /*
+     * The design system sets the heading group as a title: the eyebrow, the display heading and the lead. A nested
+     * section's title stands a step above the text, and a group left with its lead alone still reads it as one.
+     */
+
     & > hgroup {
 
-        margin-bottom: var(--skin--spacing-100);
-
-        & > * {
-            margin-block: 0;
-        }
-
-        /* The eyebrow names the part of the page in small capitals in the strong accent, tracked for legibility. */
-
-        & > p:first-child:not(:last-child):has(+ :is(h1, h2, h3)) {
-            margin-bottom: var(--skin--spacing-025);
-            font-size: var(--skin--font-size-small);
-            font-weight: var(--skin--font-weight-strong);
-            letter-spacing: 0.08em; /* Optical tracking for the small capitals of an eyebrow. */
-            text-transform: uppercase;
-            color: var(--skin--color-strong);
-        }
-
-        /*
-         * The title is a display heading, set tight and clear of the rule and the room the design system gives a
-         * heading in running text, which the rule between sections already stands in for.
-         */
-
-        & > :is(h1, h2, h3) {
-            padding: 0;
-            border-bottom-style: none;
-            line-height: 1.1; /* Optical leading for display type, tighter than the running text. */
-        }
-
-        & > h1 {
-            margin-bottom: var(--skin--spacing-100);
-            font-size: var(--skin--scaling-250);
-        }
-
-        & > h2 {
-            margin-bottom: var(--skin--spacing-025);
-            font-size: var(--skin--scaling-200);
-        }
-
         & > h3 {
-            margin-bottom: var(--skin--spacing-025);
             font-size: var(--skin--font-size-large);
         }
 
-        /* The lead says what the section is about, quieter than the text and held to a comfortable reading measure. */
-
-        & > :is(h1, h2, h3) ~ p, & > p:only-child {
-            max-inline-size: 60ch; /* A comfortable reading measure. */
+        & > p:only-child {
+            margin-bottom: 0;
             font-size: var(--skin--font-size-large);
             color: var(--skin--color-label);
         }
