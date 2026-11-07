@@ -17,8 +17,9 @@
 /**
  * Screen frame.
  *
- * Offers the frame a whole screen is laid out in: a tray of standing controls beside the content of the moment, each
- * with a header and a footer of its own, so an app states what goes in the slots rather than arranging them.
+ * Offers the frame a whole screen is laid out in: a bar across the top carrying the mark of the app, a tray of
+ * standing controls beside the content of the moment, and a foot closing the page, so an app states what goes in each
+ * slot and leaves arranging them, at every width of the window, to the frame itself.
  *
  * @module
  */
@@ -29,16 +30,23 @@ import { useId } from "preact/hooks";
 import { Icon } from "./icon.js";
 import "./shell.css";
 
-// !!!	responsive layout
-// !!	full-height scrollbars
 
 /**
  * Creates a shell.
  *
- * Lays a screen out as two scrolling columns, the tray and the content, each carrying a header that stays in view as
- * the column scrolls and a footer beneath what it holds; a screen with no use for the tray is laid out on the content
- * column alone. Every slot is optional and one left out takes no room, so a screen with no tray footer closes up
- * rather than holding a gap for it.
+ * Lays a screen out as a page scrolling as a whole, held to one measure centred in the window: a bar across the top,
+ * staying in view however far the page scrolls, with the mark of the app at its start and `meta` at its end; under it,
+ * the tray beside the content; and the foot closing the page. From the large viewport up the tray stands as a rail
+ * beside the content, staying in view under the bar as the page scrolls; below it, the tray stands over the content as
+ * a band of its own, scrolling away with the page. A screen with no use for the tray is laid out on the content alone.
+ * Every slot is optional and one left out takes no room, so a screen with no tray footer or no foot closes up rather
+ * than holding a gap where the missing part would have stood had the screen supplied it.
+ *
+ * The shell scrolls with the document rather than within a box of its own, so a host page leaves the document free to
+ * scroll: a page clipping its root or body overflow leaves whatever runs past the window out of reach.
+ *
+ * The bar, the tray, the content and the foot are landmarks a reader moves between directly, the bar standing as the
+ * banner of the screen and the foot as its content information, wherever the page is scrolled.
  *
  * Waiting is stated by the shell itself: while the {@link @metreeca/clay!fetch.Fetch shared client} has exchanges
  * in flight, the frame fades, marks itself busy for assistive technology, and shows a turning mark at the end of the
@@ -49,20 +57,19 @@ import "./shell.css";
  * taken out of reach meanwhile: the content is on its way out rather than unavailable, and a gesture that must not be
  * repeated while an exchange runs is held back by the control offering it.
  *
- * The columns are landmarks a reader moves between directly. The content is named by the heading it is already
- * showing, whether that is `head` or the `done` standing in for it, so a reader arriving at it hears which screen
- * they are on. The tray carries no name of its own: what a reader wants named there is the sections or the filters
- * it holds, which say what they are far better than a word for the whole region would, so a screen names those as
- * it puts them in.
+ * The content is named by the heading it is already showing, whether that is `head` or the `done` standing in for it,
+ * so a reader arriving at it hears which screen they are on. The tray carries no name of its own: what a reader wants
+ * named there is the sections or the filters it holds, which say what they are far better than a word for the whole
+ * region would, so a screen names those as it puts them in, as a table of contents does with its `name`.
  *
  * `lock` takes the tray out of reach for every gesture at once, pointer and keyboard alike, so a reader is never
  * left tabbing into something the screen is showing as unavailable; whoever sets it owes the reader somewhere to
  * land if the focus was in the tray at the time. `main` goes further and leaves the tray out of the frame altogether,
  * for a screen a reader is meant to see through rather than move around in.
  *
- * The content is capped at a comfortable reading measure and centred in whatever room is left, so widening the
- * window leaves the lines as long as they were; `wide` lifts the cap for content a window never has too much room
- * for.
+ * The frame is capped at a comfortable measure and centred in whatever room is left, the bar and the foot spanning the
+ * window while what they hold keeps to the edges of the frame, so widening the window leaves the lines as long as
+ * they were; `wide` takes the frame widescreen, lifting the cap for content a window never has too much room for.
  *
  * @param options The widget configuration
  *
@@ -70,9 +77,9 @@ import "./shell.css";
  */
 export function Shell({
 
+	wide = false,
 	lock = false,
 	main = false,
-	wide = false,
 
 	logo,
 	meta,
@@ -91,6 +98,13 @@ export function Shell({
 }: {
 
 	/**
+	 * Whether the frame goes widescreen, taking the whole width of the window rather than the measure it is otherwise
+	 * capped at: set it where the content is a table, a chart or a map, which a window has no more room for than it
+	 * has, and leave it where the content is prose, which a long line only makes harder to follow. Capped if omitted.
+	 */
+	wide?: boolean
+
+	/**
 	 * Whether the tray is out of reach, as it is while the content has the reader's full attention: what it holds
 	 * fades away while the surface it stands on keeps its place, it drops out of the tab order and the accessibility
 	 * tree, and it answers no gesture until it is let back in; reachable if omitted.
@@ -105,22 +119,15 @@ export function Shell({
 	 */
 	main?: boolean
 
-	/**
-	 * Whether the content is given the whole width beside the tray, rather than the reading measure it is otherwise
-	 * capped at: set it where the content is a table, a chart or a map, which a window has no more room for than it
-	 * has, and leave it where the content is prose, which a long line only makes harder to follow. Capped if
-	 * omitted.
-	 */
-	wide?: boolean
-
 
 	/**
-	 * The mark the app is recognised by, standing at the top of the tray, in view however the tray scrolls.
+	 * The mark the app is recognised by, standing at the start of the bar, in view however far the page scrolls.
 	 */
 	logo?: ComponentChildren
 
 	/**
-	 * What stands opposite the mark at the top of the tray, in view however it scrolls, such as the release on show.
+	 * What stands opposite the mark at the end of the bar, in view however far the page scrolls, such as the sections
+	 * of the app, the settings of the page, a control taking the frame widescreen or the release on show.
 	 */
 	meta?: ComponentChildren
 
@@ -132,15 +139,14 @@ export function Shell({
 	tray?: ComponentChildren
 
 	/**
-	 * What stands at the bottom of the tray, in view however it scrolls, such as the reader signed in and the way out.
+	 * What stands under the standing controls of the tray, such as the reader signed in and the way out.
 	 */
 	info?: ComponentChildren
 
 
 	/**
-	 * What the content of the moment is called. It stands at the top of the shell, in view however the content
-	 * scrolls, unless `done` stands there instead, and names the content landmark either way, so a reader arriving at
-	 * it hears which screen they are on.
+	 * What the content of the moment is called. It stands at the top of the content, unless `done` stands there
+	 * instead, and names the content landmark either way, so a reader arriving at it hears which screen they are on.
 	 */
 	head?: ComponentChildren
 
@@ -151,7 +157,7 @@ export function Shell({
 	menu?: ComponentChildren
 
 	/**
-	 * The way out of the content of the moment, standing at the top of the shell in place of `head` and
+	 * The way out of the content of the moment, standing at the top of the content in place of `head` and
 	 * naming the content landmark while it does: a screen offering it is one the reader finishes rather than one
 	 * they simply arrived at. It is taken off show while an exchange is in flight, and comes back once it settles.
 	 */
@@ -164,14 +170,13 @@ export function Shell({
 	back?: ComponentChildren
 
 	/**
-	 * What closes the content itself, such as a copyright notice. It scrolls with the content rather than standing
-	 * in a bar: where the content is short it rests at the bottom of the shell, just above `foot` if one stands,
-	 * and where the content runs longer it follows on after it.
+	 * What closes the content itself, such as a copyright notice, following on after it: where the content is short
+	 * it rests at the bottom of the window, just above `foot` if one stands, rather than right under the content.
 	 */
 	copy?: ComponentChildren
 
 	/**
-	 * What stands at the bottom of the shell, in view however the content scrolls, such as the terms.
+	 * What closes the page across the whole frame, after the tray and the content, such as the terms.
 	 */
 	foot?: ComponentChildren
 
@@ -204,26 +209,26 @@ export function Shell({
 
 		"aria-busy": fetching,
 
+		wide,
 		locked: lock,
-		main,
-		wide
+		main
 
 	}, <>
+
+		{(logo || meta) && <header>
+			{logo && <span>{logo}</span>}
+			{meta && <span>{meta}</span>}
+		</header>}
 
 		{/* locking takes the tray out of reach for every gesture at once, rather than for the pointer alone */}
 
 		{!main && <aside inert={lock}>
 
-            <header>
-				{logo && <span>{logo}</span>}
-				{meta && <span>{meta}</span>}
-            </header>
+			<section>{tray}</section>
 
-            <section>{tray}</section>
+			{info && <footer>{info}</footer>}
 
-            <footer>{info}</footer>
-
-        </aside>}
+		</aside>}
 
 		<main aria-labelledby={title}>
 
@@ -253,9 +258,9 @@ export function Shell({
 				{copy && <footer>{copy}</footer>}
 			</section>
 
-			<footer>{foot}</footer>
-
 		</main>
+
+		{foot && <footer>{foot}</footer>}
 
 	</>);
 
