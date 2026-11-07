@@ -16,13 +16,28 @@
 
 /*
  * A Markdown document is plain markup, which the design system styles as it styles the same markup anywhere else on
- * the page, GitHub alerts and highlighted fenced code included. This sheet adds only the sizing of images hinted to a
- * share of the width, and the look of the table of contents outlining a document by its headings.
+ * the page, GitHub alerts, highlighted fenced code and the table of contents outlining a document included. This sheet
+ * adds only what no markup of the design system carries: images sized to the share of the width their source hints,
+ * and a heading for the footnotes, which is meant for assistive technologies alone and kept out of the visual layout.
  */
 
 clay-markdown {
 
     display: block;
+
+    /*
+     * The footnotes heading names the section footnote references point to, and reads as noise to a sighted reader
+     * who sees the footnotes set apart already, so it is taken out of view while staying in the accessibility tree.
+     */
+
+    & [data-footnotes] > h2 {
+        position: absolute;
+        inline-size: 1px; /* A box no smaller than one pixel, which some screen readers skip at zero size. */
+        block-size: 1px;
+        overflow: hidden;
+        clip-path: inset(50%);
+        white-space: nowrap;
+    }
 
     /*
      * An image sized by a percentage hint takes that share of the width of the block holding it, keeping its
@@ -37,55 +52,10 @@ clay-markdown {
 }
 
 /*
- * An outline reads as quiet navigation beside the document: links in the text colour stacked without markers,
- * top-level sections strong, their subsections smaller and indented beneath them, deeper levels left out, and a wider
- * gap closing each section that lists subsections, so its group reads apart from the section following it.
+ * The table of contents is a navigation landmark of nested lists, which the design system sets as an outline like any
+ * other on the page, current entry included, so this sheet only lays its element out as a block of its own.
  */
 
 clay-toc {
-
     display: block;
-
-    & > nav {
-
-        & ul {
-
-            padding-left: 0;
-            margin-bottom: 0;
-
-            list-style: none;
-
-        }
-
-        & li + li, & li > ul {
-            margin-top: var(--skin--spacing-025);
-        }
-
-        & > ul > li:has(> ul) + li {
-            margin-top: var(--skin--spacing-050);
-        }
-
-        & a {
-            font-weight: var(--skin--font-weight-strong);
-            color: var(--skin--color);
-        }
-
-        & ul ul {
-
-            padding-left: var(--skin--spacing-050);
-
-            font-size: var(--skin--font-size-small);
-
-            & a {
-                font-weight: var(--skin--font-weight);
-            }
-
-            & ul {
-                display: none;
-            }
-
-        }
-
-    }
-
 }

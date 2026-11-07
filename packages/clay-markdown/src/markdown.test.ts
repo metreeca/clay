@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { createElement, render } from "preact";
+import { createElement, Fragment, render } from "preact";
 import { act } from "preact/test-utils";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -122,6 +122,22 @@ describe("Markdown", () => {
 
 		});
 
+		it("should label task list checkboxes by the text of their item", async () => {
+
+			mount("- [ ] Buy *fresh* milk\n  - [x] Check the date");
+
+			expect(attributes("input[type='checkbox']", "aria-label")).toEqual(["Buy fresh milk", "Check the date"]);
+
+		});
+
+		it("should make code blocks reachable by keyboard, so a reader scrolls the overflow without a pointer", async () => {
+
+			mount("```\ncode\n```");
+
+			expect(attributes("pre", "tabindex")).toEqual(["0"]);
+
+		});
+
 		it("should never render raw HTML", async () => {
 
 			mount("<script>alert(1)</script>\n\n<b>bold</b>");
@@ -191,6 +207,30 @@ describe("Markdown", () => {
 
 			});
 
+			it("should keep the alt text authors give", async () => {
+
+				mount("![A chart](a.png \"A title\")");
+
+				expect(attributes("img", "alt")).toEqual(["A chart"]);
+
+			});
+
+			it("should describe images lacking alt text by their title", async () => {
+
+				mount("![](a.png \"A sales chart\")");
+
+				expect(attributes("img", "alt")).toEqual(["A sales chart"]);
+
+			});
+
+			it("should describe images lacking alt text and title by their file name", async () => {
+
+				mount("![](docs/sales-chart_2026.png#50)\n\n![](https://example.com/q3%20results.jpg?v=2)");
+
+				expect(attributes("img", "alt")).toEqual(["sales chart 2026", "q3 results"]);
+
+			});
+
 			it("should leave the fragments of links alone", async () => {
 
 				mount("[a](page#50)");
@@ -227,6 +267,20 @@ describe("Markdown", () => {
 				act(() => { window.dispatchEvent(new HashChangeEvent("hashchange")); });
 
 				expect(scroll.mock.contexts.filter(element => element instanceof Element).map(element => element.id)).toEqual(["first"]);
+
+			});
+
+			it("should move focus to the heading named by the fragment", async () => {
+
+				vi.spyOn(Element.prototype, "scrollIntoView").mockImplementation(() => {});
+
+				mount("# First\n\n# Second");
+
+				history.replaceState(null, "", "/#second");
+
+				act(() => { window.dispatchEvent(new HashChangeEvent("hashchange")); });
+
+				expect(document.activeElement?.id).toBe("second");
 
 			});
 
@@ -318,6 +372,123 @@ describe("Markdown", () => {
 			mount("Text", "toc");
 
 			expect(document.querySelectorAll("clay-toc").length).toBe(0);
+
+		});
+
+		it("should leave headings below the third level of the outline out", async () => {
+
+			mount("# A\n\n## B\n\n### C\n\n#### D\n\n##### E", "toc");
+
+			expect(texts("clay-toc a")).toEqual(["A", "B", "C"]);
+
+		});
+
+		it("should name the navigation landmark", async () => {
+
+			act(() => render(createElement(Markdown, { meta: "toc", name: "Contents", children: "# A" }), document.body));
+
+			expect(attributes("clay-toc > nav", "aria-label")).toEqual(["Contents"]);
+
+		});
+
+		it("should leave the navigation landmark unnamed if no name is given", async () => {
+
+			mount("# A", "toc");
+
+			expect(document.querySelector("clay-toc > nav")?.hasAttribute("aria-label")).toBe(false);
+
+		});
+
+		describe("current section", () => {
+
+			const text = "# A\n\n## B\n\n# C";
+
+			/**
+			 * Renders the document and its table of contents side by side, as a page showing both does.
+			 */
+			function page(): void {
+				act(() => render(createElement(Fragment, {},
+					createElement(Markdown, { children: text }),
+					createElement(Markdown, { meta: "toc", children: text })
+				), document.body));
+			}
+
+			/**
+			 * Places each heading at the given distance from the top of the viewport, as scrolling would.
+			 */
+			function place(tops: { readonly [id: string]: number }): void {
+				vi.spyOn(Element.prototype, "getBoundingClientRect").mockImplementation(function (this: Element) {
+					return new DOMRect(0, tops[this.id] ?? 0, 0, 0);
+				});
+			}
+
+			function scroll(): void {
+				act(() => { window.dispatchEvent(new Event("scroll")); });
+			}
+
+			function current(): string[] {
+				return texts("clay-toc a[aria-current='location']");
+			}
+
+			it("should mark the entry of the last heading scrolled above the top band", async () => {
+
+				place({ a: -400, b: 10, c: 900 });
+
+				page();
+
+				expect(current()).toEqual(["B"]);
+
+			});
+
+			it("should mark no entry above the first heading", async () => {
+
+				place({ a: 700, b: 900, c: 1100 });
+
+				page();
+
+				expect(current()).toEqual([]);
+
+			});
+
+			it("should follow scrolling", async () => {
+
+				place({ a: 10, b: 600, c: 900 });
+
+				page();
+
+				place({ a: -900, b: -600, c: 50 });
+
+				scroll();
+
+				expect(current()).toEqual(["C"]);
+
+			});
+
+			it("should mark no entry for headings missing from the page", async () => {
+
+				place({});
+
+				mount(text, "toc");
+
+				expect(current()).toEqual([]);
+
+			});
+
+			it("should stop following scrolling once removed", async () => {
+
+				place({ a: 700, b: 900, c: 1100 });
+
+				page();
+
+				const getter = vi.spyOn(document, "getElementById");
+
+				act(() => render(null, document.body));
+
+				scroll();
+
+				expect(getter).not.toHaveBeenCalled();
+
+			});
 
 		});
 

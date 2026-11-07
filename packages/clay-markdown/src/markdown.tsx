@@ -28,7 +28,7 @@ import { headingRank } from "hast-util-heading-rank";
 import { toJsxRuntime } from "hast-util-to-jsx-runtime";
 import type { Root } from "mdast";
 import { type ComponentChildren, createElement } from "preact";
-import { useEffect, useMemo } from "preact/hooks";
+import { useEffect, useMemo, useState } from "preact/hooks";
 import { Fragment, jsx, jsxs } from "preact/jsx-runtime";
 import rehypeHighlight from "rehype-highlight";
 import rehypeSlug from "rehype-slug";
@@ -61,6 +61,16 @@ const SafeProtocol = /^(https?|ircs?|mailto|xmpp)$/i;
  */
 const WidthHint = /^(.*)#([1-9]\d?|100)$/;
 
+/**
+ * The share of the viewport height, from its top, a heading has to be scrolled into for its section to read as current.
+ */
+const Band = 1 / 3;
+
+/**
+ * The levels of the outline the table of contents lists, deeper headings left out.
+ */
+const Depth = 3;
+
 
 const front = unified()
 	.use(remarkParse)
@@ -78,7 +88,8 @@ const pipeline = unified()
 	.use(rehypeHighlight)
 	.use(rehypeAlerts)
 	.use(rehypeLinks)
-	.use(rehypeImages);
+	.use(rehypeImages)
+	.use(rehypeAccess);
 
 
 
@@ -106,17 +117,25 @@ export interface Meta {
  * - **document**, the default: the text in full, with GitHub Flavored Markdown tables, task lists and footnotes,
  *   GitHub alerts (`> [!NOTE]`), emoji shortcodes, fenced code highlighted by language and stripped of surrounding
  *   blank lines, and headings carrying the ids GitHub would give them, so links into the document resolve
- * - **table of contents**: the headings alone, as a navigation landmark of nested lists linking each to the matching
- *   heading, top-level sections set strong and their subsections indented beneath them, deeper levels left out, so
- *   the outline reads as quiet navigation beside the document; nothing at all for a text without headings
+ * - **table of contents**: the headings of the first three levels of the outline, as a navigation landmark of nested
+ *   lists linking each to the matching heading, set as the design system sets any outline, so it reads as quiet
+ *   navigation beside the document; nothing at all for a text without headings. While the document is on the page,
+ *   the entry of the last heading scrolled into the top third of the viewport is marked as the current location, and
+ *   followed as the reader scrolls, so the outline shows where they stand; no entry is marked above the first heading
  * - **front matter**: the values the YAML front matter declares, the text itself left unrendered
  *
  * Links to Markdown files are rewritten to the route serving them, `guide.md` to `guide` and `index.md` to the folder
  * holding it, fragments preserved, so a set of documents linking each other by file name reads as a set of pages.
  * Links and sources whose protocol is unsafe are dropped, and raw HTML in the text is never rendered.
  *
+ * A document reads the same to every reader. An image the text gives no alt text is described by its title, or by its
+ * file name where it has none, so it is never skipped as decoration; the checkbox of a task list item is labelled by
+ * the text of its item; a code block takes the keyboard focus, so a reader scrolls code running past the measure
+ * without a pointer; and the heading of the footnotes is left to assistive technologies, as GitHub leaves it.
+ *
  * A document scrolls the heading named by the location fragment into view as it renders and whenever the fragment
- * changes, so a link into the document lands on its target once the text is in place.
+ * changes, and moves the focus to it, so a link into the document lands on its target once the text is in place and
+ * keyboard and screen reader users carry on reading from there, rather than from where they followed the link.
  *
  * @param options The widget configuration
  *
@@ -125,6 +144,7 @@ export interface Meta {
 export function Markdown({
 
 	meta,
+	name,
 
 	children
 
@@ -136,6 +156,12 @@ export function Markdown({
 	 * document in full if omitted, the only mode following the location fragment to the heading it names.
 	 */
 	meta?: "toc" | string | ((meta: Meta) => ComponentChildren)
+
+	/**
+	 * The accessible name of the table of contents, such as `Contents`, setting it apart from the other navigation
+	 * landmarks on the page; unnamed if omitted, as befits a page holding no other one, and ignored in other modes.
+	 */
+	name?: string
 
 
 	/**
@@ -172,20 +198,64 @@ export function Markdown({
 
 	}, [meta]);
 
+	/*
+	 * The section in view follows the scroll position of the page, which no render owns, so the outline reads it from
+	 * the headings of the document on the page as it mounts and whenever the page scrolls.
+	 */
+
+	const [current, setCurrent] = useState<string>();
+
+	useEffect(() => {
+
+		if ( meta === "toc" ) {
+
+			const ids = flatten(nest(headings(transform(children)))).map(heading => String(heading.properties.id));
+			const follow = () => setCurrent(passed(ids));
+
+			follow();
+
+			window.addEventListener("scroll", follow, { passive: true });
+
+			return () => window.removeEventListener("scroll", follow);
+
+		} else {
+
+			return undefined;
+
+		}
+
+	}, [meta, children]);
+
 
 	return useMemo(() => meta === undefined ? createElement("clay-markdown", {}, render(transform(children)))
-		: meta === "toc" ? outline(transform(children))
+		: meta === "toc" ? outline(transform(children), current, name)
 			: typeof meta === "function" ? meta(entries(children))
 				: entries(children)[meta]
-	, [meta, children]);
+	, [meta, children, current, name]);
 
 }
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+/**
+ * A section of the table of contents: its heading and the sections it introduces.
+ */
+interface Section {
+
+	readonly heading: Element
+	readonly nested: readonly Section[]
+
+}
+
+
 function scroll(): void {
-	document.getElementById(decodeURIComponent(location.hash.slice(1)))?.scrollIntoView();
+
+	const target = document.getElementById(decodeURIComponent(location.hash.slice(1)));
+
+	target?.scrollIntoView();
+	target?.focus({ preventScroll: true });
+
 }
 
 
@@ -210,39 +280,66 @@ function transform(text: string): Tree {
  *
  * The ids are left to the document, so an outline shown beside it adds no duplicate ids to the page.
  */
-function outline(tree: Tree): ComponentChildren {
+function outline(tree: Tree, current: string | undefined, name: string | undefined): ComponentChildren {
 
-	const headings = tree.children.filter((node): node is Element => headingRank(node) !== undefined);
+	const sections = nest(headings(tree));
 
-	return headings.length > 0 ? createElement("clay-toc", {}, <nav>{list(headings)}</nav>) : null;
+	return sections.length > 0
+		? createElement("clay-toc", {}, <nav aria-label={name}>{list(sections, current)}</nav>)
+		: null;
 
 }
 
-function list(headings: readonly Element[]): ComponentChildren {
-	return <ul>{sections(headings)}</ul>;
+function headings(tree: Tree): readonly Element[] {
+	return tree.children.filter((node): node is Element => headingRank(node) !== undefined);
 }
 
 /**
- * Nests headings, each holding the headings that follow it up to the next one of the same or a higher level.
+ * Locates the last heading scrolled into the top band of the viewport, among those the page holds.
+ *
+ * @returns The id of the heading, or `undefined` above the first heading or for headings missing from the page
  */
-function sections(headings: readonly Element[]): readonly ComponentChildren[] {
+function passed(ids: readonly string[]): string | undefined {
+
+	const band = window.innerHeight * Band;
+
+	return ids.filter(id => (document.getElementById(id)?.getBoundingClientRect().top ?? Infinity) <= band).at(-1);
+
+}
+
+/**
+ * Nests headings, each holding the headings that follow it up to the next one of the same or a higher level, down to
+ * the deepest level the outline lists, so headings below it are left out of the outline rather than hidden.
+ */
+function nest(headings: readonly Element[], level: number = 1): readonly Section[] {
 
 	const [heading, ...rest] = headings;
 
 	return heading === undefined ? [] : [
-		section(heading, rest.slice(0, boundary(heading, rest))),
-		...sections(rest.slice(boundary(heading, rest)))
+		{ heading, nested: level < Depth ? nest(rest.slice(0, boundary(heading, rest)), level + 1) : [] },
+		...nest(rest.slice(boundary(heading, rest)), level)
 	];
 
 }
 
-function section(heading: Element, nested: readonly Element[]): ComponentChildren {
+function flatten(sections: readonly Section[]): readonly Element[] {
+	return sections.flatMap(({ heading, nested }) => [heading, ...flatten(nested)]);
+}
 
-	const href = `#${heading.properties.id}`;
+function list(sections: readonly Section[], current: string | undefined): ComponentChildren {
+	return <ul>{sections.map(section => entry(section, current))}</ul>;
+}
+
+function entry({ heading, nested }: Section, current: string | undefined): ComponentChildren {
+
+	const id = String(heading.properties.id);
+	const href = `#${id}`;
 
 	return <li key={href}>
-		<a href={href}>{render({ type: "root", children: heading.children })}</a>
-		{nested.length > 0 && list(nested)}
+		<a href={href} aria-current={id === current ? "location" : undefined}>
+			{render({ type: "root", children: heading.children })}
+		</a>
+		{nested.length > 0 && list(nested, current)}
 	</li>;
 
 }
@@ -362,5 +459,79 @@ function rehypeImages() {
 			};
 		}
 
+		if ( node.tagName === "img" && !node.properties.alt ) {
+			node.properties = {
+				...node.properties,
+				alt: typeof node.properties.title === "string" && node.properties.title.trim()
+					? node.properties.title.trim()
+					: typeof node.properties.src === "string" ? named(node.properties.src) : ""
+			};
+		}
+
 	});
+}
+
+/**
+ * Turns the file name an image source ends with into words, dropping its folders, extension, query and fragment.
+ */
+function named(src: string): string {
+
+	const file = src.replace(/[?#].*$/, "").split("/").at(-1) ?? "";
+	const stem = file.replace(/\.[^.]*$/, "");
+
+	return decoded(stem).replace(/[-_\s]+/g, " ").trim();
+
+}
+
+/**
+ * Decodes a URI component, keeping it as written where it is not well formed.
+ */
+function decoded(component: string): string {
+	try {
+		return decodeURIComponent(component);
+	} catch {
+		return component;
+	}
+}
+
+/**
+ * Supplies what the rendered markup owes assistive technologies and keyboard users beyond what Markdown states: a
+ * label for the checkbox of a task list item, the keyboard focus for a code block scrolling past the measure, and a
+ * focus target for a heading a fragment lands on, reachable by script but kept out of the tab order.
+ */
+function rehypeAccess() {
+	return (tree: Tree) => visit(tree, "element", node => {
+
+		// ;(mutation) unified transformers edit the tree they are handed in place
+
+		if ( node.tagName === "li" && classes(node).includes("task-list-item") ) {
+
+			const label = text(node.children.filter(child => !(child.type === "element" && /^(ul|ol)$/.test(child.tagName))));
+
+			node.children = node.children.map(child => child.type === "element" && child.tagName === "input"
+				? { ...child, properties: { ...child.properties, ariaLabel: label } }
+				: child
+			);
+
+		} else if ( node.tagName === "pre" ) {
+
+			node.properties = { ...node.properties, tabIndex: 0 };
+
+		} else if ( headingRank(node) !== undefined ) {
+
+			node.properties = { ...node.properties, tabIndex: -1 };
+
+		}
+
+	});
+}
+
+/**
+ * Reads the text a run of nodes shows, its whitespace collapsed.
+ */
+function text(nodes: readonly Tree["children"][number][]): string {
+	return nodes.map(node => node.type === "text" ? node.value
+		: node.type === "element" ? text(node.children)
+			: ""
+	).join("").replace(/\s+/g, " ").trim();
 }
