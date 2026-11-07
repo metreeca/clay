@@ -30,10 +30,10 @@ import { Router, Routes } from "@metreeca/clay/router";
 import { Transfer } from "@metreeca/clay/transfer";
 import { createFetch } from "@metreeca/http";
 import { mock } from "@metreeca/http/mock";
-import { Root } from "@metreeca/specimen/index.core.js";
-import { ClayMarkdown, ClayMarkdownPath } from "@metreeca/specimen/clay-markdown/index.js";
-import { ClayWidgets, ClayWidgetsPath } from "@metreeca/specimen/clay-widgets/index.js";
-import { TransferPath, Transfers } from "@metreeca/specimen/transfer/index.js";
+import { ClayMarkdownPath, ClayWidgetsPath, Root, TransferPath } from "@metreeca/specimen/index.core.js";
+import { ClayMarkdown } from "@metreeca/specimen/clay-markdown/index.js";
+import { ClayWidgets } from "@metreeca/specimen/clay-widgets/index.js";
+import { Transfers } from "@metreeca/specimen/transfer/index.js";
 import { render } from "preact";
 import "./index.css";
 

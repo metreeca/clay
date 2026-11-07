@@ -20,50 +20,36 @@
  * @module
  */
 
-import { Link } from "@metreeca/clay-widgets/link";
-import { Routes } from "@metreeca/clay/router";
-import { Page } from "@metreeca/specimen/index.core.js";
+import { Page, type Sample } from "@metreeca/specimen/index.core.js";
 import { Board } from "@metreeca/specimen/transfer/board.js";
 import { List } from "@metreeca/specimen/transfer/list.js";
 import { Uploads } from "@metreeca/specimen/transfer/uploads.js";
 
 
-export const TransferPath = "/transfer/";
+const samples: readonly Sample[] = [
+
+	{ id: "board", group: "Moves", title: "Board", view: <Board/> },
+	{ id: "list", group: "Moves", title: "List", view: <List/> },
+	{ id: "uploads", group: "Files", title: "Uploads", view: <Uploads/> }
+
+];
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 export function Transfers() {
 
-	const sections = {
-
-		Board: <Board/>,
-		List: <List/>,
-		Uploads: <Uploads/>
-
-	};
-
-	const path = (label: string) => label.toLowerCase();
-
 	return <Page
 
-		tray={<>
-
-			{Object.keys(sections).map(label =>
-				<Link key={label} active look="subtle" href={`${TransferPath}${path(label)}`}>{label}</Link>
-			)}
-
+		eyebrow="@metreeca/clay/transfer"
+		title="Moving items"
+		lead={<>
+			Items moved by drag or by menu, and files dropped or picked, each widget drawing its own grip and drop
+			indicator over the shared transfer state.
 		</>}
-	>
 
-		<Routes>{{
+		samples={samples}
 
-			"/": `/${path("Board")}`,
-
-			...Object.fromEntries(Object.entries(sections).map(([label, view]) => [`/${path(label)}`, view]))
-
-		}}</Routes>
-
-	</Page>;
+	/>;
 
 }

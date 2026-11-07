@@ -14,46 +14,38 @@
  * limitations under the License.
  */
 
-import { Link } from "@metreeca/clay-widgets/link";
-import { Routes } from "@metreeca/clay/router";
-import { Page } from "@metreeca/specimen/index.core.js";
+/**
+ * Markdown samples.
+ *
+ * @module
+ */
+
+import { Page, type Sample } from "@metreeca/specimen/index.core.js";
 import { Marks } from "@metreeca/specimen/clay-markdown/markdown.js";
 
 
-export const ClayMarkdownPath = "/clay-markdown/";
+const samples: readonly Sample[] = [
+
+	{ id: "markdown", group: "Documents", title: "Markdown", view: <Marks/> }
+
+];
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 export function ClayMarkdown() {
 
-	const sections = {
-
-		Markdown: <Marks/>
-
-	};
-
-	const path = (label: string) => label.toLowerCase();
-
 	return <Page
 
-		tray={<>
-
-			{Object.keys(sections).map(label =>
-				<Link key={label} active look="subtle" href={`${ClayMarkdownPath}${path(label)}`}>{label}</Link>
-			)}
-
+		eyebrow="@metreeca/clay-markdown"
+		title="Markdown documents"
+		lead={<>
+			Markdown rendered as a page of its own, with a table of contents following the reader and front matter read
+			as values.
 		</>}
-	>
 
-		<Routes>{{
+		samples={samples}
 
-			"/": `/${path("Markdown")}`,
-
-			...Object.fromEntries(Object.entries(sections).map(([label, view]) => [`/${path(label)}`, view]))
-
-		}}</Routes>
-
-	</Page>;
+	/>;
 
 }

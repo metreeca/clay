@@ -14,9 +14,13 @@
  * limitations under the License.
  */
 
-import { Link } from "@metreeca/clay-widgets/link";
-import { Routes } from "@metreeca/clay/router";
-import { Page } from "@metreeca/specimen/index.core.js";
+/**
+ * Widget samples.
+ *
+ * @module
+ */
+
+import { Page, type Sample } from "@metreeca/specimen/index.core.js";
 import { Boxes } from "@metreeca/specimen/clay-widgets/boxes.js";
 import { Buttons } from "@metreeca/specimen/clay-widgets/buttons.js";
 import { Cards } from "@metreeca/specimen/clay-widgets/cards.js";
@@ -35,56 +39,52 @@ import { Toasts } from "@metreeca/specimen/clay-widgets/toasts.js";
 import { Triggers } from "@metreeca/specimen/clay-widgets/triggers.js";
 
 
-export const ClayWidgetsPath = "/clay-widgets/";
+const samples: readonly Sample[] = [
+
+	{ id: "icons", group: "Glyphs", title: "Icons", view: <Icons/> },
+	{ id: "logos", group: "Glyphs", title: "Logos", view: <Logos/> },
+
+	{ id: "buttons", group: "Controls", title: "Buttons", view: <Buttons/> },
+	{ id: "triggers", group: "Controls", title: "Triggers", view: <Triggers/> },
+	{ id: "paths", group: "Controls", title: "Paths", view: <Paths/> },
+	{ id: "notes", group: "Controls", title: "Notes", view: <Notes/> },
+
+	{ id: "shell", group: "Layouts", title: "Shell", view: <Shells/> },
+	{ id: "tabs", group: "Layouts", title: "Tabs", view: <Tabbed/> },
+	{ id: "stack", group: "Layouts", title: "Stack", view: <Stacks/> },
+	{ id: "strip", group: "Layouts", title: "Strip", view: <Strips/> },
+	{ id: "box", group: "Layouts", title: "Box", view: <Boxes/> },
+	{ id: "layout", group: "Layouts", title: "Layout", view: <Layouts/> },
+
+	{ id: "info", group: "Content", title: "Info", view: <Infos/> },
+	{ id: "card", group: "Content", title: "Card", view: <Cards/> },
+	{ id: "style", group: "Content", title: "Style", view: <Styles/> },
+	{ id: "toast", group: "Content", title: "Toast", view: <Toasts/> }
+
+];
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 export function ClayWidgets() {
 
-	const sections = {
-
-		Icons: <Icons/>,
-		Logos: <Logos/>,
-		Buttons: <Buttons/>,
-		Notes: <Notes/>,
-		Paths: <Paths/>,
-		Triggers: <Triggers/>,
-		Shell: <Shells/>,
-		Tabs: <Tabbed/>,
-		Stack: <Stacks/>,
-		Strip: <Strips/>,
-		Box: <Boxes/>,
-		Layout: <Layouts/>,
-		Info: <Infos/>,
-		Card: <Cards/>,
-		Style: <Styles/>,
-		Toast: <Toasts/>,
-		Empty: <></>
-
-	};
-
-	const path = (label: string) => label.toLowerCase();
-
 	return <Page
 
-		tray={<>
-
-			{Object.keys(sections).map(label =>
-				<Link key={label} active look="subtle" href={`${ClayWidgetsPath}${path(label)}`}>{label}</Link>
-			)}
-
+		eyebrow="@metreeca/clay-widgets"
+		title="Widgets, layouts and glyphs"
+		lead={<>
+			The pieces an interface is assembled from, each drawn from the design system tokens alone. Every sample on
+			this page is a live widget, laid out in the very shell it documents.
 		</>}
-	>
 
-		<Routes>{{
+		facts={[
+			[samples.length, "sections"],
+			[new Set(samples.map(({ group }) => group)).size, "groups"],
+			[2, "colour schemes"]
+		]}
 
-			"/": `/${path("Icons")}`,
+		samples={samples}
 
-			...Object.fromEntries(Object.entries(sections).map(([label, view]) => [`/${path(label)}`, view]))
-
-		}}</Routes>
-
-	</Page>;
+	/>;
 
 }

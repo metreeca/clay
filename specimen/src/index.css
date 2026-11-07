@@ -1,5 +1,5 @@
 /*
- * Copyright © 2025-2026 Metreeca srl
+ * Copyright © 2023-2026 Metreeca srl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,13 +15,89 @@
  */
 
 /*
- * The sampler retunes the frame it is laid out in by restating the frame's own properties on the page, which is what
- * they are there for: a page measure is not a design system token and is not themed, so one screen is changed without
- * touching any other.
+ * The specimen dresses the frame it is laid out in as the design system lab dresses its own page: the brand in the two
+ * accents, the packages and the page settings grouped at the end of the bar, figures opening each page, and every row
+ * of samples set in a framed panel, so a widget is read against a surface of its own rather than against the prose.
  */
 
-clay-shell {
+/* The brand reads in the subtle accent with the package name in the strong one, set in the heading face. */
 
-    --clay-shell-tray-width: 15rem;
+.brand {
 
+    font-family: var(--skin--font-family-heading);
+    font-size: var(--skin--font-size-large);
+    font-weight: var(--skin--font-weight-strong);
+    color: var(--skin--color-subtle);
+
+    & > strong {
+        font-weight: inherit;
+        color: var(--skin--color-strong);
+    }
+
+}
+
+/* The packages stand as a row of quiet links ahead of the page settings, the one on show marked by the link itself. */
+
+.packages {
+
+    display: flex;
+    gap: var(--skin--spacing-100);
+    margin-inline-end: var(--skin--spacing-100);
+    font-size: var(--skin--font-size-small);
+
+}
+
+@container style(--skin--viewport-medium: off) {
+
+    .packages {
+        display: none;
+    }
+
+}
+
+/* The figures opening a page, each a tile ruled in the strong accent on the stripe ground. */
+
+.facts {
+
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(8rem, 1fr)); /* The narrowest fact tile. */
+    gap: var(--skin--spacing-100);
+    margin: var(--skin--spacing-150) 0 0;
+    padding: 0;
+    list-style: none;
+
+    & > li {
+
+        display: flex;
+        flex-direction: column;
+        margin: 0;
+        padding: var(--skin--spacing-075) var(--skin--spacing-100);
+        border-inline-start: calc(3 * var(--skin--border-width)) var(--skin--border-style) var(--skin--color-strong);
+        background-color: var(--skin--background-color-stripe);
+
+        & > strong {
+            font-family: var(--skin--font-family-heading);
+            font-size: var(--skin--scaling-200);
+            line-height: 1.1; /* Optical leading for display figures. */
+        }
+
+        & > span {
+            font-size: var(--skin--font-size-small);
+            color: var(--skin--color-label);
+        }
+
+    }
+
+}
+
+/*
+ * A row of samples stands in a framed panel, rounded and ruled, so the widgets it holds read against a surface of
+ * their own; the panel keeps clear of the prose before and after it, as a figure does.
+ */
+
+clay-section :is(.controls, .toolbar, .columns, .frames, .paths, .notes) {
+    padding: var(--skin--spacing-150);
+    border-style: var(--skin--border-style);
+    border-radius: var(--skin--border-radius-075);
+    margin-block: var(--skin--spacing-100) var(--skin--spacing-150);
 }

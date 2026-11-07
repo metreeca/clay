@@ -32,10 +32,10 @@
 export function Shells() {
 	return <>
 
-		<p>The frame around this page is a shell: a tray of standing controls beside the content of the moment, each
-			column carrying a header that stays in view as it scrolls and a footer beneath what it holds. A screen
-			states what goes in each slot and leaves the arrangement to the shell, and a slot left out takes no
-			room.</p>
+		<p>The frame around this page is a shell: a bar across the top staying in view, a tray of standing controls
+			beside the content as a rail, folding into a band over it on narrow windows, and a foot closing the page.
+			A screen states what goes in each slot and leaves the arrangement to the shell, and a slot left out takes
+			no room.</p>
 
 		<table>
 
@@ -48,28 +48,29 @@ export function Shells() {
 			</thead>
 
 			<tbody>
-				<tr><td><code>logo</code></td><td>the mark the app is recognised by</td><td>the lockup, leading home</td></tr>
-				<tr><td><code>meta</code></td><td>what stands opposite the mark</td><td>the lock toggle</td></tr>
-				<tr><td><code>tray</code></td><td>the standing controls</td><td>the links to this section's pages</td></tr>
-				<tr><td><code>info</code></td><td>the foot of the tray</td><td>the reader signed in, or the way in</td></tr>
-				<tr><td><code>head</code></td><td>what the content is called</td><td>the frame toggles and the package links</td></tr>
-				<tr><td><code>menu</code></td><td>the end of the content header</td><td>the release and the exchange control</td></tr>
-				<tr><td><code>foot</code></td><td>the foot of the content</td><td>the copyright</td></tr>
+				<tr><td><code>logo</code></td><td>the start of the bar</td><td>the lockup, leading home</td></tr>
+				<tr><td><code>meta</code></td><td>the end of the bar</td><td>the packages, the widescreen and exchange controls, the colour scheme</td></tr>
+				<tr><td><code>tray</code></td><td>the standing controls</td><td>the outline of this page</td></tr>
+				<tr><td><code>info</code></td><td>under the standing controls</td><td>the reader signed in or the way in, and the lock</td></tr>
+				<tr><td><code>head</code></td><td>what the content is called</td><td>nothing: each section names itself</td></tr>
+				<tr><td><code>menu</code></td><td>the end of the content header</td><td>nothing</td></tr>
+				<tr><td><code>foot</code></td><td>the foot of the page</td><td>the copyright and the release</td></tr>
 			</tbody>
 
 		</table>
 
-		<p>Three switches reshape the frame, and the controls in the headers above work them on this very page:</p>
+		<p>Three switches reshape the frame, two of them worked on this very page:</p>
 
 		<ul>
-			<li><code>lock</code> takes the tray out of reach for pointer and keyboard alike; the padlock sets it for a
-				second</li>
-			<li><code>main</code> leaves the tray out of the frame altogether; the panel toggle sets it</li>
-			<li><code>wide</code> lifts the reading measure the content is otherwise capped at; the chevrons set it</li>
+			<li><code>wide</code> takes the frame widescreen, lifting the measure it is otherwise capped at; the
+				chevrons in the bar set it</li>
+			<li><code>lock</code> takes the tray out of reach for pointer and keyboard alike; the padlock under the
+				outline sets it for a second</li>
+			<li><code>main</code> leaves the tray out of the frame altogether, for a screen meant to be seen through</li>
 		</ul>
 
 		<p>Waiting is stated by the shell itself: while the shared client has exchanges in flight, the frame fades and a
-			turning mark stands at the end of the content header. The search control runs an exchange against a mock
+			turning mark stands at the top of the content. The search control in the bar runs an exchange against a mock
 			answering after a second, so the whole of it can be watched.</p>
 
 	</>;

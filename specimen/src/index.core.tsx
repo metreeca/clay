@@ -14,48 +14,105 @@
  * limitations under the License.
  */
 
+/**
+ * Specimen frame.
+ *
+ * Lays every package page out as one long scrolling sheet inside the frame an app lays its own screens out in: a bar
+ * carrying the packages and the page settings, an outline of the sections following the reader, and the sections
+ * themselves, each opened by its heading group, so the frame is shown by being used rather than described.
+ *
+ * @module
+ */
+
 import { app } from "@metreeca/clay";
 import { Button } from "@metreeca/clay-widgets/button";
+import { Choice } from "@metreeca/clay-widgets/choice";
 import { Icon } from "@metreeca/clay-widgets/icon";
 import { Link } from "@metreeca/clay-widgets/link";
 import { Logo } from "@metreeca/clay-widgets/logo";
-import { useFetch } from "@metreeca/clay/fetch";
+import { Section } from "@metreeca/clay-widgets/section";
 import { Shell } from "@metreeca/clay-widgets/shell";
-import { Style } from "@metreeca/clay-widgets/style";
-import { TransferPath } from "@metreeca/specimen/transfer/index.js";
-import { ClayMarkdownPath } from "@metreeca/specimen/clay-markdown/index.js";
-import { ClayWidgetsPath } from "@metreeca/specimen/clay-widgets/index.js";
-import type { ComponentChildren } from "preact";
-import { useState } from "preact/hooks";
+import { Toc, type TocEntry } from "@metreeca/clay-widgets/toc";
+import { useFetch } from "@metreeca/clay/fetch";
+import { useStorage } from "@metreeca/clay/storage";
+import { type ComponentChildren } from "preact";
+import { useEffect, useState } from "preact/hooks";
 
 
 export const Root = "/";
 
+export const ClayWidgetsPath = "/clay-widgets/";
+export const ClayMarkdownPath = "/clay-markdown/";
+export const TransferPath = "/transfer/";
+
+
+/**
+ * A section of a package page: the id it is linked to by, the group of the outline it is listed under, what it is
+ * called, what it is about and the samples it shows to the reader as live widgets.
+ */
+export interface Sample {
+
+	readonly id: string
+	readonly group: string
+	readonly title: string
+	readonly lead?: ComponentChildren
+	readonly view: ComponentChildren
+
+}
+
+/**
+ * A figure stated in the opening of a package page, and what it counts.
+ */
+export type Fact = readonly [number, string]
+
+
+const schemes = { auto: "System", light: "Light", dark: "Dark" };
+
+type Scheme = keyof typeof schemes
+
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+/**
+ * Creates a package page.
+ *
+ * Opens the page with what the package is and the figures it is measured by, lists every section in the outline of
+ * the tray under the group it belongs to, and sets the sections one after the other, each opened by its heading group.
+ *
+ * @param options The page configuration
+ *
+ * @returns The package page, inside the specimen frame
+ */
 export function Page({
 
-	tray,
-
-	children
+	eyebrow,
+	title,
+	lead,
+	facts = [],
+	samples
 
 }: {
 
-	tray?: ComponentChildren
-
-	children?: ComponentChildren
-
+	eyebrow: string
+	title: string
+	lead: ComponentChildren
+	facts?: readonly Fact[]
+	samples: readonly Sample[]
 
 }) {
 
 	const fetch = useFetch();
 
-	const [lock, setLock] = useState(false);
-	const [main, setMain] = useState(false);
 	const [wide, setWide] = useState(false);
-
+	const [lock, setLock] = useState(false);
 	const [user, setUser] = useState<string>();
+
+	const [scheme, setScheme] = useStorage<Scheme>(localStorage, "specimen-scheme", "auto");
+
+	// the scheme is pinned on the root of the document, which no render of this page owns
+
+	useEffect(() => apply(scheme), [scheme]);
+
 
 	function edit() {
 
@@ -68,52 +125,28 @@ export function Page({
 
 	return <Shell
 
-		lock={lock}
-		main={main}
 		wide={wide}
+		lock={lock}
 
-		logo={<Style css={{ fontSize: "fontSizeLarge" }}>
-
-			<Link look="strong" href={Root}><Logo/><span>{app.name}</span></Link>
-
-		</Style>}
+		logo={<Link look="subtle" href={Root}>
+			<Logo/><span class="brand">@metreeca/<strong>clay</strong></span>
+		</Link>}
 
 		meta={<>
 
-			<Button
-				icon={lock ? <Icon.Unlock/> : <Icon.Lock/>}
-				look="subtle"
-				title={lock ? "Release the tray" : "Lock the tray"}
-				onClick={edit}
-			/>
-
-		</>}
-
-		head={<>
-
-			<Button
-				icon={main ? <Icon.PanelLeftOpen/> : <Icon.PanelLeftClose/>}
-				look="subtle"
-				title={main ? "Show the tray" : "Hide the tray"}
-				onClick={() => setMain(!main)}
-			/>
+			<nav class="packages" aria-label="Packages">
+				<Link active look="subtle" href={`${ClayWidgetsPath}*`}>Widgets</Link>
+				<Link active look="subtle" href={`${ClayMarkdownPath}*`}>Markdown</Link>
+				<Link active look="subtle" href={`${TransferPath}*`}>Transfer</Link>
+			</nav>
 
 			<Button
 				icon={wide ? <Icon.ChevronsRightLeft/> : <Icon.ChevronsLeftRight/>}
 				look="subtle"
-				title={wide ? "Cap the measure" : "Take the width"}
+				name={wide ? "Cap the measure" : "Go widescreen"}
+				title={wide ? "Cap the measure" : "Go widescreen"}
 				onClick={() => setWide(!wide)}
 			/>
-
-			<Link active look="strong" href={`${ClayWidgetsPath}*`}>Widgets</Link>
-			<Link active look="strong" href={`${ClayMarkdownPath}*`}>Markdown</Link>
-			<Link active look="strong" href={`${TransferPath}*`}>Transfer</Link>
-
-		</>}
-
-		menu={<>
-
-			<small>v{VERSION}</small>
 
 			<Button
 				icon={<Icon.Search/>}
@@ -123,42 +156,80 @@ export function Page({
 				onClick={() => { void fetch(app.base); }}
 			/>
 
+			<Choice name="Colour scheme" options={schemes} value={scheme} onChange={setScheme}/>
+
 		</>}
 
-		tray={tray}
+		tray={<Toc name="Sections" entries={outline(samples)}/>}
 
 		info={user
 
 			? <>
-
-				<small>{user}</small>
-
-				<Button
-					icon={<Icon.LogOut/>}
-					look="subtle"
-					name="Sign out"
-					title="Sign out"
+				<span>{user}</span>
+				<Button icon={<Icon.LogOut/>} look="subtle" name="Sign out" title="Sign out"
 					onClick={() => setUser(undefined)}
 				/>
-
 			</>
 
-			: <Button
-				icon={<Icon.LogIn/>}
-				look="subtle"
-				name="Sign in"
-				title="Sign in"
-				onClick={() => setUser("user@example.com")}
-			/>
-
+			: <>
+				<Button icon={<Icon.LogIn/>} look="subtle" name="Sign in" title="Sign in"
+					onClick={() => setUser("user@example.com")}
+				/>
+				<Button icon={lock ? <Icon.Unlock/> : <Icon.Lock/>} look="subtle" name="Lock the tray"
+					title="Lock the tray" onClick={edit}
+				/>
+			</>
 		}
 
-		foot={<small>{app.copy}</small>}
+		foot={<>
+			<span>{app.copy}</span>
+			<span>v{VERSION}</span>
+		</>}
 
 	>
 
-		{children}
+		<Section level={1} eyebrow={eyebrow} title={title} lead={lead}>
+
+			{facts.length > 0 && <ul class="facts">{facts.map(([value, label]) =>
+				<li key={label}><strong>{value}</strong><span>{label}</span></li>
+			)}</ul>}
+
+		</Section>
+
+		{samples.map(({ id, group, title, lead, view }) =>
+			<Section key={id} id={id} eyebrow={group} title={title} lead={lead}>{view}</Section>
+		)}
 
 	</Shell>;
+
+}
+
+
+/**
+ * Groups the sections of a page into the outline listing them, in the order the page holds them.
+ */
+function outline(samples: readonly Sample[]): readonly TocEntry[] {
+
+	const groups = [...new Set(samples.map(({ group }) => group))];
+
+	return groups.map(group => ({
+		label: group,
+		entries: samples
+			.filter(sample => sample.group === group)
+			.map(({ id, title }) => ({ label: title, href: `#${id}` }))
+	}));
+
+}
+
+/**
+ * Pins the colour scheme chosen on the root of the page, or leaves it to the platform.
+ */
+function apply(scheme: Scheme): void {
+
+	if ( scheme === "auto" ) {
+		document.documentElement.removeAttribute("data-scheme");
+	} else {
+		document.documentElement.setAttribute("data-scheme", scheme);
+	}
 
 }
