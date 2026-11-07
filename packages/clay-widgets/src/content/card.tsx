@@ -20,7 +20,7 @@
  * Sums up an item in a single block: its title and tags over a description, beside an image standing for it. A list
  * of search results or related items then reads as a run of cards without a layout written for each entry.
  *
- * @module
+ * @module card
  */
 
 import { isBoolean, isString } from "@metreeca/core";

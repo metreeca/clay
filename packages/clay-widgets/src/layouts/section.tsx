@@ -20,7 +20,7 @@
  * Opens a stretch of a long page under a heading group a reader takes in at a glance: the part of the page it belongs
  * to, what it is called and what it is about, so a page reads as a sequence of sections rather than as one run of text.
  *
- * @module
+ * @module section
  */
 
 import { type ComponentChildren, createElement } from "preact";

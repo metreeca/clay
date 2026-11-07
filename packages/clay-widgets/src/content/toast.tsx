@@ -20,14 +20,14 @@
  * Offers the stack of notices telling a reader how the operations under way are going and how they ended, floating
  * over the screen without moving anything on it, and read out to assistive technology as they change.
  *
- * @module
+ * @module toast
  */
 
 import { type Post, type Status, useBoard, usePosts } from "@metreeca/clay/board";
 import { createElement } from "preact";
 import { useEffect, useState } from "preact/hooks";
-import { Button } from "./button.js";
-import { Icon } from "./icon.js";
+import { Button } from "../controls/button.js";
+import { Icon } from "../glyphs/icon.js";
 import "./toast.css";
 
 

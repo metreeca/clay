@@ -20,7 +20,7 @@
  * Lists the properties of an item, each value beside the label naming it. A sidebar or the body of a page then shows
  * what is known about an item, without a table laid out for the purpose or a layout written for each property.
  *
- * @module
+ * @module info
  */
 
 import { isBoolean } from "@metreeca/core";

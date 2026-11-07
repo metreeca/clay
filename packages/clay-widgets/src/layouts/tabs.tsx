@@ -20,7 +20,7 @@
  * Presents a fixed set of labelled panels one at a time, under a strip of tabs the reader chooses from with the
  * pointer or with the keyboard, or under a menu standing in for the strip where the labels would not fit.
  *
- * @module
+ * @module tabs
  */
 
 import { useModel } from "@metreeca/clay/model";

@@ -20,7 +20,7 @@
  * Confines a failure to the part of a screen it broke: what a guard holds gives way to a fallback once it fails, the
  * rest of the screen goes on working, and the failure is raised for a reader to see rather than lost to the console.
  *
- * @module
+ * @module guard
  */
 
 import { useBoard } from "@metreeca/clay/board";

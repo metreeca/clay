@@ -20,7 +20,7 @@
  * Presents the outline of a long page as quiet navigation beside it, marking the section the reader is in as the page
  * scrolls, so a reader sees where they stand and moves to any other section in one gesture.
  *
- * @module
+ * @module toc
  */
 
 import { useModel } from "@metreeca/clay/model";

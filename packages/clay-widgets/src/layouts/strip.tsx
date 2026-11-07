@@ -19,7 +19,7 @@
  *
  * Lines up what it holds side by side, a spacing step apart, so a screen lays out its parts without a rule of its own.
  *
- * @module
+ * @module strip
  */
 
 import { isString, opt } from "@metreeca/core";

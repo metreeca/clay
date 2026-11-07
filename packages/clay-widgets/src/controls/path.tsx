@@ -19,7 +19,7 @@
  *
  * Offers the trail that tells a reader where the current page sits in the hierarchy and leads them back up through it.
  *
- * @module
+ * @module path
  */
 
 import { type ComponentChildren, createElement, toChildArray } from "preact";

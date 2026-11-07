@@ -20,13 +20,13 @@
  * Offers the trigger a growing list closes with, asking for the next batch as soon as the reader scrolls it into view,
  * so a long collection is fetched as it is read rather than all at once.
  *
- * @module
+ * @module more
  */
 
 import { opt } from "@metreeca/core";
 import { type ComponentChildren, createElement } from "preact";
 import { useEffect, useId } from "preact/hooks";
-import { Icon } from "./icon.js";
+import { Icon } from "../glyphs/icon.js";
 import "./more.css";
 
 

@@ -21,7 +21,7 @@
  * holds them, and which of them the reader is currently in, followed as the page scrolls. A rendering layer adopts it
  * and supplies the markup, the styling and the measure of where each section stands.
  *
- * @module
+ * @module toc.core
  */
 
 import { type Optional } from "@metreeca/core";

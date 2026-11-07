@@ -20,7 +20,7 @@
  * Sets what it holds on a box of its own, padded, rounded, lifted and painted from design system tokens, so a screen
  * draws a card, a panel or a well without writing a rule of its own, and each one follows the interface as it is themed.
  *
- * @module
+ * @module box
  */
 
 import { css as compile, type Tokens } from "@metreeca/skin";

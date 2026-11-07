@@ -21,7 +21,7 @@
  * reader, the one on show, and the activation a reader performs on it. A rendering layer adopts them and supplies
  * the markup, the styling and the gestures, so the same behaviour serves any layer.
  *
- * @module
+ * @module tabs.core
  */
 
 import { assert, isArray, isString, opt, type Optional } from "@metreeca/core";

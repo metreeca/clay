@@ -21,13 +21,13 @@
  * standing controls beside the content of the moment, and a foot closing the page, so an app states what goes in each
  * slot and leaves arranging them, at every width of the window, to the frame itself.
  *
- * @module
+ * @module shell
  */
 
 import { useFetching } from "@metreeca/clay/fetch";
 import { type ComponentChildren, createElement } from "preact";
 import { useId } from "preact/hooks";
-import { Icon } from "./icon.js";
+import { Icon } from "../glyphs/icon.js";
 import "./shell.css";
 
 

@@ -19,7 +19,7 @@
  *
  * Stacks what it holds top to bottom, a spacing step apart, so a screen lays out its parts without a rule of its own.
  *
- * @module
+ * @module stack
  */
 
 import { opt } from "@metreeca/core";

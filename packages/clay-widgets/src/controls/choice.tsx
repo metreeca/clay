@@ -20,7 +20,7 @@
  * Offers a choice among a few options as one boxed row of segments, every option in view and the chosen one filled, so
  * a setting such as the colour scheme is read and changed in a single glance and gesture.
  *
- * @module
+ * @module choice
  */
 
 import { type ComponentChildren, createElement } from "preact";

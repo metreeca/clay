@@ -34,16 +34,172 @@
       "default": "./dist/index.js"
     },
     "./icon": {
-      "@metreeca/source": "./src/icon.ts",
-      "default": "./dist/icon.js"
+      "@metreeca/source": "./src/glyphs/icon.ts",
+      "default": "./dist/glyphs/icon.js"
     },
-    "./*": {
-      "@metreeca/source": "./src/*.tsx",
-      "default": "./dist/*.js"
+    "./icon.css": {
+      "@metreeca/source": "./src/glyphs/icon.css",
+      "default": "./dist/glyphs/icon.css"
     },
-    "./*.css": {
-      "@metreeca/source": "./src/*.css",
-      "default": "./dist/*.css"
+    "./logo": {
+      "@metreeca/source": "./src/glyphs/logo.tsx",
+      "default": "./dist/glyphs/logo.js"
+    },
+    "./logo.css": {
+      "@metreeca/source": "./src/glyphs/logo.css",
+      "default": "./dist/glyphs/logo.css"
+    },
+    "./button": {
+      "@metreeca/source": "./src/controls/button.tsx",
+      "default": "./dist/controls/button.js"
+    },
+    "./button.css": {
+      "@metreeca/source": "./src/controls/button.css",
+      "default": "./dist/controls/button.css"
+    },
+    "./choice": {
+      "@metreeca/source": "./src/controls/choice.tsx",
+      "default": "./dist/controls/choice.js"
+    },
+    "./choice.css": {
+      "@metreeca/source": "./src/controls/choice.css",
+      "default": "./dist/controls/choice.css"
+    },
+    "./link": {
+      "@metreeca/source": "./src/controls/link.tsx",
+      "default": "./dist/controls/link.js"
+    },
+    "./link.css": {
+      "@metreeca/source": "./src/controls/link.css",
+      "default": "./dist/controls/link.css"
+    },
+    "./more": {
+      "@metreeca/source": "./src/controls/more.tsx",
+      "default": "./dist/controls/more.js"
+    },
+    "./more.css": {
+      "@metreeca/source": "./src/controls/more.css",
+      "default": "./dist/controls/more.css"
+    },
+    "./note": {
+      "@metreeca/source": "./src/controls/note.tsx",
+      "default": "./dist/controls/note.js"
+    },
+    "./note.css": {
+      "@metreeca/source": "./src/controls/note.css",
+      "default": "./dist/controls/note.css"
+    },
+    "./path": {
+      "@metreeca/source": "./src/controls/path.tsx",
+      "default": "./dist/controls/path.js"
+    },
+    "./path.css": {
+      "@metreeca/source": "./src/controls/path.css",
+      "default": "./dist/controls/path.css"
+    },
+    "./toc": {
+      "@metreeca/source": "./src/controls/toc.tsx",
+      "default": "./dist/controls/toc.js"
+    },
+    "./toc.css": {
+      "@metreeca/source": "./src/controls/toc.css",
+      "default": "./dist/controls/toc.css"
+    },
+    "./box": {
+      "@metreeca/source": "./src/layouts/box.tsx",
+      "default": "./dist/layouts/box.js"
+    },
+    "./box.css": {
+      "@metreeca/source": "./src/layouts/box.css",
+      "default": "./dist/layouts/box.css"
+    },
+    "./section": {
+      "@metreeca/source": "./src/layouts/section.tsx",
+      "default": "./dist/layouts/section.js"
+    },
+    "./section.css": {
+      "@metreeca/source": "./src/layouts/section.css",
+      "default": "./dist/layouts/section.css"
+    },
+    "./shell": {
+      "@metreeca/source": "./src/layouts/shell.tsx",
+      "default": "./dist/layouts/shell.js"
+    },
+    "./shell.css": {
+      "@metreeca/source": "./src/layouts/shell.css",
+      "default": "./dist/layouts/shell.css"
+    },
+    "./stack": {
+      "@metreeca/source": "./src/layouts/stack.tsx",
+      "default": "./dist/layouts/stack.js"
+    },
+    "./stack.css": {
+      "@metreeca/source": "./src/layouts/stack.css",
+      "default": "./dist/layouts/stack.css"
+    },
+    "./strip": {
+      "@metreeca/source": "./src/layouts/strip.tsx",
+      "default": "./dist/layouts/strip.js"
+    },
+    "./strip.css": {
+      "@metreeca/source": "./src/layouts/strip.css",
+      "default": "./dist/layouts/strip.css"
+    },
+    "./tabs": {
+      "@metreeca/source": "./src/layouts/tabs.tsx",
+      "default": "./dist/layouts/tabs.js"
+    },
+    "./tabs.css": {
+      "@metreeca/source": "./src/layouts/tabs.css",
+      "default": "./dist/layouts/tabs.css"
+    },
+    "./card": {
+      "@metreeca/source": "./src/content/card.tsx",
+      "default": "./dist/content/card.js"
+    },
+    "./card.css": {
+      "@metreeca/source": "./src/content/card.css",
+      "default": "./dist/content/card.css"
+    },
+    "./guard": {
+      "@metreeca/source": "./src/content/guard.tsx",
+      "default": "./dist/content/guard.js"
+    },
+    "./guard.css": {
+      "@metreeca/source": "./src/content/guard.css",
+      "default": "./dist/content/guard.css"
+    },
+    "./hint": {
+      "@metreeca/source": "./src/content/hint.tsx",
+      "default": "./dist/content/hint.js"
+    },
+    "./hint.css": {
+      "@metreeca/source": "./src/content/hint.css",
+      "default": "./dist/content/hint.css"
+    },
+    "./info": {
+      "@metreeca/source": "./src/content/info.tsx",
+      "default": "./dist/content/info.js"
+    },
+    "./info.css": {
+      "@metreeca/source": "./src/content/info.css",
+      "default": "./dist/content/info.css"
+    },
+    "./style": {
+      "@metreeca/source": "./src/content/style.tsx",
+      "default": "./dist/content/style.js"
+    },
+    "./style.css": {
+      "@metreeca/source": "./src/content/style.css",
+      "default": "./dist/content/style.css"
+    },
+    "./toast": {
+      "@metreeca/source": "./src/content/toast.tsx",
+      "default": "./dist/content/toast.js"
+    },
+    "./toast.css": {
+      "@metreeca/source": "./src/content/toast.css",
+      "default": "./dist/content/toast.css"
     },
     "./*.core": null
   },
@@ -57,7 +213,7 @@
   },
   "scripts": {
     "clean": "ush rm dist docs node_modules '*.tsbuildinfo'",
-    "build": "tsc -b tsconfig.build.json && ush cp dist 'src/*.css' 'src/*.md'",
+    "build": "tsc -b tsconfig.build.json && ush cp dist 'src/**/*.css' 'src/**/*.md'",
     "check": "npx vitest --config ../../vitest.config.ts --root . --typecheck --passWithNoTests --environment happy-dom run"
   },
   "dependencies": {

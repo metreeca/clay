@@ -19,7 +19,7 @@
  *
  * Restyles everything an area holds by assigning design system tokens to it, laying nothing out and taking no room.
  *
- * @module
+ * @module style
  */
 
 import { css as compile, type Tokens } from "@metreeca/skin";

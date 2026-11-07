@@ -22,7 +22,7 @@
  * chain link lucide calls `Link2`. `GitHub` is the Invertocat mark, filled in the current colour and fitted to the
  * span lucide glyphs cover, so it takes the same size and colour as the rest, though not their stroke width.
  *
- * @module
+ * @module icon.core
  */
 
 import { createLucideIcon } from "lucide-preact";

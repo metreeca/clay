@@ -155,7 +155,7 @@
  * @see {@link https://lucide.dev/icons/ Lucide: icon catalogue}
  * @see {@link https://lucide.dev/license Lucide: licence}
  *
- * @module
+ * @module icon
  */
 
 import "./icon.css";
