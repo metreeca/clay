@@ -142,15 +142,24 @@ clay-shell {
         scroll-padding-block: var(--clay-shell-head-size) var(--clay-shell-foot-size);
 
         /*
-         * The bars are painted in the colour the reset hands down from the column, so what passes beneath them is
-         * covered rather than seen through, and they stand above the body as it scrolls.
+         * The bars are frosted glass: the page colour let partly through and blurred behind, so what passes beneath them
+         * shows softly as it scrolls, telling the reader there is more beyond the bar, while what the bar holds keeps
+         * its contrast. They stand above the body as it scrolls. The glass is painted as an image, every element
+         * inheriting its background colour from the reset, so what a bar holds stays clear of it rather than stacking
+         * a pane of its own over the bar.
          */
 
         & > header,
         & > footer {
 
+            --clay-shell-glass: color-mix(in oklab, var(--skin--background-color) 60%, transparent);
+
             position: sticky;
             z-index: var(--skin--z-index-sticky);
+
+            background-color: transparent;
+            background-image: linear-gradient(var(--clay-shell-glass), var(--clay-shell-glass));
+            backdrop-filter: blur(var(--skin--spacing-025));
 
             flex: none;
 
@@ -186,25 +195,20 @@ clay-shell {
         }
 
         /*
-         * With no rule closing it off, a bar tells that content passes beneath it by letting that content fade out as
-         * it reaches it, rather than stop at an edge: under the header once the column has scrolled away from its top,
-         * over the footer while content runs on below it, and neither where the column has nothing to scroll. Each
-         * column fades its own content, being the box that scrolls it, whatever the other column is doing.
+         * Content also fades out as it reaches a bar, rather than stopping at an edge: under the header once the column
+         * has scrolled away from its top, over the footer while content runs on below it, and neither where the column
+         * has nothing to scroll. Each column fades its own content, being the box that scrolls it, whatever the other
+         * column is doing.
          *
          * The fade is a mask on the column making its content transparent, so the page shows through as it is, in any
-         * colour and either scheme, with nothing painted over it: solid under the bars, which stay whole, then clear at
-         * the edge of a bar and back to solid across the depth of the fade, along an eased ramp so that neither end
-         * shows as a line. A strip as wide as a scrollbar at the end of the column is left out of the mask, so the
-         * scrollbar keeps its full height; the gutters keep content clear of it.
+         * colour and either scheme: solid under the bars, so the glass has something to show, then clear at the edge of
+         * a bar and back to solid across the depth of the fade, along an eased ramp so that neither end shows as a line.
+         * A strip as wide as a scrollbar at the end of the column is left out of the mask, so the scrollbar keeps its
+         * full height; the gutters keep content clear of it.
          */
 
-        /*
-         * The mask stays solid a pixel past each bar, so the rule closing a bar off is never caught by the fade however
-         * the bar's edge falls between device pixels.
-         */
-
-        --clay-shell-mask-head: calc(var(--clay-shell-head-size) + 1px);
-        --clay-shell-mask-foot: calc(var(--clay-shell-foot-size) + 1px);
+        --clay-shell-mask-head: var(--clay-shell-head-size);
+        --clay-shell-mask-foot: var(--clay-shell-foot-size);
 
         mask-image:
             linear-gradient(to bottom,
@@ -253,8 +257,8 @@ clay-shell {
 
     /*
      * The tray is closed off from the content by a rule running the full height of the frame, the bars standing on the
-     * page with no rule of their own, content fading out as it reaches them; its parts are held clear of its edges by
-     * its gutter.
+     * page with no rule of their own, content fading out as it reaches them; its parts are held clear of
+     * its edges by its gutter.
      */
 
     & > aside {
