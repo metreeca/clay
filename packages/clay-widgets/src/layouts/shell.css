@@ -15,13 +15,10 @@
  */
 
 /*
- * The frame is a page scrolling as a whole: a bar across the top, the tray beside the content, and a foot closing the
- * page. The bar and the foot span the window while what they hold keeps to the edges of the frame, held to one measure
- * and centred in the room the window leaves, so the mark stands over the tray and the end of the bar over the end of
- * the content however wide the window grows, and a wide screen leaves even margins to either side.
- *
- * The frame settles almost no type: it states no family, and no size beyond the foot and the tray footer being set at
- * the size of a label, so everything else in it is set in whatever the app is written in.
+ * The frame is two columns filling the window, the tray beside the content, each a header over a body over a footer
+ * and each scrolling on its own the whole height of the window, its bars standing at its top and bottom while the body
+ * passes beneath them. The frame states no type beyond the footers being set at the size of a label, so everything
+ * else in it is set in whatever face and size the app is written in, and the frame reads as part of the page.
  */
 
 /*
@@ -31,75 +28,88 @@
  * inside an element by restating it there.
  */
 
-/* The measure the frame is held to, wide enough for a rail beside a comfortable reading column. */
+/* The width of the tray, and the reading measure the content is held to: a comfortable line runs 65 to 75 characters. */
 
-@property --clay-shell-width {
-    syntax: "*";
-    inherits: true;
-    initial-value: 84rem;
+/*
+ * How far each fade of a column is open, from shut to the full depth, driven by the scroll position of the column; they
+ * are registered as lengths so the animation interpolates them rather than switching between the two ends.
+ */
+
+@property --clay-shell-fade-top-size {
+    syntax: "<length>";
+    inherits: false;
+    initial-value: 0px;
 }
 
-/* The width of the tray standing as a rail beside the content, holding the longest entry of a table of contents. */
+@property --clay-shell-fade-bottom-size {
+    syntax: "<length>";
+    inherits: false;
+    initial-value: 0px;
+}
 
 @property --clay-shell-tray-width {
     syntax: "*";
     inherits: true;
-    initial-value: 12rem;
+    initial-value: 15rem;
 }
 
-/*
- * The height of the bar. A bar staying in view as the page scrolls is what the rail and the targets of links are
- * placed under, so it states a height of its own rather than taking one from what it holds: a rail placed under a bar
- * of unknown height would either slide beneath it or leave a gap. The root reads it as well, to keep a target a link
- * lands on clear of the bar, so it is retuned on the root rather than on the shell.
- */
-
-@property --clay-shell-bar-height {
+@property --clay-shell-main-width {
     syntax: "*";
     inherits: true;
-    initial-value: 3.5rem;
+    initial-value: 60rem;
 }
 
 /*
- * A target a link lands on, such as a section named by an entry of a table of contents, comes to rest clear of the bar
- * standing over the page rather than under it. The page is what scrolls, so the room is kept on the root.
+ * The air each column keeps between its edges and what it shows, the content column widening it where the window leaves
+ * room beyond the measure. It is stated in rem so the bars and the body line up down the edge whatever size each is set
+ * in, rather than each stepping out of line at a size of its own as an em gutter would.
  */
 
-:root:has(clay-shell > header) {
-    scroll-padding-top: calc(var(--clay-shell-bar-height) + var(--skin--spacing-100));
+@property --clay-shell-tray-gutter {
+    syntax: "*";
+    inherits: true;
+    initial-value: 1.25rem;
+}
+
+@property --clay-shell-main-gutter {
+    syntax: "*";
+    inherits: true;
+    initial-value: 2rem;
 }
 
 clay-shell {
 
-    /* The air between the frame and the edge of the window, and between the tray and the content. */
-
-    --clay-shell-gutter: var(--skin--spacing-100);
-    --clay-shell-gap: var(--skin--spacing-150);
-
     /*
-     * The column lines every part is placed on: the gutters take whatever room the measure leaves, and the parts
-     * spanning the window lay what they hold on the same lines, so the bar, the tray, the content and the foot keep
-     * one edge down the page. Below the large viewport the tray and the content share the one column, the tray
-     * standing over the content as a band rather than beside it as a rail, as stated below.
+     * The heights the bars of the two columns are levelled to, written by the widget as it measures the taller of each
+     * pair; nothing is levelled before the first measure. The scroll padding reads them too, so a target scrolled into
+     * view in either column comes to rest clear of its bars rather than beneath them.
      */
 
-    --clay-shell-columns:
-        [full-start] minmax(var(--clay-shell-gutter), 1fr)
-        [tray-start main-start] minmax(0, var(--clay-shell-width))
-        [tray-end main-end] minmax(var(--clay-shell-gutter), 1fr) [full-end];
+    --clay-shell-head-size: 0px;
+    --clay-shell-foot-size: 0px;
+
+    /* The depth content fades out across as it reaches a bar, and the scrolling it takes for the fade to open. */
+
+    --clay-shell-fade-depth: var(--skin--spacing-200);
 
     display: grid;
-    grid-template-columns: var(--clay-shell-columns);
-    grid-template-rows: auto auto 1fr auto;
+    grid-template-columns: var(--clay-shell-tray-width) minmax(0, 1fr);
 
-    /* The frame fills the window at least, so a short page still rests the foot at its bottom. */
+    /* The frame is the whole of a screen: it fills the window and scrolls its columns rather than the document. */
 
-    min-block-size: 100dvh;
+    block-size: 100dvh;
+    overflow: hidden;
+
+    /* A frame showing the content alone takes the tray column out of the track list, leaving no room beside it. */
+
+    &[main] {
+        grid-template-columns: minmax(0, 1fr);
+    }
 
     /*
      * Waiting fades the frame by the loading step: the content is on its way out rather than unavailable, so it stays
-     * worth reading, and stays operable, while it goes. Nothing is blocked here. A gesture that must not be repeated
-     * while an exchange is in flight is the business of the control offering it, which disables itself.
+     * worth reading, and stays operable, while it goes. A gesture that must not be repeated while an exchange is in
+     * flight is the business of the control offering it, which disables itself.
      */
 
     &[aria-busy="true"] {
@@ -107,88 +117,158 @@ clay-shell {
     }
 
     /*
-     * The bar and the foot span the window and hand their lines on to what they hold, so the mark lands where the tray
-     * starts and the end of the bar where the content ends, whatever the width of the window.
+     * A column scrolls on its own, the whole height of the frame, and keeps its scrolling to itself rather than handing
+     * the rest of a gesture on to the window. Its bars stick to its top and bottom, so the body passes beneath them and
+     * the scrollbar runs the full height of the window beside it, from the top of the frame to its bottom.
      */
 
-    & > header, & > footer {
+    & > * {
 
-        grid-column: full;
+        display: flex;
+        flex-direction: column;
 
-        display: grid;
-        grid-template-columns: subgrid;
-        align-items: center;
+        min-block-size: 0;
 
-        & > * {
-            grid-row: 1;
-            grid-column: tray-start / main-end;
+        overflow-x: hidden;
+        overflow-y: auto;
+
+        /*
+         * A column neither hands the rest of a gesture on to the window nor bounces past its ends: an elastic overscroll
+         * would carry the bars away from the edges they stand at and show the page through where they belong.
+         */
+
+        overscroll-behavior: none;
+
+        scroll-padding-block: var(--clay-shell-head-size) var(--clay-shell-foot-size);
+
+        /*
+         * The bars are painted in the colour the reset hands down from the column, so what passes beneath them is
+         * covered rather than seen through, and they stand above the body as it scrolls.
+         */
+
+        & > header,
+        & > footer {
+
+            position: sticky;
+            z-index: var(--skin--z-index-sticky);
+
+            flex: none;
+
             display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-between;
+            gap: var(--skin--spacing-050);
+
+            white-space: nowrap;
+
+        }
+
+        /* Each end of a bar is a row of its own, so a control sits beside its label rather than under it. */
+
+        & > header > span,
+        & > footer > * {
+            display: flex;
+            flex-direction: row;
             align-items: center;
             gap: var(--skin--spacing-050);
+            min-inline-size: 0;
+        }
+
+        & > header {
+            top: 0;
+            min-block-size: var(--clay-shell-head-size);
+            padding-block: var(--skin--spacing-075);
+        }
+
+        & > section {
+            flex: 1 0 auto;
+        }
+
+        /*
+         * With no rule closing it off, a bar tells that content passes beneath it by letting that content fade out as
+         * it reaches it, rather than stop at an edge: under the header once the column has scrolled away from its top,
+         * over the footer while content runs on below it, and neither where the column has nothing to scroll. Each
+         * column fades its own content, being the box that scrolls it, whatever the other column is doing.
+         *
+         * The fade is a mask on the column making its content transparent, so the page shows through as it is, in any
+         * colour and either scheme, with nothing painted over it: solid under the bars, which stay whole, then clear at
+         * the edge of a bar and back to solid across the depth of the fade, along an eased ramp so that neither end
+         * shows as a line. A strip as wide as a scrollbar at the end of the column is left out of the mask, so the
+         * scrollbar keeps its full height; the gutters keep content clear of it.
+         */
+
+        mask-image:
+            linear-gradient(to bottom,
+                rgb(0 0 0) 0 var(--clay-shell-head-size),
+                rgb(0 0 0 / 0%) var(--clay-shell-head-size),
+                rgb(0 0 0 / 6%) calc(var(--clay-shell-head-size) + 0.2 * var(--clay-shell-fade-top-size)),
+                rgb(0 0 0 / 32%) calc(var(--clay-shell-head-size) + 0.4 * var(--clay-shell-fade-top-size)),
+                rgb(0 0 0 / 68%) calc(var(--clay-shell-head-size) + 0.6 * var(--clay-shell-fade-top-size)),
+                rgb(0 0 0 / 94%) calc(var(--clay-shell-head-size) + 0.8 * var(--clay-shell-fade-top-size)),
+                rgb(0 0 0) calc(var(--clay-shell-head-size) + var(--clay-shell-fade-top-size)),
+                rgb(0 0 0) calc(100% - var(--clay-shell-foot-size) - var(--clay-shell-fade-bottom-size)),
+                rgb(0 0 0 / 94%) calc(100% - var(--clay-shell-foot-size) - 0.8 * var(--clay-shell-fade-bottom-size)),
+                rgb(0 0 0 / 68%) calc(100% - var(--clay-shell-foot-size) - 0.6 * var(--clay-shell-fade-bottom-size)),
+                rgb(0 0 0 / 32%) calc(100% - var(--clay-shell-foot-size) - 0.4 * var(--clay-shell-fade-bottom-size)),
+                rgb(0 0 0 / 6%) calc(100% - var(--clay-shell-foot-size) - 0.2 * var(--clay-shell-fade-bottom-size)),
+                rgb(0 0 0 / 0%) calc(100% - var(--clay-shell-foot-size)),
+                rgb(0 0 0) calc(100% - var(--clay-shell-foot-size)) 100%
+            ),
+            linear-gradient(rgb(0 0 0), rgb(0 0 0));
+
+        mask-size: 100% 100%, 1rem 100%; /* The second layer, the width of a classic scrollbar, keeps it whole. */
+        mask-position: 0 0, 100% 0;
+        mask-repeat: no-repeat;
+
+        /*
+         * Each fade opens over the first stretch of scrolling away from its edge and closes over the last stretch back
+         * to it, following the scroll position of the column itself; a column with nothing to scroll has no timeline,
+         * leaving both fades shut, and where scroll-driven animation is not supported they stay shut as well.
+         */
+
+        @supports (animation-timeline: scroll()) {
+            animation: clay-shell-fade-top linear both, clay-shell-fade-bottom linear both;
+            animation-timeline: scroll(self), scroll(self);
+            animation-range: 0 var(--clay-shell-fade-depth), calc(100% - var(--clay-shell-fade-depth)) 100%;
+        }
+
+        & > footer {
+            bottom: 0;
+            min-block-size: var(--clay-shell-foot-size);
+            padding-block: var(--skin--spacing-050);
+            font-size: var(--skin--font-size-small);
+            color: var(--skin--color-label);
         }
 
     }
 
     /*
-     * The bar stays in view however far the page scrolls, above everything the page holds and painted in the page
-     * colour so what passes under it is covered rather than shown through. The mark keeps to its start and the meta to
-     * its end, both standing in the one cell so either is placed whether the other stands or not.
-     */
-
-    & > header {
-
-        position: sticky;
-        top: 0;
-        z-index: var(--skin--z-index-sticky);
-
-        grid-row: 1;
-        block-size: var(--clay-shell-bar-height);
-
-        border-bottom-style: var(--skin--border-style);
-        background-color: var(--skin--background-color);
-
-        & > :first-child {
-            justify-self: start;
-        }
-
-        & > :last-child {
-            justify-self: end;
-        }
-
-    }
-
-    /*
-     * Below the large viewport the tray stands over the content as a band of its own, closed by a rule and scrolling
-     * away with the page, so a table of contents in it takes a line rather than a column.
+     * The tray is closed off from the content by a rule running the full height of the frame, the bars standing on the
+     * page with no rule of their own, its parts held clear of its edges by its gutter.
      */
 
     & > aside {
 
-        grid-row: 2;
-        grid-column: tray;
+        border-inline-end-style: var(--skin--border-style);
 
-        display: flex;
-        flex-direction: column;
-        gap: var(--skin--spacing-100);
+        & > * {
+            padding-inline: var(--clay-shell-tray-gutter);
+        }
 
-        padding-block: var(--skin--spacing-050);
-        border-bottom-style: var(--skin--border-style);
+        & > section {
+            padding-block: var(--skin--spacing-150);
+        }
 
         /*
-         * The step back is followed rather than snapped to, so a reader who locks the tray sees where it went and a
-         * reader who lets it back in sees it return. What the tray holds is faded rather than the tray itself, so the
-         * place it stands keeps its edge while what the place holds is out of reach, which `inert` settles.
+         * What the tray holds is faded by the locked step, the surface it stands on keeping its place, and the step is
+         * followed rather than snapped to; reach itself is settled by `inert` on the column.
          */
 
         & > * {
             transition-property: opacity;
             transition-duration: var(--skin--duration-normal);
             transition-timing-function: var(--skin--easing-standard);
-        }
-
-        & > footer {
-            font-size: var(--skin--font-size-small);
-            color: var(--skin--color-label);
         }
 
     }
@@ -199,60 +279,34 @@ clay-shell {
 
     & > main {
 
-        /* The column is the box the mark hangs from, which is what places the mark in the row the header is laid in. */
+        /*
+         * Every part of the content column takes the whole of it and holds what it shows to the reading measure,
+         * centred in whatever room the window leaves, so the column, and its scrollbar, reach the edge of the window.
+         * A percentage in a custom property resolves where it is read, so the inset measures the part reading it.
+         */
 
-        position: relative;
+        --clay-shell-main-inset: max(var(--clay-shell-main-gutter), (100% - var(--clay-shell-main-width)) / 2);
 
-        grid-row: 3;
-        grid-column: main;
-
-        display: flex;
-        flex-direction: column;
-
-        min-inline-size: 0;
+        & > * {
+            padding-inline: var(--clay-shell-main-inset);
+        }
 
         /*
-         * The content header lays the heading at its start and the navigation at its end, each a row of its own so a
-         * control sits beside its label rather than under it. It is left out where the screen gave it nothing to show.
+         * The navigation keeps to the end of the header whether a heading stands before it or not; the navigation the
+         * turning mark stands in for is taken off show as well as out of reach, keeping its place in the bar.
          */
 
         & > header {
 
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: var(--skin--spacing-050);
-
-            padding-block-start: var(--skin--spacing-150);
-
-            &:empty {
-                display: none;
-            }
-
-            & > span {
-                display: flex;
-                align-items: center;
-                gap: var(--skin--spacing-050);
-            }
-
-            /* The navigation keeps to the end of the bar whether a heading stands before it or not. */
-
             & > span:not([id]) {
 
-                margin-left: auto;
-
-                /* The control closing the navigation is the one the mark comes to rest over. */
+                margin-inline-start: auto;
 
                 & > :last-child {
                     anchor-name: --clay-shell-tail;
                 }
 
             }
-
-            /*
-             * The navigation the mark stands in for is taken off show as well as out of reach, so the two are never
-             * read as standing one on top of the other, and each keeps its place, holding the header at its height.
-             */
 
             & > span[inert] {
                 visibility: hidden;
@@ -262,15 +316,18 @@ clay-shell {
 
         /*
          * The body stacks the content over the notice closing it, the content taking whatever room the notice leaves,
-         * so short content rests the notice at the bottom of the window and long content pushes it on after it.
+         * so short content rests the notice at the bottom of the body and long content pushes it on after it.
          */
 
         & > section {
 
             display: flex;
             flex-direction: column;
-            flex-grow: 1;
             row-gap: var(--skin--spacing-100);
+
+            /* Content wider than the column, such as a table or a chart, is scrolled across rather than clipped. */
+
+            overflow-x: auto;
 
             & > div {
                 display: flex;
@@ -291,16 +348,12 @@ clay-shell {
         }
 
         /*
-         * The mark hangs over the header row rather than standing in it, so it neither makes a header where there was
-         * none nor adds to the height of one that stands. Over a navigation it comes to rest on the box of the control
-         * closing it; with none, at the end of the row. It answers no gesture and carries no paint of its own.
+         * The turning mark hangs over the end of the content header, centred over the control closing the navigation
+         * where one stands, and answers no gesture. With no header, it sticks to the top of the body instead, taking no
+         * room in it and leaving what the body holds exactly where it stood before.
          */
 
-        & > .busy {
-
-            position: absolute;
-            top: var(--skin--spacing-150);
-            right: 0;
+        & .busy {
 
             display: flex;
             align-items: center;
@@ -308,101 +361,66 @@ clay-shell {
             background-color: transparent;
             pointer-events: none;
 
-            /*
-             * The mark turns for as long as the frame is busy, at twice the slowest step; a reader who asked for less
-             * motion gets a still mark, the duration collapsing to zero with every other.
-             */
-
             & svg {
                 animation: clay-shell-turn calc(2 * var(--skin--duration-slow)) linear infinite;
             }
 
         }
 
-        &:has(> header > span:not([id]) > *) > .busy {
+        & > header > .busy {
+
+            position: absolute;
+            inset-block: 0;
+            inset-inline-end: var(--clay-shell-main-inset);
+
+        }
+
+        & > header:has(> span:not([id]) > *) > .busy {
             position-anchor: --clay-shell-tail;
             position-area: center;
-            top: auto;
-            right: auto;
+            inset: auto;
+        }
+
+        & > .busy {
+            position: sticky;
+            top: 0;
+            z-index: var(--skin--z-index-sticky);
+            align-self: flex-end;
+            block-size: 0;
+            overflow: visible;
+            padding-block-start: var(--skin--spacing-150);
         }
 
     }
 
-    /* A frame showing the content alone gives it the row the tray would have stood in. */
+    /* Content a window never has too much room for takes the whole of the column, the measure being no help to a grid. */
 
-    &[main] > main {
-        grid-row: 2 / 4;
-    }
-
-    /* The foot closes the page across the window, set at the size of a label and closed off by a rule above it. */
-
-    & > footer {
-
-        grid-row: 4;
-
-        padding-block: var(--skin--spacing-100);
-        border-top-style: var(--skin--border-style);
-
-        font-size: var(--skin--font-size-small);
-        color: var(--skin--color-label);
-
-    }
-
-    /* Content a window never has too much room for takes the whole of it, the measure being no help to a grid. */
-
-    &[wide] {
-        --clay-shell-width: 100%;
+    &[wide] > main {
+        --clay-shell-main-inset: var(--clay-shell-main-gutter);
     }
 
 }
 
-/*
- * From the large viewport up the tray stands as a rail beside the content, staying in view under the bar as the page
- * scrolls and scrolling on its own where it runs longer than the window, and the gutters widen with the room.
- */
+@keyframes clay-shell-fade-top {
 
-@container style(--skin--viewport-large: on) {
+    from {
+        --clay-shell-fade-top-size: 0px;
+    }
 
-    clay-shell {
+    to {
+        --clay-shell-fade-top-size: var(--clay-shell-fade-depth);
+    }
 
-        --clay-shell-gutter: var(--skin--spacing-200);
-        --clay-shell-gap: var(--skin--spacing-250);
+}
 
-        --clay-shell-columns:
-            [full-start] minmax(var(--clay-shell-gutter), 1fr)
-            [tray-start] var(--clay-shell-tray-width) [tray-end] var(--clay-shell-gap)
-            [main-start] minmax(0, calc(var(--clay-shell-width) - var(--clay-shell-tray-width) - var(--clay-shell-gap)))
-            [main-end] minmax(var(--clay-shell-gutter), 1fr) [full-end];
+@keyframes clay-shell-fade-bottom {
 
-        & > aside {
+    from {
+        --clay-shell-fade-bottom-size: var(--clay-shell-fade-depth);
+    }
 
-            position: sticky;
-            top: 0;
-            align-self: start;
-
-            max-block-size: 100dvh;
-            overflow-y: auto;
-
-            padding-block: var(--skin--spacing-150);
-            border-bottom-style: none;
-
-        }
-
-        &:has(> header) > aside {
-            top: var(--clay-shell-bar-height);
-            max-block-size: calc(100dvh - var(--clay-shell-bar-height));
-        }
-
-        & > main {
-            grid-row: 2 / 4;
-        }
-
-        /* A frame showing the content alone lets it take the room the rail held. */
-
-        &[main] > main {
-            grid-column: tray-start / main-end;
-        }
-
+    to {
+        --clay-shell-fade-bottom-size: 0px;
     }
 
 }
