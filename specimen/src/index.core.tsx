@@ -132,13 +132,13 @@ export function Page({
 			<Logo/><span class="brand">@metreeca/<strong>clay</strong></span>
 		</Link>}
 
-		meta={<>
+		head={<nav class="packages" aria-label="Packages">
+			<Link active look="subtle" href={`${ClayPath}*`}>Hooks</Link>
+			<Link active look="subtle" href={`${ClayWidgetsPath}*`}>Widgets</Link>
+			<Link active look="subtle" href={`${ClayMarkdownPath}*`}>Markdown</Link>
+		</nav>}
 
-			<nav class="packages" aria-label="Packages">
-				<Link active look="subtle" href={`${ClayPath}*`}>Hooks</Link>
-				<Link active look="subtle" href={`${ClayWidgetsPath}*`}>Widgets</Link>
-				<Link active look="subtle" href={`${ClayMarkdownPath}*`}>Markdown</Link>
-			</nav>
+		menu={<>
 
 			<Button
 				icon={wide ? <Icon.ChevronsRightLeft/> : <Icon.ChevronsLeftRight/>}
