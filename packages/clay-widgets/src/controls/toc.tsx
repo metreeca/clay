@@ -27,7 +27,7 @@ import { useModel } from "@metreeca/clay/model";
 import { opt, type Optional } from "@metreeca/core";
 import { type ComponentChildren, createElement } from "preact";
 import { useEffect } from "preact/hooks";
-import { createToc } from "./toc.core.js";
+import { createToc, type Toc as Outline, type View } from "./toc.core.js";
 import "./toc.css";
 
 
@@ -73,9 +73,16 @@ export interface TocEntry {
  *
  * While the page scrolls, the link whose section the reader is in is marked as the current location, which the design
  * system sets in the strong accent and weight and assistive technology reads as such: the section is the last one, in
- * page order, whose start has been scrolled up to a
- * reading line standing a third of the way down the viewport, so no link is marked above the first section. Only
- * links naming an element on the page by fragment take part; any other link is listed and never marked.
+ * page order, whose start has been scrolled up to a reading line standing a third of the way down the viewport, and
+ * once the page is scrolled to its end, the last one whose start is in view, so a short closing section is still
+ * reached. No link is marked above the first section. Only links naming an element on the page by fragment take part;
+ * any other link is listed and never marked, as it names no section the scroll position could put the reader in.
+ *
+ * A section the reader asks for, by following one of its links or by arriving with a fragment naming it, is marked at
+ * once and stays marked while the page scrolls to it, until the reader scrolls on their own with the wheel, by touch,
+ * with the pointer or from the keyboard. The location fragment follows the section marked in turn, replaced rather
+ * than pushed so that scrolling adds no entries to the history, and cleared above the first section, so a reload or a
+ * shared address lands on the section where the reader stood when the address was taken.
  *
  * From the large viewport up, the outline stands as a column of entries; below it, the outline folds into a single
  * row of its links scrolled across, group labels left out, so it takes one line above the content rather than a column
@@ -111,51 +118,121 @@ export function Toc({
 
 	const sections = targets(entries);
 
-	const { current, follow } = useModel(() => createToc({ sections }), [sections.join(" ")]);
+	const key = sections.join(" ");
+
+	const outline = useModel(() => createToc({ sections }), [key]);
 
 	/*
-	 * The section in view follows the scroll position of the document, which no render owns, so the outline measures
-	 * where each section stands as it mounts and whenever the page scrolls or the viewport is resized; the model
-	 * renders again only once the current section changes, so scrolling within a section costs nothing.
+	 * The section in view follows the scroll position and the location of the document, which no render owns, so the
+	 * outline measures where each section stands as it mounts and whenever the page scrolls or the viewport is
+	 * resized, takes the section the fragment names on arrival and whenever it changes, and lets a chosen section go as
+	 * soon as the reader scrolls on their own; the model renders again only once the current section changes, so
+	 * scrolling within a section costs nothing beyond measuring where the section starts stand.
 	 */
 
 	useEffect(() => {
 
-		const update = () => {
+		/*
+		 * Events arrive between renders, and a transition starts from the state the render it was read from saw, so a
+		 * scroll landing before the render a choice brought would follow the page from before the choice and undo it.
+		 * Each event takes its transition on the outline the previous event left instead, which is the state the next
+		 * render will show, so a choice and the scroll it sets off land in the order they happened.
+		 */
 
-			const line = window.innerHeight * TocLine;
+		let latest = outline; // ;(let) the outline as the events of this subscription have left it
 
-			follow(Object.fromEntries(sections.flatMap(id => {
-
-				const element = document.getElementById(id);
-
-				return element ? [[id, element.getBoundingClientRect().top - line]] : [];
-
-			})));
-
+		const take = (next: Outline) => {
+			latest = next;
+			sync(next);
 		};
 
-		update();
+		const chosen = () => opt(fragment(location.hash), id => latest.sections.includes(id) ? id : undefined);
+
+		const choose = () => opt(chosen(), id => take(latest.select(id)));
+		const update = () => take(latest.follow(view(latest.sections)));
+		const release = () => take(latest.release());
+
+		if ( chosen() === undefined ) {
+			update();
+		} else {
+			choose();
+		}
 
 		window.addEventListener("scroll", update, { passive: true });
 		window.addEventListener("resize", update, { passive: true });
+		window.addEventListener("hashchange", choose);
+
+		Gestures.forEach(gesture => window.addEventListener(gesture, release, { passive: true, capture: true }));
 
 		return () => {
+
 			window.removeEventListener("scroll", update);
 			window.removeEventListener("resize", update);
+			window.removeEventListener("hashchange", choose);
+
+			Gestures.forEach(gesture => window.removeEventListener(gesture, release, { capture: true }));
+
 		};
 
-	}, [follow, sections.join(" ")]);
+	}, [key]); // the outline the subscription starts from is the one created for these sections
 
 
 	return entries.length === 0 ? null : createElement("clay-toc", {}, <nav aria-label={name}>
-		{list(entries, current)}
+		{list(entries, outline.current)}
 	</nav>);
 
 }
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/**
+ * The gestures a reader scrolls the page with, as opposed to the scroll a followed link sets off on its own.
+ */
+const Gestures: readonly (keyof WindowEventMap)[] = ["wheel", "touchmove", "pointerdown", "keydown"];
+
+
+/**
+ * Measures where the sections stand in the viewport, and whether the page has been scrolled to its end.
+ */
+function view(sections: readonly string[]): View {
+
+	const root = document.documentElement;
+
+	return {
+
+		tops: Object.fromEntries(sections.flatMap((id): readonly (readonly [string, number])[] => {
+
+			const element = document.getElementById(id);
+
+			return element ? [[id, element.getBoundingClientRect().top]] : [];
+
+		})),
+
+		line: window.innerHeight * TocLine,
+		height: window.innerHeight,
+
+		// a page with nothing to scroll is at its start as much as at its end, and is read by the reading line
+
+		end: window.scrollY > 0 && window.scrollY + window.innerHeight >= root.scrollHeight - 1
+
+	};
+
+}
+
+/**
+ * Brings the location fragment in step with the section the page puts the reader in, replacing the entry on show so
+ * that scrolling leaves the history alone, and handing the router the state it keeps there unchanged.
+ */
+function sync({ current, pinned }: Outline): void {
+
+	const hash = current === undefined ? "" : `#${encodeURIComponent(current)}`;
+
+	if ( !pinned && location.hash !== hash ) {
+		history.replaceState(history.state, "", `${location.pathname}${location.search}${hash}`);
+	}
+
+}
 
 /**
  * Collects the ids of the sections an outline links to by fragment, in page order.

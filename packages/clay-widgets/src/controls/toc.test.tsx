@@ -17,7 +17,7 @@
 import { render } from "preact";
 import { act } from "preact/test-utils";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { createToc } from "./toc.core.js";
+import { createToc, type View } from "./toc.core.js";
 import { Toc, type TocEntry } from "./toc.js";
 
 
@@ -51,59 +51,141 @@ describe("createToc", () => {
 
 	});
 
+	/**
+	 * A view of a 900 pixel viewport whose reading line stands at 300, the sections starting at the offsets given.
+	 */
+	function view(tops: Readonly<Record<string, number>>, end = false): View {
+		return { tops, line: 300, height: 900, end };
+	}
+
+
 	describe("following", () => {
 
 		const toc = createToc({ sections: ["one", "two", "three"] });
 
 		it("takes the last section scrolled up to the line as current", async () => {
 
-			expect(toc.follow({ one: -400, two: -10, three: 300 }).current).toBe("two");
+			expect(toc.follow(view({ one: -100, two: 290, three: 600 })).current).toBe("two");
 
 		});
 
 		it("takes a section starting exactly on the line as current", async () => {
 
-			expect(toc.follow({ one: -100, two: 0, three: 300 }).current).toBe("two");
+			expect(toc.follow(view({ one: -100, two: 300, three: 600 })).current).toBe("two");
 
 		});
 
 		it("takes no section as current above the first one", async () => {
 
-			expect(toc.follow({ one: 10, two: 300, three: 600 }).current).toBeUndefined();
+			expect(toc.follow(view({ one: 310, two: 600, three: 900 })).current).toBeUndefined();
 
 		});
 
 		it("goes by page order rather than by offset", async () => {
 
-			expect(toc.follow({ one: -10, two: -400, three: 300 }).current).toBe("two");
+			expect(toc.follow(view({ one: 290, two: -100, three: 600 })).current).toBe("two");
 
 		});
 
 		it("never takes a section missing from the page as current", async () => {
 
-			expect(toc.follow({ one: -400, three: 300 }).current).toBe("one");
+			expect(toc.follow(view({ one: -100, three: 600 })).current).toBe("one");
 
 		});
 
 		it("ignores offsets of elements it does not list", async () => {
 
-			expect(toc.follow({ one: 10, stray: -100 }).current).toBeUndefined();
+			expect(toc.follow(view({ one: 310, stray: -100 })).current).toBeUndefined();
 
 		});
 
 		it("yields itself when the current section is unchanged", async () => {
 
-			const scrolled = toc.follow({ one: -10, two: 300 });
+			const scrolled = toc.follow(view({ one: 290, two: 600 }));
 
-			expect(scrolled.follow({ one: -50, two: 260 })).toBe(scrolled);
+			expect(scrolled.follow(view({ one: 250, two: 560 }))).toBe(scrolled);
 
 		});
 
 		it("leaves the outline it was called on as it stands", async () => {
 
-			toc.follow({ one: -10 });
+			toc.follow(view({ one: 290 }));
 
 			expect(toc.current).toBeUndefined();
+
+		});
+
+	});
+
+	describe("following to the end of the page", () => {
+
+		const toc = createToc({ sections: ["one", "two", "three"] });
+
+		it("takes the last section in view as current", async () => {
+
+			expect(toc.follow(view({ one: -400, two: 100, three: 700 }, true)).current).toBe("three");
+
+		});
+
+		it("passes over sections below the viewport", async () => {
+
+			expect(toc.follow(view({ one: -400, two: 100, three: 950 }, true)).current).toBe("two");
+
+		});
+
+		it("goes by the reading line short of the end", async () => {
+
+			expect(toc.follow(view({ one: -400, two: 100, three: 700 })).current).toBe("two");
+
+		});
+
+	});
+
+	describe("choosing", () => {
+
+		const toc = createToc({ sections: ["one", "two", "three"] });
+
+		it("makes the section chosen current and pinned", async () => {
+
+			const chosen = toc.select("three");
+
+			expect(chosen.current).toBe("three");
+			expect(chosen.pinned).toBe(true);
+
+		});
+
+		it("ignores a section it does not list", async () => {
+
+			expect(toc.select("stray")).toBe(toc);
+
+		});
+
+		it("holds the section chosen against the scroll position", async () => {
+
+			const chosen = toc.select("three");
+
+			expect(chosen.follow(view({ one: -400, two: 100, three: 600 }))).toBe(chosen);
+
+		});
+
+		it("follows the page again once released", async () => {
+
+			const released = toc.select("three").release();
+
+			expect(released.pinned).toBe(false);
+			expect(released.follow(view({ one: -400, two: 100, three: 600 })).current).toBe("two");
+
+		});
+
+		it("keeps the section chosen current until the page is followed again", async () => {
+
+			expect(toc.select("three").release().current).toBe("three");
+
+		});
+
+		it("yields itself when released with nothing pinned", async () => {
+
+			expect(toc.release()).toBe(toc);
 
 		});
 
@@ -167,9 +249,34 @@ describe("Toc", () => {
 	}
 
 
+	/**
+	 * Scrolls the 900 pixel viewport to the end of a page 2000 pixels tall.
+	 */
+	function end(): void {
+		vi.spyOn(window, "scrollY", "get").mockReturnValue(1100);
+		vi.spyOn(document.documentElement, "scrollHeight", "get").mockReturnValue(2000);
+	}
+
+	/**
+	 * Follows a link to a section, as the browser does: the fragment changes, then the page scrolls to the section.
+	 */
+	async function follow(fragment: string, tops: Readonly<Record<string, number>>): Promise<void> {
+
+		await act(async () => {
+			history.pushState(history.state, "", fragment);
+			window.dispatchEvent(new HashChangeEvent("hashchange"));
+		});
+
+		await scroll(tops);
+
+	}
+
+
 	afterEach(() => {
 
 		act(() => render(null, document.body));
+
+		history.replaceState(history.state, "", location.pathname);
 
 		vi.restoreAllMocks();
 
@@ -259,6 +366,89 @@ describe("Toc", () => {
 			await mount({ colours: -800, spacing: -400 });
 
 			expect(document.querySelector("clay-toc a[href='/guide']")?.hasAttribute("aria-current")).toBe(false);
+
+		});
+
+		it("marks the last section in view once the page is scrolled to its end", async () => {
+
+			end();
+
+			await mount({ colours: -800, spacing: 500 });
+
+			expect(marked()).toEqual(["Spacing"]);
+
+		});
+
+	});
+
+	describe("choice", () => {
+
+		it("marks the section a followed link names, whatever the scroll position", async () => {
+
+			await mount({ colours: 100, spacing: 800 });
+			await follow("#spacing", { colours: -100, spacing: 600 });
+
+			expect(marked()).toEqual(["Spacing"]);
+
+		});
+
+		it("marks the section the fragment names on arrival", async () => {
+
+			history.replaceState(history.state, "", "#spacing");
+
+			await mount({ colours: 100, spacing: 800 });
+
+			expect(marked()).toEqual(["Spacing"]);
+
+		});
+
+		it("follows the page again once the reader scrolls on their own", async () => {
+
+			await mount({ colours: 100, spacing: 800 });
+			await follow("#spacing", { colours: -100, spacing: 600 });
+
+			await act(async () => { window.dispatchEvent(new Event("wheel")); });
+			await scroll({ colours: -150, spacing: 550 });
+
+			expect(marked()).toEqual(["Colours"]);
+
+		});
+
+	});
+
+	describe("fragment", () => {
+
+		it("follows the section marked as the page scrolls", async () => {
+
+			await mount({ colours: 100, spacing: 800 });
+			await scroll({ colours: -500, spacing: 200 });
+
+			expect(location.hash).toBe("#spacing");
+
+		});
+
+		it("is cleared above the first section", async () => {
+
+			history.replaceState(history.state, "", "#colours");
+
+			await mount({ colours: 100, spacing: 800 });
+
+			await act(async () => { window.dispatchEvent(new Event("wheel")); });
+			await scroll({ colours: 400, spacing: 1100 });
+
+			expect(location.hash).toBe("");
+
+		});
+
+		it("adds no entries to the history", async () => {
+
+			await mount({ colours: 100, spacing: 800 });
+
+			const entries = history.length;
+
+			await scroll({ colours: -500, spacing: 200 });
+
+			expect(history.length).toBe(entries);
 
 		});
 
