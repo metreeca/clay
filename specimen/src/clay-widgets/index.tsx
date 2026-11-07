@@ -24,6 +24,11 @@ import { Page, type Sample } from "@metreeca/specimen/index.core.js";
 import { Boxes } from "@metreeca/specimen/clay-widgets/boxes.js";
 import { Buttons } from "@metreeca/specimen/clay-widgets/buttons.js";
 import { Cards } from "@metreeca/specimen/clay-widgets/cards.js";
+import { Choices } from "@metreeca/specimen/clay-widgets/choices.js";
+import { Contents } from "@metreeca/specimen/clay-widgets/contents.js";
+import { Guards } from "@metreeca/specimen/clay-widgets/guards.js";
+import { Hints } from "@metreeca/specimen/clay-widgets/hints.js";
+import { Sections } from "@metreeca/specimen/clay-widgets/sections.js";
 import { Icons } from "@metreeca/specimen/clay-widgets/icons.js";
 import { Infos } from "@metreeca/specimen/clay-widgets/infos.js";
 import { Layouts } from "@metreeca/specimen/clay-widgets/layouts.js";
@@ -44,22 +49,27 @@ const samples: readonly Sample[] = [
 	{ id: "icons", group: "Glyphs", title: "Icons", view: <Icons/> },
 	{ id: "logos", group: "Glyphs", title: "Logos", view: <Logos/> },
 
-	{ id: "buttons", group: "Controls", title: "Buttons", view: <Buttons/> },
-	{ id: "triggers", group: "Controls", title: "Triggers", view: <Triggers/> },
-	{ id: "paths", group: "Controls", title: "Paths", view: <Paths/> },
-	{ id: "notes", group: "Controls", title: "Notes", view: <Notes/> },
-
-	{ id: "shell", group: "Layouts", title: "Shell", view: <Shells/> },
-	{ id: "tabs", group: "Layouts", title: "Tabs", view: <Tabbed/> },
-	{ id: "stack", group: "Layouts", title: "Stack", view: <Stacks/> },
-	{ id: "strip", group: "Layouts", title: "Strip", view: <Strips/> },
-	{ id: "box", group: "Layouts", title: "Box", view: <Boxes/> },
-	{ id: "layout", group: "Layouts", title: "Layout", view: <Layouts/> },
-
 	{ id: "info", group: "Content", title: "Info", view: <Infos/> },
 	{ id: "card", group: "Content", title: "Card", view: <Cards/> },
+	{ id: "notes", group: "Content", title: "Notes", view: <Notes/> },
+	{ id: "hint", group: "Content", title: "Hint", view: <Hints/> },
+	{ id: "toast", group: "Content", title: "Toast", view: <Toasts/> },
+	{ id: "guard", group: "Content", title: "Guard", view: <Guards/> },
 	{ id: "style", group: "Content", title: "Style", view: <Styles/> },
-	{ id: "toast", group: "Content", title: "Toast", view: <Toasts/> }
+
+	{ id: "buttons", group: "Controls", title: "Buttons", view: <Buttons/> },
+	{ id: "choice", group: "Controls", title: "Choice", view: <Choices/> },
+	{ id: "triggers", group: "Controls", title: "Triggers", view: <Triggers/> },
+	{ id: "paths", group: "Controls", title: "Paths", view: <Paths/> },
+	{ id: "contents", group: "Controls", title: "Table of Contents", view: <Contents/> },
+
+	{ id: "box", group: "Layouts", title: "Box", view: <Boxes/> },
+	{ id: "stack", group: "Layouts", title: "Stack", view: <Stacks/> },
+	{ id: "strip", group: "Layouts", title: "Strip", view: <Strips/> },
+	{ id: "layout", group: "Layouts", title: "Layout", view: <Layouts/> },
+	{ id: "tabs", group: "Layouts", title: "Tabs", view: <Tabbed/> },
+	{ id: "section", group: "Layouts", title: "Section", view: <Sections/> },
+	{ id: "shell", group: "Layouts", title: "Shell", view: <Shells/> }
 
 ];
 

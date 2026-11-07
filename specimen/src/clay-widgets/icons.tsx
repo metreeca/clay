@@ -21,9 +21,8 @@
  */
 
 import { Icon } from "@metreeca/clay-widgets/icon";
-import { type Entry, Samples } from "@metreeca/specimen/sample";
+import { type Entry } from "@metreeca/specimen/sample";
 import { css, skin } from "@metreeca/skin";
-import { Fragment } from "preact";
 import "./icons.css";
 
 
@@ -164,50 +163,54 @@ export function Icons() {
 
 		<h3>Roles</h3>
 
-		<dl class="areas">{areas.map(([ area, marks ]) => <Fragment key={area}>
+		<div class="icon-areas">{areas.map(([ area, marks ]) => <section key={area}>
 
-			<dt>{area}</dt>
+			<h4>{area}</h4>
 
-			<dd class="glyphs">{marks.map(([ name, Mark ]) =>
-				<span key={name}><Mark/> <code>{name}</code></span>
-			)}</dd>
+			<div class="icon-tiles">{marks.map(([ name, Mark ]) =>
+				<figure key={name} class="icon-tile">
+					<span><Mark/></span>
+					<figcaption>{name}</figcaption>
+				</figure>
+			)}</div>
 
-		</Fragment>)}</dl>
+		</section>)}</div>
 
 		<h3>Size</h3>
 
 		<p>A glyph is drawn at <code>{skin.scaling100}</code>, so it rides with the text around it; any other step of
-			the ladder is a size stated on purpose.</p>
+			the ladder is a size stated on purpose. Hover a step for what it is meant for.</p>
 
-		<Samples entries={scalings} sample={property =>
-			<Icon.Rocket style={{ width: css.var(property), height: css.var(property) }}/>
-		}/>
+		<ol class="icon-band">{scalings.map(([ property, note ]) =>
+			<li key={property} title={note} class={property === skin.scaling100 ? "icon-default" : undefined}>
+				<span><Icon.Rocket style={{ width: css.var(property), height: css.var(property) }}/></span>
+				<code>{property.slice(-3)}</code>
+			</li>
+		)}</ol>
 
 		<h3>Stroke</h3>
 
 		<p>Every glyph is stroked at <code>{skin.strokeWidth}</code>, in user units of the icon viewport, so the weight
 			holds whatever size the glyph is drawn at.</p>
 
-		<div class="glyphs">{strokes.map(width =>
-			<span key={width}>
-				<Icon.Alert style={{
-
-					width: css.var(skin.scaling200),
-					height: css.var(skin.scaling200),
-					strokeWidth: width
-
-				}}/>{" "}<code>{width}</code>
-			</span>
-		)}</div>
+		<ol class="icon-band">{strokes.map(width =>
+			<li key={width} class={width === 2 ? "icon-default" : undefined}>
+				<span><Icon.Alert style={{ width: css.var(skin.scaling200), height: css.var(skin.scaling200), strokeWidth: width }}/></span>
+				<code>{width}</code>
+			</li>
+		)}</ol>
 
 		<h3>Colour</h3>
 
 		<p>A glyph strokes <code>currentColor</code>, so it takes the colour of whatever it sits in and matches its
 			label through every state.</p>
 
-		<Samples entries={tints} sample={property =>
-			<Icon.Alert style={{ color: css.var(property) }}/>
-		}/>
+		<div class="icon-tiles wide">{tints.map(([ property, note ]) =>
+			<figure key={property} class="icon-tile" style={{ color: css.var(property) }}>
+				<span><Icon.Alert/></span>
+				<figcaption><code>{property.replace(/^--skin--/, "")}</code><small>{note}</small></figcaption>
+			</figure>
+		)}</div>
 
 	</>;
 }
