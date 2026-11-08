@@ -14,20 +14,21 @@
  * limitations under the License.
  */
 
+import { type Optional } from "@metreeca/core";
 import { render } from "preact";
 import { act } from "preact/test-utils";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { createToc, type View } from "./toc.core.js";
-import { Toc, type TocEntry } from "./toc.js";
+import { createTOC, type TOCMetrics } from "./toc.core.js";
+import { TOC, type TOCEntry } from "./toc.js";
 
 
-describe("createToc", () => {
+describe("createTOC", () => {
 
 	describe("creation", () => {
 
 		it("lists no section by default", async () => {
 
-			const toc = createToc();
+			const toc = createTOC();
 
 			expect(toc.sections).toEqual([]);
 			expect(toc.current).toBeUndefined();
@@ -36,7 +37,7 @@ describe("createToc", () => {
 
 		it("lists the sections given, in order, with none current", async () => {
 
-			const toc = createToc({ sections: ["one", "two", "three"] });
+			const toc = createTOC({ sections: ["one", "two", "three"] });
 
 			expect(toc.sections).toEqual(["one", "two", "three"]);
 			expect(toc.current).toBeUndefined();
@@ -45,71 +46,71 @@ describe("createToc", () => {
 
 		it("removes duplicate sections, keeping the first occurrence", async () => {
 
-			expect(createToc({ sections: ["one", "two", "one"] }).sections).toEqual(["one", "two"]);
+			expect(createTOC({ sections: ["one", "two", "one"] }).sections).toEqual(["one", "two"]);
 
 		});
 
 	});
 
 	/**
-	 * A view of a 900 pixel viewport whose reading line stands at 300, the sections starting at the offsets given.
+	 * The metrics of a 900 pixel viewport whose reading line stands at 300, the sections starting at the offsets given.
 	 */
-	function view(tops: Readonly<Record<string, number>>, end = false): View {
-		return { tops, line: 300, height: 900, end };
+	function metrics(tops: Readonly<Record<string, number>>, end = false): TOCMetrics {
+		return { tops, height: 900, end };
 	}
 
 
 	describe("following", () => {
 
-		const toc = createToc({ sections: ["one", "two", "three"] });
+		const toc = createTOC({ sections: ["one", "two", "three"] });
 
 		it("takes the last section scrolled up to the line as current", async () => {
 
-			expect(toc.follow(view({ one: -100, two: 290, three: 600 })).current).toBe("two");
+			expect(toc.scroll(metrics({ one: -100, two: 290, three: 600 })).current).toBe("two");
 
 		});
 
 		it("takes a section starting exactly on the line as current", async () => {
 
-			expect(toc.follow(view({ one: -100, two: 300, three: 600 })).current).toBe("two");
+			expect(toc.scroll(metrics({ one: -100, two: 300, three: 600 })).current).toBe("two");
 
 		});
 
 		it("takes no section as current above the first one", async () => {
 
-			expect(toc.follow(view({ one: 310, two: 600, three: 900 })).current).toBeUndefined();
+			expect(toc.scroll(metrics({ one: 310, two: 600, three: 900 })).current).toBeUndefined();
 
 		});
 
 		it("goes by page order rather than by offset", async () => {
 
-			expect(toc.follow(view({ one: 290, two: -100, three: 600 })).current).toBe("two");
+			expect(toc.scroll(metrics({ one: 290, two: -100, three: 600 })).current).toBe("two");
 
 		});
 
 		it("never takes a section missing from the page as current", async () => {
 
-			expect(toc.follow(view({ one: -100, three: 600 })).current).toBe("one");
+			expect(toc.scroll(metrics({ one: -100, three: 600 })).current).toBe("one");
 
 		});
 
 		it("ignores offsets of elements it does not list", async () => {
 
-			expect(toc.follow(view({ one: 310, stray: -100 })).current).toBeUndefined();
+			expect(toc.scroll(metrics({ one: 310, stray: -100 })).current).toBeUndefined();
 
 		});
 
 		it("yields itself when the current section is unchanged", async () => {
 
-			const scrolled = toc.follow(view({ one: 290, two: 600 }));
+			const scrolled = toc.scroll(metrics({ one: 290, two: 600 }));
 
-			expect(scrolled.follow(view({ one: 250, two: 560 }))).toBe(scrolled);
+			expect(scrolled.scroll(metrics({ one: 250, two: 560 }))).toBe(scrolled);
 
 		});
 
 		it("leaves the outline it was called on as it stands", async () => {
 
-			toc.follow(view({ one: 290 }));
+			toc.scroll(metrics({ one: 290 }));
 
 			expect(toc.current).toBeUndefined();
 
@@ -119,23 +120,23 @@ describe("createToc", () => {
 
 	describe("following to the end of the page", () => {
 
-		const toc = createToc({ sections: ["one", "two", "three"] });
+		const toc = createTOC({ sections: ["one", "two", "three"] });
 
 		it("takes the last section in view as current", async () => {
 
-			expect(toc.follow(view({ one: -400, two: 100, three: 700 }, true)).current).toBe("three");
+			expect(toc.scroll(metrics({ one: -400, two: 100, three: 700 }, true)).current).toBe("three");
 
 		});
 
 		it("passes over sections below the viewport", async () => {
 
-			expect(toc.follow(view({ one: -400, two: 100, three: 950 }, true)).current).toBe("two");
+			expect(toc.scroll(metrics({ one: -400, two: 100, three: 950 }, true)).current).toBe("two");
 
 		});
 
 		it("goes by the reading line short of the end", async () => {
 
-			expect(toc.follow(view({ one: -400, two: 100, three: 700 })).current).toBe("two");
+			expect(toc.scroll(metrics({ one: -400, two: 100, three: 700 })).current).toBe("two");
 
 		});
 
@@ -143,7 +144,7 @@ describe("createToc", () => {
 
 	describe("choosing", () => {
 
-		const toc = createToc({ sections: ["one", "two", "three"] });
+		const toc = createTOC({ sections: ["one", "two", "three"] });
 
 		it("makes the section chosen current and pinned", async () => {
 
@@ -164,7 +165,7 @@ describe("createToc", () => {
 
 			const chosen = toc.select("three");
 
-			expect(chosen.follow(view({ one: -400, two: 100, three: 600 }))).toBe(chosen);
+			expect(chosen.scroll(metrics({ one: -400, two: 100, three: 600 }))).toBe(chosen);
 
 		});
 
@@ -173,7 +174,7 @@ describe("createToc", () => {
 			const released = toc.select("three").release();
 
 			expect(released.pinned).toBe(false);
-			expect(released.follow(view({ one: -400, two: 100, three: 600 })).current).toBe("two");
+			expect(released.scroll(metrics({ one: -400, two: 100, three: 600 })).current).toBe("two");
 
 		});
 
@@ -193,9 +194,9 @@ describe("createToc", () => {
 
 });
 
-describe("Toc", () => {
+describe("TOC", () => {
 
-	const entries: readonly TocEntry[] = [
+	const entries: readonly TOCEntry[] = [
 		{
 			label: "Foundations", entries: [
 				{ label: "Colours", href: "#colours" },
@@ -209,13 +210,13 @@ describe("Toc", () => {
 	 * Mounts the outline beside the sections it names, each starting at the offset below the top of the viewport given
 	 * for it; the reading line stands a third of the way down the 900 pixel viewport, at 300.
 	 */
-	async function mount(tops: Readonly<Record<string, number>> = {}, outline: readonly TocEntry[] = entries): Promise<void> {
+	async function mount(tops: Readonly<Record<string, number>> = {}, outline: readonly TOCEntry[] = entries): Promise<void> {
 
 		vi.spyOn(window, "innerHeight", "get").mockReturnValue(900);
 
 		act(() => render(<>
 			{Object.keys(tops).map(id => <h2 key={id} id={id}>{id}</h2>)}
-			<Toc name="Contents" entries={outline}/>
+			<TOC name="Contents" entries={outline}/>
 		</>, document.body));
 
 		await scroll(tops);
@@ -289,7 +290,7 @@ describe("Toc", () => {
 
 			await mount();
 
-			expect(document.querySelector("clay-toc > nav")?.getAttribute("aria-label")).toBe("Contents");
+			expect(document.querySelector("clay-toc nav")?.getAttribute("aria-label")).toBe("Contents");
 
 		});
 
@@ -300,7 +301,7 @@ describe("Toc", () => {
 			expect(Array.from(document.querySelectorAll("clay-toc li"), item => item.firstElementChild?.textContent))
 				.toEqual(["Foundations", "Colours", "Spacing", "Guide"]);
 
-			expect(document.querySelectorAll("clay-toc > nav > ul > li > ul > li")).toHaveLength(2);
+			expect(document.querySelectorAll("clay-toc nav > ul > li > ul > li")).toHaveLength(2);
 
 		});
 
@@ -317,7 +318,7 @@ describe("Toc", () => {
 
 			await mount();
 
-			const label = document.querySelector("clay-toc > nav > ul > li > :first-child");
+			const label = document.querySelector("clay-toc nav > ul > li > :first-child");
 
 			expect(label?.localName).toBe("span");
 			expect(label?.textContent).toBe("Foundations");
@@ -329,6 +330,84 @@ describe("Toc", () => {
 			await mount({}, []);
 
 			expect(document.querySelector("clay-toc")).toBeNull();
+
+		});
+
+	});
+
+	describe("folding", () => {
+
+		function details(): Optional<HTMLDetailsElement> {
+			return document.querySelector<HTMLDetailsElement>("clay-toc > details") ?? undefined;
+		}
+
+		function summary(): Optional<string> {
+			return document.querySelector("clay-toc > details > summary")?.textContent ?? undefined;
+		}
+
+		async function toggle(open: boolean): Promise<void> {
+			await act(async () => {
+				const element = details();
+				if ( element ) {
+					element.open = open;
+					element.dispatchEvent(new Event("toggle"));
+				}
+			});
+		}
+
+
+		it("wraps the navigation landmark in a disclosure", async () => {
+
+			await mount();
+
+			expect(document.querySelector("clay-toc > details > summary + nav")).not.toBeNull();
+
+		});
+
+		it("starts folded", async () => {
+
+			await mount();
+
+			expect(details()?.open).toBe(false);
+
+		});
+
+		it("sums up the folded outline with the section the reader is in", async () => {
+
+			await mount({ colours: 100, spacing: 400 });
+
+			expect(summary()).toBe("Colours");
+
+		});
+
+		it("sums up the folded outline with its name above the first section", async () => {
+
+			await mount({ colours: 400, spacing: 800 });
+
+			expect(summary()).toBe("Contents");
+
+		});
+
+		it("stays unfolded as the page scrolls", async () => {
+
+			await mount({ colours: 100, spacing: 800 });
+			await toggle(true);
+			await scroll({ colours: -500, spacing: 200 });
+
+			expect(details()?.open).toBe(true);
+
+		});
+
+		it("folds once the reader follows one of its links", async () => {
+
+			await mount({ colours: 100, spacing: 800 });
+			await toggle(true);
+
+			await act(async () => {
+				document.querySelector<HTMLAnchorElement>("clay-toc a[href='#spacing']")?.click();
+			});
+
+			expect(details()?.open).toBe(false);
 
 		});
 
@@ -393,7 +472,7 @@ describe("Toc", () => {
 				<div id="box" style={{ overflowY: "auto", scrollPaddingTop: "60px" }}>
 					{Object.keys(tops).map(id => <h2 key={id} id={id}>{id}</h2>)}
 				</div>
-				<Toc name="Contents" entries={entries}/>
+				<TOC name="Contents" entries={entries}/>
 			</>, document.body));
 
 			const box = document.getElementById("box");
@@ -436,7 +515,7 @@ describe("Toc", () => {
 						{["colours", "spacing"].map(id => <h2 key={id} id={id}>{id}</h2>)}
 					</div>
 				</div>
-				<Toc name="Contents" entries={entries}/>
+				<TOC name="Contents" entries={entries}/>
 			</>, document.body));
 
 			const box = document.getElementById("box");

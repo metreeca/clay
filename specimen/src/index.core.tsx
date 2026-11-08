@@ -32,7 +32,7 @@ import { Link } from "@metreeca/clay-widgets/link";
 import { Logo } from "@metreeca/clay-widgets/logo";
 import { Section } from "@metreeca/clay-widgets/section";
 import { Shell } from "@metreeca/clay-widgets/shell";
-import { Toc, type TocEntry } from "@metreeca/clay-widgets/toc";
+import { TOC, type TOCEntry } from "@metreeca/clay-widgets/toc";
 import { useFetch } from "@metreeca/clay/fetch";
 import { useStorage } from "@metreeca/clay/storage";
 import { type ComponentChildren } from "preact";
@@ -160,7 +160,7 @@ export function Page({
 
 		</>}
 
-		tray={<Toc name="Sections" entries={outline(samples)}/>}
+		tray={<TOC name="Sections" entries={outline(samples)}/>}
 
 		info={user
 
@@ -208,7 +208,7 @@ export function Page({
 /**
  * Groups the sections of a page into the outline listing them, in the order the page holds them.
  */
-function outline(samples: readonly Sample[]): readonly TocEntry[] {
+function outline(samples: readonly Sample[]): readonly TOCEntry[] {
 
 	const groups = [...new Set(samples.map(({ group }) => group))];
 

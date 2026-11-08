@@ -38,8 +38,8 @@ export function Contents() {
 
 		<p>Following one of its links marks that section at once and holds it while the page scrolls there, until the
 			reader scrolls on their own. The location fragment follows the section marked, replaced rather than pushed,
-			so a reload or a shared address lands where the reader stood. Below the large viewport the outline folds into
-			a single row of links over the content.</p>
+			so a reload or a shared address lands where the reader stood. Below the large viewport the outline folds behind
+			a single line naming the section the reader is in, and unfolds on demand.</p>
 
 		<p>The Markdown page renders the outline of a document through the same widget.</p>
 

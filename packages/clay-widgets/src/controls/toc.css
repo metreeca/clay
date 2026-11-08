@@ -16,44 +16,30 @@
 
 /*
  * The outline is a navigation landmark of nested lists, which the design system sets as an outline like any other on
- * the page, current entry included, so this sheet only lays its element out: a column of entries from the large
- * viewport up, and below it a single row of links scrolled across, standing as one line over the content.
+ * the page, current entry included, inside a disclosure folding it behind a single line on smaller viewports.
  */
 
 clay-toc {
+
     display: block;
+
 }
 
 /*
- * Across a row the links stand side by side, so the lists and their items step out of the way and the links become the
- * items of the row; a group label names a column of entries, which a row has none of, so it is left out of view. The
- * links take room to either side in place of the line gap the column gives them.
+ * From the large viewport up the whole column fits, so the summary steps out of view and the entries always show.
  */
 
-@container style(--skin--viewport-large: off) {
+@container style(--skin--viewport-large: on) {
 
-    clay-toc > nav {
+    clay-toc > details {
 
-        overflow-x: auto;
-
-        & > ul {
-            display: flex;
-            gap: var(--skin--spacing-025);
-            margin: 0;
-        }
-
-        & li, & li > ul {
-            display: contents;
-        }
-
-        & li > span {
+        & > summary {
             display: none;
         }
 
-        & li > a {
-            flex: none;
-            padding: var(--skin--spacing-025) var(--skin--spacing-050);
-            white-space: nowrap;
+        &::details-content {
+            content-visibility: visible;
+            display: contents;
         }
 
     }

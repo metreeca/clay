@@ -319,9 +319,9 @@ describe("Markdown", () => {
 
 			mount("# A\n\n## B\n\n### C\n\n## D\n\n# E", "toc");
 
-			expect(texts("clay-toc > nav > ul > li > a")).toEqual(["A", "E"]);
-			expect(texts("clay-toc > nav > ul > li > ul > li > a")).toEqual(["B", "D"]);
-			expect(texts("clay-toc > nav > ul > li > ul > li > ul > li > a")).toEqual(["C"]);
+			expect(texts("clay-toc nav > ul > li > a")).toEqual(["A", "E"]);
+			expect(texts("clay-toc nav > ul > li > ul > li > a")).toEqual(["B", "D"]);
+			expect(texts("clay-toc nav > ul > li > ul > li > ul > li > a")).toEqual(["C"]);
 
 		});
 
@@ -329,8 +329,8 @@ describe("Markdown", () => {
 
 			mount("## A\n\n# B\n\n### C", "toc");
 
-			expect(texts("clay-toc > nav > ul > li > a")).toEqual(["A", "B"]);
-			expect(texts("clay-toc > nav > ul > li > ul > li > a")).toEqual(["C"]);
+			expect(texts("clay-toc nav > ul > li > a")).toEqual(["A", "B"]);
+			expect(texts("clay-toc nav > ul > li > ul > li > a")).toEqual(["C"]);
 
 		});
 
@@ -387,7 +387,7 @@ describe("Markdown", () => {
 
 			act(() => render(createElement(Markdown, { meta: "toc", name: "Contents", children: "# A" }), document.body));
 
-			expect(attributes("clay-toc > nav", "aria-label")).toEqual(["Contents"]);
+			expect(attributes("clay-toc nav", "aria-label")).toEqual(["Contents"]);
 
 		});
 
@@ -395,7 +395,7 @@ describe("Markdown", () => {
 
 			mount("# A", "toc");
 
-			expect(document.querySelector("clay-toc > nav")?.hasAttribute("aria-label")).toBe(false);
+			expect(document.querySelector("clay-toc nav")?.hasAttribute("aria-label")).toBe(false);
 
 		});
 

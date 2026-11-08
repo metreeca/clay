@@ -25,17 +25,10 @@
 
 import { useModel } from "@metreeca/clay/model";
 import { opt, type Optional } from "@metreeca/core";
-import { type ComponentChildren, createElement } from "preact";
+import { type ComponentChildren, createElement, type JSX } from "preact";
 import { useEffect } from "preact/hooks";
-import { createToc, type Toc as Outline, type View } from "./toc.core.js";
+import { createTOC, type TOC as Outline, type TOCMetrics } from "./toc.core.js";
 import "./toc.css";
-
-
-/**
- * The share of the viewport height, from its top, where the reading line stands: a section becomes current once its
- * start is scrolled up to the line, and stays current until the start of the next one is.
- */
-export const TocLine = 1 / 3;
 
 
 /**
@@ -43,7 +36,7 @@ export const TocLine = 1 / 3;
  *
  * Either a link to a section, or a group label gathering the entries under it without leading anywhere itself.
  */
-export interface TocEntry {
+export interface TOCEntry {
 
 	/**
 	 * What the entry reads as.
@@ -59,10 +52,12 @@ export interface TocEntry {
 	/**
 	 * The entries nested under this one, in page order; none if omitted.
 	 */
-	readonly entries?: readonly TocEntry[]
+	readonly entries?: readonly TOCEntry[]
 
 }
 
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /**
  * Creates a table of contents.
@@ -84,9 +79,9 @@ export interface TocEntry {
  * than pushed so that scrolling adds no entries to the history, and cleared above the first section, so a reload or a
  * shared address lands on the section where the reader stood when the address was taken.
  *
- * From the large viewport up, the outline stands as a column of entries; below it, the outline folds into a single
- * row of its links scrolled across, group labels left out, so it takes one line above the content rather than a column
- * beside it, and every link stays reachable by pointer and keyboard alike in either form.
+ * From the large viewport up, the outline stands as a column of entries; below it, the outline folds behind a single
+ * line naming the section the reader is in, or the outline itself above the first section, and unfolds into the same
+ * column on demand, folding again as soon as one of its links is followed, so it takes one line above the content.
  *
  * The outline follows the box its sections scroll in, whatever lays the page out: the nearest scrolling ancestor of
  * the first section on the page, such as the content column of a {@link @metreeca/clay-widgets!shell.Shell shell}, or
@@ -97,7 +92,7 @@ export interface TocEntry {
  *
  * @returns The table of contents, or nothing for an empty outline
  */
-export function Toc({
+export function TOC({
 
 	name,
 
@@ -106,15 +101,15 @@ export function Toc({
 }: {
 
 	/**
-	 * The accessible name of the outline, such as `Contents`, setting it apart from the other navigation landmarks on
-	 * the page; unnamed if omitted, as befits a page holding no other navigation landmark.
+	 * The accessible name of the outline, such as `Contents`, telling it apart from other navigation landmarks and
+	 * naming the folded outline above the first section; unnamed if omitted, for a page with no other such landmark.
 	 */
 	name?: string
 
 	/**
 	 * The entries of the outline, in page order.
 	 */
-	entries: readonly TocEntry[]
+	entries: readonly TOCEntry[]
 
 }) {
 
@@ -122,7 +117,7 @@ export function Toc({
 
 	const key = sections.join(" ");
 
-	const outline = useModel(() => createToc({ sections }), [key]);
+	const outline = useModel(() => createTOC({ sections }), [key]);
 
 	/*
 	 * The section in view follows the scroll position and the location of the document, which no render owns, so the
@@ -148,72 +143,59 @@ export function Toc({
 			sync(next);
 		};
 
-		const chosen = () => opt(fragment(location.hash), id => latest.sections.includes(id) ? id : undefined);
+		// a fragment naming no section is left alone, as it may lead anywhere else on the page
 
-		const choose = () => opt(chosen(), id => take(latest.select(id)));
-		const update = () => take(latest.follow(view(latest.sections)));
+		const select = () => opt(fragment(location.hash), id => latest.sections.includes(id) ? take(latest.select(id)) : undefined);
+		const scroll = () => take(latest.scroll(metrics(latest.sections)));
 		const release = () => take(latest.release());
 
-		if ( chosen() === undefined ) {
-			update();
-		} else {
-			choose();
-		}
+		// a section the fragment names on arrival is pinned, and following the page leaves a pinned section alone
+
+		select();
+		scroll();
 
 		/*
 		 * A box scrolling sends its event to itself alone, which the capture phase on the document hears on the way
 		 * down; the document scrolling sends its own on to the window, where it is heard as well. Following twice lands
 		 * where following once does, so the page scrolling heard on both costs nothing.
-		 */
-
-		document.addEventListener("scroll", update, { passive: true, capture: true });
-		window.addEventListener("scroll", update, { passive: true });
-		window.addEventListener("resize", update, { passive: true });
-
-		/*
+		 *
 		 * Sections moving without a scroll, as the page settles its styles, fonts and images after mounting or grows
 		 * under the reader, move the reading line across them all the same, so the outline follows their sizes too.
+		 *
+		 * The reader scrolling on their own, with the wheel, by touch, with the pointer or from the keyboard, as opposed
+		 * to the scroll a followed link sets off, releases the section chosen.
 		 */
 
-		const settle = typeof ResizeObserver === "undefined" ? undefined : new ResizeObserver(() => {
-			if ( !latest.pinned ) { update(); }
-		});
+		const stops = [
 
-		latest.sections.forEach(id => opt(document.getElementById(id) ?? undefined, element => settle?.observe(element)));
-		window.addEventListener("hashchange", choose);
+			listen(document, "scroll", scroll, { passive: true, capture: true }),
+			listen(window, "scroll", scroll, { passive: true }),
+			listen(window, "resize", scroll, { passive: true }),
 
-		Gestures.forEach(gesture => window.addEventListener(gesture, release, { passive: true, capture: true }));
+			observe(latest.sections, scroll),
 
-		return () => {
+			listen(window, "hashchange", select),
 
-			settle?.disconnect();
+			...["wheel", "touchmove", "pointerdown", "keydown"].map(gesture =>
+				listen(window, gesture, release, { passive: true, capture: true })
+			)
 
-			document.removeEventListener("scroll", update, { capture: true });
-			window.removeEventListener("scroll", update);
-			window.removeEventListener("resize", update);
-			window.removeEventListener("hashchange", choose);
+		];
 
-			Gestures.forEach(gesture => window.removeEventListener(gesture, release, { capture: true }));
-
-		};
+		return () => stops.forEach(stop => stop());
 
 	}, [key]); // the outline the subscription starts from is the one created for these sections
 
 
-	return entries.length === 0 ? null : createElement("clay-toc", {}, <nav aria-label={name}>
-		{list(entries, outline.current)}
-	</nav>);
+	return entries.length === 0 ? null : createElement("clay-toc", {}, <details>
+		<summary>{opt(outline.current, id => caption(entries, id)) ?? name}</summary>
+		<nav aria-label={name}>{list(entries, outline.current)}</nav>
+	</details>);
 
 }
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-/**
- * The gestures a reader scrolls the page with, as opposed to the scroll a followed link sets off on its own.
- */
-const Gestures: readonly (keyof WindowEventMap)[] = ["wheel", "touchmove", "pointerdown", "keydown"];
-
 
 /**
  * Measures where the sections stand in the part of their scrolling box left in view, and whether the box has been
@@ -222,35 +204,28 @@ const Gestures: readonly (keyof WindowEventMap)[] = ["wheel", "touchmove", "poin
  * The box is the nearest scrolling ancestor of the first section on the page, or the document where none scrolls; the
  * part left in view stops short of its scroll padding, which is where whatever stands over the box is accounted for.
  */
-function view(sections: readonly string[]): View {
+function metrics(sections: readonly string[]): TOCMetrics {
 
-	const elements = sections.flatMap((id): readonly (readonly [string, HTMLElement])[] => {
-
-		const element = document.getElementById(id);
-
-		return element ? [[id, element]] : [];
-
-	});
-	const box = opt(elements[0]?.[1], scroller);
+	const elements = sections.flatMap(id => opt(document.getElementById(id) ?? undefined, element => [{ id, element }], []));
+	const box = opt(elements[0]?.element, scroller);
 
 	const root = document.documentElement;
 	const style = getComputedStyle(box ?? root);
 
-	const start = parseFloat(style.scrollPaddingTop) || 0; // ;(NaN) `auto` pads nothing
-	const end = parseFloat(style.scrollPaddingBottom) || 0;
+	const paddingTop = parseFloat(style.scrollPaddingTop) || 0; // ;(NaN) `auto` pads nothing
+	const paddingBottom = parseFloat(style.scrollPaddingBottom) || 0;
 
-	const top = (box ? box.getBoundingClientRect().top : 0) + start;
-	const client = box ? box.clientHeight : window.innerHeight;
-	const scrolled = box ? box.scrollTop : window.scrollY;
-	const total = box ? box.scrollHeight : root.scrollHeight;
+	const { offset, client, scrolled, total } = box
+		? { offset: box.getBoundingClientRect().top, client: box.clientHeight, scrolled: box.scrollTop, total: box.scrollHeight }
+		: { offset: 0, client: window.innerHeight, scrolled: window.scrollY, total: root.scrollHeight };
 
-	const height = client - start - end;
+	const origin = offset + paddingTop;
+	const height = client - paddingTop - paddingBottom;
 
 	return {
 
-		tops: Object.fromEntries(elements.map(([id, element]) => [id, element.getBoundingClientRect().top - top])),
+		tops: Object.fromEntries(elements.map(({ id, element }) => [id, element.getBoundingClientRect().top - origin])),
 
-		line: height * TocLine,
 		height,
 
 		// a box with nothing to scroll is at its start as much as at its end, and is read by the reading line
@@ -281,6 +256,34 @@ function scroller(element: Element): Optional<HTMLElement> {
 }
 
 /**
+ * Subscribes a listener to an event target.
+ *
+ * @returns A function unsubscribing `listener`
+ */
+function listen(target: EventTarget, type: string, listener: () => void, options?: AddEventListenerOptions): () => void {
+
+	target.addEventListener(type, listener, options);
+
+	return () => target.removeEventListener(type, listener, options);
+
+}
+
+/**
+ * Subscribes a listener to the resizing of the sections on the page, where the platform reports it.
+ *
+ * @returns A function unsubscribing `listener`
+ */
+function observe(sections: readonly string[], listener: () => void): () => void {
+
+	const observer = typeof ResizeObserver === "undefined" ? undefined : new ResizeObserver(listener);
+
+	sections.forEach(id => opt(document.getElementById(id) ?? undefined, element => observer?.observe(element)));
+
+	return () => observer?.disconnect();
+
+}
+
+/**
  * Brings the location fragment in step with the section the page puts the reader in, replacing the entry on show so
  * that scrolling leaves the history alone, and handing the router the state it keeps there unchanged.
  */
@@ -297,31 +300,47 @@ function sync({ current, pinned }: Outline): void {
 /**
  * Collects the ids of the sections an outline links to by fragment, in page order.
  */
-function targets(entries: readonly TocEntry[]): readonly string[] {
-	return entries.flatMap(({ href, entries }) => [...opt(fragment(href), id => [id], []), ...targets(entries ?? [])]);
+function targets(entries: readonly TOCEntry[]): readonly string[] {
+	return entries.flatMap(({ href, entries = [] }) => [fragment(href), ...targets(entries)]).filter(id => id !== undefined);
 }
 
+/**
+ * Extracts the id a link names by fragment, or `undefined` for a link leading elsewhere or nowhere.
+ */
 function fragment(href: Optional<string>): Optional<string> {
 	return href?.startsWith("#") && href.length > 1 ? decodeURIComponent(href.slice(1)) : undefined;
 }
 
-function list(entries: readonly TocEntry[], current: Optional<string>): ComponentChildren {
-	return <ul>{entries.map((entry, index) => item(entry, index, current))}</ul>;
-}
 
-function item({ label, href, entries }: TocEntry, index: number, current: Optional<string>): ComponentChildren {
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	const id = fragment(href);
-
-	return <li key={href ?? index}>
+function list(entries: readonly TOCEntry[], current: Optional<string>): ComponentChildren {
+	return <ul>{entries.map(({ label, href, entries = [] }, index) => <li key={href ?? index}>
 
 		{href === undefined
 			? <span>{label}</span>
-			: <a href={href} aria-current={id !== undefined && id === current ? "location" : undefined}>{label}</a>
+			: <a href={href} aria-current={current !== undefined && fragment(href) === current ? "location" : undefined}
+				onClick={fold}
+			>{label}</a>
 		}
 
-		{entries && entries.length > 0 && list(entries, current)}
+		{entries.length > 0 && list(entries, current)}
 
-	</li>;
+	</li>)}</ul>;
+}
 
+/**
+ * Finds the label of the entry linking to a section, searching the entries in page order.
+ */
+function caption(entries: readonly TOCEntry[], id: string): ComponentChildren {
+	return entries.reduce<ComponentChildren>((found, entry) =>
+		found ?? (fragment(entry.href) === id ? entry.label : caption(entry.entries ?? [], id)), undefined
+	);
+}
+
+/**
+ * Folds the outline a followed link belongs to, so the section it leads to is not left under the unfolded entries.
+ */
+function fold({ currentTarget }: JSX.TargetedMouseEvent<HTMLAnchorElement>): void {
+	currentTarget.closest("details")?.removeAttribute("open");
 }

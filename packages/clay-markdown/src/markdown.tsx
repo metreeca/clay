@@ -23,7 +23,7 @@
  * @module
  */
 
-import { Toc, type TocEntry } from "@metreeca/clay-widgets/toc";
+import { TOC, type TOCEntry } from "@metreeca/clay-widgets/toc";
 import type { Element, Root as Tree } from "hast";
 import { headingRank } from "hast-util-heading-rank";
 import { toJsxRuntime } from "hast-util-to-jsx-runtime";
@@ -117,7 +117,8 @@ export interface Meta {
  *   lists linking each to the matching heading, set as the design system sets any outline, so it reads as quiet
  *   navigation beside the document; nothing at all for a text without headings. While the document is on the page,
  *   the entry of the last heading scrolled into the top third of the viewport is marked as the current location, and
- *   followed as the reader scrolls, so the outline shows where they stand; no entry is marked above the first heading
+ *   followed as the reader scrolls, so the outline shows where they stand; no entry is marked above the first heading.
+ *   Below the large viewport the outline folds behind a single line naming the section the reader is in
  * - **front matter**: the values the YAML front matter declares, the text itself left unrendered
  *
  * Links to Markdown files are rewritten to the route serving them, `guide.md` to `guide` and `index.md` to the folder
@@ -154,8 +155,8 @@ export function Markdown({
 	meta?: "toc" | string | ((meta: Meta) => ComponentChildren)
 
 	/**
-	 * The accessible name of the table of contents, such as `Contents`, setting it apart from the other navigation
-	 * landmarks on the page; unnamed if omitted, as befits a page holding no other one, and ignored in other modes.
+	 * The accessible name of the table of contents, such as `Contents`, telling it apart from other navigation landmarks
+	 * and naming the folded outline above the first heading; unnamed if omitted, and ignored in other modes.
 	 */
 	name?: string
 
@@ -251,7 +252,7 @@ function outline(tree: Tree, name: string | undefined): ComponentChildren {
 
 	const sections = nest(headings(tree));
 
-	return sections.length > 0 ? <Toc name={name} entries={contents(sections)}/> : null;
+	return sections.length > 0 ? <TOC name={name} entries={contents(sections)}/> : null;
 
 }
 
@@ -277,7 +278,7 @@ function nest(headings: readonly Element[], level: number = 1): readonly Section
 /**
  * Turns sections into the entries of a table of contents, each linking to its heading by the id the document gives it.
  */
-function contents(sections: readonly Section[]): readonly TocEntry[] {
+function contents(sections: readonly Section[]): readonly TOCEntry[] {
 	return sections.map(({ heading, nested }) => ({
 		label: render({ type: "root", children: heading.children }),
 		href: `#${String(heading.properties.id)}`,

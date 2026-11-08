@@ -30,32 +30,13 @@ import { createState } from "@metreeca/core/state";
 
 
 /**
- * Where the page stands in the viewport, as an outline follows it.
+ * The share of the viewport height, from its top, where the reading line stands: a section becomes current once its
+ * start is scrolled up to the line, and stays current until the start of the next one is.
  */
-export interface View {
+const Line = 1/3;
 
-	/**
-	 * The distance of each section start below the top of the viewport, keyed by section id, negative for a start
-	 * scrolled above it; a section missing from the record is taken as not on the page, and never becomes current.
-	 */
-	readonly tops: Readonly<Record<string, number>>;
 
-	/**
-	 * The distance of the reading line below the top of the viewport.
-	 */
-	readonly line: number;
-
-	/**
-	 * The height of the viewport.
-	 */
-	readonly height: number;
-
-	/**
-	 * Whether the page has been scrolled to its end, leaving the sections below the reading line no way to reach it.
-	 */
-	readonly end: boolean;
-
-}
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /**
  * Headless table of contents.
@@ -73,7 +54,7 @@ export interface View {
  * A transition yields a new outline and leaves this one as it stands. One that changes nothing yields this outline
  * itself, which a rendering layer takes as nothing to redraw, so scrolling within a section costs no render.
  */
-export interface Toc {
+export interface TOC {
 
 	/**
 	 * The ids of the elements opening the sections, in page order, unique.
@@ -92,14 +73,14 @@ export interface Toc {
 
 
 	/**
-	 * Follows the page to where it now stands.
+	 * Follows the page to where the reader has scrolled it.
 	 *
-	 * @param view Where the page stands in the viewport
+	 * @param metrics Where the page stands in the viewport
 	 *
-	 * @returns An outline whose current section is the one `view` puts the reader in, or this outline itself if that
-	 * section is already current or if the current section is pinned, which no position of the page overrides
+	 * @returns An outline whose current section is the one `metrics` puts the reader in, or this outline itself if
+	 * that section is already current or if the current section is pinned, which no position of the page overrides
 	 */
-	follow(view: View): this;
+	scroll(metrics: TOCMetrics): this;
 
 	/**
 	 * Chooses a section, as the reader does by following a link to it.
@@ -114,10 +95,33 @@ export interface Toc {
 	/**
 	 * Releases a chosen section, as the reader does by scrolling on their own.
 	 *
-	 * @returns An outline following the page again from the next {@link Toc.follow follow}, or this outline itself if
-	 * no section is pinned; the section released stays current until the page is followed again
+	 * @returns An outline following the page again from the next {@link TOC.scroll scroll}, or this outline itself if
+	 * no section is pinned; the section released stays current until the page is scrolled again
 	 */
 	release(): this;
+
+}
+
+/**
+ * Where the page stands in the viewport, as an outline follows it.
+ */
+export interface TOCMetrics {
+
+	/**
+	 * The distance of each section start below the top of the viewport, keyed by section id, negative for a start
+	 * scrolled above it; a section missing from the record is taken as not on the page, and never becomes current.
+	 */
+	readonly tops: Readonly<Record<string, number>>;
+
+	/**
+	 * The height of the viewport; the reading line stands a third of the way down from its top.
+	 */
+	readonly height: number;
+
+	/**
+	 * Whether the page has been scrolled to its end, leaving the sections below the reading line no way to reach it.
+	 */
+	readonly end: boolean;
 
 }
 
@@ -129,11 +133,11 @@ export interface Toc {
  *
  * @param options The outline configuration
  *
- * @returns An immutable {@link Toc} listing `sections`, with no section current or pinned
+ * @returns An immutable {@link TOC} listing `sections`, with no section current or pinned
  */
-export function createToc({
+export function createTOC({
 
-	sections
+	sections = []
 
 }: {
 
@@ -143,30 +147,28 @@ export function createToc({
 	 */
 	sections?: readonly string[]
 
-} = {}): Toc {
+} = {}): TOC {
 
-	const ids: readonly string[] = sections === undefined ? [] : unique(sections);
+	return createState<TOC>({
 
-	return createState<Toc>({
-
-		sections: ids,
+		sections: unique(sections),
 		current: undefined,
 		pinned: false,
 
 
-		follow({ tops, line, height, end }: View) {
+		scroll({ tops, height, end }: TOCMetrics) {
 
 			// at the end of the page the sections below the line can't reach it, so the edge of the viewport stands in
 
-			const limit = end ? height : line;
+			const limit = end ? height : height*Line;
 
-			return this.pinned ? {} : { current: ids.filter(id => (tops[id] ?? Infinity) <= limit).at(-1) };
+			return this.pinned ? {} : { current: this.sections.filter(id => (tops[id] ?? Infinity) <= limit).at(-1) };
 
 		},
 
 		select(id: string) {
 
-			return ids.includes(id) ? { current: id, pinned: true } : {};
+			return this.sections.includes(id) ? { current: id, pinned: true } : {};
 
 		},
 
