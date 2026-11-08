@@ -15,7 +15,7 @@
  */
 
 /**
- * Preact widgets and layouts.
+ * Preact interface components.
  *
  * Provides the defaults a widget's controls observe, and the attribute values and event handlers it builds out of
  * state, so a control offers the surface the platform already carries without restating it. The widgets themselves

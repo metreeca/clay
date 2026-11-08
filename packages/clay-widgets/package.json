@@ -1,7 +1,7 @@
 {
   "name": "@metreeca/clay-widgets",
   "version": "0.1.0",
-  "description": "Preact widgets and layouts for @metreeca/clay.",
+  "description": "Preact interface components for @metreeca/clay.",
   "keywords": [
     "typescript",
     "preact",

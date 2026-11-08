@@ -22,16 +22,16 @@ npm install @metreeca/clay-<package>  # one per package the app takes up
 > TypeScript consumers must use `"moduleResolution": "nodenext"/"node16"/"bundler"` in `tsconfig.json`.
 > The legacy `"node"` resolver is not supported.
 
-Add the widgets and layouts the app's screens need, each from its own package, with the peer dependencies it lists.
+Add the interface components the app's screens need, each from its own package, with the peer dependencies it lists.
 
 An app brands the [@metreeca/skin] stylesheet by overriding its tokens: its
 [theming guide](https://github.com/metreeca/skin#theming) covers colours, faces, spacing and every other token family.
 
-| Package                   | Description         |
-|---------------------------|---------------------|
-| [@metreeca/clay]          | Contexts and hooks  |
-| [@metreeca/clay-widgets]  | Widgets and layouts |
-| [@metreeca/clay-markdown] | Markdown documents  |
+| Package                   | Description          |
+|---------------------------|----------------------|
+| [@metreeca/clay]          | Contexts and hooks   |
+| [@metreeca/clay-widgets]  | Interface components |
+| [@metreeca/clay-markdown] | Markdown documents   |
 
 [@metreeca/skin]: https://metreeca.github.io/skin/
 

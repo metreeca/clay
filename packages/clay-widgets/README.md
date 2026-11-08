@@ -2,13 +2,13 @@
 
 [![npm](https://img.shields.io/npm/v/@metreeca/clay-widgets)](https://www.npmjs.com/package/@metreeca/clay-widgets)
 
-Preact widgets and layouts for [@metreeca/clay](https://github.com/metreeca/clay).
+Preact interface components for [@metreeca/clay](https://github.com/metreeca/clay).
 
-The widgets and layouts an interface is assembled from: buttons, links and icons, the app logo, text runs, labels and
-captioned images, notices and placeholders, breadcrumb trails and incremental loading triggers, a frame for the whole
-screen, stacks, strips and cards optionally set on surfaces of their own, tabs, property panels, transient notices and
-failure boundaries. A custom widget built on the shared class and keyboard helpers, and marked with the same role-named
-glyphs, behaves and looks like the stock ones without restating their keyboard handling or visual vocabulary.
+The components an interface is assembled from: buttons, links and icons, the app logo, text runs, labels and captioned
+images, notices and placeholders, breadcrumb trails and incremental loading triggers, a frame for the whole screen,
+stacks, strips and cards optionally set on surfaces of their own, tabs, property panels, transient notices and failure
+boundaries. A custom widget built on the shared class and keyboard helpers, and marked with the same role-named glyphs,
+behaves and looks like the stock ones without restating their keyboard handling or visual vocabulary.
 
 Styling is structural only: what a widget needs to work, with colour, type and spacing left to
 [@metreeca/skin](https://github.com/metreeca/skin) or to whoever styles the app.
