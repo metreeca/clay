@@ -21,7 +21,6 @@
  */
 
 import { Page, type Sample } from "@metreeca/specimen/index.core.js";
-import { Boxes } from "@metreeca/specimen/clay-widgets/boxes.js";
 import { Buttons } from "@metreeca/specimen/clay-widgets/buttons.js";
 import { Cards } from "@metreeca/specimen/clay-widgets/cards.js";
 import { Choices } from "@metreeca/specimen/clay-widgets/choices.js";
@@ -39,6 +38,7 @@ import { Shells } from "@metreeca/specimen/clay-widgets/shells.js";
 import { Stacks } from "@metreeca/specimen/clay-widgets/stacks.js";
 import { Strips } from "@metreeca/specimen/clay-widgets/strips.js";
 import { Styles } from "@metreeca/specimen/clay-widgets/styles.js";
+import { Surfaces } from "@metreeca/specimen/clay-widgets/surfaces.js";
 import { Tabbed } from "@metreeca/specimen/clay-widgets/tabbed.js";
 import { Toasts } from "@metreeca/specimen/clay-widgets/toasts.js";
 import { Triggers } from "@metreeca/specimen/clay-widgets/triggers.js";
@@ -63,7 +63,7 @@ const samples: readonly Sample[] = [
 	{ id: "paths", group: "Controls", title: "Paths", view: <Paths/> },
 	{ id: "contents", group: "Controls", title: "Table of Contents", view: <Contents/> },
 
-	{ id: "box", group: "Layouts", title: "Box", view: <Boxes/> },
+	{ id: "surfaces", group: "Layouts", title: "Surfaces", view: <Surfaces/> },
 	{ id: "stack", group: "Layouts", title: "Stack", view: <Stacks/> },
 	{ id: "strip", group: "Layouts", title: "Strip", view: <Strips/> },
 	{ id: "layout", group: "Layouts", title: "Layout", view: <Layouts/> },

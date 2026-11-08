@@ -14,13 +14,12 @@
  * limitations under the License.
  */
 
-import { css, type Tokens } from "@metreeca/skin";
 import { type JSX, render } from "preact";
 import { describe, expect, it } from "vitest";
-import { Box } from "./box.js";
+import { Panel } from "./panel.js";
 
 
-describe("Box", () => {
+describe("Panel", () => {
 
 	const rendered = (element: JSX.Element): null | HTMLElement => {
 
@@ -28,31 +27,20 @@ describe("Box", () => {
 
 		render(element, container);
 
-		return container.querySelector<HTMLElement>(":scope > clay-box");
+		return container.querySelector<HTMLElement>(":scope > clay-panel");
 
 	};
 
 
-	it("renders what it holds inside a box", () => {
+	it("renders what it holds inside a panel", async () => {
 
-		expect(rendered(<Box><p>held</p></Box>)?.innerHTML).toBe("<p>held</p>");
-
-	});
-
-	it("assigns the tokens it is given to its box", () => {
-
-		const tokens: Tokens = { padding: "spacing100", backgroundColor: "backgroundColorRaised" };
-		const style = Object.entries(css(tokens));
-
-		const box = rendered(<Box css={tokens}/>);
-
-		expect(style.map(([ property ]) => [ property, box?.style.getPropertyValue(property) ])).toEqual(style);
+		expect(rendered(<Panel><p>held</p></Panel>)?.innerHTML).toBe("<p>held</p>");
 
 	});
 
-	it("assigns nothing when given no tokens", () => {
+	it("takes its look from the design system alone", async () => {
 
-		expect(rendered(<Box/>)?.getAttribute("style")).toBeNull();
+		expect(rendered(<Panel><p>held</p></Panel>)?.getAttribute("style")).toBeNull();
 
 	});
 

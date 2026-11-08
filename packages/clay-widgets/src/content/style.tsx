@@ -42,10 +42,10 @@ import "./style.css";
  *
  * The area takes no box of its own, so what it holds sits in the row, the grid or the flow around it exactly as it
  * would without the wrapper. Having no box, it takes nothing from the box tokens, `padding`, `borderRadius` and
- * `boxShadow`: an area to be padded, rounded or lifted is a {@link box!Box box} instead. Being an element all the
- * same, it stands between what it holds and whatever encloses that: a rule reaching its children by `> *`,
- * `:first-child` or `:nth-child()` stops at the area, and a screen styling what it holds that way reaches for a class
- * instead.
+ * `boxShadow`: an area set apart on a surface of its own is a {@link panel!Panel panel} or a {@link well!Well well}
+ * instead, retuned by a styled area around it. Being an element all the same, it stands between what it holds and
+ * whatever encloses that: a rule reaching its children by `> *`, `:first-child` or `:nth-child()` stops at the area,
+ * and a screen styling what it holds that way reaches for a class on those children instead.
  *
  * @param options The widget configuration
  *

@@ -23,21 +23,14 @@
 import { Button } from "@metreeca/clay-widgets/button";
 import { Icon } from "@metreeca/clay-widgets/icon";
 import { Link } from "@metreeca/clay-widgets/link";
-import { Box } from "@metreeca/clay-widgets/box";
+import { Panel } from "@metreeca/clay-widgets/panel";
 import { Stack } from "@metreeca/clay-widgets/stack";
 import { Strip } from "@metreeca/clay-widgets/strip";
-import { type Tokens } from "@metreeca/skin";
+import { Well } from "@metreeca/clay-widgets/well";
 import "./index.css";
 
 
 const here = "/clay-widgets/layout";
-
-const raised: Tokens = {
-	backgroundColor: "backgroundColorRaised",
-	boxShadow: "boxShadowRaised",
-	borderRadius: "borderRadius050",
-	padding: "spacing100"
-};
 
 const seasons: ReadonlyArray<readonly [string, string]> = [
 	[ "Spring", "Days lengthen, and the first leaves open." ],
@@ -50,59 +43,59 @@ const seasons: ReadonlyArray<readonly [string, string]> = [
 /**
  * Creates the layout section.
  *
- * Shows a screen assembled from boxes, stacks and strips alone, with no layout rule written for it: a bar setting its
- * title apart from its actions, a sidebar keeping its settings at the bottom, and a wrapping row of cards.
+ * Shows a screen assembled from surfaces, stacks and strips alone, with no layout rule written for it: a bar setting
+ * its title apart from its actions, a sidebar keeping its settings at the bottom, and a wrapping row of tiles.
  *
  * @returns The layout section
  */
 export function Layouts() {
 	return <>
 
-		<p>Boxes, stacks and strips compose into a whole screen with no layout rule written for it. The bar is a raised
-			box holding a strip that sets the title apart from the actions (<code>place="head"</code>). Below it, a
-			strip stretching its items sets a sidebar beside the content: the sidebar is a box as tall as the content it
-			stands beside, and the stack it holds fills it, keeping its settings at the
-			bottom (<code>place="tail"</code>). The content is a wrapping strip of cards, each a box stretched to the tallest
-			in its row, holding a stack that keeps its action at the bottom, pushed to the end by a strip of its
-			own (<code>place="end"</code>).</p>
+		<p>Surfaces, stacks and strips compose into a whole screen with no layout rule written for it. The screen sits
+			in a well, and the bar is a panel holding a strip that sets the title apart from the
+			actions (<code>place="head"</code>). Below it, a strip stretching its items sets a sidebar beside the
+			content: the sidebar is a panel as tall as the content it stands beside, and the stack it holds fills it,
+			keeping its settings at the bottom (<code>place="tail"</code>). The content is a wrapping strip of tiles,
+			each a panel stretched to the tallest in its row, holding a stack that keeps its action at the bottom,
+			pushed to the end by a strip of its own (<code>place="end"</code>).</p>
 
-		<Box css={{ backgroundColor: "backgroundColorSunken", borderRadius: "borderRadius050", padding: "spacing100" }}>
+		<Well>
 			<Stack space="spacing100">
 
-				<Box css={raised}>
+				<Panel>
 					<Strip place="head" align="center" space="spacing050">
 						<strong>Seasons</strong>
 						<Button icon={<Icon.Create/>} label="New"/>
 						<Button look="strong" mode="commit" icon={<Icon.Save/>} label="Save"/>
 					</Strip>
-				</Box>
+				</Panel>
 
 				<Strip align="stretch" space="spacing150">
 
-					<Box css={raised}>
+					<Panel>
 						<Stack place="tail" space="spacing050">
 							<Link look="subtle" href={here}>Overview</Link>
 							<Link look="subtle" href={here}>Calendar</Link>
 							<Link look="subtle" href={here}>Archive</Link>
 							<Link look="subtle" href={here}>Settings</Link>
 						</Stack>
-					</Box>
+					</Panel>
 
 					<Strip grow wrap align="stretch" space="spacing100">{seasons.map(([ season, text ]) =>
 
-						<Box key={season} css={raised}>
+						<Panel key={season}>
 							<Stack place="tail" space="spacing050">
 								<strong>{season}</strong>
 								<span>{text}</span>
 								<Strip place="end"><Button icon={<Icon.Update/>} label="Edit"/></Strip>
 							</Stack>
-						</Box>
+						</Panel>
 					)}</Strip>
 
 				</Strip>
 
 			</Stack>
-		</Box>
+		</Well>
 
 	</>;
 }

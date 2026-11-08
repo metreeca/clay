@@ -97,13 +97,21 @@
       "@metreeca/source": "./src/controls/toc.css",
       "default": "./dist/controls/toc.css"
     },
-    "./box": {
-      "@metreeca/source": "./src/layouts/box.tsx",
-      "default": "./dist/layouts/box.js"
+    "./panel": {
+      "@metreeca/source": "./src/layouts/panel.tsx",
+      "default": "./dist/layouts/panel.js"
     },
-    "./box.css": {
-      "@metreeca/source": "./src/layouts/box.css",
-      "default": "./dist/layouts/box.css"
+    "./panel.css": {
+      "@metreeca/source": "./src/layouts/panel.css",
+      "default": "./dist/layouts/panel.css"
+    },
+    "./well": {
+      "@metreeca/source": "./src/layouts/well.tsx",
+      "default": "./dist/layouts/well.js"
+    },
+    "./well.css": {
+      "@metreeca/source": "./src/layouts/well.css",
+      "default": "./dist/layouts/well.css"
     },
     "./section": {
       "@metreeca/source": "./src/layouts/section.tsx",

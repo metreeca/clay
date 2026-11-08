@@ -23,7 +23,7 @@
  * @module
  */
 
-import { Box } from "@metreeca/clay-widgets/box";
+import { Panel } from "@metreeca/clay-widgets/panel";
 import { type ComponentChildren } from "preact";
 import "./index.css";
 
@@ -31,8 +31,7 @@ import "./index.css";
 /**
  * Creates a set of items.
  *
- * Draws each label as a raised card, so the items read apart from one another and from the frame around them whatever
- * the colour scheme.
+ * Draws each label on a raised panel, so the items read apart from each other and from the frame in either scheme.
  *
  * @param options The widget configuration
  *
@@ -41,19 +40,14 @@ import "./index.css";
 export function Items({ labels }: {
 
 	/**
-	 * The label of each item, one card per label.
+	 * The label of each item, one panel per label.
 	 */
 	labels: ReadonlyArray<string>
 
 }) {
 	return <>{labels.map(label =>
 
-		<Box key={label} css={{
-			backgroundColor: "backgroundColorRaised",
-			boxShadow: "boxShadowRaised",
-			borderRadius: "borderRadius025",
-			padding: "spacing050"
-		}}>{label}</Box>
+		<Panel key={label}><span>{label}</span></Panel>
 	)}</>;
 }
 
