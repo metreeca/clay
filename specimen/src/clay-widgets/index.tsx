@@ -97,12 +97,6 @@ export function ClayWidgets() {
 			this page is a live widget, laid out in the very shell it documents.
 		</>}
 
-		facts={[
-			[samples.length, "sections"],
-			[new Set(samples.map(({ group }) => group)).size, "groups"],
-			[2, "colour schemes"]
-		]}
-
 		samples={samples}
 
 	/>;

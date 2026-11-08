@@ -62,11 +62,6 @@ export interface Sample {
 
 }
 
-/**
- * A figure stated in the opening of a package page, and what it counts.
- */
-export type Fact = readonly [number, string]
-
 
 const schemes = { auto: "System", light: "Light", dark: "Dark" };
 
@@ -78,8 +73,8 @@ type Scheme = keyof typeof schemes
 /**
  * Creates a package page.
  *
- * Opens the page with what the package is and the figures it is measured by, lists every section in the outline of
- * the tray under the group it belongs to, and sets the sections one after the other, each opened by its heading group.
+ * Opens the page with what the package is, lists every section in the outline of the tray under the group it belongs
+ * to, and sets the sections one after the other, each opened by its heading group.
  *
  * @param options The page configuration
  *
@@ -90,7 +85,6 @@ export function Page({
 	eyebrow,
 	title,
 	lead,
-	facts = [],
 	samples
 
 }: {
@@ -98,7 +92,6 @@ export function Page({
 	eyebrow: string
 	title: string
 	lead: ComponentChildren
-	facts?: readonly Fact[]
 	samples: readonly Sample[]
 
 }) {
@@ -190,13 +183,7 @@ export function Page({
 
 	>
 
-		<Section eyebrow={eyebrow} title={title} lead={lead}>
-
-			{facts.length > 0 && <ul class="facts">{facts.map(([value, label]) =>
-				<li key={label}><strong>{value}</strong><span>{label}</span></li>
-			)}</ul>}
-
-		</Section>
+		<Section eyebrow={eyebrow} title={title} lead={lead}/>
 
 		{samples.map(({ id, group, title, lead, view }) =>
 			<Section key={id} id={id} eyebrow={group} title={title} lead={lead}>{view}</Section>

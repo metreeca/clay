@@ -61,12 +61,6 @@ export function Clay() {
 			draws its own way. Every sample below draws its own markup over the same hooks the widgets use.
 		</>}
 
-		facts={[
-			[samples.length, "sections"],
-			[0, "rendered elements"],
-			[1, "shared client"]
-		]}
-
 		samples={samples}
 
 	/>;

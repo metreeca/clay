@@ -55,41 +55,6 @@
 
 }
 
-/* The figures opening a page, each a tile ruled in the strong accent on the stripe ground. */
-
-.facts {
-
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(8rem, 1fr)); /* The narrowest fact tile. */
-    gap: var(--skin--spacing-100);
-    margin: var(--skin--spacing-150) 0 0;
-    padding: 0;
-    list-style: none;
-
-    & > li {
-
-        display: flex;
-        flex-direction: column;
-        margin: 0;
-        padding: var(--skin--spacing-075) var(--skin--spacing-100);
-        border-inline-start: calc(3 * var(--skin--border-width)) var(--skin--border-style) var(--skin--color-strong);
-        background-color: var(--skin--background-color-stripe);
-
-        & > strong {
-            font-family: var(--skin--font-family-heading);
-            font-size: var(--skin--scaling-200);
-            line-height: var(--skin--line-height-display);
-        }
-
-        & > span {
-            font-size: var(--skin--font-size-small);
-            color: var(--skin--color-label);
-        }
-
-    }
-
-}
-
 /*
  * A row of samples stands in a framed panel, rounded and ruled, so the widgets it holds read against a surface of
  * their own; the panel keeps clear of the prose before and after it, as a figure does.
