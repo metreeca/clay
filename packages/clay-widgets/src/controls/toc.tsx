@@ -50,6 +50,12 @@ export interface TOCEntry {
 	readonly href?: string
 
 	/**
+	 * The browsing context the entry opens its location in, such as `_blank` for a screen of its own in a new tab,
+	 * which leaves the page holding the outline in place; the current one if omitted.
+	 */
+	readonly target?: string
+
+	/**
 	 * The entries nested under this one, in page order; none if omitted.
 	 */
 	readonly entries?: readonly TOCEntry[]
@@ -84,7 +90,7 @@ export interface TOCEntry {
  * column on demand, folding again as soon as one of its links is followed, so it takes one line above the content.
  *
  * The outline follows the box its sections scroll in, whatever lays the page out: the nearest scrolling ancestor of
- * the first section on the page, such as the content column of a {@link @metreeca/clay-widgets!shell.Shell shell}, or
+ * the first section on the page, such as the content column of a {@link @metreeca/clay-widgets!tool.Tool tool}, or
  * the document where no ancestor scrolls. The reading line and the end of the page are measured on the part of that
  * box left in view, short of its scroll padding, so a header standing over the box is not counted as room to read in.
  *
@@ -336,7 +342,7 @@ function fragment(href: Optional<string>): Optional<string> {
  * folds share that name, so only one is open at a time, and a fold opens while it holds the section the reader is in.
  */
 function list(entries: readonly TOCEntry[], current: Optional<string>, accordion?: string): ComponentChildren {
-	return <ul>{entries.map(({ label, href, entries = [] }, index) => <li key={href ?? index}>
+	return <ul>{entries.map(({ label, href, target, entries = [] }, index) => <li key={href ?? index}>
 
 		{accordion !== undefined && href === undefined && entries.length > 0
 
@@ -349,7 +355,7 @@ function list(entries: readonly TOCEntry[], current: Optional<string>, accordion
 
 				{href === undefined
 					? <span>{label}</span>
-					: <a href={href} aria-current={current !== undefined && fragment(href) === current ? "location" : undefined}
+					: <a href={href} target={target} aria-current={current !== undefined && fragment(href) === current ? "location" : undefined}
 						onClick={({ currentTarget }) => currentTarget.closest("clay-toc > details")?.removeAttribute("open")}
 					>{label}</a>
 				}

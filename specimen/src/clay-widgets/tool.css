@@ -1,0 +1,90 @@
+/*
+ * Copyright © 2023-2026 Metreeca srl
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/*
+ * The schema draws the frame in miniature, the tray beside the content and each a header over a body over a footer,
+ * with every slot standing where the shell sets it, so the table below it is read against a picture of the screen.
+ */
+
+.schema {
+
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 3fr);
+    grid-template-rows: minmax(0, 1fr) auto;
+
+    block-size: 18rem;
+    margin-block: var(--skin--spacing-100) var(--skin--spacing-150);
+
+    border-style: var(--skin--border-style);
+    border-radius: var(--skin--border-radius-075);
+    overflow: hidden;
+
+    font-size: var(--skin--font-size-small);
+
+    /* Each column stacks its bars around a body taking whatever room they leave. */
+
+    & > div {
+
+        display: flex;
+        flex-direction: column;
+        min-inline-size: 0;
+
+        &:first-child {
+            border-inline-end-style: var(--skin--border-style);
+        }
+
+    }
+
+    /* The bars are set apart from the body by the stripe, as the frosted bars of the shell stand over its content. */
+
+    & header,
+    & footer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: var(--skin--spacing-050);
+        padding: var(--skin--spacing-050);
+        background-color: var(--skin--background-color-stripe);
+    }
+
+    /* The body of the content column rests the closing notice at its bottom, as the shell does with short content. */
+
+    & section {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: flex-start;
+        padding: var(--skin--spacing-050);
+    }
+
+    /* A slot reads as a dashed placeholder, an alternative standing in it after a slash. */
+
+    & code {
+        padding-inline: var(--skin--spacing-050);
+        border-style: dashed;
+        border-radius: var(--skin--border-radius-025);
+        white-space: nowrap;
+    }
+
+    & figcaption {
+        grid-column: 1 / -1;
+        padding: var(--skin--spacing-050);
+        border-block-start-style: var(--skin--border-style);
+        color: var(--skin--color-label);
+    }
+
+}

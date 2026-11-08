@@ -97,13 +97,13 @@
       "@metreeca/source": "./src/controls/toc.css",
       "default": "./dist/controls/toc.css"
     },
-    "./shell": {
-      "@metreeca/source": "./src/layouts/shell.tsx",
-      "default": "./dist/layouts/shell.js"
+    "./tool": {
+      "@metreeca/source": "./src/shells/tool.tsx",
+      "default": "./dist/shells/tool.js"
     },
-    "./shell.css": {
-      "@metreeca/source": "./src/layouts/shell.css",
-      "default": "./dist/layouts/shell.css"
+    "./tool.css": {
+      "@metreeca/source": "./src/shells/tool.css",
+      "default": "./dist/shells/tool.css"
     },
     "./stack": {
       "@metreeca/source": "./src/layouts/stack.tsx",

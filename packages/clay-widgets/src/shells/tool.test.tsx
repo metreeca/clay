@@ -16,10 +16,10 @@
 
 import { type JSX, render } from "preact";
 import { describe, expect, it } from "vitest";
-import { Shell } from "./shell.js";
+import { Tool } from "./tool.js";
 
 
-describe("Shell", () => {
+describe("Tool", () => {
 
 	const rendered = (element: JSX.Element): null | HTMLElement => {
 
@@ -27,7 +27,7 @@ describe("Shell", () => {
 
 		render(element, container);
 
-		return container.querySelector<HTMLElement>(":scope > clay-shell");
+		return container.querySelector<HTMLElement>(":scope > clay-tool");
 
 	};
 
@@ -46,19 +46,19 @@ describe("Shell", () => {
 
 		it("sets the tray beside the content", async () => {
 
-			expect(parts(<Shell tray="Tray">Content</Shell>)).toEqual(["aside", "main"]);
+			expect(parts(<Tool tray="Tray">Content</Tool>)).toEqual(["aside", "main"]);
 
 		});
 
 		it("leaves out the tray for content standing on its own", async () => {
 
-			expect(parts(<Shell main logo="Logo" tray="Tray" info="Info">Content</Shell>)).toEqual(["main"]);
+			expect(parts(<Tool main logo="Logo" tray="Tray" info="Info">Content</Tool>)).toEqual(["main"]);
 
 		});
 
 		it("lays each column out as a header over a body over a footer", async () => {
 
-			const shell = rendered(<Shell logo="Logo" tray="Tray" info="Info" head="Head" foot="Foot">Content</Shell>);
+			const shell = rendered(<Tool logo="Logo" tray="Tray" info="Info" head="Head" foot="Foot">Content</Tool>);
 
 			expect(column(shell, "aside")).toEqual(["header", "section", "footer"]);
 			expect(column(shell, "main")).toEqual(["header", "section", "footer"]);
@@ -67,7 +67,7 @@ describe("Shell", () => {
 
 		it("keeps the header and footer of a column standing while its opposite number holds something", async () => {
 
-			const shell = rendered(<Shell logo="Logo" tray="Tray" foot="Foot">Content</Shell>);
+			const shell = rendered(<Tool logo="Logo" tray="Tray" foot="Foot">Content</Tool>);
 
 			expect(column(shell, "aside")).toEqual(["header", "section", "footer"]);
 			expect(column(shell, "main")).toEqual(["header", "section", "footer"]);
@@ -76,7 +76,7 @@ describe("Shell", () => {
 
 		it("leaves out the headers and the footers when neither column has anything for them", async () => {
 
-			const shell = rendered(<Shell tray="Tray">Content</Shell>);
+			const shell = rendered(<Tool tray="Tray">Content</Tool>);
 
 			expect(column(shell, "aside")).toEqual(["section"]);
 			expect(column(shell, "main")).toEqual(["section"]);
@@ -89,7 +89,7 @@ describe("Shell", () => {
 
 		it("sets the mark at its start and the meta at its end", async () => {
 
-			const shell = rendered(<Shell logo="Logo" meta="Meta">Content</Shell>);
+			const shell = rendered(<Tool logo="Logo" meta="Meta">Content</Tool>);
 
 			expect(Array.from(shell?.querySelectorAll(":scope > aside > header > *") ?? [], node => node.textContent))
 				.toEqual(["Logo", "Meta"]);
@@ -98,7 +98,7 @@ describe("Shell", () => {
 
 		it("holds the meta at its end with no mark before it", async () => {
 
-			const shell = rendered(<Shell meta="Meta">Content</Shell>);
+			const shell = rendered(<Tool meta="Meta">Content</Tool>);
 
 			expect(Array.from(shell?.querySelectorAll(":scope > aside > header > *") ?? [], node => node.textContent))
 				.toEqual(["Meta"]);
@@ -111,7 +111,7 @@ describe("Shell", () => {
 
 		it("holds the standing controls over the info", async () => {
 
-			const shell = rendered(<Shell tray="Tray" info="Info">Content</Shell>);
+			const shell = rendered(<Tool tray="Tray" info="Info">Content</Tool>);
 
 			expect(text(shell, ":scope > aside > section")).toBe("Tray");
 			expect(text(shell, ":scope > aside > footer")).toBe("Info");
@@ -120,8 +120,8 @@ describe("Shell", () => {
 
 		it("takes the tray out of reach while locked", async () => {
 
-			expect(rendered(<Shell lock tray="Tray">Content</Shell>)?.querySelector("aside")?.inert).toBe(true);
-			expect(rendered(<Shell tray="Tray">Content</Shell>)?.querySelector("aside")?.inert).toBe(false);
+			expect(rendered(<Tool lock tray="Tray">Content</Tool>)?.querySelector("aside")?.inert).toBe(true);
+			expect(rendered(<Tool tray="Tray">Content</Tool>)?.querySelector("aside")?.inert).toBe(false);
 
 		});
 
@@ -131,7 +131,7 @@ describe("Shell", () => {
 
 		it("holds the content and the notice closing it", async () => {
 
-			const shell = rendered(<Shell copy="Copy">Content</Shell>);
+			const shell = rendered(<Tool copy="Copy">Content</Tool>);
 
 			expect(text(shell, ":scope > main > section > div")).toBe("Content");
 			expect(text(shell, ":scope > main > section > footer")).toBe("Copy");
@@ -140,7 +140,7 @@ describe("Shell", () => {
 
 		it("is named by the heading on show", async () => {
 
-			const shell = rendered(<Shell head="Widgets">Content</Shell>);
+			const shell = rendered(<Tool head="Widgets">Content</Tool>);
 			const main = shell?.querySelector(":scope > main");
 			const title = main?.getAttribute("aria-labelledby");
 
@@ -151,7 +151,7 @@ describe("Shell", () => {
 
 		it("is named by the way out where one stands in place of the heading", async () => {
 
-			const shell = rendered(<Shell head="Widgets" done="Done">Content</Shell>);
+			const shell = rendered(<Tool head="Widgets" done="Done">Content</Tool>);
 			const title = shell?.querySelector(":scope > main")?.getAttribute("aria-labelledby");
 
 			expect(shell?.querySelector(`[id="${title}"]`)?.textContent).toBe("Done");
@@ -160,13 +160,13 @@ describe("Shell", () => {
 
 		it("is left unnamed with no heading on show", async () => {
 
-			expect(rendered(<Shell>Content</Shell>)?.querySelector("main")?.hasAttribute("aria-labelledby")).toBe(false);
+			expect(rendered(<Tool>Content</Tool>)?.querySelector("main")?.hasAttribute("aria-labelledby")).toBe(false);
 
 		});
 
 		it("takes the focus a navigation lands on without standing in the tab order", async () => {
 
-			expect(rendered(<Shell>Content</Shell>)?.querySelector("main")?.getAttribute("tabindex")).toBe("-1");
+			expect(rendered(<Tool>Content</Tool>)?.querySelector("main")?.getAttribute("tabindex")).toBe("-1");
 
 		});
 
@@ -176,7 +176,7 @@ describe("Shell", () => {
 
 		it("sets the heading at the start of the header and the menu at its end", async () => {
 
-			const shell = rendered(<Shell head="Head" menu="Menu">Content</Shell>);
+			const shell = rendered(<Tool head="Head" menu="Menu">Content</Tool>);
 
 			expect(Array.from(shell?.querySelectorAll(":scope > main > header > *") ?? [], node => node.textContent))
 				.toEqual(["Head", "Menu"]);
@@ -185,7 +185,7 @@ describe("Shell", () => {
 
 		it("sets the foot in the footer", async () => {
 
-			expect(text(rendered(<Shell foot="Foot">Content</Shell>), ":scope > main > footer")).toBe("Foot");
+			expect(text(rendered(<Tool foot="Foot">Content</Tool>), ":scope > main > footer")).toBe("Foot");
 
 		});
 
@@ -195,7 +195,7 @@ describe("Shell", () => {
 
 		it("states the switches on the frame", async () => {
 
-			const shell = rendered(<Shell lock main wide>Content</Shell>);
+			const shell = rendered(<Tool lock main wide>Content</Tool>);
 
 			expect(["locked", "main", "wide"].map(name => shell?.hasAttribute(name))).toEqual([true, true, true]);
 
@@ -203,7 +203,7 @@ describe("Shell", () => {
 
 		it("leaves the switches off the frame when not set", async () => {
 
-			const shell = rendered(<Shell>Content</Shell>);
+			const shell = rendered(<Tool>Content</Tool>);
 
 			expect(["locked", "main", "wide"].map(name => shell?.hasAttribute(name))).toEqual([false, false, false]);
 

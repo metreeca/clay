@@ -30,8 +30,8 @@ import { Choice } from "@metreeca/clay-widgets/choice";
 import { Icon } from "@metreeca/clay-widgets/icon";
 import { Link } from "@metreeca/clay-widgets/link";
 import { Logo } from "@metreeca/clay-widgets/logo";
-import { Shell } from "@metreeca/clay-widgets/shell";
 import { TOC, type TOCEntry } from "@metreeca/clay-widgets/toc";
+import { Tool } from "@metreeca/clay-widgets/tool";
 import { useFetch } from "@metreeca/clay/fetch";
 import { useStorage } from "@metreeca/clay/storage";
 import { type ComponentChildren, createElement, Fragment } from "preact";
@@ -44,25 +44,37 @@ export const ClayPath = "/clay/";
 export const ClayWidgetsPath = "/clay-widgets/";
 export const ClayMarkdownPath = "/clay-markdown/";
 
+export const ToolPath = `${ClayWidgetsPath}tool`;
+
 
 /**
  * A section of a package page: the id it is linked to by, the group of the outline it is listed under, what it is
  * called, the shorter name the outline lists it by if its title is too long for the rail, what it is about and the
  * samples it shows to the reader as live widgets rather than as pictures or descriptions of them.
+ *
+ * A sample filling the window, such as a shell, stands on a screen of its own instead: it names the location of that
+ * screen, which the outline opens in a new tab, and takes no section on the page.
  */
-export interface Sample {
+export type Sample = {
 
 	readonly id: string
 	readonly group: string
 	readonly title: string
 	readonly label?: string
+
+} & ({
+
 	readonly lead?: ComponentChildren
 	readonly view: ComponentChildren
 
-}
+} | {
+
+	readonly href: string
+
+})
 
 
-const schemes = { auto: "System", light: "Light", dark: "Dark" };
+export const schemes = { auto: "System", light: "Light", dark: "Dark" };
 
 type Scheme = keyof typeof schemes
 
@@ -101,11 +113,7 @@ export function Page({
 	const [lock, setLock] = useState(false);
 	const [user, setUser] = useState<string>();
 
-	const [scheme, setScheme] = useStorage<Scheme>(localStorage, "specimen-scheme", "auto");
-
-	// the scheme is pinned on the root of the document, which no render of this page owns
-
-	useEffect(() => apply(scheme), [scheme]);
+	const [scheme, setScheme] = useScheme();
 
 
 	function edit() {
@@ -117,7 +125,7 @@ export function Page({
 	}
 
 
-	return <Shell
+	return <Tool
 
 		wide={wide}
 		lock={lock}
@@ -184,12 +192,30 @@ export function Page({
 
 		<Intro eyebrow={eyebrow} title={title} lead={lead}/>
 
-		{samples.map(({ id, group, title, lead, view }) => <Fragment key={id}>
-			<Intro id={id} level={2} eyebrow={group} title={title} lead={lead}/>
-			{view}
+		{samples.map(sample => "view" in sample && <Fragment key={sample.id}>
+			<Intro id={sample.id} level={2} eyebrow={sample.group} title={sample.title} lead={sample.lead}/>
+			{sample.view}
 		</Fragment>)}
 
-	</Shell>;
+	</Tool>;
+
+}
+
+
+/**
+ * Adopts the colour scheme the reader chose, remembered across pages and tabs, pinning it on the root of the document.
+ *
+ * @returns The scheme in force and the way to choose another
+ */
+export function useScheme() {
+
+	const state = useStorage<Scheme>(localStorage, "specimen-scheme", "auto");
+
+	// the scheme is pinned on the root of the document, which no render of a page owns
+
+	useEffect(() => apply(state[0]), [state[0]]);
+
+	return state;
 
 }
 
@@ -239,7 +265,10 @@ function outline(samples: readonly Sample[]): readonly TOCEntry[] {
 		label: group,
 		entries: samples
 			.filter(sample => sample.group === group)
-			.map(({ id, title, label = title }) => ({ label, href: `#${id}` }))
+			.map(sample => "href" in sample
+				? { label: sample.label ?? sample.title, href: sample.href, target: "_blank" }
+				: { label: sample.label ?? sample.title, href: `#${sample.id}` }
+			)
 	}));
 
 }

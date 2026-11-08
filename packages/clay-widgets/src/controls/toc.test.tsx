@@ -316,6 +316,18 @@ describe("TOC", () => {
 
 		});
 
+		it("opens an entry in the browsing context it names", async () => {
+
+			await mount({}, [
+				{ label: "Here", href: "/here" },
+				{ label: "Apart", href: "/apart", target: "_blank" }
+			]);
+
+			expect(Array.from(document.querySelectorAll("clay-toc a"), link => link.getAttribute("target")))
+				.toEqual([null, "_blank"]);
+
+		});
+
 		it("shows an entry with no location as a label leading nowhere", async () => {
 
 			await mount();

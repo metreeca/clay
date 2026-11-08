@@ -15,13 +15,13 @@
  */
 
 /**
- * Screen frame.
+ * Tool shell.
  *
- * Offers the frame a whole app screen is laid out in: a tray of standing controls beside the content of the moment,
- * each with a header and a footer of its own, so an app states what goes in each slot and leaves arranging and
- * scrolling them, and keeping the bars of the two columns level, to the frame itself.
+ * Offers the frame the screens of an app or a tool are laid out in: a tray of standing controls beside the content of
+ * the moment, each with a header and a footer of its own, so a screen states what goes in each slot and leaves
+ * arranging and scrolling them, and keeping the bars of the two columns level, to the frame itself.
  *
- * @module shell
+ * @module tool
  */
 
 import { useFetching } from "@metreeca/clay/fetch";
@@ -29,11 +29,11 @@ import { opt } from "@metreeca/core";
 import { type ComponentChildren, createElement } from "preact";
 import { useEffect, useId } from "preact/hooks";
 import { Icon } from "../glyphs/icon.js";
-import "./shell.css";
+import "./tool.css";
 
 
 /**
- * Creates a shell.
+ * Creates a tool shell.
  *
  * Lays a screen out as two columns filling the window, the tray beside the content, each a header over a body over a
  * footer. Each column scrolls on its own, the whole height of the window: its header and its footer stay in view at
@@ -77,9 +77,9 @@ import "./shell.css";
  *
  * @param options The widget configuration
  *
- * @returns The shell
+ * @returns The tool shell
  */
-export function Shell({
+export function Tool({
 
 	wide = false,
 	lock = false,
@@ -222,8 +222,8 @@ export function Shell({
 		// whole pixels, so neither bar rounds to a height of its own and the rules of the two land on the same line
 
 		const level = () => {
-			element.style.setProperty("--clay-shell-head-size", `${Math.ceil(natural(element, "header"))}px`);
-			element.style.setProperty("--clay-shell-foot-size", `${Math.ceil(natural(element, "footer"))}px`);
+			element.style.setProperty("--clay-tool-head-size", `${Math.ceil(natural(element, "header"))}px`);
+			element.style.setProperty("--clay-tool-foot-size", `${Math.ceil(natural(element, "footer"))}px`);
 		};
 
 		const observer = new ResizeObserver(level);
@@ -252,7 +252,7 @@ export function Shell({
 
 	const busy = fetching && <span class="busy" inert><Icon.RefreshCw/></span>;
 
-	return createElement("clay-shell", {
+	return createElement("clay-tool", {
 
 		"aria-busy": fetching,
 

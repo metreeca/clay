@@ -204,10 +204,12 @@ Headless state is tested without a DOM: a widget test that needs one supplies it
 Each specimen page lists its samples in the order its outline shows them, so a reader meets an element before the
 elements built from it:
 
-- **Groups run top-down**: from the structure of a screen to the parts it holds, as layouts, then content, controls
-  and alerts, then glyphs; helpers wrapping other elements rather than drawing anything, such as scopes, come last
+- **Groups run top-down**: from the structure of a screen to the parts it holds, as shells, then layouts, content,
+  controls and alerts, then glyphs; helpers wrapping other elements rather than drawing anything, such as scopes, last
 - **Items run simple to complex**: within a group, an element precedes the elements built on it, as `Stack` precedes
-  `Card` and `Shell` closes the layouts
+  `Card`
+- **Shells stand alone**: a shell fills the window, so its outline entry opens a screen of its own in a new tab,
+  laying the shell out and documenting it, rather than a section nesting a second frame inside the page
 
 A sample added to a page takes the place these rules give it, never the end of its group by default.
 

@@ -20,7 +20,7 @@
  * @module
  */
 
-import { Page, type Sample } from "@metreeca/specimen/index.core.js";
+import { Page, type Sample, ToolPath } from "@metreeca/specimen/index.core.js";
 import { Buttons } from "@metreeca/specimen/clay-widgets/button.js";
 import { Cards } from "@metreeca/specimen/clay-widgets/card.js";
 import { Choices } from "@metreeca/specimen/clay-widgets/choice.js";
@@ -36,7 +36,6 @@ import { Logos } from "@metreeca/specimen/clay-widgets/logo.js";
 import { Triggers } from "@metreeca/specimen/clay-widgets/more.js";
 import { Notes } from "@metreeca/specimen/clay-widgets/note.js";
 import { Paths } from "@metreeca/specimen/clay-widgets/path.js";
-import { Shells } from "@metreeca/specimen/clay-widgets/shell.js";
 import { Stacks } from "@metreeca/specimen/clay-widgets/stack.js";
 import { Strips } from "@metreeca/specimen/clay-widgets/strip.js";
 import { Styles } from "@metreeca/specimen/clay-widgets/style.js";
@@ -48,11 +47,12 @@ import { Contents } from "@metreeca/specimen/clay-widgets/toc.js";
 
 const samples: readonly Sample[] = [
 
+	{ id: "tool", group: "Shells", title: "Tool", href: ToolPath },
+
 	{ id: "stack", group: "Layouts", title: "Stack", view: <Stacks/> },
 	{ id: "strip", group: "Layouts", title: "Strip", view: <Strips/> },
 	{ id: "card", group: "Layouts", title: "Card", view: <Cards/> },
 	{ id: "tabs", group: "Layouts", title: "Tabs", view: <Tabbed/> },
-	{ id: "shell", group: "Layouts", title: "Shell", view: <Shells/> },
 
 	{ id: "heading", group: "Content", title: "Heading", view: <Headings/> },
 	{ id: "text", group: "Content", title: "Text", view: <Texts/> },
@@ -90,7 +90,7 @@ export function ClayWidgets() {
 		title="Interface Components"
 		lead={<>
 			The pieces an interface is assembled from, each drawn from the design system tokens alone. Every sample on
-			this page is a live widget, laid out in the very shell it documents.
+			this page is a live widget, laid out in a tool shell; the shells listed first in the outline open on screens of their own.
 		</>}
 
 		samples={samples}

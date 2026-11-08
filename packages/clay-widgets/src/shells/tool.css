@@ -22,10 +22,10 @@
  */
 
 /*
- * The knobs below tune the geometry of the frame. They are properties of this layout rather than design system tokens,
+ * The knobs below tune the geometry of the frame. They are properties of this shell rather than design system tokens,
  * a column width being what this arrangement needs rather than a value the interface is themed by, so a single dash
- * keeps them apart from the `--skin--` contract. An app retunes one shell by restating a knob on it, or every shell
- * inside an element by restating it there.
+ * keeps them apart from the `--skin--` contract. An app retunes one tool shell by restating a knob on it, or all
+ * the tool shells inside an element by restating it there, leaving other kinds of shell and the rest of the page alone.
  */
 
 /* The width of the tray, and the reading measure the content is held to: a comfortable line runs 65 to 75 characters. */
@@ -35,25 +35,25 @@
  * are registered as lengths so the animation interpolates them rather than switching between the two ends.
  */
 
-@property --clay-shell-fade-top-size {
+@property --clay-tool-fade-top-size {
     syntax: "<length>";
     inherits: false;
     initial-value: 0px;
 }
 
-@property --clay-shell-fade-bottom-size {
+@property --clay-tool-fade-bottom-size {
     syntax: "<length>";
     inherits: false;
     initial-value: 0px;
 }
 
-@property --clay-shell-tray-width {
+@property --clay-tool-tray-width {
     syntax: "*";
     inherits: true;
     initial-value: 15rem;
 }
 
-@property --clay-shell-main-width {
+@property --clay-tool-main-width {
     syntax: "*";
     inherits: true;
     initial-value: 60rem;
@@ -65,19 +65,19 @@
  * in, rather than each stepping out of line at a size of its own as an em gutter would.
  */
 
-@property --clay-shell-tray-gutter {
+@property --clay-tool-tray-gutter {
     syntax: "*";
     inherits: true;
     initial-value: 1.25rem;
 }
 
-@property --clay-shell-main-gutter {
+@property --clay-tool-main-gutter {
     syntax: "*";
     inherits: true;
     initial-value: 2rem;
 }
 
-clay-shell {
+clay-tool {
 
     /*
      * The heights the bars of the two columns are levelled to, written by the widget as it measures the taller of each
@@ -85,15 +85,15 @@ clay-shell {
      * view in either column comes to rest clear of its bars rather than beneath them.
      */
 
-    --clay-shell-head-size: 0px;
-    --clay-shell-foot-size: 0px;
+    --clay-tool-head-size: 0px;
+    --clay-tool-foot-size: 0px;
 
     /* The depth content fades out across as it reaches a bar, and the scrolling it takes for the fade to open. */
 
-    --clay-shell-fade-depth: var(--skin--spacing-200);
+    --clay-tool-fade-depth: var(--skin--spacing-200);
 
     display: grid;
-    grid-template-columns: var(--clay-shell-tray-width) minmax(0, 1fr);
+    grid-template-columns: var(--clay-tool-tray-width) minmax(0, 1fr);
 
     /* The frame is the whole of a screen: it fills the window and scrolls its columns rather than the document. */
 
@@ -139,7 +139,7 @@ clay-shell {
 
         overscroll-behavior: none;
 
-        scroll-padding-block: var(--clay-shell-head-size) var(--clay-shell-foot-size);
+        scroll-padding-block: var(--clay-tool-head-size) var(--clay-tool-foot-size);
 
         /*
          * The bars are frosted glass: the page colour let partly through and blurred behind, so what passes beneath them
@@ -152,13 +152,13 @@ clay-shell {
         & > header,
         & > footer {
 
-            --clay-shell-glass: color-mix(in oklab, var(--skin--background-color) 60%, transparent);
+            --clay-tool-glass: color-mix(in oklab, var(--skin--background-color) 60%, transparent);
 
             position: sticky;
             z-index: var(--skin--z-index-sticky);
 
             background-color: transparent;
-            background-image: linear-gradient(var(--clay-shell-glass), var(--clay-shell-glass));
+            background-image: linear-gradient(var(--clay-tool-glass), var(--clay-tool-glass));
             backdrop-filter: blur(var(--skin--spacing-025));
 
             flex: none;
@@ -186,7 +186,7 @@ clay-shell {
 
         & > header {
             top: 0;
-            min-block-size: var(--clay-shell-head-size);
+            min-block-size: var(--clay-tool-head-size);
             padding-block: var(--skin--spacing-075);
         }
 
@@ -207,25 +207,25 @@ clay-shell {
          * full height; the gutters keep content clear of it.
          */
 
-        --clay-shell-mask-head: var(--clay-shell-head-size);
-        --clay-shell-mask-foot: var(--clay-shell-foot-size);
+        --clay-tool-mask-head: var(--clay-tool-head-size);
+        --clay-tool-mask-foot: var(--clay-tool-foot-size);
 
         mask-image:
             linear-gradient(to bottom,
-                rgb(0 0 0) 0 var(--clay-shell-mask-head),
-                rgb(0 0 0 / 0%) var(--clay-shell-mask-head),
-                rgb(0 0 0 / 6%) calc(var(--clay-shell-mask-head) + 0.2 * var(--clay-shell-fade-top-size)),
-                rgb(0 0 0 / 32%) calc(var(--clay-shell-mask-head) + 0.4 * var(--clay-shell-fade-top-size)),
-                rgb(0 0 0 / 68%) calc(var(--clay-shell-mask-head) + 0.6 * var(--clay-shell-fade-top-size)),
-                rgb(0 0 0 / 94%) calc(var(--clay-shell-mask-head) + 0.8 * var(--clay-shell-fade-top-size)),
-                rgb(0 0 0) calc(var(--clay-shell-mask-head) + var(--clay-shell-fade-top-size)),
-                rgb(0 0 0) calc(100% - var(--clay-shell-mask-foot) - var(--clay-shell-fade-bottom-size)),
-                rgb(0 0 0 / 94%) calc(100% - var(--clay-shell-mask-foot) - 0.8 * var(--clay-shell-fade-bottom-size)),
-                rgb(0 0 0 / 68%) calc(100% - var(--clay-shell-mask-foot) - 0.6 * var(--clay-shell-fade-bottom-size)),
-                rgb(0 0 0 / 32%) calc(100% - var(--clay-shell-mask-foot) - 0.4 * var(--clay-shell-fade-bottom-size)),
-                rgb(0 0 0 / 6%) calc(100% - var(--clay-shell-mask-foot) - 0.2 * var(--clay-shell-fade-bottom-size)),
-                rgb(0 0 0 / 0%) calc(100% - var(--clay-shell-mask-foot)),
-                rgb(0 0 0) calc(100% - var(--clay-shell-mask-foot)) 100%
+                rgb(0 0 0) 0 var(--clay-tool-mask-head),
+                rgb(0 0 0 / 0%) var(--clay-tool-mask-head),
+                rgb(0 0 0 / 6%) calc(var(--clay-tool-mask-head) + 0.2 * var(--clay-tool-fade-top-size)),
+                rgb(0 0 0 / 32%) calc(var(--clay-tool-mask-head) + 0.4 * var(--clay-tool-fade-top-size)),
+                rgb(0 0 0 / 68%) calc(var(--clay-tool-mask-head) + 0.6 * var(--clay-tool-fade-top-size)),
+                rgb(0 0 0 / 94%) calc(var(--clay-tool-mask-head) + 0.8 * var(--clay-tool-fade-top-size)),
+                rgb(0 0 0) calc(var(--clay-tool-mask-head) + var(--clay-tool-fade-top-size)),
+                rgb(0 0 0) calc(100% - var(--clay-tool-mask-foot) - var(--clay-tool-fade-bottom-size)),
+                rgb(0 0 0 / 94%) calc(100% - var(--clay-tool-mask-foot) - 0.8 * var(--clay-tool-fade-bottom-size)),
+                rgb(0 0 0 / 68%) calc(100% - var(--clay-tool-mask-foot) - 0.6 * var(--clay-tool-fade-bottom-size)),
+                rgb(0 0 0 / 32%) calc(100% - var(--clay-tool-mask-foot) - 0.4 * var(--clay-tool-fade-bottom-size)),
+                rgb(0 0 0 / 6%) calc(100% - var(--clay-tool-mask-foot) - 0.2 * var(--clay-tool-fade-bottom-size)),
+                rgb(0 0 0 / 0%) calc(100% - var(--clay-tool-mask-foot)),
+                rgb(0 0 0) calc(100% - var(--clay-tool-mask-foot)) 100%
             ),
             linear-gradient(rgb(0 0 0), rgb(0 0 0));
 
@@ -240,14 +240,14 @@ clay-shell {
          */
 
         @supports (animation-timeline: scroll()) {
-            animation: clay-shell-fade-top linear both, clay-shell-fade-bottom linear both;
+            animation: clay-tool-fade-top linear both, clay-tool-fade-bottom linear both;
             animation-timeline: scroll(self), scroll(self);
-            animation-range: 0 var(--clay-shell-fade-depth), calc(100% - var(--clay-shell-fade-depth)) 100%;
+            animation-range: 0 var(--clay-tool-fade-depth), calc(100% - var(--clay-tool-fade-depth)) 100%;
         }
 
         & > footer {
             bottom: 0;
-            min-block-size: var(--clay-shell-foot-size);
+            min-block-size: var(--clay-tool-foot-size);
             padding-block: var(--skin--spacing-050);
             font-size: var(--skin--font-size-small);
             color: var(--skin--color-label);
@@ -266,7 +266,7 @@ clay-shell {
         border-inline-end-style: var(--skin--border-style);
 
         & > * {
-            padding-inline: var(--clay-shell-tray-gutter);
+            padding-inline: var(--clay-tool-tray-gutter);
         }
 
         & > section {
@@ -298,10 +298,10 @@ clay-shell {
          * A percentage in a custom property resolves where it is read, so the inset measures the part reading it.
          */
 
-        --clay-shell-main-inset: max(var(--clay-shell-main-gutter), (100% - var(--clay-shell-main-width)) / 2);
+        --clay-tool-main-inset: max(var(--clay-tool-main-gutter), (100% - var(--clay-tool-main-width)) / 2);
 
         & > * {
-            padding-inline: var(--clay-shell-main-inset);
+            padding-inline: var(--clay-tool-main-inset);
         }
 
         /*
@@ -316,7 +316,7 @@ clay-shell {
                 margin-inline-start: auto;
 
                 & > :last-child {
-                    anchor-name: --clay-shell-tail;
+                    anchor-name: --clay-tool-tail;
                 }
 
             }
@@ -375,7 +375,7 @@ clay-shell {
             pointer-events: none;
 
             & svg {
-                animation: clay-shell-turn calc(2 * var(--skin--duration-slow)) linear infinite;
+                animation: clay-tool-turn calc(2 * var(--skin--duration-slow)) linear infinite;
             }
 
         }
@@ -384,12 +384,12 @@ clay-shell {
 
             position: absolute;
             inset-block: 0;
-            inset-inline-end: var(--clay-shell-main-inset);
+            inset-inline-end: var(--clay-tool-main-inset);
 
         }
 
         & > header:has(> span:not([id]) > *) > .busy {
-            position-anchor: --clay-shell-tail;
+            position-anchor: --clay-tool-tail;
             position-area: center;
             inset: auto;
         }
@@ -409,36 +409,36 @@ clay-shell {
     /* Content a window never has too much room for takes the whole of the column, the measure being no help to a grid. */
 
     &[wide] > main {
-        --clay-shell-main-inset: var(--clay-shell-main-gutter);
+        --clay-tool-main-inset: var(--clay-tool-main-gutter);
     }
 
 }
 
-@keyframes clay-shell-fade-top {
+@keyframes clay-tool-fade-top {
 
     from {
-        --clay-shell-fade-top-size: 0px;
+        --clay-tool-fade-top-size: 0px;
     }
 
     to {
-        --clay-shell-fade-top-size: var(--clay-shell-fade-depth);
+        --clay-tool-fade-top-size: var(--clay-tool-fade-depth);
     }
 
 }
 
-@keyframes clay-shell-fade-bottom {
+@keyframes clay-tool-fade-bottom {
 
     from {
-        --clay-shell-fade-bottom-size: var(--clay-shell-fade-depth);
+        --clay-tool-fade-bottom-size: var(--clay-tool-fade-depth);
     }
 
     to {
-        --clay-shell-fade-bottom-size: 0px;
+        --clay-tool-fade-bottom-size: 0px;
     }
 
 }
 
-@keyframes clay-shell-turn {
+@keyframes clay-tool-turn {
 
     to {
         rotate: 1turn;
