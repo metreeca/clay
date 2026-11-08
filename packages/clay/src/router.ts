@@ -295,6 +295,9 @@ export interface Router {
  *   left; the top is the start of the document and of the `main` landmark alike, so an app scrolling its content in a
  *   box of its own lands there as well; a link changing the query or the annex alone, as a filter or an alternate
  *   view does, keeps the reader in place on whatever they were reading before following it
+ * - a page landed afresh also moves the focus to its `main` landmark, so a screen reader announces the page arrived
+ *   on; the landmark takes the focus only if it is focusable, as a `tabindex` of `-1` makes it without adding a tab
+ *   stop; otherwise the focus is cleared, so the next keystroke never acts on a control of the page left behind
  * - a link to another site opens in a new browsing context
  * - an image outside any link toggles its `active` attribute, which the `@metreeca/skin` stylesheet reads to show it
  *   over the whole viewport; an image inside a link is left to the link
@@ -341,11 +344,22 @@ export function Router({
 		if ( landing ) {
 
 			const target = landing.hash ? document.getElementById(decodeURIComponent(landing.hash.slice(1))) : null;
+			const main = document.querySelector("main");
 
 			window.scrollTo(0, 0);
-			document.querySelector("main")?.scrollTo(0, 0); // an app may scroll its content in a box of its own
+			main?.scrollTo(0, 0); // an app may scroll its content in a box of its own
 
 			target?.scrollIntoView();
+
+			// the focus lands on the content, or nowhere, rather than on a control of the page left behind
+
+			main?.focus({ preventScroll: true });
+
+			if ( document.activeElement !== main && document.activeElement instanceof HTMLElement ) {
+				document.activeElement.blur();
+			} else {
+				// the focus already rests on the content, or on nothing
+			}
 
 		}
 

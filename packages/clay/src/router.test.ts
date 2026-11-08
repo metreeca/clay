@@ -235,6 +235,69 @@ describe("Router", () => {
 
 	});
 
+	describe("focus", () => {
+
+		beforeEach(() => {
+			vi.spyOn(window, "scrollTo").mockImplementation(() => {});
+		});
+
+		afterEach(() => {
+			vi.restoreAllMocks();
+		});
+
+
+		it("should move the focus to the main landmark when following a link", async () => {
+
+			mount({
+				"/": createElement("main", { tabIndex: -1 }, createElement("a", { href: "/other" }, "link")),
+				"/other": createElement("main", { tabIndex: -1 }, "other")
+			});
+
+			document.querySelector("a")?.focus();
+
+			await act(async () => document.querySelector("a")?.click());
+
+			expect(document.activeElement?.localName).toBe("main");
+			expect(document.activeElement?.textContent).toBe("other");
+
+		});
+
+		it("should clear the focus when following a link to a page with no main landmark", async () => {
+
+			shell([
+				createElement("button", { key: "outside" }, "outside"),
+				createElement(Routes, {
+					key: "routes", children: {
+						"/": createElement("a", { href: "/other" }, "link"),
+						"/other": createElement("p", {}, "other")
+					}
+				})
+			]);
+
+			document.querySelector("button")?.focus();
+
+			await act(async () => document.querySelector("a")?.click());
+
+			expect(document.activeElement).toBe(document.body);
+
+		});
+
+		it("should leave the focus alone on a link changing the annex alone", async () => {
+
+			history.replaceState(null, "", "/items");
+
+			mount({ "/items": createElement("main", { tabIndex: -1 }, createElement("a", { href: "/items;table" }, "table")) });
+
+			document.querySelector("a")?.focus();
+
+			await act(async () => document.querySelector("a")?.click());
+
+			expect(document.activeElement?.localName).toBe("a");
+
+		});
+
+	});
+
 	describe("history", () => {
 
 		it("should render again on browser history navigation", async () => {
