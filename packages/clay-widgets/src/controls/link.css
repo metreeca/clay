@@ -22,7 +22,10 @@
 
 clay-link {
 
-    /* A logo or an icon in the link is centred on its wording, without stretching the line the link stands in. */
+    /*
+     * A logo or an icon in the link is centred on its wording, without stretching the line the link stands in, and
+     * kept apart from it by a gap wider than a space, so the glyph reads as a mark set beside the words it leads.
+     */
 
     /*
      * A link short of room cuts its wording short with an ellipsis, wherever the area around it caps its width and
@@ -35,6 +38,7 @@ clay-link {
 
         display: inline-flex;
         align-items: center;
+        column-gap: var(--skin--spacing-050);
         min-width: 0;
 
         font-weight: inherit;
