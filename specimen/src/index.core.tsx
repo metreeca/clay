@@ -188,7 +188,7 @@ export function Page({
 
 	>
 
-		<Section level={1} eyebrow={eyebrow} title={title} lead={lead}>
+		<Section eyebrow={eyebrow} title={title} lead={lead}>
 
 			{facts.length > 0 && <ul class="facts">{facts.map(([value, label]) =>
 				<li key={label}><strong>{value}</strong><span>{label}</span></li>

@@ -36,13 +36,13 @@ export function Sections() {
 		<p>Every stretch of this page is a section: an eyebrow naming the part of the page it belongs to, a title, and a
 			lead saying what it is about, all optional, set by the heading group rules of the design system. Consecutive
 			sections are set apart by a rule, and one carrying an id is a target an outline links to. The opening of the
-			page is a section too, titled a step larger.</p>
+			page is a section too, ranked with the ones following it.</p>
 
-		<Section level={3} eyebrow="Nested" title="A Section within a Section" lead="Titled a step above the text.">
+		<Section level={2} eyebrow="Nested" title="A Section within a Section" lead="Titled a step above the text.">
 			<p>A nested section opens a stretch of its parent, keeping no rule or air of its own.</p>
 		</Section>
 
-		<Section level={3} title="Another Nested Section">
+		<Section level={2} title="Another Nested Section">
 			<p>A section given a title alone shows the title over its content.</p>
 		</Section>
 

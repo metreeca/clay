@@ -34,8 +34,9 @@ import "./section.css";
  * heading, and the lead in the label colour at a comfortable reading measure. Every part is optional and one left out
  * takes no room; a section given no part of the heading group shows its content alone.
  *
- * Consecutive sections are set apart by a rule, so a page of them reads as a sequence without a frame around each.
- * A section given an `id` is a target a link lands on, such as an entry of a
+ * Consecutive sections of the page are set apart by a rule, so a page of them reads as a sequence without a frame
+ * around each. A nested section opens a stretch of its parent instead: its title stands a step above the text, and it
+ * keeps no rule or air of its own. A section given an `id` is a target a link lands on, such as an entry of a
  * {@link @metreeca/clay-widgets!toc.Toc table of contents}, coming to rest clear of any bar standing over the page.
  *
  * @param options The widget configuration
@@ -46,7 +47,7 @@ export function Section({
 
 	id,
 
-	level = 2,
+	level = 1,
 
 	eyebrow,
 	title,
@@ -62,8 +63,8 @@ export function Section({
 	id?: string
 
 	/**
-	 * The rank of the title in the outline of the page: `1` for the section opening the page, which sets the title a
-	 * step larger, `2` for one of the sections following it, `3` for a section nested in one of them; `2` if omitted.
+	 * The rank of the title in the outline of the page: `1` for a section of the page itself, `2` for a section nested
+	 * in one of them, `3` for one nested a level deeper; `1` if omitted, so a page of sections needs no rank at all.
 	 */
 	level?: 1 | 2 | 3
 

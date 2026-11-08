@@ -40,13 +40,13 @@ describe("Section", () => {
 		it("sets the eyebrow, the title and the lead in order", async () => {
 
 			expect(outline(<Section eyebrow="Foundations" title="Colours" lead="Anchors and roles."/>))
-				.toEqual(["p", "h2", "p"]);
+				.toEqual(["p", "h1", "p"]);
 
 		});
 
 		it("leaves out the parts not given", async () => {
 
-			expect(outline(<Section title="Colours"/>)).toEqual(["h2"]);
+			expect(outline(<Section title="Colours"/>)).toEqual(["h1"]);
 			expect(outline(<Section eyebrow="Foundations" lead="Anchors and roles."/>)).toEqual(["p", "p"]);
 
 		});
@@ -59,8 +59,8 @@ describe("Section", () => {
 
 		it("sets the title at the level given", async () => {
 
-			expect(outline(<Section level={1} title="Widgets"/>)).toEqual(["h1"]);
-			expect(outline(<Section level={3} title="Anchors"/>)).toEqual(["h3"]);
+			expect(outline(<Section level={2} title="Anchors"/>)).toEqual(["h2"]);
+			expect(outline(<Section level={3} title="Hues"/>)).toEqual(["h3"]);
 
 		});
 

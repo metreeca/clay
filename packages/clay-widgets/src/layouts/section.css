@@ -29,15 +29,9 @@ clay-section {
         border-top-style: var(--skin--border-style);
     }
 
-    /* The section opening a page stands further off the one after it, as the opening of a document does. */
-
-    &[level="1"] {
-        padding-block-end: var(--skin--spacing-250);
-    }
-
     /* A nested section opens a stretch of its parent rather than of the page, so it keeps no air or rule of its own. */
 
-    &[level="3"] {
+    &:not([level="1"]) {
 
         padding-block: var(--skin--spacing-100) 0;
 
@@ -54,7 +48,7 @@ clay-section {
 
     & > hgroup {
 
-        & > h3 {
+        & > :is(h2, h3) {
             font-size: var(--skin--font-size-large);
         }
 
