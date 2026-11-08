@@ -97,14 +97,6 @@
       "@metreeca/source": "./src/controls/toc.css",
       "default": "./dist/controls/toc.css"
     },
-    "./section": {
-      "@metreeca/source": "./src/layouts/section.tsx",
-      "default": "./dist/layouts/section.js"
-    },
-    "./section.css": {
-      "@metreeca/source": "./src/layouts/section.css",
-      "default": "./dist/layouts/section.css"
-    },
     "./shell": {
       "@metreeca/source": "./src/layouts/shell.tsx",
       "default": "./dist/layouts/shell.js"
@@ -144,6 +136,14 @@
     "./card.css": {
       "@metreeca/source": "./src/layouts/card.css",
       "default": "./dist/layouts/card.css"
+    },
+    "./heading": {
+      "@metreeca/source": "./src/content/heading.tsx",
+      "default": "./dist/content/heading.js"
+    },
+    "./heading.css": {
+      "@metreeca/source": "./src/content/heading.css",
+      "default": "./dist/content/heading.css"
     },
     "./image": {
       "@metreeca/source": "./src/content/image.tsx",

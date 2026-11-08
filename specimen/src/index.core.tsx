@@ -24,18 +24,17 @@
  * @module
  */
 
-import { app } from "@metreeca/clay";
+import { app, isContent } from "@metreeca/clay";
 import { Button } from "@metreeca/clay-widgets/button";
 import { Choice } from "@metreeca/clay-widgets/choice";
 import { Icon } from "@metreeca/clay-widgets/icon";
 import { Link } from "@metreeca/clay-widgets/link";
 import { Logo } from "@metreeca/clay-widgets/logo";
-import { Section } from "@metreeca/clay-widgets/section";
 import { Shell } from "@metreeca/clay-widgets/shell";
 import { TOC, type TOCEntry } from "@metreeca/clay-widgets/toc";
 import { useFetch } from "@metreeca/clay/fetch";
 import { useStorage } from "@metreeca/clay/storage";
-import { type ComponentChildren } from "preact";
+import { type ComponentChildren, createElement, Fragment } from "preact";
 import { useEffect, useState } from "preact/hooks";
 
 
@@ -183,16 +182,51 @@ export function Page({
 
 	>
 
-		<Section eyebrow={eyebrow} title={title} lead={lead}/>
+		<Intro eyebrow={eyebrow} title={title} lead={lead}/>
 
-		{samples.map(({ id, group, title, lead, view }) =>
-			<Section key={id} id={id} level={2} eyebrow={group} title={title} lead={lead}>{view}</Section>
-		)}
+		{samples.map(({ id, group, title, lead, view }) => <Fragment key={id}>
+			<Intro id={id} level={2} eyebrow={group} title={title} lead={lead}/>
+			{view}
+		</Fragment>)}
 
 	</Shell>;
 
 }
 
+
+/**
+ * Opens a page or one of its samples with the heading group of the design system: the part of the page it belongs to,
+ * the title ranked at `level`, and what it is about; the id given is the target its outline entry links to.
+ */
+function Intro({
+
+	id,
+
+	level = 1,
+
+	eyebrow,
+	title,
+	lead
+
+}: {
+
+	id?: string
+
+	level?: 1 | 2
+
+	eyebrow: ComponentChildren
+	title: ComponentChildren
+	lead?: ComponentChildren
+
+}) {
+
+	return <hgroup id={id}>
+		<p>{eyebrow}</p>
+		{createElement(`h${level}`, {}, title)}
+		{isContent(lead) && <p>{lead}</p>}
+	</hgroup>;
+
+}
 
 /**
  * Groups the sections of a page into the outline listing them, in the order the page holds them.

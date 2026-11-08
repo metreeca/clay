@@ -26,6 +26,7 @@ import { Cards } from "@metreeca/specimen/clay-widgets/card.js";
 import { Choices } from "@metreeca/specimen/clay-widgets/choice.js";
 import { Empties } from "@metreeca/specimen/clay-widgets/empty.js";
 import { Guards } from "@metreeca/specimen/clay-widgets/guard.js";
+import { Headings } from "@metreeca/specimen/clay-widgets/heading.js";
 import { Icons } from "@metreeca/specimen/clay-widgets/icon.js";
 import { Images } from "@metreeca/specimen/clay-widgets/image.js";
 import { Infoboxes } from "@metreeca/specimen/clay-widgets/infobox.js";
@@ -35,7 +36,6 @@ import { Logos } from "@metreeca/specimen/clay-widgets/logo.js";
 import { Triggers } from "@metreeca/specimen/clay-widgets/more.js";
 import { Notes } from "@metreeca/specimen/clay-widgets/note.js";
 import { Paths } from "@metreeca/specimen/clay-widgets/path.js";
-import { Sections } from "@metreeca/specimen/clay-widgets/section.js";
 import { Shells } from "@metreeca/specimen/clay-widgets/shell.js";
 import { Stacks } from "@metreeca/specimen/clay-widgets/stack.js";
 import { Strips } from "@metreeca/specimen/clay-widgets/strip.js";
@@ -50,11 +50,11 @@ const samples: readonly Sample[] = [
 
 	{ id: "stack", group: "Layouts", title: "Stack", view: <Stacks/> },
 	{ id: "strip", group: "Layouts", title: "Strip", view: <Strips/> },
-	{ id: "section", group: "Layouts", title: "Section", view: <Sections/> },
 	{ id: "card", group: "Layouts", title: "Card", view: <Cards/> },
 	{ id: "tabs", group: "Layouts", title: "Tabs", view: <Tabbed/> },
 	{ id: "shell", group: "Layouts", title: "Shell", view: <Shells/> },
 
+	{ id: "heading", group: "Content", title: "Heading", view: <Headings/> },
 	{ id: "text", group: "Content", title: "Text", view: <Texts/> },
 	{ id: "label", group: "Content", title: "Label", view: <Labels/> },
 	{ id: "image", group: "Content", title: "Image", view: <Images/> },
