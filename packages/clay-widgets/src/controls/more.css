@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-/* A trigger closes the list it grows, centring the mark saying that more is on its way. */
+/* A `More` trigger closes the list it grows, centring the mark saying that more is on its way. */
 
 clay-more {
 
