@@ -24,7 +24,8 @@
  * @module
  */
 
-import { app, isContent } from "@metreeca/clay";
+import { app } from "@metreeca/clay";
+import { isContent } from "@metreeca/clay-widgets";
 import { Button } from "@metreeca/clay-widgets/button";
 import { Choice } from "@metreeca/clay-widgets/choice";
 import { Icon } from "@metreeca/clay-widgets/icon";

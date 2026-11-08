@@ -21,10 +21,13 @@
  * state, so a control offers the surface the platform already carries without restating it. The widgets themselves
  * come from their own modules, leaving a screen with the ones it renders and nothing else.
  *
+ * Also tells the content of a slot apart from a slot left empty, so a widget renders nothing for a part it was not
+ * given and a screen hands over whatever it knows without checking what is missing.
+ *
  * @module index
  */
 
-import { type Optional } from "@metreeca/core";
+import { isBoolean, type Optional } from "@metreeca/core";
 
 
 /**
@@ -44,6 +47,27 @@ export const AutoSize = 10;
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/**
+ * Checks if a value is content.
+ *
+ * Values that JSX renders as nothing are not content: they are what a conditional such as `label && <Link/>` leaves
+ * in a slot when its condition fails. A component checks each slot to leave out the wrapper of a part it was given
+ * nothing for, rather than rendering an empty element. Any other value is content, `0` and whitespace included.
+ *
+ * @param value The value to check
+ *
+ * @returns True if the value is neither `undefined`, `null`, a boolean nor the empty string; false otherwise
+ */
+export function isContent(value: unknown): boolean {
+
+	return value !== undefined
+		&& value !== null
+		&& value !== ""
+		&& !isBoolean(value);
+
+}
+
 
 /**
  * Names the classes in force.

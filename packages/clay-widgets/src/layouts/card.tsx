@@ -23,7 +23,7 @@
  * @module card
  */
 
-import { isContent } from "@metreeca/clay";
+import { isContent } from "../index.js";
 import { type ComponentChildren, createElement } from "preact";
 import "./card.css";
 

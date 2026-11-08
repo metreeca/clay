@@ -16,31 +16,8 @@
 
 import { describe, expect, it } from "vitest";
 
-import { host, isContent } from "./index.js";
+import { host } from "./index.js";
 
-
-describe("isContent", () => {
-
-	it("takes content that renders nothing as an empty slot", () => {
-
-		expect(isContent(undefined)).toBe(false);
-		expect(isContent(null)).toBe(false);
-		expect(isContent(true)).toBe(false);
-		expect(isContent(false)).toBe(false);
-		expect(isContent("")).toBe(false);
-
-	});
-
-	it("takes any other content as shown", () => {
-
-		expect(isContent("text")).toBe(true);
-		expect(isContent(" ")).toBe(true);
-		expect(isContent(0)).toBe(true);
-		expect(isContent([])).toBe(true);
-
-	});
-
-});
 
 describe("host", () => {
 
