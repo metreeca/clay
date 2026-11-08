@@ -27,6 +27,12 @@ import { Frame, landscape } from "@metreeca/specimen/clay-widgets/sample.js";
 import "./index.css";
 
 
+type Options = Parameters<typeof Card>[0]
+
+
+const looks: ReadonlyArray<NonNullable<Options["look"]>> = [ "subtle", "normal", "strong" ];
+
+
 /**
  * Creates the summary card section.
  *
@@ -112,19 +118,20 @@ export function Cards() {
 		<p>Given a <code>look</code>, a card sets its parts on a padded, rounded surface of its own, as a stack does, so
 			a run of results reads as a deck of tiles rather than as a list of entries.</p>
 
-		<div class="frames">
-			<Frame label={<code>look="strong"</code>}>
+		<div class="frames">{looks.map(look =>
 
-				<Card look="strong" title="Board minutes" badge="Record · Restricted" image={<Icon.FileText/>}>
+			<Frame key={look} label={<code>look="{look}"</code>}>
+
+				<Card look={look} title="Board minutes" badge="Record · Restricted" image={<Icon.FileText/>}>
 					Decisions of the March meeting on budget allocation and the renewal of the audit committee.
 				</Card>
 
-				<Card look="strong" title="Maria Rossi" badge="Person" image={<>MR</>}>
+				<Card look={look} title="Maria Rossi" badge="Person" image={<>MR</>}>
 					Lead researcher for the climate programme and contact point for data access requests.
 				</Card>
 
 			</Frame>
-		</div>
+		)}</div>
 
 	</>;
 }

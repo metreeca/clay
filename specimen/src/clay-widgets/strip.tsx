@@ -20,7 +20,6 @@
  * @module
  */
 
-import { Stack } from "@metreeca/clay-widgets/stack";
 import { Strip } from "@metreeca/clay-widgets/strip";
 import { Style } from "@metreeca/clay-widgets/style";
 import { Frame, Items } from "@metreeca/specimen/clay-widgets/sample.js";
@@ -58,66 +57,58 @@ export function Strips() {
 			start and the others at the end (<code>head</code>), as an app bar sets its logo apart from its actions, or
 			the last alone at the end (<code>tail</code>).</p>
 
-		<div class="frames">
-			<Stack space="spacing100">{places.map(place =>
+		<div class="frames aside">{places.map(place =>
 
-				<Frame key={place} label={<code>place="{place}"</code>}>
-					<Strip place={place} space="spacing050"><Items labels={labels}/></Strip>
-				</Frame>
-			)}</Stack>
-		</div>
+			<Frame key={place} label={<code>place="{place}"</code>}>
+				<Strip place={place} space="spacing050"><Items labels={labels}/></Strip>
+			</Frame>
+		)}</div>
 
 		<p>Across the row, <code>align</code> decides where each item sits: against either edge, in the middle, on the
 			text baseline the items share, or stretched to the height of the row. The items below differ in size, so
 			each setting reads off the ragged edge it leaves.</p>
 
-		<div class="frames">
-			<Strip wrap space="spacing100">{aligns.map(align =>
+		<div class="frames aside">{aligns.map(align =>
 
-				<Frame key={align} label={<code>align="{align}"</code>}>
-					<Strip align={align} space="spacing050">
+			<Frame key={align} label={<code>align="{align}"</code>}>
+				<Strip align={align} space="spacing050">
 
-						<Items labels={[ "Aa" ]}/>
+					<Items labels={[ "Aa" ]}/>
 
-						<Style css={{ fontSize: "fontSizeLarge" }}><Items labels={[ "Bb" ]}/></Style>
+					<Style css={{ fontSize: "fontSizeLarge" }}><Items labels={[ "Bb" ]}/></Style>
 
-						<Style css={{ fontSize: "fontSizeSmall" }}><Items labels={[ "Cc" ]}/></Style>
+					<Style css={{ fontSize: "fontSizeSmall" }}><Items labels={[ "Cc" ]}/></Style>
 
-					</Strip>
-				</Frame>
-			)}</Strip>
-		</div>
+				</Strip>
+			</Frame>
+		)}</div>
 
 		<p>Items that do not fit stay on one line and overflow it, unless the strip is told to <code>wrap</code>: they
 			then flow onto as many rows as they need, set apart by the same step as the items, or by the
 			step <code>wrap</code> names.</p>
 
-		<div class="frames">
-			<Stack space="spacing100">
+		<div class="frames aside">
 
-				<Frame label={<code>wrap</code>}>
-					<Strip wrap space="spacing050"><Items labels={days}/></Strip>
-				</Frame>
+			<Frame label={<code>wrap</code>}>
+				<Strip wrap space="spacing050"><Items labels={days}/></Strip>
+			</Frame>
 
-				<Frame label={<code>wrap="spacing150"</code>}>
-					<Strip wrap="spacing150" space="spacing050"><Items labels={days}/></Strip>
-				</Frame>
+			<Frame label={<code>wrap="spacing150"</code>}>
+				<Strip wrap="spacing150" space="spacing050"><Items labels={days}/></Strip>
+			</Frame>
 
-			</Stack>
 		</div>
 
 		<p>Given a <code>look</code>, a strip sets its items on a padded, rounded surface of its own, as a stack does:
 			sunk below the page (<code>subtle</code>), flat on the colour around it (<code>normal</code>), or raised
 			and edged by a border (<code>strong</code>), as a toolbar standing apart from the content it acts on.</p>
 
-		<div class="frames">
-			<Stack space="spacing100">{looks.map(look =>
+		<div class="frames aside">{looks.map(look =>
 
-				<Frame key={look} label={<code>look="{look}"</code>}>
-					<Strip look={look} space="spacing050"><Items labels={labels}/></Strip>
-				</Frame>
-			)}</Stack>
-		</div>
+			<Frame key={look} label={<code>look="{look}"</code>}>
+				<Strip look={look} space="spacing050"><Items labels={labels}/></Strip>
+			</Frame>
+		)}</div>
 
 	</>;
 }

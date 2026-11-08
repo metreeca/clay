@@ -21,7 +21,14 @@
  */
 
 import { Tabs } from "@metreeca/clay-widgets/tabs";
+import { Frame } from "@metreeca/specimen/clay-widgets/sample.js";
 import "./index.css";
+
+
+type Options = Parameters<typeof Tabs>[0]
+
+
+const looks: ReadonlyArray<NonNullable<Options["look"]>> = [ "subtle", "normal" ];
 
 
 /**
@@ -33,6 +40,20 @@ import "./index.css";
  * @returns The tabs section
  */
 export function Tabbed() {
+
+	const seasons = {
+		Spring: <p>Days lengthen, and the first leaves open.</p>,
+		Summer: <p>The longest days, and the warmest.</p>,
+		Autumn: <p>Days shorten, and the leaves turn.</p>
+	};
+
+	const guide = {
+		"Introduction": <p>What the guide covers, and who it is for.</p>,
+		"Getting started": <p>Installing the package and rendering a first screen.</p>,
+		"Configuration": <p>The options a screen takes, and their defaults.</p>,
+		"Troubleshooting": <p>The mistakes most often made, and their fixes.</p>
+	};
+
 	return <>
 
 		<p>Tabs present a fixed set of labelled panels one at a time. A panel is chosen with the pointer or with the
@@ -40,38 +61,32 @@ export function Tabbed() {
 			either end of the strip. A panel given no content keeps its label, greyed, and is never brought on
 			show.</p>
 
-		<Tabs name="Seasons" panels={{
-			Spring: <p>Days lengthen, and the first leaves open.</p>,
-			Summer: <p>The longest days, and the warmest.</p>,
-			Autumn: <p>Days shorten, and the leaves turn.</p>,
-			Winter: undefined
-		}}/>
+		<div class="frames">
+			<Frame label="a panel with no content">
+				<Tabs name="Seasons" panels={{ ...seasons, Winter: undefined }}/>
+			</Frame>
+		</div>
 
-		<p>The quiet step drops the rule closing the strip off, so the labels read as part of what surrounds them; the
-			mark on the chosen tab stays either way.</p>
+		<p>Given a <code>look</code>, tabs close the strip off with a rule (<code>normal</code>), or drop it so the labels
+			read as part of what surrounds them (<code>subtle</code>); the mark on the chosen tab stays either way.</p>
 
-		<Tabs name="Seasons, quietly" look="subtle" panels={{
-			Spring: <p>Days lengthen, and the first leaves open.</p>,
-			Summer: <p>The longest days, and the warmest.</p>,
-			Autumn: <p>Days shorten, and the leaves turn.</p>
-		}}/>
+		<div class="frames">{looks.map(look =>
+
+			<Frame key={look} label={<code>look="{look}"</code>}>
+				<Tabs name={`Seasons, ${look}`} look={look} panels={seasons}/>
+			</Frame>
+		)}</div>
 
 		<p>Where the labels would not fit on one line, the strip gives way to a menu offering the same choice, and comes
-			back as soon as they fit again. The same tabs are set below in a wide column and in a narrow one, where the
-			menu stands in; narrowing the window turns the wide one over to the menu as well.</p>
+			back as soon as they fit again. The same tabs are set below in a wide box and in a narrow one, where the menu
+			stands in; narrowing the window turns the wide one over to the menu as well.</p>
 
-		<div class="columns">
+		<div class="columns">{[ "wide", "narrow" ].map(width =>
 
-			{[ "Wide column", "Narrow column" ].map(name =>
-				<Tabs key={name} name={name} panels={{
-					"Introduction": <p>What the guide covers, and who it is for.</p>,
-					"Getting started": <p>Installing the package and rendering a first screen.</p>,
-					"Configuration": <p>The options a screen takes, and their defaults.</p>,
-					"Troubleshooting": <p>The mistakes most often made, and their fixes.</p>
-				}}/>
-			)}
-
-		</div>
+			<Frame key={width} label={width}>
+				<Tabs name={`Guide, ${width}`} panels={guide}/>
+			</Frame>
+		)}</div>
 
 	</>;
 }

@@ -115,13 +115,48 @@
 /**** Frames **********************************************************************************************************/
 
 /*
- * A frame sets a layout in a dashed outline, so the room left over around its items shows. No frame states a size:
- * each one is as large as what it holds, or as the layout it sits in stretches it to. The frame is a column, so a
+ * A frame sets a layout in a dashed outline, so the room left over around its items shows. The frame is a column, so a
  * layout inside it takes the full width, and a stack told to grow takes the full height as well.
+ *
+ * A set of frames shows one setting per frame. Frames run down the set at the full width, so a layout laid out as a
+ * row has the room to show where its items sit along it; a set laid `across` runs them side by side instead, at equal
+ * widths and at the height of the tallest, for a layout laid out as a column. A set laid `aside` transposes that one:
+ * frames run down the set, closer together, each with its caption beside it in a column of their own, so a run of rows
+ * reads as one compact table. A `tall` set gives each frame the room a growing stack needs to show where its items sit
+ * along it, which is the one size a frame states rather than taking it from what it holds.
  */
 
 .frames {
+
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--skin--spacing-150);
     margin-bottom: var(--skin--spacing-100);
+
+    &.across {
+        grid-template-columns: none;
+        grid-auto-flow: column;
+        grid-auto-columns: minmax(0, 1fr);
+    }
+
+    &.aside {
+
+        grid-template-columns: minmax(0, 1fr) max-content;
+        row-gap: var(--skin--spacing-075);
+
+        & > .frame {
+            display: grid;
+            grid-column: 1 / -1;
+            grid-template-columns: subgrid;
+            align-items: center;
+        }
+
+    }
+
+    &.tall > .frame > div {
+        min-height: calc(16 * var(--skin--spacing-100));
+    }
+
 }
 
 /*
@@ -142,6 +177,7 @@
     display: flex;
     flex-direction: column;
     row-gap: var(--skin--spacing-050);
+    margin: 0; /* spaced by the set it stands in, never by the flow of the prose */
 
     & > div {
         display: flex;

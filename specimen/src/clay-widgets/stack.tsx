@@ -21,7 +21,6 @@
  */
 
 import { Stack } from "@metreeca/clay-widgets/stack";
-import { Strip } from "@metreeca/clay-widgets/strip";
 import { Frame, Items } from "@metreeca/specimen/clay-widgets/sample.js";
 import "./index.css";
 
@@ -30,7 +29,6 @@ type Options = Parameters<typeof Stack>[0]
 
 
 const labels = [ "One", "Two", "Three" ];
-const longer = [ "One", "Two", "Three", "Four", "Five", "Six" ];
 const ragged = [ "A", "Bravo", "Charlie Delta" ];
 
 const places: ReadonlyArray<NonNullable<Options["place"]>> = [ "start", "center", "end", "spread", "head", "tail" ];
@@ -55,52 +53,36 @@ export function Stacks() {
 		<p>Told to grow, a stack takes the room its container leaves, and <code>place</code> decides where the items
 			sit in it: packed at either end or in the middle, spread from edge to edge, or split with the first item
 			alone at the top and the others at the bottom (<code>head</code>), or the last alone at the
-			bottom (<code>tail</code>), as a sidebar keeps its settings. Below, stacks set side by side in a strip
-			stretching them all to the tallest one, which holds more items than the others, and every shorter stack
-			places its items in the room left over.</p>
+			bottom (<code>tail</code>), as a sidebar keeps its settings.</p>
 
-		<div class="frames">
-			<Strip wrap align="stretch" space="spacing100">
+		<div class="frames across tall">{places.map(place =>
 
-				<Frame label="as it stands">
-					<Stack space="spacing050"><Items labels={longer}/></Stack>
-				</Frame>
-
-				{places.map(place =>
-
-					<Frame key={place} label={<code>place="{place}"</code>}>
-						<Stack grow place={place} space="spacing050"><Items labels={labels}/></Stack>
-					</Frame>
-				)}
-
-			</Strip>
-		</div>
+			<Frame key={place} label={<code>place="{place}"</code>}>
+				<Stack grow place={place} space="spacing050"><Items labels={labels}/></Stack>
+			</Frame>
+		)}</div>
 
 		<p>Across the column, <code>align</code> decides where each item sits: against either edge, in the middle, or
-			stretched to the full width, which is where a stack starts. The items below differ in width, so the stack
-			is as wide as the widest one and each setting reads off the ragged edge the others leave.</p>
+			stretched to the full width, which is where a stack starts. The items below differ in width, so each setting
+			reads off the ragged edge they leave.</p>
 
-		<div class="frames">
-			<Strip wrap align="stretch" space="spacing100">{aligns.map(align =>
+		<div class="frames across">{aligns.map(align =>
 
-				<Frame key={align} label={<code>align="{align}"</code>}>
-					<Stack align={align} space="spacing050"><Items labels={ragged}/></Stack>
-				</Frame>
-			)}</Strip>
-		</div>
+			<Frame key={align} label={<code>align="{align}"</code>}>
+				<Stack align={align} space="spacing050"><Items labels={ragged}/></Stack>
+			</Frame>
+		)}</div>
 
 		<p>Given a <code>look</code>, a stack sets its items on a padded, rounded surface of its own: sunk below the
 			page (<code>subtle</code>), flat on the colour around it (<code>normal</code>), or raised and edged by a
 			border (<code>strong</code>). A stack stating no look draws nothing, whatever the look around it.</p>
 
-		<div class="frames">
-			<Strip wrap align="stretch" space="spacing100">{looks.map(look =>
+		<div class="frames across">{looks.map(look =>
 
-				<Frame key={look} label={<code>look="{look}"</code>}>
-					<Stack look={look} space="spacing050"><Items labels={labels}/></Stack>
-				</Frame>
-			)}</Strip>
-		</div>
+			<Frame key={look} label={<code>look="{look}"</code>}>
+				<Stack look={look} space="spacing050"><Items labels={labels}/></Stack>
+			</Frame>
+		)}</div>
 
 	</>;
 }
