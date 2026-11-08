@@ -199,6 +199,18 @@ against `src/` without a prior build. Packages installed from the registry keep 
 
 Headless state is tested without a DOM: a widget test that needs one supplies its own environment.
 
+# Specimen
+
+Each specimen page lists its samples in the order its outline shows them, so a reader meets an element before the
+elements built from it:
+
+- **Groups run top-down**: from the structure of a screen to the parts it holds, as layouts, then controls, alerts
+  and content, then glyphs; helpers wrapping other elements rather than drawing anything, such as scopes, come last
+- **Items run simple to complex**: within a group, an element precedes the elements built on it, as `Stack` precedes
+  `Card` and `Shell` closes the layouts
+
+A sample added to a page takes the place these rules give it, never the end of its group by default.
+
 # Version Management
 
 All workspace packages share the root `package.json` version. Beyond the `version` fields the release flow already
