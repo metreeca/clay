@@ -22,7 +22,7 @@
 
 import { type Post, usePosts, useBoard, Board } from "@metreeca/clay/board";
 import { Button } from "@metreeca/clay-widgets/button";
-import { Toast } from "@metreeca/clay-widgets/toast";
+import { Toasts } from "@metreeca/clay-widgets/toasts";
 import "./index.css";
 
 
@@ -47,7 +47,7 @@ const Samples: readonly Required<Pick<Post, "status" | "message">>[] = [
  *
  * @returns The toasts section
  */
-export function Toasts() {
+export function Toasted() {
 	return <Board>
 
 		<p>Toasts float over the top of the screen, one for each post standing on the board, telling how an operation is
@@ -97,7 +97,7 @@ function Shown() {
 
 	const { post } = useBoard();
 
-	return <Toast position={["bottom", "start"]} timeout={2500} onAction={acted => {
+	return <Toasts position={["bottom", "start"]} timeout={2500} onAction={acted => {
 		post({ message: `Opened “${acted.message}”` });
 	}}/>;
 

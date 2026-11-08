@@ -20,7 +20,7 @@
  * Offers the stack of notices telling a reader how the operations under way are going and how they ended, floating
  * over the screen without moving anything on it, and read out to assistive technology as they change.
  *
- * @module toast
+ * @module toasts
  */
 
 import { type Post, type Status, useBoard, usePosts } from "@metreeca/clay/board";
@@ -28,7 +28,7 @@ import { createElement } from "preact";
 import { useEffect, useState } from "preact/hooks";
 import { Button } from "../controls/button.js";
 import { Icon } from "../glyphs/icon.js";
-import "./toast.css";
+import "./toasts.css";
 
 
 /**
@@ -47,7 +47,7 @@ import "./toast.css";
  * no gesture, leaving the pointer to the screen beneath it, so the toasts never stand in the way of what they cover.
  *
  * Every toast takes the same width, so the stack reads as one column, a long message wrapping rather than widening
- * its toast; the width is retuned through the `--clay-toast-width` custom property, `24rem` unless restated, and
+ * its toast; the width is retuned through the `--clay-toasts-width` custom property, `24rem` unless restated, and
  * gives way to the whole width of a narrow screen.
  *
  * Every post put up or updated is read out to assistive technology without moving the focus. The stack is to be
@@ -58,7 +58,7 @@ import "./toast.css";
  *
  * @returns The toast stack
  */
-export function Toast({
+export function Toasts({
 
 	position = "top",
 	timeout = 0,
@@ -133,7 +133,7 @@ export function Toast({
 
 	const [edge, side] = typeof position === "string" ? [position, "center"] : position;
 
-	return createElement("clay-toast", { role: "status", edge, side }, <> {/* edge and side read by the stylesheet */}
+	return createElement("clay-toasts", { role: "status", edge, side }, <> {/* edge and side read by the stylesheet */}
 
 		{shown.map(post => <Item key={post.instance}
 			hidden={hidden(post)}

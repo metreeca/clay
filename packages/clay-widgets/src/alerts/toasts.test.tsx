@@ -18,7 +18,7 @@ import { type Post, usePosts, useBoard, Board } from "@metreeca/clay/board";
 import { render } from "preact";
 import { act } from "preact/test-utils";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { Toast } from "./toast.js";
+import { Toasts } from "./toasts.js";
 
 
 const saving: Post = { instance: "urn:test:saving", status: "pending", message: "Saving" };
@@ -40,8 +40,8 @@ function Probe() {
 
 }
 
-function mount(props: NonNullable<Parameters<typeof Toast>[0]> = {}): void {
-	act(() => render(<Board><Toast {...props}/><Probe/></Board>, document.body));
+function mount(props: NonNullable<Parameters<typeof Toasts>[0]> = {}): void {
+	act(() => render(<Board><Toasts {...props}/><Probe/></Board>, document.body));
 }
 
 function board(): Board {
@@ -65,14 +65,14 @@ function elapse(ms: number): void {
 }
 
 function region(): HTMLElement | null {
-	return document.querySelector("clay-toast");
+	return document.querySelector("clay-toasts");
 }
 
 /**
  * The toasts in the stack, as `message:status`, marked with `!` where on their way out.
  */
 function toasts(): readonly string[] {
-	return Array.from(document.querySelectorAll("clay-toast > div"), toast =>
+	return Array.from(document.querySelectorAll("clay-toasts > div"), toast =>
 		`${toast.textContent}:${toast.getAttribute("status")}${toast.hasAttribute("hidden") ? "!" : ""}`
 	);
 }
@@ -81,7 +81,7 @@ function toasts(): readonly string[] {
  * The toast carrying a message.
  */
 function toast(message: string): Element | null {
-	return Array.from(document.querySelectorAll("clay-toast > div")).find(toast => toast.textContent === message) ?? null;
+	return Array.from(document.querySelectorAll("clay-toasts > div")).find(toast => toast.textContent === message) ?? null;
 }
 
 /**
@@ -110,7 +110,7 @@ afterEach(async () => {
 });
 
 
-describe("Toast()", () => {
+describe("Toasts()", () => {
 
 	it("should render a polite live region with no toast while nothing stands", async () => {
 
@@ -123,7 +123,7 @@ describe("Toast()", () => {
 
 	it("should render the live region with no toast outside any board", async () => {
 
-		act(() => render(<Toast/>, document.body));
+		act(() => render(<Toasts/>, document.body));
 
 		expect(region()?.getAttribute("role")).toBe("status");
 		expect(toasts()).toEqual([]);
@@ -152,7 +152,7 @@ describe("Toast()", () => {
 			{ instance: "urn:test:defect", status: "defect", message: "Defect" }
 		);
 
-		const glyphs = Array.from(document.querySelectorAll("clay-toast > div > div > div > svg"), glyph => glyph.innerHTML);
+		const glyphs = Array.from(document.querySelectorAll("clay-toasts > div > div > div > svg"), glyph => glyph.innerHTML);
 
 		expect(glyphs).toHaveLength(7);
 		expect(new Set(glyphs).size).toBe(7);
@@ -234,7 +234,7 @@ describe("Toast()", () => {
 
 	describe("position", () => {
 
-		function placed(position?: NonNullable<Parameters<typeof Toast>[0]>["position"]): readonly (string | null)[] {
+		function placed(position?: NonNullable<Parameters<typeof Toasts>[0]>["position"]): readonly (string | null)[] {
 
 			mount({ position });
 
@@ -394,7 +394,7 @@ describe("Toast()", () => {
 		const linked: Post = { ...failed, actionable: true };
 
 		function link(): HTMLButtonElement | null {
-			return document.querySelector("clay-toast > div span > button");
+			return document.querySelector("clay-toasts > div span > button");
 		}
 
 		it("should show the message of an actionable post as a control", async () => {
@@ -456,7 +456,7 @@ describe("Toast()", () => {
 	describe("dismiss all", () => {
 
 		function all(): HTMLButtonElement | null {
-			return document.querySelector("clay-toast > footer button");
+			return document.querySelector("clay-toasts > footer button");
 		}
 
 		it("should offer no global dismiss control for a single toast", async () => {

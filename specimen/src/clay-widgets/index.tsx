@@ -42,7 +42,7 @@ import { Styles } from "@metreeca/specimen/clay-widgets/styles.js";
 import { Surfaces } from "@metreeca/specimen/clay-widgets/surfaces.js";
 import { Tabbed } from "@metreeca/specimen/clay-widgets/tabbed.js";
 import { Texts } from "@metreeca/specimen/clay-widgets/texts.js";
-import { Toasts } from "@metreeca/specimen/clay-widgets/toasts.js";
+import { Toasted } from "@metreeca/specimen/clay-widgets/toasted.js";
 import { Triggers } from "@metreeca/specimen/clay-widgets/triggers.js";
 
 
@@ -54,9 +54,10 @@ const samples: readonly Sample[] = [
 	{ id: "text", group: "Content", title: "Text", view: <Texts/> },
 	{ id: "label", group: "Content", title: "Label", view: <Labels/> },
 	{ id: "info", group: "Content", title: "Info", view: <Infos/> },
-	{ id: "notes", group: "Content", title: "Notes", view: <Notes/> },
 	{ id: "hint", group: "Content", title: "Hint", view: <Hints/> },
-	{ id: "toast", group: "Content", title: "Toast", view: <Toasts/> },
+
+	{ id: "notes", group: "Alerts", title: "Notes", view: <Notes/> },
+	{ id: "toasts", group: "Alerts", title: "Toasts", view: <Toasted/> },
 
 	{ id: "buttons", group: "Controls", title: "Buttons", view: <Buttons/> },
 	{ id: "choice", group: "Controls", title: "Choice", view: <Choices/> },

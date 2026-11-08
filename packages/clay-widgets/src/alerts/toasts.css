@@ -29,7 +29,7 @@
  * toasts carry, so it grows with the type, and is held to the room the screen leaves.
  */
 
-@property --clay-toast-width {
+@property --clay-toasts-width {
     syntax: "*";
     inherits: true;
     initial-value: 24em;
@@ -38,7 +38,7 @@
 
 /**** Stack ***********************************************************************************************************/
 
-clay-toast {
+clay-toasts {
 
     /*
      * The stack is a single tray of glass gathering its toasts, rounded a full step, as wide as its toasts and
@@ -95,9 +95,9 @@ clay-toast {
 
         padding-block-end: calc(var(--skin--spacing-100) - var(--skin--spacing-050));
 
-        --clay-toast-before: 0;
-        --clay-toast-after: var(--skin--spacing-050);
-        --clay-toast-shift: calc(-1 * var(--skin--spacing-050));
+        --clay-toasts-before: 0;
+        --clay-toasts-after: var(--skin--spacing-050);
+        --clay-toasts-shift: calc(-1 * var(--skin--spacing-050));
 
     }
 
@@ -110,9 +110,9 @@ clay-toast {
 
         padding-block-start: calc(var(--skin--spacing-100) - var(--skin--spacing-050));
 
-        --clay-toast-before: var(--skin--spacing-050);
-        --clay-toast-after: 0;
-        --clay-toast-shift: var(--skin--spacing-050);
+        --clay-toasts-before: var(--skin--spacing-050);
+        --clay-toasts-after: 0;
+        --clay-toasts-shift: var(--skin--spacing-050);
 
     }
 
@@ -126,7 +126,7 @@ clay-toast {
         display: grid;
         grid-template-rows: 1fr;
 
-        margin-block: var(--clay-toast-before) var(--clay-toast-after);
+        margin-block: var(--clay-toasts-before) var(--clay-toasts-after);
 
         /*
          * The reset hands every element the background of the one around it, which would lay the glass again under
@@ -157,7 +157,7 @@ clay-toast {
             grid-template-rows: 0fr;
             margin-block: 0;
             opacity: 0;
-            translate: 0 var(--clay-toast-shift);
+            translate: 0 var(--clay-toasts-shift);
         }
 
         /* The display above is unlayered and outranks the reset hiding a hidden element, so the rule is restated here. */
@@ -204,9 +204,9 @@ clay-toast {
              * A neutral border, the same whatever the status, sets the card off from the glass.
              */
 
-            --clay-toast-tint: var(--skin--background-color-overlay);
+            --clay-toasts-tint: var(--skin--background-color-overlay);
 
-            background-color: color-mix(in oklab, var(--clay-toast-tint) 60%, var(--skin--background-color-overlay));
+            background-color: color-mix(in oklab, var(--clay-toasts-tint) 60%, var(--skin--background-color-overlay));
             border: var(--skin--border-width) var(--skin--border-style) var(--skin--border-color);
             border-radius: var(--skin--border-radius-050);
 
@@ -303,17 +303,17 @@ clay-toast {
 
         &[status="pending"] > div > div {
 
-            --clay-toast-tint: var(--skin--background-color-note);
+            --clay-toasts-tint: var(--skin--background-color-note);
             & > svg {
                 color: var(--skin--color-note);
-                animation: clay-toast-turn calc(2 * var(--skin--duration-slow)) linear infinite;
+                animation: clay-toasts-turn calc(2 * var(--skin--duration-slow)) linear infinite;
             }
 
         }
 
         &[status="success"] > div > div {
 
-            --clay-toast-tint: var(--skin--background-color-pass);
+            --clay-toasts-tint: var(--skin--background-color-pass);
             & > svg {
                 color: var(--skin--color-pass);
             }
@@ -322,7 +322,7 @@ clay-toast {
 
         &[status="paused"] > div > div {
 
-            --clay-toast-tint: var(--skin--background-color-flag);
+            --clay-toasts-tint: var(--skin--background-color-flag);
             & > svg {
                 color: var(--skin--color-flag);
             }
@@ -331,7 +331,7 @@ clay-toast {
 
         &[status="warning"] > div > div {
 
-            --clay-toast-tint: var(--skin--background-color-warn);
+            --clay-toasts-tint: var(--skin--background-color-warn);
 
             & > svg {
                 color: var(--skin--color-warn);
@@ -345,7 +345,7 @@ clay-toast {
 
             & > div > div {
 
-                --clay-toast-tint: var(--skin--background-color-fail);
+                --clay-toasts-tint: var(--skin--background-color-fail);
                 & > svg {
                     color: var(--skin--color-fail);
                 }
@@ -374,15 +374,15 @@ clay-toast {
          * sits a little outside the curve, shifted by half its own size outwards on either axis.
          */
 
-        --clay-toast-corner: calc(var(--skin--border-radius-100) * (1 - cos(45deg)) / 2);
-        --clay-toast-x: 50%;
-        --clay-toast-y: -50%;
+        --clay-toasts-corner: calc(var(--skin--border-radius-100) * (1 - cos(45deg)) / 2);
+        --clay-toasts-x: 50%;
+        --clay-toasts-y: -50%;
 
         position: absolute;
-        inset-block-start: var(--clay-toast-corner);
-        inset-inline-end: var(--clay-toast-corner);
+        inset-block-start: var(--clay-toasts-corner);
+        inset-inline-end: var(--clay-toasts-corner);
 
-        translate: var(--clay-toast-x) var(--clay-toast-y);
+        translate: var(--clay-toasts-x) var(--clay-toasts-y);
 
         display: flex;
         justify-content: center;
@@ -405,7 +405,7 @@ clay-toast {
         /* The inline end lies on the left where the writing runs right to left, so the outward shift turns with it. */
 
         &:dir(rtl) {
-            translate: calc(-1 * var(--clay-toast-x)) var(--clay-toast-y);
+            translate: calc(-1 * var(--clay-toasts-x)) var(--clay-toasts-y);
         }
 
         /* The mark takes the colour of the ring, so the two read as one control cut out of the tray. */
@@ -419,13 +419,13 @@ clay-toast {
     }
 
     &[edge="bottom"] > footer {
-        inset-block: auto var(--clay-toast-corner);
-        --clay-toast-y: 50%;
+        inset-block: auto var(--clay-toasts-corner);
+        --clay-toasts-y: 50%;
     }
 
     &[side="start"] > footer {
-        inset-inline: var(--clay-toast-corner) auto;
-        --clay-toast-x: -50%;
+        inset-inline: var(--clay-toasts-corner) auto;
+        --clay-toasts-x: -50%;
     }
 
 }
@@ -438,12 +438,12 @@ clay-toast {
 
 @container style(--skin--viewport-small: on) {
 
-    clay-toast {
+    clay-toasts {
 
         width: fit-content;
 
         & > div {
-            width: var(--clay-toast-width);
+            width: var(--clay-toasts-width);
             max-width: 100%;
         }
 
@@ -463,7 +463,7 @@ clay-toast {
 
 }
 
-@keyframes clay-toast-turn {
+@keyframes clay-toasts-turn {
     to {
         rotate: 1turn;
     }

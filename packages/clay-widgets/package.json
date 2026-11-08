@@ -193,14 +193,6 @@
       "@metreeca/source": "./src/content/label.css",
       "default": "./dist/content/label.css"
     },
-    "./note": {
-      "@metreeca/source": "./src/content/note.tsx",
-      "default": "./dist/content/note.js"
-    },
-    "./note.css": {
-      "@metreeca/source": "./src/content/note.css",
-      "default": "./dist/content/note.css"
-    },
     "./text": {
       "@metreeca/source": "./src/content/text.tsx",
       "default": "./dist/content/text.js"
@@ -209,13 +201,21 @@
       "@metreeca/source": "./src/content/text.css",
       "default": "./dist/content/text.css"
     },
-    "./toast": {
-      "@metreeca/source": "./src/content/toast.tsx",
-      "default": "./dist/content/toast.js"
+    "./note": {
+      "@metreeca/source": "./src/alerts/note.tsx",
+      "default": "./dist/alerts/note.js"
     },
-    "./toast.css": {
-      "@metreeca/source": "./src/content/toast.css",
-      "default": "./dist/content/toast.css"
+    "./note.css": {
+      "@metreeca/source": "./src/alerts/note.css",
+      "default": "./dist/alerts/note.css"
+    },
+    "./toasts": {
+      "@metreeca/source": "./src/alerts/toasts.tsx",
+      "default": "./dist/alerts/toasts.js"
+    },
+    "./toasts.css": {
+      "@metreeca/source": "./src/alerts/toasts.css",
+      "default": "./dist/alerts/toasts.css"
     },
     "./guard": {
       "@metreeca/source": "./src/scopes/guard.tsx",
