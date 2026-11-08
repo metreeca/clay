@@ -15,7 +15,7 @@
  */
 
 /**
- * Trigger samples.
+ * `More` trigger samples.
  *
  * @module
  */
@@ -30,11 +30,11 @@ const Delay = 1000;
 
 
 /**
- * Creates the triggers section.
+ * Creates the `More` trigger section.
  *
  * Shows a list growing a batch at a time as the reader scrolls to its end, until there is nothing left to fetch.
  *
- * @returns The triggers section
+ * @returns The `More` trigger section
  */
 export function Triggers() {
 
@@ -49,8 +49,8 @@ export function Triggers() {
 
 	return <>
 
-		<p>A trigger closes a list fetched as it is read: scrolling it into view asks for the next batch, and the list
-			stops rendering it once there is nothing left to fetch.</p>
+		<p>A <code>More</code> trigger closes a list fetched as it is read: scrolling it into view asks for the next
+			batch, and the list stops rendering it once there is nothing left to fetch.</p>
 
 		<ol>
 			{Array.from({ length: count }, (_, index) => <li key={index}>Item {index + 1}</li>)}

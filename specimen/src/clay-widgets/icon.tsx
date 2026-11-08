@@ -23,7 +23,7 @@
 import { Icon } from "@metreeca/clay-widgets/icon";
 import { type Entry } from "@metreeca/specimen/sample";
 import { css, skin } from "@metreeca/skin";
-import "./icons.css";
+import "./icon.css";
 
 
 /**

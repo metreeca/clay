@@ -21,30 +21,31 @@
  */
 
 import { Page, type Sample } from "@metreeca/specimen/index.core.js";
-import { Buttons } from "@metreeca/specimen/clay-widgets/buttons.js";
-import { Cards } from "@metreeca/specimen/clay-widgets/cards.js";
-import { Choices } from "@metreeca/specimen/clay-widgets/choices.js";
-import { Contents } from "@metreeca/specimen/clay-widgets/contents.js";
-import { Empties } from "@metreeca/specimen/clay-widgets/empties.js";
-import { Guards } from "@metreeca/specimen/clay-widgets/guards.js";
-import { Sections } from "@metreeca/specimen/clay-widgets/sections.js";
-import { Icons } from "@metreeca/specimen/clay-widgets/icons.js";
-import { Images } from "@metreeca/specimen/clay-widgets/images.js";
-import { Infoboxes } from "@metreeca/specimen/clay-widgets/infoboxes.js";
-import { Labels } from "@metreeca/specimen/clay-widgets/labels.js";
-import { Layouts } from "@metreeca/specimen/clay-widgets/layouts.js";
-import { Logos } from "@metreeca/specimen/clay-widgets/logos.js";
-import { Notes } from "@metreeca/specimen/clay-widgets/notes.js";
-import { Paths } from "@metreeca/specimen/clay-widgets/paths.js";
-import { Shells } from "@metreeca/specimen/clay-widgets/shells.js";
-import { Stacks } from "@metreeca/specimen/clay-widgets/stacks.js";
-import { Strips } from "@metreeca/specimen/clay-widgets/strips.js";
-import { Styles } from "@metreeca/specimen/clay-widgets/styles.js";
+import { Buttons } from "@metreeca/specimen/clay-widgets/button.js";
+import { Cards } from "@metreeca/specimen/clay-widgets/card.js";
+import { Choices } from "@metreeca/specimen/clay-widgets/choice.js";
+import { Empties } from "@metreeca/specimen/clay-widgets/empty.js";
+import { Guards } from "@metreeca/specimen/clay-widgets/guard.js";
+import { Icons } from "@metreeca/specimen/clay-widgets/icon.js";
+import { Images } from "@metreeca/specimen/clay-widgets/image.js";
+import { Infoboxes } from "@metreeca/specimen/clay-widgets/infobox.js";
+import { Labels } from "@metreeca/specimen/clay-widgets/label.js";
+import { Layouts } from "@metreeca/specimen/clay-widgets/layout.js";
+import { Links } from "@metreeca/specimen/clay-widgets/link.js";
+import { Logos } from "@metreeca/specimen/clay-widgets/logo.js";
+import { Triggers } from "@metreeca/specimen/clay-widgets/more.js";
+import { Notes } from "@metreeca/specimen/clay-widgets/note.js";
+import { Paths } from "@metreeca/specimen/clay-widgets/path.js";
+import { Sections } from "@metreeca/specimen/clay-widgets/section.js";
+import { Shells } from "@metreeca/specimen/clay-widgets/shell.js";
+import { Stacks } from "@metreeca/specimen/clay-widgets/stack.js";
+import { Strips } from "@metreeca/specimen/clay-widgets/strip.js";
+import { Styles } from "@metreeca/specimen/clay-widgets/style.js";
 import { Surfaces } from "@metreeca/specimen/clay-widgets/surfaces.js";
-import { Tabbed } from "@metreeca/specimen/clay-widgets/tabbed.js";
-import { Texts } from "@metreeca/specimen/clay-widgets/texts.js";
-import { Toasted } from "@metreeca/specimen/clay-widgets/toasted.js";
-import { Triggers } from "@metreeca/specimen/clay-widgets/triggers.js";
+import { Tabbed } from "@metreeca/specimen/clay-widgets/tabs.js";
+import { Texts } from "@metreeca/specimen/clay-widgets/text.js";
+import { Toasted } from "@metreeca/specimen/clay-widgets/toasts.js";
+import { Contents } from "@metreeca/specimen/clay-widgets/toc.js";
 
 
 const samples: readonly Sample[] = [
@@ -58,23 +59,24 @@ const samples: readonly Sample[] = [
 	{ id: "layout", group: "Layouts", title: "Layout", view: <Layouts/> },
 	{ id: "shell", group: "Layouts", title: "Shell", view: <Shells/> },
 
-	{ id: "buttons", group: "Controls", title: "Buttons", view: <Buttons/> },
-	{ id: "choice", group: "Controls", title: "Choice", view: <Choices/> },
-	{ id: "paths", group: "Controls", title: "Paths", view: <Paths/> },
-	{ id: "triggers", group: "Controls", title: "Triggers", view: <Triggers/> },
-	{ id: "contents", group: "Controls", title: "Table of Contents", label: "ToC", view: <Contents/> },
-
-	{ id: "notes", group: "Alerts", title: "Notes", view: <Notes/> },
-	{ id: "toasts", group: "Alerts", title: "Toasts", view: <Toasted/> },
-
 	{ id: "text", group: "Content", title: "Text", view: <Texts/> },
 	{ id: "label", group: "Content", title: "Label", view: <Labels/> },
 	{ id: "empty", group: "Content", title: "Empty", view: <Empties/> },
 	{ id: "image", group: "Content", title: "Image", view: <Images/> },
 	{ id: "infobox", group: "Content", title: "Infobox", view: <Infoboxes/> },
 
-	{ id: "icons", group: "Glyphs", title: "Icons", view: <Icons/> },
-	{ id: "logos", group: "Glyphs", title: "Logos", view: <Logos/> },
+	{ id: "link", group: "Controls", title: "Link", view: <Links/> },
+	{ id: "path", group: "Controls", title: "Path", view: <Paths/> },
+	{ id: "contents", group: "Controls", title: "Table of Contents", label: "ToC", view: <Contents/> },
+	{ id: "button", group: "Controls", title: "Button", view: <Buttons/> },
+	{ id: "choice", group: "Controls", title: "Choice", view: <Choices/> },
+	{ id: "more", group: "Controls", title: "More", view: <Triggers/> },
+
+	{ id: "note", group: "Alerts", title: "Note", view: <Notes/> },
+	{ id: "toasts", group: "Alerts", title: "Toasts", view: <Toasted/> },
+
+	{ id: "icon", group: "Glyphs", title: "Icon", view: <Icons/> },
+	{ id: "logo", group: "Glyphs", title: "Logo", view: <Logos/> },
 
 	{ id: "style", group: "Scopes", title: "Style", view: <Styles/> },
 	{ id: "guard", group: "Scopes", title: "Guard", view: <Guards/> }
