@@ -26,7 +26,7 @@
 import { useModel } from "@metreeca/clay/model";
 import { opt, type Optional } from "@metreeca/core";
 import { type ComponentChildren, createElement } from "preact";
-import { useEffect } from "preact/hooks";
+import { useEffect, useId } from "preact/hooks";
 import { createTOC, type TOC as Outline, type TOCMetrics } from "./toc.core.js";
 import "./toc.css";
 
@@ -94,11 +94,22 @@ export interface TOCEntry {
  */
 export function TOC({
 
+	compact = false,
+
 	name,
 
 	entries
 
 }: {
+
+	/**
+	 * Whether top-level groups fold like an accordion, keeping a long outline down to the group the reader is in.
+	 *
+	 * Each top-level group without a link of its own folds behind its label, and only one group is open at a time. The
+	 * group holding the section the reader is in opens as they reach it, and any other opens on demand. A group with a
+	 * link stays listed in full, since its label already leads somewhere. Every group is listed in full if omitted.
+	 */
+	compact?: boolean
 
 	/**
 	 * The accessible name of the outline, such as `Contents`, telling it apart from other navigation landmarks and
@@ -118,6 +129,8 @@ export function TOC({
 	const key = sections.join(" ");
 
 	const outline = useModel(() => createTOC({ sections }), [key]);
+
+	const group = useId(); // the name gathering the folded groups of this outline alone into one accordion
 
 	/*
 	 * The section in view follows the scroll position and the location of the document, which no render owns, so the
@@ -189,7 +202,7 @@ export function TOC({
 
 	return entries.length === 0 ? null : createElement("clay-toc", {}, <details>
 		<summary>{opt(outline.current, id => caption(entries, id)) ?? name}</summary>
-		<nav aria-label={name}>{list(entries, outline.current)}</nav>
+		<nav aria-label={name}>{list(entries, outline.current, compact ? group : undefined)}</nav>
 	</details>);
 
 }
@@ -318,20 +331,42 @@ function fragment(href: Optional<string>): Optional<string> {
  * Renders entries as a nested list of links, and an entry with no link as plain text. The link to the section the
  * reader is in is marked as the current location. Following a link folds the outline on smaller viewports, so the
  * reader lands on the section it leads to with the outline already out of the way.
+ *
+ * Given an accordion name, each entry with nested entries and no link of its own folds behind its label instead. The
+ * folds share that name, so only one is open at a time, and a fold opens while it holds the section the reader is in.
  */
-function list(entries: readonly TOCEntry[], current: Optional<string>): ComponentChildren {
+function list(entries: readonly TOCEntry[], current: Optional<string>, accordion?: string): ComponentChildren {
 	return <ul>{entries.map(({ label, href, entries = [] }, index) => <li key={href ?? index}>
 
-		{href === undefined
-			? <span>{label}</span>
-			: <a href={href} aria-current={current !== undefined && fragment(href) === current ? "location" : undefined}
-				onClick={({ currentTarget }) => currentTarget.closest("details")?.removeAttribute("open")}
-			>{label}</a>
+		{accordion !== undefined && href === undefined && entries.length > 0
+
+			? <details name={accordion} open={current !== undefined && holds(entries, current)}>
+				<summary>{label}</summary>
+				{list(entries, current)}
+			</details>
+
+			: <>
+
+				{href === undefined
+					? <span>{label}</span>
+					: <a href={href} aria-current={current !== undefined && fragment(href) === current ? "location" : undefined}
+						onClick={({ currentTarget }) => currentTarget.closest("clay-toc > details")?.removeAttribute("open")}
+					>{label}</a>
+				}
+
+				{entries.length > 0 && list(entries, current)}
+
+			</>
 		}
 
-		{entries.length > 0 && list(entries, current)}
-
 	</li>)}</ul>;
+}
+
+/**
+ * Checks whether entries link to a section, at any depth.
+ */
+function holds(entries: readonly TOCEntry[], id: string): boolean {
+	return entries.some(entry => fragment(entry.href) === id || holds(entry.entries ?? [], id));
 }
 
 /**

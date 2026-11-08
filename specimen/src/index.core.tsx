@@ -162,7 +162,7 @@ export function Page({
 
 		</>}
 
-		tray={<TOC name="Sections" entries={outline(samples)}/>}
+		tray={<TOC name="Sections" compact entries={outline(samples)}/>}
 
 		info={user
 

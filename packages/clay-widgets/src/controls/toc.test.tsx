@@ -210,13 +210,15 @@ describe("TOC", () => {
 	 * Mounts the outline beside the sections it names, each starting at the offset below the top of the viewport given
 	 * for it; the reading line stands a third of the way down the 900 pixel viewport, at 300.
 	 */
-	async function mount(tops: Readonly<Record<string, number>> = {}, outline: readonly TOCEntry[] = entries): Promise<void> {
+	async function mount(
+		tops: Readonly<Record<string, number>> = {}, outline: readonly TOCEntry[] = entries, compact?: boolean
+	): Promise<void> {
 
 		vi.spyOn(window, "innerHeight", "get").mockReturnValue(900);
 
 		act(() => render(<>
 			{Object.keys(tops).map(id => <h2 key={id} id={id}>{id}</h2>)}
-			<TOC name="Contents" entries={outline}/>
+			<TOC name="Contents" compact={compact} entries={outline}/>
 		</>, document.body));
 
 		await scroll(tops);
@@ -408,6 +410,126 @@ describe("TOC", () => {
 			});
 
 			expect(details()?.open).toBe(false);
+
+		});
+
+	});
+
+	describe("compact", () => {
+
+		const groups: readonly TOCEntry[] = [
+			{
+				label: "Foundations", entries: [
+					{ label: "Colours", href: "#colours" },
+					{ label: "Spacing", href: "#spacing" }
+				]
+			},
+			{
+				label: "Components", entries: [
+					{ label: "Buttons", href: "#buttons" }
+				]
+			},
+			{
+				label: "Guide", href: "/guide", entries: [
+					{ label: "Install", href: "/guide/install" }
+				]
+			}
+		];
+
+		function folds(): readonly HTMLDetailsElement[] {
+			return Array.from(document.querySelectorAll<HTMLDetailsElement>("clay-toc nav > ul > li > details"));
+		}
+
+		function open(): readonly string[] {
+			return folds().filter(fold => fold.open).map(fold => fold.querySelector("summary")?.textContent ?? "");
+		}
+
+
+		it("lists groups unfolded by default", async () => {
+
+			await mount({}, groups);
+
+			expect(folds()).toEqual([]);
+
+		});
+
+		it("folds each group leading nowhere behind its label", async () => {
+
+			await mount({}, groups, true);
+
+			expect(folds().map(fold => fold.querySelector(":scope > summary")?.textContent)).toEqual(["Foundations", "Components"]);
+			expect(document.querySelectorAll("clay-toc nav > ul > li > details > summary + ul > li")).toHaveLength(3);
+
+		});
+
+		it("keeps a group with a location as a link listing its entries", async () => {
+
+			await mount({}, groups, true);
+
+			expect(document.querySelector("clay-toc nav > ul > li > a[href='/guide'] + ul a[href='/guide/install']"))
+				.not.toBeNull();
+
+		});
+
+		it("opens one group at a time", async () => {
+
+			await mount({}, groups, true);
+
+			const names = folds().map(fold => fold.getAttribute("name"));
+
+			expect(names[0]).toBeTruthy();
+			expect(new Set(names).size).toBe(1);
+
+		});
+
+		it("keeps groups apart across outlines", async () => {
+
+			act(() => render(<>
+				<TOC compact entries={groups}/>
+				<TOC compact entries={groups}/>
+			</>, document.body));
+
+			expect(new Set(folds().map(fold => fold.getAttribute("name"))).size).toBe(2);
+
+		});
+
+		it("keeps every group folded above the first section", async () => {
+
+			await mount({ colours: 400, spacing: 800, buttons: 1200 }, groups, true);
+
+			expect(open()).toEqual([]);
+
+		});
+
+		it("opens the group holding the section the reader is in", async () => {
+
+			await mount({ colours: 100, spacing: 800, buttons: 1200 }, groups, true);
+
+			expect(open()).toEqual(["Foundations"]);
+
+		});
+
+		it("opens the group the reader scrolls into, folding the one they leave", async () => {
+
+			await mount({ colours: 100, spacing: 800, buttons: 1200 }, groups, true);
+			await scroll({ colours: -1000, spacing: -500, buttons: 200 });
+
+			expect(open()).toEqual(["Components"]);
+
+		});
+
+		it("folds the outline rather than the group once the reader follows one of its links", async () => {
+
+			await mount({ colours: 100, spacing: 800, buttons: 1200 }, groups, true);
+
+			await act(async () => {
+				const outline = document.querySelector<HTMLDetailsElement>("clay-toc > details");
+				if ( outline ) { outline.open = true; }
+				document.querySelector<HTMLAnchorElement>("clay-toc a[href='#spacing']")?.click();
+			});
+
+			expect(document.querySelector<HTMLDetailsElement>("clay-toc > details")?.open).toBe(false);
+			expect(open()).toEqual(["Foundations"]);
 
 		});
 
