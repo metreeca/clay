@@ -73,8 +73,6 @@ export function Style({
 
 }) {
 
-	// tokens are assigned on the element, an area being settled by whoever renders it rather than by a stylesheet
-
 	return createElement("clay-style", { style: compile(css) }, children);
 
 }
