@@ -63,6 +63,9 @@ import "./shell.css";
  * named there is the sections or the filters it holds, which say what they are far better than a word for the whole
  * region would, so a screen names those as it puts them in, as a table of contents does with its `name`.
  *
+ * The content can take the focus without standing in the tab order, so the {@link @metreeca/clay!router.Router router}
+ * moves the focus there on landing a screen, so a reader hears its name at once instead of a control of the last one.
+ *
  * `lock` takes the tray out of reach for every gesture at once, pointer and keyboard alike, so a reader is never
  * left tabbing into something the screen is showing as unavailable; whoever sets it owes the reader somewhere to
  * land if the focus was in the tray at the time. `main` goes further and leaves the tray out of the frame altogether,
@@ -276,7 +279,9 @@ export function Shell({
 
 		</aside>}
 
-		<main aria-labelledby={title}>
+		{/* focusable from code alone, so a navigation can land the focus on the content without adding a tab stop */}
+
+		<main aria-labelledby={title} tabIndex={-1}>
 
 			{heads && <header>
 				{lead && <span id={title} inert={fetching && lead === done}>{lead}</span>}

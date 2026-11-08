@@ -164,6 +164,12 @@ describe("Shell", () => {
 
 		});
 
+		it("takes the focus a navigation lands on without standing in the tab order", async () => {
+
+			expect(rendered(<Shell>Content</Shell>)?.querySelector("main")?.getAttribute("tabindex")).toBe("-1");
+
+		});
+
 	});
 
 	describe("content header and footer", () => {
