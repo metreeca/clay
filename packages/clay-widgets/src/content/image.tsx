@@ -18,7 +18,7 @@
  * Captioned image.
  *
  * Sets a picture together with what is said about it, such as its credits, as one block held to the width of the
- * picture, so a card, a panel or a page places an image without a layout of its own for the caption beneath it.
+ * picture, so a card, a stack or a page places an image without a layout of its own for the caption beneath it.
  *
  * @module image
  */

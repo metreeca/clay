@@ -16,10 +16,10 @@
 
 import { type JSX, render } from "preact";
 import { describe, expect, it } from "vitest";
-import { Panel } from "./panel.js";
+import { Strip } from "./strip.js";
 
 
-describe("Panel", () => {
+describe("Strip", () => {
 
 	const rendered = (element: JSX.Element): null | HTMLElement => {
 
@@ -27,20 +27,24 @@ describe("Panel", () => {
 
 		render(element, container);
 
-		return container.querySelector<HTMLElement>(":scope > clay-panel");
+		return container.querySelector<HTMLElement>(":scope > clay-strip");
 
 	};
 
 
-	it("renders what it holds inside a panel", async () => {
+	describe("look", () => {
 
-		expect(rendered(<Panel><p>held</p></Panel>)?.innerHTML).toBe("<p>held</p>");
+		it("carries the given look", async () => {
 
-	});
+			expect(rendered(<Strip look="subtle"><p>held</p></Strip>)?.getAttribute("look")).toBe("subtle");
 
-	it("takes its look from the design system alone", async () => {
+		});
 
-		expect(rendered(<Panel><p>held</p></Panel>)?.getAttribute("style")).toBeNull();
+		it("states no look of its own by default", async () => {
+
+			expect(rendered(<Strip><p>held</p></Strip>)?.hasAttribute("look")).toBe(false);
+
+		});
 
 	});
 

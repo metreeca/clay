@@ -17,7 +17,8 @@
 /**
  * Vertical stack.
  *
- * Stacks what it holds top to bottom, a spacing step apart, so a screen lays out its parts without a rule of its own.
+ * Stacks what it holds top to bottom, a spacing step apart and optionally on a surface of its own, so a screen lays
+ * out its parts and sets a bar, a sidebar or a tray apart from the page without a rule of its own.
  *
  * @module stack
  */
@@ -51,6 +52,9 @@ const justify = {
  * aligned otherwise; a stack told to grow takes whatever room its container leaves along the main axis, which is
  * what lets `place` position the items within a stack taller than they are.
  *
+ * A stack given a look sets its items on a padded, rounded surface of its own, painting everything inside it as
+ * standing on that surface, so a screen sets a bar, a sidebar or a tray apart without a wrapper of its own.
+ *
  * The stack carries no semantics: grouping its items for assistive technology takes an element inside it or around it.
  *
  * @param options The widget configuration
@@ -58,6 +62,8 @@ const justify = {
  * @returns The vertical stack
  */
 export function Stack({
+
+	look,
 
 	grow = false,
 
@@ -68,6 +74,13 @@ export function Stack({
 	children
 
 }: {
+
+	/**
+	 * The surface the stack sets its items on: sunk below the page (`subtle`), flat on the page colour (`normal`), or
+	 * raised and edged by a border (`strong`); none if omitted, whatever the look of the area around the stack.
+	 */
+	look?: "subtle" | "normal" | "strong"
+
 
 	/**
 	 * Whether the stack takes the room its container leaves along the main axis, rather than the size of its items.
@@ -104,6 +117,7 @@ export function Stack({
 
 	return createElement("clay-stack", {
 
+		look,
 		place,
 
 		style: {

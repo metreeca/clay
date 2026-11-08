@@ -35,13 +35,14 @@ const ragged = [ "A", "Bravo", "Charlie Delta" ];
 
 const places: ReadonlyArray<NonNullable<Options["place"]>> = [ "start", "center", "end", "spread", "head", "tail" ];
 const aligns: ReadonlyArray<NonNullable<Options["align"]>> = [ "start", "center", "end", "stretch" ];
+const looks: ReadonlyArray<NonNullable<Options["look"]>> = [ "subtle", "normal", "strong" ];
 
 
 /**
  * Creates the stack section.
  *
- * Shows items laid out one below the other, where they sit along a stack taller than they are, and where each sits
- * across it.
+ * Shows items laid out one below the other, where they sit along a stack taller than they are, where each sits
+ * across it, and the sunken, flat or raised surface a stack given a look sets them on.
  *
  * @returns The stack section
  */
@@ -84,6 +85,19 @@ export function Stacks() {
 
 				<Frame key={align} label={<code>align="{align}"</code>}>
 					<Stack align={align} space="spacing050"><Items labels={ragged}/></Stack>
+				</Frame>
+			)}</Strip>
+		</div>
+
+		<p>Given a <code>look</code>, a stack sets its items on a padded, rounded surface of its own: sunk below the
+			page (<code>subtle</code>), flat on the colour around it (<code>normal</code>), or raised and edged by a
+			border (<code>strong</code>). A stack stating no look draws nothing, whatever the look around it.</p>
+
+		<div class="frames">
+			<Strip wrap align="stretch" space="spacing100">{looks.map(look =>
+
+				<Frame key={look} label={<code>look="{look}"</code>}>
+					<Stack look={look} space="spacing050"><Items labels={labels}/></Stack>
 				</Frame>
 			)}</Strip>
 		</div>

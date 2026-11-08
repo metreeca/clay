@@ -90,4 +90,20 @@ describe("Card", () => {
 
 	});
 
+	describe("look", () => {
+
+		it("carries the given look", async () => {
+
+			expect(rendered(<Card look="normal" title="Title"/>)?.getAttribute("look")).toBe("normal");
+
+		});
+
+		it("states no look of its own by default", async () => {
+
+			expect(rendered(<Card title="Title"/>)?.hasAttribute("look")).toBe(false);
+
+		});
+
+	});
+
 });

@@ -25,6 +25,28 @@ clay-stack {
     display: flex;
     flex-direction: column;
 
+    /*
+     * A stack given a look stands on a surface of its own. The page colour is retuned to the surface rather than
+     * painted over it, so everything inside reads as standing on the stack. A stack stating no look draws nothing,
+     * whatever the look of the area around it, so one surface never outlines every layout nested inside it. A
+     * strong look takes the raised colour edged by a border rather than a shadow, so it stands apart with no depth.
+     */
+
+    &[look] {
+        padding: var(--skin--spacing-100);
+        border-radius: var(--skin--border-radius-050);
+        background-color: var(--skin--background-color);
+    }
+
+    &[look="subtle"] {
+        --skin--background-color: var(--skin--background-color-sunken);
+    }
+
+    &[look="strong"] {
+        --skin--background-color: var(--skin--background-color-raised);
+        border: var(--skin--border-width) solid var(--skin--border-color);
+    }
+
     &[place="head"] > :first-child {
         margin-block-end: auto;
     }

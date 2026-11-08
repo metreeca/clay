@@ -17,7 +17,8 @@
 /**
  * Horizontal strip.
  *
- * Lines up what it holds side by side, a spacing step apart, so a screen lays out its parts without a rule of its own.
+ * Lines up what it holds side by side, a spacing step apart and optionally on a surface of its own, so a screen lays
+ * out its parts and sets a toolbar or a row of tiles apart from the page without a rule of its own.
  *
  * @module strip
  */
@@ -52,6 +53,9 @@ const justify = {
  * one line and overflow it, unless the strip is told to wrap, in which case they flow onto as many rows as they
  * need, set apart as `wrap` states.
  *
+ * A strip given a look sets its items on a padded, rounded surface of its own, painting everything inside it as
+ * standing on that surface, so a screen sets a toolbar or a row of tiles apart without a wrapper of its own.
+ *
  * The strip carries no semantics: grouping its items for assistive technology takes an element inside it or around it.
  *
  * @param options The widget configuration
@@ -59,6 +63,8 @@ const justify = {
  * @returns The horizontal strip
  */
 export function Strip({
+
+	look,
 
 	grow = false,
 	wrap = false,
@@ -70,6 +76,13 @@ export function Strip({
 	children
 
 }: {
+
+	/**
+	 * The surface the strip sets its items on: sunk below the page (`subtle`), flat on the page colour (`normal`), or
+	 * raised and edged by a border (`strong`); none if omitted, whatever the look of the area around the strip.
+	 */
+	look?: "subtle" | "normal" | "strong"
+
 
 	/**
 	 * Whether the strip takes the room its container leaves along the main axis, rather than the size of its items.
@@ -114,6 +127,7 @@ export function Strip({
 
 	return createElement("clay-strip", {
 
+		look,
 		place,
 
 		style: {

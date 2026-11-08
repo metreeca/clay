@@ -40,11 +40,16 @@ import "./card.css";
  * an item without first checking what is missing. A part is empty when it is `undefined`, `null`, an empty string
  * or a boolean, as left by a conditional such as `label && <Link/>`; any other part is shown, `0` included.
  *
+ * A card given a look sets its parts on a padded, rounded surface of its own, painting everything inside it as
+ * standing on that surface, so a run of results reads as a deck of tiles rather than as a list of entries.
+ *
  * @param options The widget configuration
  *
  * @returns The card, or `null` if every part is empty
  */
 export function Card({
+
+	look,
 
 	title,
 	badge,
@@ -53,6 +58,13 @@ export function Card({
 	children
 
 }: {
+
+	/**
+	 * The surface the card sets its parts on: sunk below the page (`subtle`), flat on the page colour (`normal`), or
+	 * raised and edged by a border (`strong`); none if omitted, whatever the look of the area around the card.
+	 */
+	look?: "subtle" | "normal" | "strong"
+
 
 	/**
 	 * The title naming the item, at the top of the main column.
@@ -79,7 +91,7 @@ export function Card({
 
 }) {
 
-	return [title, badge, image, children].some(isContent) ? createElement("clay-card", {}, <>
+	return [title, badge, image, children].some(isContent) ? createElement("clay-card", { look }, <>
 
 		{isContent(title) && <span>{title}</span>}
 		{isContent(badge) && <span class="badge">{badge}</span>}

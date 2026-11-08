@@ -23,7 +23,7 @@
  * @module
  */
 
-import { Panel } from "@metreeca/clay-widgets/panel";
+import { Stack } from "@metreeca/clay-widgets/stack";
 import { type ComponentChildren } from "preact";
 import "./index.css";
 
@@ -31,7 +31,7 @@ import "./index.css";
 /**
  * Creates a set of items.
  *
- * Draws each label on a raised panel, so the items read apart from each other and from the frame in either scheme.
+ * Draws each label in an outlined stack, so the items read apart from each other and from the frame in either scheme.
  *
  * @param options The widget configuration
  *
@@ -40,14 +40,14 @@ import "./index.css";
 export function Items({ labels }: {
 
 	/**
-	 * The label of each item, one panel per label.
+	 * The label of each item, one outlined stack per label.
 	 */
 	labels: ReadonlyArray<string>
 
 }) {
 	return <>{labels.map(label =>
 
-		<Panel key={label}><span>{label}</span></Panel>
+		<Stack key={label} look="strong"><span>{label}</span></Stack>
 	)}</>;
 }
 

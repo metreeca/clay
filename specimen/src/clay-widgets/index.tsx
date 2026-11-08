@@ -30,7 +30,6 @@ import { Icons } from "@metreeca/specimen/clay-widgets/icon.js";
 import { Images } from "@metreeca/specimen/clay-widgets/image.js";
 import { Infoboxes } from "@metreeca/specimen/clay-widgets/infobox.js";
 import { Labels } from "@metreeca/specimen/clay-widgets/label.js";
-import { Layouts } from "@metreeca/specimen/clay-widgets/layout.js";
 import { Links } from "@metreeca/specimen/clay-widgets/link.js";
 import { Logos } from "@metreeca/specimen/clay-widgets/logo.js";
 import { Triggers } from "@metreeca/specimen/clay-widgets/more.js";
@@ -41,7 +40,6 @@ import { Shells } from "@metreeca/specimen/clay-widgets/shell.js";
 import { Stacks } from "@metreeca/specimen/clay-widgets/stack.js";
 import { Strips } from "@metreeca/specimen/clay-widgets/strip.js";
 import { Styles } from "@metreeca/specimen/clay-widgets/style.js";
-import { Surfaces } from "@metreeca/specimen/clay-widgets/surfaces.js";
 import { Tabbed } from "@metreeca/specimen/clay-widgets/tabs.js";
 import { Texts } from "@metreeca/specimen/clay-widgets/text.js";
 import { Toasted } from "@metreeca/specimen/clay-widgets/toasts.js";
@@ -52,18 +50,16 @@ const samples: readonly Sample[] = [
 
 	{ id: "stack", group: "Layouts", title: "Stack", view: <Stacks/> },
 	{ id: "strip", group: "Layouts", title: "Strip", view: <Strips/> },
-	{ id: "surfaces", group: "Layouts", title: "Surfaces", view: <Surfaces/> },
 	{ id: "section", group: "Layouts", title: "Section", view: <Sections/> },
 	{ id: "card", group: "Layouts", title: "Card", view: <Cards/> },
 	{ id: "tabs", group: "Layouts", title: "Tabs", view: <Tabbed/> },
-	{ id: "layout", group: "Layouts", title: "Layout", view: <Layouts/> },
 	{ id: "shell", group: "Layouts", title: "Shell", view: <Shells/> },
 
 	{ id: "text", group: "Content", title: "Text", view: <Texts/> },
 	{ id: "label", group: "Content", title: "Label", view: <Labels/> },
-	{ id: "empty", group: "Content", title: "Empty", view: <Empties/> },
 	{ id: "image", group: "Content", title: "Image", view: <Images/> },
 	{ id: "infobox", group: "Content", title: "Infobox", view: <Infoboxes/> },
+	{ id: "empty", group: "Content", title: "Empty", view: <Empties/> },
 
 	{ id: "link", group: "Controls", title: "Link", view: <Links/> },
 	{ id: "path", group: "Controls", title: "Path", view: <Paths/> },

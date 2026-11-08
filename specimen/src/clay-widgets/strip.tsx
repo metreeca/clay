@@ -34,6 +34,7 @@ const labels = [ "One", "Two", "Three" ];
 
 const places: ReadonlyArray<NonNullable<Options["place"]>> = [ "start", "center", "end", "spread", "head", "tail" ];
 const aligns: ReadonlyArray<NonNullable<Options["align"]>> = [ "start", "center", "end", "baseline", "stretch" ];
+const looks: ReadonlyArray<NonNullable<Options["look"]>> = [ "subtle", "normal", "strong" ];
 
 const days = Array.from({ length: 31 }, (_, index) => String(index + 1));
 
@@ -41,8 +42,8 @@ const days = Array.from({ length: 31 }, (_, index) => String(index + 1));
 /**
  * Creates the strip section.
  *
- * Shows items laid out side by side, where they sit along a strip wider than they are, where each sits across it, and
- * how a strip told to wrap flows onto further rows.
+ * Shows items laid out side by side, where they sit along a strip wider than they are, where each sits across it, how
+ * a strip told to wrap flows onto further rows, and the surface a strip given a look sets them on.
  *
  * @returns The strip section
  */
@@ -103,6 +104,19 @@ export function Strips() {
 				</Frame>
 
 			</Stack>
+		</div>
+
+		<p>Given a <code>look</code>, a strip sets its items on a padded, rounded surface of its own, as a stack does:
+			sunk below the page (<code>subtle</code>), flat on the colour around it (<code>normal</code>), or raised
+			and edged by a border (<code>strong</code>), as a toolbar standing apart from the content it acts on.</p>
+
+		<div class="frames">
+			<Stack space="spacing100">{looks.map(look =>
+
+				<Frame key={look} label={<code>look="{look}"</code>}>
+					<Strip look={look} space="spacing050"><Items labels={labels}/></Strip>
+				</Frame>
+			)}</Stack>
 		</div>
 
 	</>;

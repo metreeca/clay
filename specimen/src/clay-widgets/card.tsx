@@ -31,7 +31,7 @@ import "./index.css";
  * Creates the summary card section.
  *
  * Shows runs of entries standing for their items by a captioned picture, by an icon or initials, and by nothing, and
- * the same entries again in a narrow box, where the side column is capped to a third of the card.
+ * the same entries again in a narrow box, where the side column is capped to a third of the card, and on a surface.
  *
  * @returns The summary card section
  */
@@ -104,6 +104,23 @@ export function Cards() {
 
 				<Card title="Harbour lights" badge="Photo" image={<Image src="missing-picture.jpg"/>}>
 					A picture that fails to load is dropped, leaving the description beside the badge.
+				</Card>
+
+			</Frame>
+		</div>
+
+		<p>Given a <code>look</code>, a card sets its parts on a padded, rounded surface of its own, as a stack does, so
+			a run of results reads as a deck of tiles rather than as a list of entries.</p>
+
+		<div class="frames">
+			<Frame label={<code>look="strong"</code>}>
+
+				<Card look="strong" title="Board minutes" badge="Record · Restricted" image={<Icon.FileText/>}>
+					Decisions of the March meeting on budget allocation and the renewal of the audit committee.
+				</Card>
+
+				<Card look="strong" title="Maria Rossi" badge="Person" image={<>MR</>}>
+					Lead researcher for the climate programme and contact point for data access requests.
 				</Card>
 
 			</Frame>

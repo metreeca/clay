@@ -16,10 +16,10 @@
 
 import { type JSX, render } from "preact";
 import { describe, expect, it } from "vitest";
-import { Well } from "./well.js";
+import { Stack } from "./stack.js";
 
 
-describe("Well", () => {
+describe("Stack", () => {
 
 	const rendered = (element: JSX.Element): null | HTMLElement => {
 
@@ -27,20 +27,24 @@ describe("Well", () => {
 
 		render(element, container);
 
-		return container.querySelector<HTMLElement>(":scope > clay-well");
+		return container.querySelector<HTMLElement>(":scope > clay-stack");
 
 	};
 
 
-	it("renders what it holds inside a well", async () => {
+	describe("look", () => {
 
-		expect(rendered(<Well><p>held</p></Well>)?.innerHTML).toBe("<p>held</p>");
+		it("carries the given look", async () => {
 
-	});
+			expect(rendered(<Stack look="strong"><p>held</p></Stack>)?.getAttribute("look")).toBe("strong");
 
-	it("takes its look from the design system alone", async () => {
+		});
 
-		expect(rendered(<Well><p>held</p></Well>)?.getAttribute("style")).toBeNull();
+		it("states no look of its own by default", async () => {
+
+			expect(rendered(<Stack><p>held</p></Stack>)?.hasAttribute("look")).toBe(false);
+
+		});
 
 	});
 

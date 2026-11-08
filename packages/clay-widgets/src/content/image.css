@@ -16,7 +16,7 @@
 
 /*
  * An image is a block as wide as its picture and scaled down to the room it is given, adding no spacing of its own,
- * so it sits in a card, a panel or a column exactly as the bare picture would, with its caption held beneath it.
+ * so it sits in a card, a stack or a column exactly as the bare picture would, with its caption held beneath it.
  */
 
 clay-image {
