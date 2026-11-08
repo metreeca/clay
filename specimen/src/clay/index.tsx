@@ -20,14 +20,12 @@
  * @module
  */
 
-import { Columns } from "@metreeca/specimen/clay/columns.js";
-import { Exchanges } from "@metreeca/specimen/clay/fetch.js";
-import { Focus } from "@metreeca/specimen/clay/focus.js";
-import { List } from "@metreeca/specimen/clay/list.js";
+import { Board } from "@metreeca/specimen/clay/board.js";
+import { Fetch } from "@metreeca/specimen/clay/fetch.js";
 import { Model } from "@metreeca/specimen/clay/model.js";
-import { Notices } from "@metreeca/specimen/clay/notices.js";
+import { Roving } from "@metreeca/specimen/clay/roving.js";
 import { Storage } from "@metreeca/specimen/clay/storage.js";
-import { Uploads } from "@metreeca/specimen/clay/uploads.js";
+import { Transfer } from "@metreeca/specimen/clay/transfer.js";
 import { Page, type Sample } from "@metreeca/specimen/index.core.js";
 
 
@@ -36,13 +34,11 @@ const samples: readonly Sample[] = [
 	{ id: "model", group: "State", title: "Model", view: <Model/> },
 	{ id: "storage", group: "State", title: "Storage", view: <Storage/> },
 
-	{ id: "exchanges", group: "Services", title: "Exchanges", view: <Exchanges/> },
-	{ id: "notices", group: "Services", title: "Notices", view: <Notices/> },
+	{ id: "fetch", group: "Services", title: "Fetch", view: <Fetch/> },
+	{ id: "board", group: "Services", title: "Board", view: <Board/> },
 
-	{ id: "focus", group: "Interaction", title: "Focus", view: <Focus/> },
-	{ id: "columns", group: "Interaction", title: "Columns", view: <Columns/> },
-	{ id: "list", group: "Interaction", title: "List", view: <List/> },
-	{ id: "uploads", group: "Interaction", title: "Uploads", view: <Uploads/> }
+	{ id: "roving", group: "Interaction", title: "Roving", view: <Roving/> },
+	{ id: "transfer", group: "Interaction", title: "Transfer", view: <Transfer/> }
 
 ];
 

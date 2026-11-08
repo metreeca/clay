@@ -15,24 +15,24 @@
  */
 
 /**
- * Notice samples.
+ * Board samples.
  *
  * @module
  */
 
-import { Board, useBoard, usePosts } from "@metreeca/clay/board";
+import { Board as BoardProvider, useBoard, usePosts } from "@metreeca/clay/board";
 import { Button } from "@metreeca/clay-widgets/button";
 import "../clay-widgets/index.css";
 
 
 /**
- * Creates the notices section.
+ * Creates the board section.
  *
  * Puts posts up on a status board from one component and lists them from another, neither knowing of the other.
  *
- * @returns The notices section
+ * @returns The board section
  */
-export function Notices() {
+export function Board() {
 	return <>
 
 		<p>A component running an operation puts it up on the shared <code>Board</code> as a post, without knowing who
@@ -40,10 +40,10 @@ export function Notices() {
 			list are two components sharing nothing but the board. Toasts are one way of showing the same posts, as the
 			widgets page shows.</p>
 
-		<Board>
+		<BoardProvider>
 			<Sources/>
 			<Posts/>
-		</Board>
+		</BoardProvider>
 
 	</>;
 }

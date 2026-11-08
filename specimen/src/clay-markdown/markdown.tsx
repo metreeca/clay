@@ -12,12 +12,12 @@ title: Release Notes
 author: Metreeca
 ---
 
-# Release Notes
+### Release Notes
 
 Tokens carry the values behind every colour, measure and duration :tada:, and widgets read them rather than stating
 values of their own. See the [guide](guide.md) or the [index](docs/index.md#tokens).
 
-## Tokens
+#### Tokens
 
 | Token                  | Role                |
 |------------------------|---------------------|
@@ -42,7 +42,7 @@ values of their own. See the [guide](guide.md) or the [index](docs/index.md#toke
 > [!CAUTION]
 > Reassigning a token read by a derived one resolves both to nothing.
 
-## Code
+#### Code
 
 \`\`\`ts
 
@@ -56,7 +56,7 @@ values of their own. See the [guide](guide.md) or the [index](docs/index.md#toke
 
 \`\`\`
 
-## Tokens
+#### Tokens
 
 A second heading with the same text gets a distinct id.
 `;

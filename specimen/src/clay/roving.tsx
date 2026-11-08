@@ -29,13 +29,13 @@ const tools = ["Bold", "Italic", "Underline", "Code", "Link"];
 
 
 /**
- * Creates the focus section.
+ * Creates the roving section.
  *
  * Makes a toolbar a single tab stop, the arrow keys moving the focus between its buttons.
  *
- * @returns The focus section
+ * @returns The roving section
  */
-export function Focus() {
+export function Roving() {
 
 	const id = useId();
 

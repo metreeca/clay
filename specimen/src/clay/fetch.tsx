@@ -15,7 +15,7 @@
  */
 
 /**
- * Exchange samples.
+ * Fetch samples.
  *
  * @module
  */
@@ -29,13 +29,13 @@ import "../clay-widgets/index.css";
 
 
 /**
- * Creates the exchanges section.
+ * Creates the fetch section.
  *
  * Runs exchanges through the shared client, showing what each one answered and whether the client is busy.
  *
- * @returns The exchanges section
+ * @returns The fetch section
  */
-export function Exchanges() {
+export function Fetch() {
 
 	const fetch = useFetch();
 	const fetching = useFetching();

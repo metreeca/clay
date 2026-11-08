@@ -186,7 +186,7 @@ export function Page({
 		<Section eyebrow={eyebrow} title={title} lead={lead}/>
 
 		{samples.map(({ id, group, title, lead, view }) =>
-			<Section key={id} id={id} eyebrow={group} title={title} lead={lead}>{view}</Section>
+			<Section key={id} id={id} level={2} eyebrow={group} title={title} lead={lead}>{view}</Section>
 		)}
 
 	</Shell>;
