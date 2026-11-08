@@ -57,8 +57,6 @@ const samples: readonly Sample[] = [
 	{ id: "notes", group: "Content", title: "Notes", view: <Notes/> },
 	{ id: "hint", group: "Content", title: "Hint", view: <Hints/> },
 	{ id: "toast", group: "Content", title: "Toast", view: <Toasts/> },
-	{ id: "guard", group: "Content", title: "Guard", view: <Guards/> },
-	{ id: "style", group: "Content", title: "Style", view: <Styles/> },
 
 	{ id: "buttons", group: "Controls", title: "Buttons", view: <Buttons/> },
 	{ id: "choice", group: "Controls", title: "Choice", view: <Choices/> },
@@ -73,7 +71,10 @@ const samples: readonly Sample[] = [
 	{ id: "tabs", group: "Layouts", title: "Tabs", view: <Tabbed/> },
 	{ id: "section", group: "Layouts", title: "Section", view: <Sections/> },
 	{ id: "card", group: "Layouts", title: "Card", view: <Cards/> },
-	{ id: "shell", group: "Layouts", title: "Shell", view: <Shells/> }
+	{ id: "shell", group: "Layouts", title: "Shell", view: <Shells/> },
+
+	{ id: "style", group: "Scopes", title: "Style", view: <Styles/> },
+	{ id: "guard", group: "Scopes", title: "Guard", view: <Guards/> }
 
 ];
 

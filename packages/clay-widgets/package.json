@@ -169,14 +169,6 @@
       "@metreeca/source": "./src/content/image.css",
       "default": "./dist/content/image.css"
     },
-    "./guard": {
-      "@metreeca/source": "./src/content/guard.tsx",
-      "default": "./dist/content/guard.js"
-    },
-    "./guard.css": {
-      "@metreeca/source": "./src/content/guard.css",
-      "default": "./dist/content/guard.css"
-    },
     "./hint": {
       "@metreeca/source": "./src/content/hint.tsx",
       "default": "./dist/content/hint.js"
@@ -209,14 +201,6 @@
       "@metreeca/source": "./src/content/note.css",
       "default": "./dist/content/note.css"
     },
-    "./style": {
-      "@metreeca/source": "./src/content/style.tsx",
-      "default": "./dist/content/style.js"
-    },
-    "./style.css": {
-      "@metreeca/source": "./src/content/style.css",
-      "default": "./dist/content/style.css"
-    },
     "./text": {
       "@metreeca/source": "./src/content/text.tsx",
       "default": "./dist/content/text.js"
@@ -232,6 +216,22 @@
     "./toast.css": {
       "@metreeca/source": "./src/content/toast.css",
       "default": "./dist/content/toast.css"
+    },
+    "./guard": {
+      "@metreeca/source": "./src/scopes/guard.tsx",
+      "default": "./dist/scopes/guard.js"
+    },
+    "./guard.css": {
+      "@metreeca/source": "./src/scopes/guard.css",
+      "default": "./dist/scopes/guard.css"
+    },
+    "./style": {
+      "@metreeca/source": "./src/scopes/style.tsx",
+      "default": "./dist/scopes/style.js"
+    },
+    "./style.css": {
+      "@metreeca/source": "./src/scopes/style.css",
+      "default": "./dist/scopes/style.css"
     },
     "./*.core": null
   },
