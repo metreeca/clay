@@ -105,11 +105,11 @@
  * @module
  */
 
-import { opt, type Optional } from "@metreeca/core";
+import { type Optional } from "@metreeca/core";
 import { type ComponentChildren, createContext, createElement } from "preact";
 import { useContext, useEffect, useLayoutEffect, useState } from "preact/hooks";
 import { Fields } from "./roving.core.js";
-import { accepts, announcement, describe, edge, type Edge, install, lacking, milliseconds, type Outcome, settle } from "./transfer.core.js";
+import { accepts, announcement, describe, edge, type Edge, milliseconds, type Outcome, settle } from "./transfer.core.js";
 
 export type { Edge, Outcome } from "./transfer.core.js";
 
@@ -126,7 +126,6 @@ const Hidden = {
 	position: "absolute", width: "1px", height: "1px", margin: "-1px", padding: "0",
 	overflow: "hidden", clip: "rect(0 0 0 0)", whiteSpace: "nowrap", border: "0"
 };
-
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -224,18 +223,31 @@ export interface Destination {
 }
 
 
+
 /**
  * A bound source, as held by the service while its component stands.
  */
 interface SourceEntry {
-	id: string;
-	name: string;
-	type: string;
-	data: unknown;
-	payload: Optional<Readonly<Record<string, string>>>;
-	element: string;
-	handle: Optional<string>;
-	focus: Optional<string>;
+	id: string
+	name: string
+	type: string
+	data: unknown
+	payload: Optional<Readonly<Record<string, string>>>
+	element: string
+	handle: Optional<string>
+	focus: Optional<string>
+}
+
+/**
+ * A bound target, as held by the service while its component stands.
+ */
+interface TargetEntry {
+	id: string
+	name: string
+	data: unknown
+	accept: readonly string[]
+	edges: boolean
+	onDrop: Optional<(drop: Drop) => Outcome>
 }
 
 /**
@@ -244,41 +256,37 @@ interface SourceEntry {
 type State = "pending" | "dropping";
 
 /**
- * Something a target takes standing over it, nearest the given side if the target takes edges.
+ * A drag standing over a target that takes it, with the side the item would land on if the target takes edges.
  */
-type Over = { readonly edge?: Edge };
+interface Over {
+	readonly edge: Optional<Edge>
+}
 
 /**
- * A bound target, as held by the service while its component stands.
+ * What lands on a target: an item of the page, with the box it was dropped from if it is to glide to its new place,
+ * or content brought from outside the page, such as files from the desktop or a link from another app.
  */
-interface TargetEntry {
-	id: string;
-	name: string;
-	data: unknown;
-	accept: readonly string[];
-	edges: boolean;
-	onDrop: Optional<(drop: Drop) => Outcome>;
-}
+type Landing =
+	| { readonly source: SourceEntry, readonly from: Optional<DOMRect> }
+	| { readonly files: readonly File[], readonly strings: Readonly<Record<string, string>> };
 
 /**
  * The transfer service behind {@link Transfer}, shared by the hooks of every component inside it.
  */
 interface Service {
 
-	readonly targets: () => readonly TargetEntry[];
-	readonly addTarget: (entry: TargetEntry) => () => void;
+	readonly targets: () => readonly TargetEntry[]
+	readonly addTarget: (entry: TargetEntry) => () => void
+	readonly addSource: (entry: SourceEntry) => () => void
 
-	readonly source: (id: string) => Optional<SourceEntry>;
-	readonly addSource: (entry: SourceEntry) => () => void;
+	readonly dragged: () => Optional<SourceEntry>
+	readonly begin: (source: SourceEntry) => void
+	readonly end: () => void
 
-	readonly dragged: () => Optional<SourceEntry>;
-	readonly begin: (source: SourceEntry) => void;
-	readonly end: () => void;
+	readonly state: (id: string) => Optional<State>
+	readonly subscribe: (listener: () => void) => () => void
 
-	readonly state: (id: string) => Optional<State>;
-	readonly subscribe: (listener: () => void) => () => void;
-
-	readonly drop: (drop: Drop, source: Optional<SourceEntry>, target: TargetEntry, from: Optional<DOMRect>) => Promise<boolean>;
+	readonly drop: (target: TargetEntry, landing: Landing, edge: Optional<Edge>) => Promise<boolean>
 
 }
 
@@ -324,7 +332,7 @@ export function Transfer({
 		requestAnimationFrame(() => setMessage(message));
 	}));
 
-	useEffect(() => lacking(window) ? install(document) : undefined, []);
+	useEffect(() => lacking(window) ? touch(document) : undefined, []);
 	useEffect(() => scroll(document), []);
 
 	return createElement(ServiceContext.Provider, { value: service },
@@ -443,22 +451,9 @@ export function useSource({
 } {
 
 	const service = useContext(ServiceContext);
+	const entry = useEntry<SourceEntry>(service, { id, name, type, data, payload, element, handle, focus }, service => service.addSource);
 
-	const [entry] = useState<SourceEntry>(() => ({ id, name, type, data, payload, element, handle, focus }));
 	const [dragging, setDragging] = useState(false);
-	const [, setVersion] = useState(0);
-
-	/*
-	 * The entry is read by listeners bound to the DOM, a lifetime the render does not own, so it is brought up to date
-	 * in place before the browser paints, where every listener finds the props of the last render.
-	 */
-
-	useLayoutEffect(() => {
-		Object.assign(entry, { id, name, type, data, payload, element, handle, focus });
-	});
-
-	useEffect(() => service?.addSource(entry), [service]);
-	useEffect(() => service?.subscribe(() => setVersion(version => version+1)), [service]);
 
 	useEffect(() => {
 
@@ -471,26 +466,25 @@ export function useSource({
 
 	const state = service?.state(id);
 
+	function takes(target: TargetEntry): boolean {
+		return target.id !== id && accepts(target.accept, [type]);
+	}
+
 	return {
 
 		dragging,
 		dropping: state === "dropping",
 		pending: state === "pending",
 
-		targets: (service?.targets() ?? [])
-			.filter(target => target.id !== id && accepts(target.accept, [type]))
-			.map(target => ({ id: target.id, name: target.name })),
+		targets: (service?.targets() ?? []).filter(takes).map(target => ({ id: target.id, name: target.name })),
 
 		move: (target, edge) => {
 
-			const destination = service?.targets()
-				.find(entry => entry.id === target && entry.id !== id && accepts(entry.accept, [type]));
+			const destination = service?.targets().find(candidate => candidate.id === target && takes(candidate));
 
-			return service && destination ? service.drop({
-				source: { id, type, data },
-				target: { id: destination.id, data: destination.data },
-				...(edge === undefined || !destination.edges ? {} : { edge })
-			}, entry, destination, document.getElementById(element)?.getBoundingClientRect()) : Promise.resolve(false);
+			return service && destination
+				? service.drop(destination, { source: entry, from: document.getElementById(element)?.getBoundingClientRect() }, edge)
+				: Promise.resolve(false);
 
 		}
 
@@ -584,17 +578,9 @@ export function useTarget({
 } {
 
 	const service = useContext(ServiceContext);
+	const entry = useEntry<TargetEntry>(service, { id, name, data, accept, edges, onDrop }, service => service.addTarget);
 
-	const [entry] = useState<TargetEntry>(() => ({ id, name, data, accept, edges, onDrop }));
 	const [over, setOver] = useState<Optional<Over>>(undefined);
-	const [, setVersion] = useState(0);
-
-	useLayoutEffect(() => {
-		Object.assign(entry, { id, name, data, accept, edges, onDrop });
-	});
-
-	useEffect(() => service?.addTarget(entry), [service]);
-	useEffect(() => service?.subscribe(() => setVersion(version => version+1)), [service]);
 
 	useEffect(() => {
 
@@ -614,6 +600,38 @@ export function useTarget({
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/**
+ * Binds an entry to the service for the lifetime of a component.
+ *
+ * The entry always carries the props of the last render, so DOM listeners reading it never act on stale values. The
+ * component renders again whenever the service changes, so the state it reads off the service is never a render behind.
+ *
+ * @typeParam T The kind of entry bound, a source or a target
+ *
+ * @param service The service the entry is bound to; nothing is bound outside a {@link Transfer} context
+ * @param props The props of the current render, copied into the entry
+ * @param add Selects the service method adding the entry and returning the function that removes it again
+ *
+ * @returns The entry bound to the service, the same object across renders
+ */
+function useEntry<T extends object>(
+	service: Optional<Service>,
+	props: T,
+	add: (service: Service) => (entry: T) => () => void
+): T {
+
+	const [entry] = useState<T>(() => ({ ...props }));
+	const [, setVersion] = useState(0);
+
+	useLayoutEffect(() => { Object.assign(entry, props); });
+
+	useEffect(() => service && add(service)(entry), [service]);
+	useEffect(() => service?.subscribe(() => setVersion(version => version+1)), [service]);
+
+	return entry;
+
+}
 
 /**
  * Creates the transfer service behind a {@link Transfer} context.
@@ -645,6 +663,50 @@ function createService(announce: (message: string) => void): Service {
 
 	}
 
+	/**
+	 * Follows a moved source to where it is drawn afresh.
+	 *
+	 * Once the components have rendered the move, the element glides from where the move started to where it now
+	 * stands. It takes back the focus if the move left the focus on the page, and never takes it from anywhere else.
+	 * A component drawn afresh may bind the item under new DOM ids, so the source is found again by its item id.
+	 *
+	 * @param moved The source as it stood when the move started
+	 * @param from The box the glide starts from; the element takes its new place at once if omitted
+	 */
+	function follow(moved: SourceEntry, from: Optional<DOMRect>): void {
+
+		requestAnimationFrame(() => requestAnimationFrame(() => {
+
+			const source = sources.get(moved.id) ?? moved;
+			const element = document.getElementById(source.element);
+			const focusable = document.getElementById(source.focus ?? source.handle ?? source.element);
+
+			if ( document.activeElement === null || document.activeElement === document.body ) {
+				focusable?.focus();
+			}
+
+			const to = element?.getBoundingClientRect();
+			const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+			const styles = element ? getComputedStyle(element) : undefined;
+			const duration = milliseconds(styles?.getPropertyValue("--skin--duration-normal") ?? "");
+			const easing = styles?.getPropertyValue("--skin--easing-standard").trim() || "ease";
+
+			if ( element && from && to && !reduced && duration > 0 && (from.left !== to.left || from.top !== to.top) ) {
+
+				mark([source.id], "dropping");
+
+				element.animate([
+					{ translate: `${from.left-to.left}px ${from.top-to.top}px` },
+					{ translate: "0 0" }
+				], { duration, easing }).finished.finally(() => mark([source.id], undefined));
+
+			}
+
+		}));
+
+	}
+
 	return {
 
 		targets: () => targets,
@@ -665,8 +727,6 @@ function createService(announce: (message: string) => void): Service {
 		 * A source is held by its identifier, the last component bound under it winning: a component drawn afresh
 		 * after a move, under DOM ids of its own, takes the place of the one it replaces.
 		 */
-
-		source: id => sources.get(id),
 
 		addSource: entry => {
 
@@ -689,7 +749,18 @@ function createService(announce: (message: string) => void): Service {
 			return () => listeners.delete(listener);
 		},
 
-		drop: (drop, source, target, from) => {
+		drop: (target, landing, edge) => {
+
+			const source = "source" in landing ? landing.source : undefined;
+			const from = "source" in landing ? landing.from : undefined;
+			const item = "source" in landing ? landing.source.name : describe(landing.files);
+
+			const at = { id: target.id, data: target.data };
+			const side = edge === undefined || !target.edges ? {} : { edge };
+
+			const drop: Drop = "source" in landing
+				? { source: { id: landing.source.id, type: landing.source.type, data: landing.source.data }, target: at, ...side }
+				: { files: landing.files, strings: landing.strings, target: at, ...side };
 
 			const outcome = target.onDrop?.(drop);
 			const waiting = outcome instanceof Promise;
@@ -697,19 +768,13 @@ function createService(announce: (message: string) => void): Service {
 
 			if ( waiting ) { mark(ids, "pending"); }
 
-			const item = "source" in drop ? source?.name ?? drop.source.id : describe(drop.files);
-
 			return settle(outcome).then(taken => {
 
 				if ( waiting ) { mark(ids, undefined); }
 
-				announce(announcement(item, target.name, taken, target.edges ? drop.edge : undefined));
+				announce(announcement(item, target.name, taken, drop.edge));
 
-				if ( source ) {
-					follow(() => sources.get(source.id) ?? source, taken ? from : undefined,
-						() => mark([source.id], "dropping"), () => mark([source.id], undefined)
-					);
-				}
+				if ( source ) { follow(source, taken ? from : undefined); }
 
 				return taken;
 
@@ -742,19 +807,21 @@ function bind(
 
 	function onDragStart(event: DragEvent): void {
 
-		const transfer = event.dataTransfer;
+		const { dataTransfer } = event;
 
-		if ( transfer === null || event.target !== grip ) { return; }
+		if ( dataTransfer !== null && event.target === grip ) {
 
-		const box = root.getBoundingClientRect();
+			const box = root.getBoundingClientRect();
 
-		transfer.setData(entry.type, entry.id);
-		Object.entries(entry.payload ?? {}).forEach(([type, value]) => transfer.setData(type, value));
-		transfer.effectAllowed = "copyMove";
-		transfer.setDragImage(root, event.clientX-box.left, event.clientY-box.top);
+			dataTransfer.setData(entry.type, entry.id);
+			Object.entries(entry.payload ?? {}).forEach(([type, value]) => dataTransfer.setData(type, value));
+			dataTransfer.effectAllowed = "copyMove";
+			dataTransfer.setDragImage(root, event.clientX-box.left, event.clientY-box.top);
 
-		service.begin(entry);
-		setDragging(true);
+			service.begin(entry);
+			setDragging(true);
+
+		}
 
 	}
 
@@ -795,20 +862,22 @@ function listen(
 		return entry.edges ? edge(root.getBoundingClientRect(), event.clientY) : undefined;
 	}
 
-	function taken(event: DragEvent): boolean {
+	function taken(event: DragEvent): event is DragEvent & { readonly dataTransfer: DataTransfer } {
 		return event.dataTransfer !== null && accepts(entry.accept, [...event.dataTransfer.types]);
 	}
 
 	function onDragOver(event: DragEvent): void {
 
-		if ( !taken(event) ) { return; }
+		if ( taken(event) ) {
 
-		event.preventDefault(); // takes the drop
-		event.stopPropagation(); // leaves no enclosing target taking it as well
+			event.preventDefault(); // takes the drop
+			event.stopPropagation(); // leaves no enclosing target taking it as well
 
-		event.dataTransfer!.dropEffect = service.dragged() ? "move" : "copy"; // taken() checked dataTransfer
+			event.dataTransfer.dropEffect = service.dragged() ? "move" : "copy";
 
-		setOver(opt(side(event), edge => ({ edge })) ?? {});
+			setOver({ edge: side(event) });
+
+		}
 
 	}
 
@@ -818,40 +887,38 @@ function listen(
 
 	function onDrop(event: DragEvent): void {
 
-		if ( !taken(event) ) { return; }
+		if ( taken(event) ) {
 
-		event.preventDefault();
-		event.stopPropagation();
+			event.preventDefault();
+			event.stopPropagation();
 
-		setOver(undefined);
+			setOver(undefined);
 
-		const transfer = event.dataTransfer!; // taken() checked dataTransfer
-		const landed = opt(side(event), edge => ({ edge })) ?? {};
-		const source = service.dragged();
-		const target = { id: entry.id, data: entry.data };
+			const { dataTransfer, clientX, clientY } = event;
 
-		const internal = source !== undefined && transfer.getData(source.type) === source.id;
+			const source = service.dragged();
+			const internal = source !== undefined && dataTransfer.getData(source.type) === source.id;
+			const box = internal ? document.getElementById(source.element)?.getBoundingClientRect() : undefined;
 
-		/*
-		 * Outside content is read here, since a DataTransfer cannot be read once the drop event is over.
-		 */
+			/*
+			 * Outside content is read here, since a DataTransfer cannot be read once the drop event is over; an item
+			 * of the page glides from the box it stood in under the pointer as it was dropped.
+			 */
 
-		const drop: Drop = internal
-			? { source: { id: source.id, type: source.type, data: source.data }, target, ...landed }
-			: {
-				files: [...transfer.files],
-				strings: Object.fromEntries([...transfer.types]
-					.map(type => type.toLowerCase())
-					.filter(type => type !== "files" && accepts(entry.accept, [type]))
-					.map(type => [type, transfer.getData(type)])
-				),
-				target,
-				...landed
-			};
+			const landing: Landing = internal
+				? { source, from: box && new DOMRect(clientX-box.width/2, clientY-box.height/2, box.width, box.height) }
+				: {
+					files: [...dataTransfer.files],
+					strings: Object.fromEntries([...dataTransfer.types]
+						.map(type => type.toLowerCase())
+						.filter(type => type !== "files" && accepts(entry.accept, [type]))
+						.map(type => [type, dataTransfer.getData(type)])
+					)
+				};
 
-		const from = internal ? grabbed(source, event) : undefined;
+			void service.drop(entry, landing, side(event));
 
-		void service.drop(drop, internal ? source : undefined, entry, from);
+		}
 
 	}
 
@@ -875,60 +942,200 @@ function listen(
 
 }
 
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 /**
- * Locates the box a dragged source stood in under the pointer as it was dropped, which its glide starts from.
+ * How long a finger rests on a draggable element before a drag starts, in milliseconds; a shorter press is left to the
+ * scroll or the tap the reader meant, so lists stay scrollable under the finger.
  */
-function grabbed(source: SourceEntry, event: DragEvent): Optional<DOMRect> {
+const Hold = 350;
 
-	const box = document.getElementById(source.element)?.getBoundingClientRect();
+/**
+ * How far a finger may wander while held before the press is taken as a scroll, in CSS pixels.
+ */
+const Slop = 8;
 
-	return box && new DOMRect(event.clientX-box.width/2, event.clientY-box.height/2, box.width, box.height);
+/**
+ * Checks whether the browser leaves touch drags undone.
+ *
+ * Firefox for Android and Samsung Internet fire no drag events from a finger; other touch browsers drag natively.
+ *
+ * @param window The window to check
+ *
+ * @returns `true` if `window` runs on a touch device whose browser fires no drag events from a finger
+ */
+function lacking(window: Window): boolean {
+
+	const { userAgent, maxTouchPoints } = window.navigator;
+
+	return maxTouchPoints > 0 && /Android/.test(userAgent) && /Firefox|SamsungBrowser/.test(userAgent);
 
 }
 
 /**
- * Follows a moved source to where it is drawn afresh.
+ * Follows touch gestures on the draggable elements of a document, dispatching the drag events they stand for: a long
+ * press on a draggable element starts a drag, and the native drag events follow as the finger moves and lifts, so
+ * sources and targets need no touch code of their own, the drag reaching them as a pointer drag would.
  *
- * Once the components have rendered the move, the element glides from where the move started to where it now stands,
- * and takes back the focus if the move left it on the page, never taking it from wherever else the reader put it. The
- * source is looked up as it stands then, since a component drawn afresh binds its item under DOM ids of its own.
+ * @param document The document whose draggable elements are to follow touch; left alone if it has no window
+ *
+ * @returns A function removing the touch listeners and cancelling any drag under way
  */
-function follow(
-	current: () => SourceEntry,
-	from: Optional<DOMRect>,
-	start: () => void,
-	stop: () => void
-): void {
+function touch(document: Document): () => void {
 
-	requestAnimationFrame(() => requestAnimationFrame(() => {
+	const window = document.defaultView;
 
-		const source = current();
-		const element = document.getElementById(source.element);
-		const focusable = document.getElementById(source.focus ?? source.handle ?? source.element);
+	/*
+	 * The gesture is a foreign lifetime spanning several events, so its state is held in two locals the listeners
+	 * share, the press while the finger rests and the drag once it moves, both reset as either one ends.
+	 */
 
-		if ( document.activeElement === null || document.activeElement === document.body ) {
-			focusable?.focus();
+	let press: Optional<{ readonly source: HTMLElement, readonly x: number, readonly y: number, readonly timer: number }>;
+	let drag: Optional<{ readonly source: HTMLElement, readonly data: DataTransfer, readonly ghost: HTMLElement, readonly over: Optional<Element>, readonly accepted: boolean }>;
+
+	function dispatch(type: string, target: EventTarget, x: number, y: number): boolean {
+		return target.dispatchEvent(new DragEvent(type, {
+			bubbles: true,
+			cancelable: true,
+			clientX: x,
+			clientY: y,
+			dataTransfer: drag?.data ?? null
+		}));
+	}
+
+	function start(): void {
+
+		if ( press !== undefined ) {
+
+			const { source, x, y } = press;
+			const box = source.getBoundingClientRect();
+
+			/*
+			 * The preview stands for the item to the eye alone: hidden from assistive technology, out of reach of the
+			 * focus, and stripped of the ids it copied, which the item still answers to and its references still point at.
+			 */
+
+			const ghost = source.cloneNode(true) as HTMLElement; // ;(cast) cloneNode is typed as Node, but a clone keeps the element type
+
+			[ghost, ...ghost.querySelectorAll("[id]")].forEach(element => element.removeAttribute("id"));
+
+			ghost.setAttribute("aria-hidden", "true");
+			ghost.inert = true;
+
+			Object.assign(ghost.style, {
+				position: "fixed", left: `${box.left}px`, top: `${box.top}px`, width: `${box.width}px`,
+				pointerEvents: "none", opacity: "0.8", zIndex: "2147483647"
+			});
+
+			press = undefined;
+			drag = { source, data: new DataTransfer(), ghost, over: undefined, accepted: false };
+
+			document.body.append(ghost);
+			dispatch("dragstart", source, x, y);
+
 		}
 
-		const to = element?.getBoundingClientRect();
-		const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+	}
 
-		const styles = element ? getComputedStyle(element) : undefined;
-		const duration = milliseconds(styles?.getPropertyValue("--skin--duration-normal") ?? "");
-		const easing = styles?.getPropertyValue("--skin--easing-standard").trim() || "ease";
+	function move(x: number, y: number): void {
 
-		if ( element && from && to && !reduced && duration > 0 && (from.left !== to.left || from.top !== to.top) ) {
+		if ( drag !== undefined ) {
 
-			start();
+			const { ghost, over } = drag;
+			const box = ghost.getBoundingClientRect();
 
-			element.animate([
-				{ translate: `${from.left-to.left}px ${from.top-to.top}px` },
-				{ translate: "0 0" }
-			], { duration, easing }).finished.finally(stop);
+			ghost.style.translate = `${x-box.left-box.width/2}px ${y-box.top-box.height/2}px`;
+
+			const under = document.elementFromPoint(x, y) ?? undefined;
+
+			if ( under !== over ) {
+				if ( over ) { dispatch("dragleave", over, x, y); }
+				if ( under ) { dispatch("dragenter", under, x, y); }
+			}
+
+			drag = { ...drag, over: under, accepted: under !== undefined && !dispatch("dragover", under, x, y) };
 
 		}
 
-	}));
+	}
+
+	function end(x: number, y: number, cancelled: boolean): void {
+
+		if ( press !== undefined ) {
+			window?.clearTimeout(press.timer);
+			press = undefined;
+		}
+
+		if ( drag !== undefined ) {
+
+			const { source, ghost, over, accepted } = drag;
+
+			if ( over && accepted && !cancelled ) {
+				dispatch("drop", over, x, y);
+			} else if ( over ) {
+				dispatch("dragleave", over, x, y);
+			}
+
+			dispatch("dragend", source, x, y);
+
+			ghost.remove();
+			drag = undefined;
+
+		}
+
+	}
+
+
+	function onTouchStart(event: TouchEvent): void {
+
+		const touch = event.touches[0];
+		const source = event.touches.length === 1 && event.target instanceof Element
+			? event.target.closest<HTMLElement>("[draggable='true']")
+			: null;
+
+		if ( touch && source && window ) {
+			press = { source, x: touch.clientX, y: touch.clientY, timer: window.setTimeout(start, Hold) };
+		}
+
+	}
+
+	function onTouchMove(event: TouchEvent): void {
+
+		const touch = event.touches[0];
+
+		if ( touch === undefined ) {
+			return;
+		} else if ( drag !== undefined ) {
+			event.preventDefault(); // the finger drags rather than scrolls
+			move(touch.clientX, touch.clientY);
+		} else if ( press !== undefined && Math.hypot(touch.clientX-press.x, touch.clientY-press.y) > Slop ) {
+			end(touch.clientX, touch.clientY, true);
+		}
+
+	}
+
+	function onTouchEnd(event: TouchEvent): void {
+
+		const touch = event.changedTouches[0];
+
+		end(touch?.clientX ?? 0, touch?.clientY ?? 0, event.type === "touchcancel");
+
+	}
+
+
+	document.addEventListener("touchstart", onTouchStart, { passive: true });
+	document.addEventListener("touchmove", onTouchMove, { passive: false });
+	document.addEventListener("touchend", onTouchEnd);
+	document.addEventListener("touchcancel", onTouchEnd);
+
+	return () => {
+		end(0, 0, true);
+		document.removeEventListener("touchstart", onTouchStart);
+		document.removeEventListener("touchmove", onTouchMove);
+		document.removeEventListener("touchend", onTouchEnd);
+		document.removeEventListener("touchcancel", onTouchEnd);
+	};
 
 }
 
