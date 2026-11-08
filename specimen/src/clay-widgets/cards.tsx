@@ -23,30 +23,8 @@
 import { Card } from "@metreeca/clay-widgets/card";
 import { Icon } from "@metreeca/clay-widgets/icon";
 import { Image } from "@metreeca/clay-widgets/image";
-import { Frame } from "@metreeca/specimen/clay-widgets/sample.js";
+import { Frame, landscape } from "@metreeca/specimen/clay-widgets/sample.js";
 import "./index.css";
-
-
-/**
- * Draws a sample landscape picture.
- *
- * Builds the picture inline, so the specimen shows real pictures without fetching anything. The colours are part of
- * the picture rather than of the interface, so they are literals rather than design system tokens.
- *
- * @param sky The colour of the sky
- * @param hills The colour of the hills
- * @param sun The colour of the sun
- *
- * @returns The data URL of the picture
- */
-function landscape(sky: string, hills: string, sun: string): string {
-	return `data:image/svg+xml,${encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="144" height="96" viewBox="0 0 240 160">
-		<rect width="240" height="160" fill="${sky}"/>
-		<circle cx="176" cy="52" r="22" fill="${sun}"/>
-		<path d="M0 112 Q60 72 120 104 T240 92 V160 H0 Z" fill="${hills}" opacity="0.7"/>
-		<path d="M0 132 Q80 104 160 128 T240 120 V160 H0 Z" fill="${hills}"/>
-	</svg>`)}`;
-}
 
 
 /**

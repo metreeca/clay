@@ -16,10 +16,10 @@
 
 import { type JSX, render } from "preact";
 import { describe, expect, it } from "vitest";
-import { Info } from "./info.js";
+import { Infobox } from "./infobox.js";
 
 
-describe("Info", () => {
+describe("Infobox", () => {
 
 	const rendered = (element: JSX.Element): null | HTMLElement => {
 
@@ -27,7 +27,7 @@ describe("Info", () => {
 
 		render(element, container);
 
-		return container.querySelector<HTMLElement>(":scope > clay-info");
+		return container.querySelector<HTMLElement>(":scope > clay-infobox");
 
 	};
 
@@ -38,34 +38,45 @@ describe("Info", () => {
 		Array.from(rendered(element)?.querySelectorAll("dd") ?? [], ({ textContent }) => textContent);
 
 
+	describe("placement", () => {
+
+		it("places at the start by default", async () => {
+
+			expect(rendered(<Infobox>{{ label: "value" }}</Infobox>)?.getAttribute("place")).toBe("start");
+
+		});
+
+	});
+
+
 	describe("empty values", () => {
 
 		it("leaves out undefined, null and empty string values", async () => {
 
-			expect(labels(<Info>{{
+			expect(labels(<Infobox>{{
 				undefined: undefined,
 				null: null,
 				empty: "",
 				shown: "value"
-			}}</Info>)).toEqual([ "shown" ]);
+			}}</Infobox>)).toEqual([ "shown" ]);
 
 		});
 
 		it("shows zero", async () => {
 
-			expect(values(<Info>{{ count: 0 }}</Info>)).toEqual([ "0" ]);
+			expect(values(<Infobox>{{ count: 0 }}</Infobox>)).toEqual([ "0" ]);
 
 		});
 
 		it("shows booleans by name", async () => {
 
-			expect(values(<Info>{{ draft: false, published: true }}</Info>)).toEqual([ "false", "true" ]);
+			expect(values(<Infobox>{{ draft: false, published: true }}</Infobox>)).toEqual([ "false", "true" ]);
 
 		});
 
 		it("renders nothing if every value is empty", async () => {
 
-			expect(rendered(<Info>{{ undefined: undefined, null: null, empty: "" }}</Info>)).toBeNull();
+			expect(rendered(<Infobox>{{ undefined: undefined, null: null, empty: "" }}</Infobox>)).toBeNull();
 
 		});
 

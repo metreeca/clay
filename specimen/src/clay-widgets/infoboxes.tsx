@@ -15,37 +15,45 @@
  */
 
 /**
- * Property panel samples.
+ * Infobox samples.
  *
  * @module
  */
 
-import { Info } from "@metreeca/clay-widgets/info";
+import { Infobox } from "@metreeca/clay-widgets/infobox";
 import { Frame } from "@metreeca/specimen/clay-widgets/sample.js";
 import { type ComponentChildren } from "preact";
 import "./index.css";
 
 
 /**
- * Creates the property panel section.
+ * Creates the infobox section.
  *
  * Shows the same properties laid out for the body of a page and for a sidebar, with the rule that sets consecutive
- * panels apart and the entries a panel leaves out for want of a value, so the two layouts compare side by side.
+ * infoboxes apart and the entries an infobox leaves out for want of a value, so the layouts compare side by side.
  *
- * @returns The property panel section
+ * @returns The infobox section
  */
-export function Infos() {
+export function Infoboxes() {
 	return <>
 
-		<p>A panel lists the properties of an item, each value beside the label naming it. In the body of a page the
-			labels and the values meet in the middle; in a sidebar they are spread from edge to edge. A property with no
-			value is left out, and consecutive panels are set apart by a rule.</p>
+		<p>An infobox lists the properties of an item, each value beside the label naming it. In the body of a page the
+			labels and the values both keep left or meet in the middle; in a sidebar they spread from edge to edge. A
+			property with no value is left out, and consecutive infoboxes are set apart by a rule.</p>
 
 		<div class="columns">
 
-			<Frame label="center">
-				<Panels place="center"/>
-			</Frame>
+			<div>
+
+				<Frame label="start">
+					<Panels place="start"/>
+				</Frame>
+
+				<Frame label="center">
+					<Panels place="center"/>
+				</Frame>
+
+			</div>
 
 			<Frame label="spread">
 				<Panels place="spread"/>
@@ -59,19 +67,19 @@ export function Infos() {
 
 function Panels({ place }: {
 
-	place: "center" | "spread"
+	place: "start" | "center" | "spread"
 
 }) {
 	return <>
 
-		<Info place={place}>{{
+		<Infobox place={place}>{{
 			title: "Annual report",
 			author: "Jane Doe",
 			editor: undefined,
 			published: "2026-03-15"
-		}}</Info>
+		}}</Infobox>
 
-		<Info place={place}>{[
+		<Infobox place={place}>{[
 			{
 				label: "Keywords", value: <Items labels={place === "center"
 					? ["Finance", "Governance", "Sustainability"]
@@ -79,7 +87,7 @@ function Panels({ place }: {
 				}/>
 			},
 			{ label: "Status", value: "Published" }
-		]}</Info>
+		]}</Infobox>
 
 	</>;
 }

@@ -20,15 +20,15 @@
  * Offers the placeholder an area shows while it has no content of its own, whether still loading, left empty or
  * unable to fetch what it was to show, filling the space the content would take.
  *
- * @module hint
+ * @module empty
  */
 
 import { type ComponentChildren, createElement } from "preact";
-import "./hint.css";
+import "./empty.css";
 
 
 /**
- * Creates a hint.
+ * Creates an empty state.
  *
  * Fills the space it is handed and centres what it carries there, so a table, a list or a media frame with nothing to
  * show holds its place instead of collapsing. A glyph leading the content is drawn large, as the mark of the whole
@@ -36,20 +36,24 @@ import "./hint.css";
  *
  * @param options The widget configuration
  *
- * @returns The hint
+ * @returns The empty state
  */
-export function Hint({
+export function Empty({
 
-	border,
+	look, // deliberately left undefaulted, so an unstated look falls through to the ambient `--skin--look`
 
 	children
 
 }: {
 
 	/**
-	 * Whether the area is outlined and recessed, reading as room left for the missing content; flush if omitted.
+	 * How loud the area appears: `subtle` stays flush with the surface around it, `normal` is outlined as room left
+	 * for the missing content, and `strong` is outlined and recessed as well, standing apart from what surrounds it.
+	 *
+	 * An area stating nothing takes the look the area around it is written in, from the `--skin--look` token the
+	 * design system carries, which is `normal` where nothing assigns it. Stating a look here answers to that alone.
 	 */
-	border?: boolean
+	look?: "subtle" | "normal" | "strong"
 
 
 	/**
@@ -59,6 +63,6 @@ export function Hint({
 
 }) {
 
-	return createElement("clay-hint", { border }, children);
+	return createElement("clay-empty", { look }, children);
 
 }

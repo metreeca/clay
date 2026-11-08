@@ -96,6 +96,22 @@
 }
 
 
+/**** Looks ***********************************************************************************************************/
+
+/*
+ * Three columns of equal width set the same widget in each of its looks side by side, subtle to strong, so the looks
+ * compare at the same size. Each column is as tall as what it holds, as with the columns above.
+ */
+
+.looks {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    align-items: start;
+    column-gap: var(--skin--spacing-200);
+    margin-bottom: var(--skin--spacing-100);
+}
+
+
 /**** Frames **********************************************************************************************************/
 
 /*
@@ -108,7 +124,20 @@
     margin-bottom: var(--skin--spacing-100);
 }
 
+/*
+ * The inset of the items within the outline, resolved once at the size of the frame: spacing follows the font size,
+ * so the smaller caption would otherwise take a narrower inset than the items and sit to their left.
+ */
+
+@property --frame-inset {
+    syntax: "<length>";
+    inherits: true;
+    initial-value: 0px;
+}
+
 .frame {
+
+    --frame-inset: var(--skin--spacing-050);
 
     display: flex;
     flex-direction: column;
@@ -118,12 +147,19 @@
         display: flex;
         flex-direction: column;
         flex-grow: 1;
-        padding: var(--skin--spacing-050);
+        padding: var(--frame-inset);
         border-style: dashed;
         border-radius: var(--skin--border-radius-025);
     }
 
+    /*
+     * The caption is inset as the items are, by the outline and the padding inside it, so the two line up. The outline
+     * is matched by a transparent border rather than by padding, so the platform rounds both widths to the same pixel.
+     */
+
     & > figcaption {
+        padding-inline: var(--frame-inset);
+        border-inline: var(--skin--border-width) solid transparent;
         color: var(--skin--color-label);
     }
 

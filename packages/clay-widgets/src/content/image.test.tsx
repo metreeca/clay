@@ -60,6 +60,22 @@ describe("Image", () => {
 
 	});
 
+	describe("look", () => {
+
+		it("carries the given look", async () => {
+
+			expect(rendered(<Image src={src} look="strong"/>)?.getAttribute("look")).toBe("strong");
+
+		});
+
+		it("states no look of its own by default", async () => {
+
+			expect(rendered(<Image src={src}/>)?.hasAttribute("look")).toBe(false);
+
+		});
+
+	});
+
 	describe("caption", () => {
 
 		it("shows a bare picture with no caption", async () => {

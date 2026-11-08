@@ -25,11 +25,12 @@ import { Buttons } from "@metreeca/specimen/clay-widgets/buttons.js";
 import { Cards } from "@metreeca/specimen/clay-widgets/cards.js";
 import { Choices } from "@metreeca/specimen/clay-widgets/choices.js";
 import { Contents } from "@metreeca/specimen/clay-widgets/contents.js";
+import { Empties } from "@metreeca/specimen/clay-widgets/empties.js";
 import { Guards } from "@metreeca/specimen/clay-widgets/guards.js";
-import { Hints } from "@metreeca/specimen/clay-widgets/hints.js";
 import { Sections } from "@metreeca/specimen/clay-widgets/sections.js";
 import { Icons } from "@metreeca/specimen/clay-widgets/icons.js";
-import { Infos } from "@metreeca/specimen/clay-widgets/infos.js";
+import { Images } from "@metreeca/specimen/clay-widgets/images.js";
+import { Infoboxes } from "@metreeca/specimen/clay-widgets/infoboxes.js";
 import { Labels } from "@metreeca/specimen/clay-widgets/labels.js";
 import { Layouts } from "@metreeca/specimen/clay-widgets/layouts.js";
 import { Logos } from "@metreeca/specimen/clay-widgets/logos.js";
@@ -48,31 +49,32 @@ import { Triggers } from "@metreeca/specimen/clay-widgets/triggers.js";
 
 const samples: readonly Sample[] = [
 
-	{ id: "icons", group: "Glyphs", title: "Icons", view: <Icons/> },
-	{ id: "logos", group: "Glyphs", title: "Logos", view: <Logos/> },
+	{ id: "stack", group: "Layouts", title: "Stack", view: <Stacks/> },
+	{ id: "strip", group: "Layouts", title: "Strip", view: <Strips/> },
+	{ id: "surfaces", group: "Layouts", title: "Surfaces", view: <Surfaces/> },
+	{ id: "section", group: "Layouts", title: "Section", view: <Sections/> },
+	{ id: "card", group: "Layouts", title: "Card", view: <Cards/> },
+	{ id: "tabs", group: "Layouts", title: "Tabs", view: <Tabbed/> },
+	{ id: "layout", group: "Layouts", title: "Layout", view: <Layouts/> },
+	{ id: "shell", group: "Layouts", title: "Shell", view: <Shells/> },
 
-	{ id: "text", group: "Content", title: "Text", view: <Texts/> },
-	{ id: "label", group: "Content", title: "Label", view: <Labels/> },
-	{ id: "info", group: "Content", title: "Info", view: <Infos/> },
-	{ id: "hint", group: "Content", title: "Hint", view: <Hints/> },
+	{ id: "buttons", group: "Controls", title: "Buttons", view: <Buttons/> },
+	{ id: "choice", group: "Controls", title: "Choice", view: <Choices/> },
+	{ id: "paths", group: "Controls", title: "Paths", view: <Paths/> },
+	{ id: "triggers", group: "Controls", title: "Triggers", view: <Triggers/> },
+	{ id: "contents", group: "Controls", title: "Table of Contents", label: "ToC", view: <Contents/> },
 
 	{ id: "notes", group: "Alerts", title: "Notes", view: <Notes/> },
 	{ id: "toasts", group: "Alerts", title: "Toasts", view: <Toasted/> },
 
-	{ id: "buttons", group: "Controls", title: "Buttons", view: <Buttons/> },
-	{ id: "choice", group: "Controls", title: "Choice", view: <Choices/> },
-	{ id: "triggers", group: "Controls", title: "Triggers", view: <Triggers/> },
-	{ id: "paths", group: "Controls", title: "Paths", view: <Paths/> },
-	{ id: "contents", group: "Controls", title: "Table of Contents", view: <Contents/> },
+	{ id: "text", group: "Content", title: "Text", view: <Texts/> },
+	{ id: "label", group: "Content", title: "Label", view: <Labels/> },
+	{ id: "empty", group: "Content", title: "Empty", view: <Empties/> },
+	{ id: "image", group: "Content", title: "Image", view: <Images/> },
+	{ id: "infobox", group: "Content", title: "Infobox", view: <Infoboxes/> },
 
-	{ id: "surfaces", group: "Layouts", title: "Surfaces", view: <Surfaces/> },
-	{ id: "stack", group: "Layouts", title: "Stack", view: <Stacks/> },
-	{ id: "strip", group: "Layouts", title: "Strip", view: <Strips/> },
-	{ id: "layout", group: "Layouts", title: "Layout", view: <Layouts/> },
-	{ id: "tabs", group: "Layouts", title: "Tabs", view: <Tabbed/> },
-	{ id: "section", group: "Layouts", title: "Section", view: <Sections/> },
-	{ id: "card", group: "Layouts", title: "Card", view: <Cards/> },
-	{ id: "shell", group: "Layouts", title: "Shell", view: <Shells/> },
+	{ id: "icons", group: "Glyphs", title: "Icons", view: <Icons/> },
+	{ id: "logos", group: "Glyphs", title: "Logos", view: <Logos/> },
 
 	{ id: "style", group: "Scopes", title: "Style", view: <Styles/> },
 	{ id: "guard", group: "Scopes", title: "Guard", view: <Guards/> }

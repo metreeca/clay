@@ -15,48 +15,50 @@
  */
 
 /**
- * Property panel.
+ * Infobox.
  *
  * Lists the properties of an item, each value beside the label naming it. A sidebar or the body of a page then shows
  * what is known about an item, without a table laid out for the purpose or a layout written for each property.
  *
- * @module info
+ * @module infobox
  */
 
 import { isBoolean } from "@metreeca/core";
 import { type ComponentChildren, createElement, Fragment } from "preact";
-import "./info.css";
+import "./infobox.css";
 
 
 /**
- * Creates a property panel.
+ * Creates an infobox.
  *
  * Lists properties as label and value pairs, read by assistive technology as the terms and definitions of a single
- * list. Properties with an empty value are left out, and a panel left with none renders nothing, so a screen hands
- * over whatever it knows about an item without first checking what is missing. A value is empty when it is
+ * list. Properties with an empty value are left out, and an infobox left with none renders nothing, so a screen
+ * hands over whatever it knows about an item without first checking what is missing. A value is empty when it is
  * `undefined`, `null` or an empty string; any other value is shown, `0` included, and a boolean reads as its name.
  *
- * Consecutive panels are set apart by a rule, so a screen groups related properties by giving each group a panel.
+ * Consecutive infoboxes are set apart by a rule, so a screen groups related properties by giving each group its own
+ * infobox, without drawing a separator of its own between one group and the next.
  *
  * @param options The widget configuration
  *
- * @returns The panel, or `null` if no property carries a value
+ * @returns The infobox, or `null` if no property carries a value
  */
-export function Info({
+export function Infobox({
 
-	place = "center",
+	place = "start",
 
 	children
 
 }: {
 
 	/**
-	 * Where labels and values sit across the panel. In the `center`, the default, labels sit flush against the values
-	 * they introduce and long values wrap across lines, as fits the body of a page; with `spread`, labels keep to the
-	 * left edge and values to the right one, clipped to a single line, so that each pair spans the full width of the
-	 * panel without wrapping and a list of properties stays compact, as fits a narrow sidebar beside the page body.
+	 * Where labels and values sit across the infobox. At the `start`, the default, labels keep to the left edge of their
+	 * column as values do, wrapping alike, so both columns read as aligned text; in the `center`, labels sit flush
+	 * against the values they introduce and long values wrap across lines, as fits the body of a page; with `spread`,
+	 * labels keep to the left edge and values to the right one, clipped to a single line, so that each pair spans the
+	 * full width of the infobox without wrapping and a list of properties stays compact, as fits a narrow sidebar.
 	 */
-	place?: "center" | "spread"
+	place?: "start" | "center" | "spread"
 
 
 	/**
@@ -77,7 +79,7 @@ export function Info({
 		value !== undefined && value !== null && value !== ""
 	);
 
-	return entries.length > 0 ? createElement("clay-info", {
+	return entries.length > 0 ? createElement("clay-infobox", {
 
 		place
 

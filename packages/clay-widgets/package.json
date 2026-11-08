@@ -169,21 +169,21 @@
       "@metreeca/source": "./src/content/image.css",
       "default": "./dist/content/image.css"
     },
-    "./hint": {
-      "@metreeca/source": "./src/content/hint.tsx",
-      "default": "./dist/content/hint.js"
+    "./empty": {
+      "@metreeca/source": "./src/content/empty.tsx",
+      "default": "./dist/content/empty.js"
     },
-    "./hint.css": {
-      "@metreeca/source": "./src/content/hint.css",
-      "default": "./dist/content/hint.css"
+    "./empty.css": {
+      "@metreeca/source": "./src/content/empty.css",
+      "default": "./dist/content/empty.css"
     },
-    "./info": {
-      "@metreeca/source": "./src/content/info.tsx",
-      "default": "./dist/content/info.js"
+    "./infobox": {
+      "@metreeca/source": "./src/content/infobox.tsx",
+      "default": "./dist/content/infobox.js"
     },
-    "./info.css": {
-      "@metreeca/source": "./src/content/info.css",
-      "default": "./dist/content/info.css"
+    "./infobox.css": {
+      "@metreeca/source": "./src/content/infobox.css",
+      "default": "./dist/content/infobox.css"
     },
     "./label": {
       "@metreeca/source": "./src/content/label.tsx",

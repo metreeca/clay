@@ -43,11 +43,91 @@ clay-image {
     /*
      * The caption takes no width of its own, so a long caption wraps within the width of the picture rather than
      * widening the block. Its size, colour and distance from the picture come from the design system figure rules.
+     *
+     * Small wording flush with the hard edge of a picture reads as standing to its left, so the caption is nudged
+     * right by the width of a border, shifting its rendering alone and leaving the line its wording wraps in intact.
      */
 
     & figcaption {
+        box-sizing: border-box;
         width: 0;
         min-width: 100%;
+        translate: var(--skin--border-width) 0;
+    }
+
+    /*
+     * Normal, the picture is outlined with the quiet border the design system draws around content, and the caption
+     * is inset by the width of the border as well, so its wording keeps to the picture rather than to the outline.
+     */
+
+    &[look="normal"] {
+
+        & img {
+            border: var(--skin--border-width) var(--skin--border-style) var(--skin--border-color);
+        }
+
+        & figcaption {
+            padding-inline: var(--skin--border-width);
+        }
+
+    }
+
+    /*
+     * Strong, picture and caption sit in a rounded box, the picture rounded by a smaller step so its corners follow
+     * the corners of the box around it rather than meeting them at a sharper angle.
+     */
+
+    &[look="strong"] {
+
+        padding: var(--skin--spacing-050);
+
+        border: var(--skin--border-width) var(--skin--border-style) var(--skin--border-color);
+        border-radius: var(--skin--border-radius-050);
+
+        & img {
+            border-radius: var(--skin--border-radius-025);
+        }
+
+    }
+
+}
+
+
+/*
+ * An image stating no look of its own takes the one the area around it is written in, read off the `--skin--look`
+ * token through a style query, as buttons and links do: the attribute has to be absent for the container to have a
+ * say, so each rule here holds itself to an image carrying none, restating the declarations of the rules above.
+ */
+
+@container style(--skin--look: normal) {
+
+    clay-image:not([look]) {
+
+        & img {
+            border: var(--skin--border-width) var(--skin--border-style) var(--skin--border-color);
+        }
+
+        & figcaption {
+            padding-inline: var(--skin--border-width);
+        }
+
+    }
+
+}
+
+@container style(--skin--look: strong) {
+
+    clay-image:not([look]) {
+
+        padding: var(--skin--spacing-050);
+
+        border: var(--skin--border-width) var(--skin--border-style) var(--skin--border-color);
+        border-radius: var(--skin--border-radius-050);
+
+        & img {
+            border-radius: var(--skin--border-radius-025);
+        }
+
     }
 
 }

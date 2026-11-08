@@ -48,13 +48,15 @@ export const ClayMarkdownPath = "/clay-markdown/";
 
 /**
  * A section of a package page: the id it is linked to by, the group of the outline it is listed under, what it is
- * called, what it is about and the samples it shows to the reader as live widgets.
+ * called, the shorter name the outline lists it by if its title is too long for the rail, what it is about and the
+ * samples it shows to the reader as live widgets rather than as pictures or descriptions of them.
  */
 export interface Sample {
 
 	readonly id: string
 	readonly group: string
 	readonly title: string
+	readonly label?: string
 	readonly lead?: ComponentChildren
 	readonly view: ComponentChildren
 
@@ -216,7 +218,7 @@ function outline(samples: readonly Sample[]): readonly TOCEntry[] {
 		label: group,
 		entries: samples
 			.filter(sample => sample.group === group)
-			.map(({ id, title }) => ({ label: title, href: `#${id}` }))
+			.map(({ id, title, label = title }) => ({ label, href: `#${id}` }))
 	}));
 
 }

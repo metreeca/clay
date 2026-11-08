@@ -47,12 +47,24 @@ import "./image.css";
  */
 export function Image({
 
+	look, // deliberately left undefaulted, so an unstated look falls through to the ambient `--skin--look`
+
 	src,
 	alt = "",
 
 	caption
 
 }: {
+
+	/**
+	 * How loud the image appears: `subtle` sets the picture bare, `normal` outlines it with a quiet border, and
+	 * `strong` holds picture and caption in a rounded box, the picture rounded to match.
+	 *
+	 * An image stating nothing takes the look the area around it is written in, from the `--skin--look` token the
+	 * design system carries, which is `normal` where nothing assigns it. Stating a look here answers to that alone.
+	 */
+	look?: "subtle" | "normal" | "strong"
+
 
 	/**
 	 * The URL of the picture.
@@ -74,7 +86,7 @@ export function Image({
 
 	const picture = <img alt={alt} src={src}/>;
 
-	return createElement("clay-image", {}, isContent(caption)
+	return createElement("clay-image", { look }, isContent(caption)
 		? <figure>{picture}<figcaption>{caption}</figcaption></figure>
 		: picture
 	);

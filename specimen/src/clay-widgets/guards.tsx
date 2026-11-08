@@ -22,8 +22,8 @@
 
 import { Board, usePosts } from "@metreeca/clay/board";
 import { Button } from "@metreeca/clay-widgets/button";
+import { Empty } from "@metreeca/clay-widgets/empty";
 import { Guard } from "@metreeca/clay-widgets/guard";
-import { Hint } from "@metreeca/clay-widgets/hint";
 import { Icon } from "@metreeca/clay-widgets/icon";
 import { useState } from "preact/hooks";
 import "./index.css";
@@ -50,7 +50,7 @@ export function Guards() {
 
 			<div class="columns">
 
-				<Guard key={round} fallback={<Hint border><Icon.Alert/>This part stopped working</Hint>}>
+				<Guard key={round} fallback={<Empty look="strong"><Icon.Alert/>This part stopped working</Empty>}>
 					<Fragile/>
 				</Guard>
 
@@ -80,10 +80,10 @@ function Fragile() {
 		throw new Error("The widget stopped working");
 	}
 
-	return <Hint border>
+	return <Empty look="strong">
 		<Icon.Accept/>
 		<Button mode="danger" label="Break" onClick={() => setBroken(true)}/>
-	</Hint>;
+	</Empty>;
 
 }
 

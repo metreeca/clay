@@ -15,16 +15,16 @@
  */
 
 /*
- * A panel lays its definition list out as a two-column grid, labels in the first column and values in the second. In
- * a sidebar the labels keep to the left edge and the values to the right one; in the body of a page labels are set
- * flush against the values they introduce, which then take whatever width is left.
+ * An infobox lays its definition list out as a two-column grid, labels in the first column and values in the second.
+ * At the start, labels keep to the left edge of their column as values do. Centred, labels sit flush against the
+ * values they introduce, as fits the body of a page. Spread, labels keep to the left edge and values to the right.
  */
 
-clay-info {
+clay-infobox {
 
     display: block;
 
-    /* Consecutive panels are set apart by a rule, so a screen groups properties by panel. */
+    /* Consecutive infoboxes are set apart by a rule, so a screen groups properties by infobox. */
 
     & + & {
         margin-top: var(--skin--spacing-075);
@@ -33,7 +33,7 @@ clay-info {
     }
 
     /*
-     * A run of panels is spaced as any other block of the page, in the body as in a sidebar: its last panel leaves the
+     * A run of infoboxes is spaced as any other block of the page, in the body as in a sidebar: its last one leaves the
      * step a paragraph leaves below it. A run opening or closing its container leaves no step on that side, so it lines
      * up with the edge the container already pads, as a tray or a box pads what it holds.
      *
@@ -53,7 +53,7 @@ clay-info {
     & > dl {
 
         /*
-         * Labels take the width they need up to half the panel, so a long label is clipped rather than crowding out
+         * Labels take the width they need up to half the infobox, so a long label is clipped rather than crowding out
          * the values it is there to introduce; values take the rest of the width, never less than half of it.
          */
 
@@ -67,7 +67,7 @@ clay-info {
         /*
          * Spacing between entries comes from the grid gap, replacing the margins the base list rules set. Labels and
          * values are kept to one line each, clipped with an ellipsis where they outrun their column, so one long value
-         * neither wraps the row nor widens the panel; centred panels release values from this rule, as set below.
+         * neither wraps the row nor widens the infobox; centred infoboxes release values from this rule, as set below.
          */
 
         & > dt,
@@ -119,7 +119,7 @@ clay-info {
 
                     /* The room a marked item leaves to its chevron: the glyph and the gap before the item. */
 
-                    --clay-info-chevron-width: calc(0.5em + var(--skin--spacing-050));
+                    --clay-infobox-chevron-width: calc(0.5em + var(--skin--spacing-050));
 
                     overflow: hidden;
                     text-overflow: ellipsis;
@@ -130,7 +130,7 @@ clay-info {
                      */
 
                     &:not(:only-child) > * {
-                        max-width: calc(100% - var(--clay-info-chevron-width));
+                        max-width: calc(100% - var(--clay-infobox-chevron-width));
                     }
 
                     /*
@@ -145,7 +145,7 @@ clay-info {
                         content: "›";
                         display: inline-block;
                         box-sizing: border-box;
-                        inline-size: var(--clay-info-chevron-width);
+                        inline-size: var(--clay-infobox-chevron-width);
                         position: relative;
                         top: calc((1ex - 1cap) / 2);
                         padding-right: var(--skin--spacing-050);
@@ -161,8 +161,8 @@ clay-info {
     }
 
     /*
-     * Centred, labels and values meet in the middle of the panel with no edge between them, so they are set a wider
-     * step apart to read as two columns rather than as one run of text.
+     * Centred or at the start, labels and values have no edge between them to tell the two columns apart, so they are
+     * set a wider step apart to read as two columns rather than as one run of text.
      *
      * Values in the body of a page have the width of the page to wrap across, so a long value wraps within its
      * column rather than being clipped, and a word outrunning the column alone, as a long address, breaks as needed.
@@ -177,6 +177,12 @@ clay-info {
             overflow-wrap: anywhere;
         }
 
+    }
+
+    /* At the start, labels keep to the left edge of their column as values do, wrapping as they do when centred. */
+
+    &[place="start"] > dl > dt {
+        text-align: start;
     }
 
     /* Spread, labels keep to the left edge and values to the right one. */

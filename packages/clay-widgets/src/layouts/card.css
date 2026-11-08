@@ -45,7 +45,7 @@ clay-card {
         margin-top: var(--skin--spacing-100);
     }
 
-    /* The title and the badge share the first row, sitting on a common baseline as a property panel entry does. */
+    /* The title and the badge share the first row, sitting on a common baseline as an infobox entry does. */
 
     & > span {
         grid-row: 1;
@@ -76,7 +76,7 @@ clay-card {
     }
 
     /*
-     * A badge is guidance rather than text, rendered as a label of a property panel is: it takes the size and weight
+     * A badge is guidance rather than text, rendered as a label of an infobox is: it takes the size and weight
      * of the title beside it, set apart by the label colour alone, which holds 4.5:1 in both schemes, and is kept to
      * one line, clipped with an ellipsis where it outruns the side column rather than wrapping the row.
      */
