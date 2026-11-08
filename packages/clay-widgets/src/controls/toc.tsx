@@ -25,7 +25,7 @@
 
 import { useModel } from "@metreeca/clay/model";
 import { opt, type Optional } from "@metreeca/core";
-import { type ComponentChildren, createElement, type JSX } from "preact";
+import { type ComponentChildren, createElement } from "preact";
 import { useEffect } from "preact/hooks";
 import { createTOC, type TOC as Outline, type TOCMetrics } from "./toc.core.js";
 import "./toc.css";
@@ -314,13 +314,18 @@ function fragment(href: Optional<string>): Optional<string> {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+/**
+ * Renders entries as a nested list of links, and an entry with no link as plain text. The link to the section the
+ * reader is in is marked as the current location. Following a link folds the outline on smaller viewports, so the
+ * reader lands on the section it leads to with the outline already out of the way.
+ */
 function list(entries: readonly TOCEntry[], current: Optional<string>): ComponentChildren {
 	return <ul>{entries.map(({ label, href, entries = [] }, index) => <li key={href ?? index}>
 
 		{href === undefined
 			? <span>{label}</span>
 			: <a href={href} aria-current={current !== undefined && fragment(href) === current ? "location" : undefined}
-				onClick={fold}
+				onClick={({ currentTarget }) => currentTarget.closest("details")?.removeAttribute("open")}
 			>{label}</a>
 		}
 
@@ -336,11 +341,4 @@ function caption(entries: readonly TOCEntry[], id: string): ComponentChildren {
 	return entries.reduce<ComponentChildren>((found, entry) =>
 		found ?? (fragment(entry.href) === id ? entry.label : caption(entry.entries ?? [], id)), undefined
 	);
-}
-
-/**
- * Folds the outline a followed link belongs to, so the section it leads to is not left under the unfolded entries.
- */
-function fold({ currentTarget }: JSX.TargetedMouseEvent<HTMLAnchorElement>): void {
-	currentTarget.closest("details")?.removeAttribute("open");
 }
