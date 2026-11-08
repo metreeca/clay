@@ -22,11 +22,15 @@
  * the window needs no root of its own. The package contexts and hooks come from their own modules, so a component
  * imports only the ones it is wired to, and an app pulls in no service it never provides.
  *
+ * Also tells the content of a slot apart from a slot left empty, so a widget renders nothing for a part it was not
+ * given and a screen hands over whatever it knows without checking what is missing.
+ *
  * Importing this module reads the document, so a test or a server render has to supply a DOM before importing it.
  *
  * @module index
  */
 
+import { isBoolean } from "@metreeca/core";
 import { resolve } from "@metreeca/core/resource";
 import { immutable } from "@metreeca/core/values";
 
@@ -74,6 +78,27 @@ export const app = immutable({
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/**
+ * Checks if a value is content.
+ *
+ * Values that JSX renders as nothing are not content: they are what a conditional such as `label && <Link/>` leaves
+ * in a slot when its condition fails. A component checks each slot to leave out the wrapper of a part it was given
+ * nothing for, rather than rendering an empty element. Any other value is content, `0` and whitespace included.
+ *
+ * @param value The value to check
+ *
+ * @returns True if the value is neither `undefined`, `null`, a boolean nor the empty string; false otherwise
+ */
+	export function isContent(value: unknown): boolean {
+
+		return value !== undefined
+			&& value !== null
+			&& value !== ""
+			&& !isBoolean(value);
+
+	}
+
 
 /**
  * Settles the custom element a page is rendered into.

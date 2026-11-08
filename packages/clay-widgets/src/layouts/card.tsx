@@ -17,13 +17,13 @@
 /**
  * Summary card.
  *
- * Sums up an item in a single block: its title and tags over a description, beside an image standing for it. A list
+ * Sums up an item in a single block: its title and badge over a description, beside an image standing for it. A list
  * of search results or related items then reads as a run of cards without a layout written for each entry.
  *
  * @module card
  */
 
-import { isBoolean, isString } from "@metreeca/core";
+import { isContent } from "@metreeca/clay";
 import { type ComponentChildren, createElement } from "preact";
 import "./card.css";
 
@@ -31,9 +31,9 @@ import "./card.css";
 /**
  * Creates a summary card.
  *
- * Sets the title over the description in a main column, and the tags over the image in a side column at the end of
+ * Sets the title over the description in a main column, and the badge over the image in a side column at the end of
  * the card, sized to its content up to the cap set by the `--clay-card-side-max-width` knob. A description with no
- * image beneath the side column runs on under the tags. Consecutive cards are set a spacing step apart, so a run of
+ * image beneath the side column runs on under the badge. Consecutive cards are set a spacing step apart, so a run of
  * them reads as a list of entries rather than as one block of text, with no layout written for each entry.
  *
  * Empty parts are left out, and a card left with none renders nothing, so a screen hands over whatever it knows about
@@ -47,9 +47,8 @@ import "./card.css";
 export function Card({
 
 	title,
-	tags,
+	badge,
 	image,
-	caption,
 
 	children
 
@@ -61,22 +60,16 @@ export function Card({
 	title?: ComponentChildren
 
 	/**
-	 * The tags classifying the item, at the top of the side column across from the title.
+	 * The badge classifying the item, at the top of the side column across from the title: a line of text, chips or
+	 * anything else kept to one line, clipped with an ellipsis where it outruns the column.
 	 */
-	tags?: ComponentChildren
+	badge?: ComponentChildren
 
 	/**
-	 * The image standing for the item, under the tags in the side column. A string is taken as the URL of a
-	 * decorative picture, left out of the accessibility tree and of the layout if it fails to load; anything else, such
-	 * as an icon or initials, is shown as given, in the label colour the card sets for the tags above it.
+	 * The image standing for the item, under the badge in the side column: a picture, captioned or not, as set by an
+	 * {@link image!Image Image}, or an icon or initials, shown as given in the label colour the card sets for the badge.
 	 */
 	image?: ComponentChildren
-
-	/**
-	 * The caption of the image, such as its credits, set under it in the label colour and held to its width; left out
-	 * with no image to stand under.
-	 */
-	caption?: ComponentChildren
 
 
 	/**
@@ -86,21 +79,14 @@ export function Card({
 
 }) {
 
-	function shown(part: ComponentChildren): boolean {
-		return part !== undefined && part !== null && part !== "" && !isBoolean(part);
-	}
+	return [title, badge, image, children].some(isContent) ? createElement("clay-card", {}, <>
 
-	return [title, tags, image, children].some(shown) ? createElement("clay-card", {}, <>
+		{isContent(title) && <span>{title}</span>}
+		{isContent(badge) && <span class="badge">{badge}</span>}
 
-		{shown(title) && <span>{title}</span>}
-		{shown(tags) && <span class="tags">{tags}</span>}
+		{isContent(children) && <div>{children}</div>}
 
-		{shown(children) && <div>{children}</div>}
-
-		{shown(image) && <i>
-			{isString(image) ? <img alt="" src={image}/> : image}
-			{shown(caption) && <small>{caption}</small>}
-		</i>}
+		{isContent(image) && <i>{image}</i>}
 
 	</>) : null;
 

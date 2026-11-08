@@ -23,6 +23,7 @@
  * @module section
  */
 
+import { isContent } from "@metreeca/clay";
 import { type ComponentChildren, createElement } from "preact";
 import "./section.css";
 
@@ -90,27 +91,18 @@ export function Section({
 
 }) {
 
-	const heading = given(eyebrow) || given(title) || given(lead);
+	const heading = isContent(eyebrow) || isContent(title) || isContent(lead);
 
 	return createElement("clay-section", { id, level }, <>
 
 		{heading && <hgroup>
-			{given(eyebrow) && <p>{eyebrow}</p>}
-			{given(title) && createElement(`h${level}`, {}, title)}
-			{given(lead) && <p>{lead}</p>}
+			{isContent(eyebrow) && <p>{eyebrow}</p>}
+			{isContent(title) && createElement(`h${level}`, {}, title)}
+			{isContent(lead) && <p>{lead}</p>}
 		</hgroup>}
 
 		{children}
 
 	</>);
 
-}
-
-
-/**
- * Tells content that shows something from content a slot was left empty with, as JSX renders nothing for `undefined`,
- * `null`, booleans and the empty string, so a slot holding any of them takes no room in the heading group.
- */
-function given(content: ComponentChildren): boolean {
-	return content !== undefined && content !== null && typeof content !== "boolean" && content !== "";
 }

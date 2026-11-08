@@ -17,6 +17,7 @@
 import { type JSX, render } from "preact";
 import { describe, expect, it } from "vitest";
 import { Card } from "./card.js";
+import { Image } from "../content/image.js";
 
 
 describe("Card", () => {
@@ -39,7 +40,7 @@ describe("Card", () => {
 
 		it("shows every part given", async () => {
 
-			expect(parts(<Card title="Title" tags="Tags" image={<b>T</b>}>Description</Card>))
+			expect(parts(<Card title="Title" badge="Badge" image={<b>T</b>}>Description</Card>))
 				.toEqual([ "span", "span", "div", "i" ]);
 
 		});
@@ -53,8 +54,8 @@ describe("Card", () => {
 
 		it("leaves out undefined, null, empty string and boolean parts", async () => {
 
-			expect(parts(<Card title={undefined} tags={null} image={false}>{""}</Card>)).toEqual([]);
-			expect(parts(<Card title="" tags={true}>Description</Card>)).toEqual([ "div" ]);
+			expect(parts(<Card title={undefined} badge={null} image={false}>{""}</Card>)).toEqual([]);
+			expect(parts(<Card title="" badge={true}>Description</Card>)).toEqual([ "div" ]);
 
 		});
 
@@ -66,33 +67,24 @@ describe("Card", () => {
 
 		it("renders nothing if every part is empty", async () => {
 
-			expect(rendered(<Card title="" tags={null}/>)).toBeNull();
+			expect(rendered(<Card title="" badge={null}/>)).toBeNull();
 
 		});
 
-		it("shows a string image as a decorative picture", async () => {
+		it("shows the image as given", async () => {
 
-			const image = rendered(<Card image="https://example.com/image.png"/>)?.querySelector("i > img");
+			const card = rendered(<Card image={<Image src="https://example.com/image.png" caption="© Credits"/>}/>);
 
-			expect(image?.getAttribute("src")).toBe("https://example.com/image.png");
-			expect(image?.getAttribute("alt")).toBe("");
-
-		});
-
-		it("shows a caption under the image", async () => {
-
-			const card = rendered(<Card image="https://example.com/image.png" caption="© Credits"/>);
-
-			expect(Array.from(card?.querySelector(":scope > i")?.children ?? [], ({ localName }) => localName))
-				.toEqual([ "img", "small" ]);
-
-			expect(card?.querySelector("i > small")?.textContent).toBe("© Credits");
+			expect(card?.querySelector(":scope > i > clay-image")).not.toBeNull();
 
 		});
 
-		it("leaves out a caption with no image to stand under", async () => {
+		it("shows a string image as given rather than as a picture", async () => {
 
-			expect(parts(<Card title="Title" caption="© Credits"/>)).toEqual([ "span" ]);
+			const card = rendered(<Card image="IM"/>);
+
+			expect(card?.querySelector(":scope > i")?.textContent).toBe("IM");
+			expect(card?.querySelector("img")).toBeNull();
 
 		});
 

@@ -1,0 +1,53 @@
+/*
+ * Copyright © 2023-2026 Metreeca srl
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/*
+ * An image is a block as wide as its picture and scaled down to the room it is given, adding no spacing of its own,
+ * so it sits in a card, a panel or a column exactly as the bare picture would, with its caption held beneath it.
+ */
+
+clay-image {
+
+    display: block;
+    width: fit-content;
+    max-width: 100%;
+
+    & > figure {
+        margin: 0;
+    }
+
+    /*
+     * A picture is never stretched past its own size, and keeps its proportions when scaled down. An enlarged picture
+     * is left alone, since this rule would otherwise beat the design system one showing it over the viewport.
+     */
+
+    & img:not([active]) {
+        display: block;
+        max-width: 100%;
+        height: auto;
+    }
+
+    /*
+     * The caption takes no width of its own, so a long caption wraps within the width of the picture rather than
+     * widening the block. Its size, colour and distance from the picture come from the design system figure rules.
+     */
+
+    & figcaption {
+        width: 0;
+        min-width: 100%;
+    }
+
+}

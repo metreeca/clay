@@ -83,12 +83,14 @@
 /*
  * Two columns set the same widget in a wide and a narrow box side by side, the narrow one taking a quarter of the room,
  * so what a widget does when it runs out of room is shown without stating a width. Each column may shrink below what
- * it holds, which is what leaves a widget short of room rather than the grid widening the column to fit it.
+ * it holds, which is what leaves a widget short of room rather than the grid widening the column to fit it, and is as
+ * tall as what it holds, so the shorter one is not stretched to leave an empty frame below its content.
  */
 
 .columns {
     display: grid;
     grid-template-columns: minmax(0, 3fr) minmax(0, 1fr);
+    align-items: start;
     column-gap: var(--skin--spacing-200);
     margin-bottom: var(--skin--spacing-100);
 }

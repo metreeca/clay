@@ -4,11 +4,11 @@
 
 Preact widgets and layouts for [@metreeca/clay](https://github.com/metreeca/clay).
 
-The widgets and layouts an interface is assembled from: buttons, links and icons, the app logo, text runs and labels,
-notices and placeholders, breadcrumb trails and incremental loading triggers, a frame for the whole screen, stacks,
-strips, surfaces and cards, tabs, property panels, transient notices and failure boundaries. A custom widget builds its
-own controls on the class and keyboard helpers the widgets share, and marks them with the same role-named glyphs, so it
-behaves and looks like the stock ones without restating either their keyboard handling or their visual vocabulary.
+The widgets and layouts an interface is assembled from: buttons, links and icons, the app logo, text runs, labels and
+captioned images, notices and placeholders, breadcrumb trails and incremental loading triggers, a frame for the whole
+screen, stacks, strips, surfaces and cards, tabs, property panels, transient notices and failure boundaries. A custom
+widget built on the class and keyboard helpers the widgets share, and marked with the same role-named glyphs, behaves
+and looks like the stock ones without restating their keyboard handling or visual vocabulary.
 
 Styling is structural only: what a widget needs to work, with colour, type and spacing left to
 [@metreeca/skin](https://github.com/metreeca/skin) or to whoever styles the app.

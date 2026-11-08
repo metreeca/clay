@@ -154,12 +154,20 @@
       "default": "./dist/layouts/tabs.css"
     },
     "./card": {
-      "@metreeca/source": "./src/content/card.tsx",
-      "default": "./dist/content/card.js"
+      "@metreeca/source": "./src/layouts/card.tsx",
+      "default": "./dist/layouts/card.js"
     },
     "./card.css": {
-      "@metreeca/source": "./src/content/card.css",
-      "default": "./dist/content/card.css"
+      "@metreeca/source": "./src/layouts/card.css",
+      "default": "./dist/layouts/card.css"
+    },
+    "./image": {
+      "@metreeca/source": "./src/content/image.tsx",
+      "default": "./dist/content/image.js"
+    },
+    "./image.css": {
+      "@metreeca/source": "./src/content/image.css",
+      "default": "./dist/content/image.css"
     },
     "./guard": {
       "@metreeca/source": "./src/content/guard.tsx",
