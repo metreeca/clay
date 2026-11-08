@@ -30,6 +30,7 @@ import { Hints } from "@metreeca/specimen/clay-widgets/hints.js";
 import { Sections } from "@metreeca/specimen/clay-widgets/sections.js";
 import { Icons } from "@metreeca/specimen/clay-widgets/icons.js";
 import { Infos } from "@metreeca/specimen/clay-widgets/infos.js";
+import { Labels } from "@metreeca/specimen/clay-widgets/labels.js";
 import { Layouts } from "@metreeca/specimen/clay-widgets/layouts.js";
 import { Logos } from "@metreeca/specimen/clay-widgets/logos.js";
 import { Notes } from "@metreeca/specimen/clay-widgets/notes.js";
@@ -40,6 +41,7 @@ import { Strips } from "@metreeca/specimen/clay-widgets/strips.js";
 import { Styles } from "@metreeca/specimen/clay-widgets/styles.js";
 import { Surfaces } from "@metreeca/specimen/clay-widgets/surfaces.js";
 import { Tabbed } from "@metreeca/specimen/clay-widgets/tabbed.js";
+import { Texts } from "@metreeca/specimen/clay-widgets/texts.js";
 import { Toasts } from "@metreeca/specimen/clay-widgets/toasts.js";
 import { Triggers } from "@metreeca/specimen/clay-widgets/triggers.js";
 
@@ -49,6 +51,8 @@ const samples: readonly Sample[] = [
 	{ id: "icons", group: "Glyphs", title: "Icons", view: <Icons/> },
 	{ id: "logos", group: "Glyphs", title: "Logos", view: <Logos/> },
 
+	{ id: "text", group: "Content", title: "Text", view: <Texts/> },
+	{ id: "label", group: "Content", title: "Label", view: <Labels/> },
 	{ id: "info", group: "Content", title: "Info", view: <Infos/> },
 	{ id: "card", group: "Content", title: "Card", view: <Cards/> },
 	{ id: "notes", group: "Content", title: "Notes", view: <Notes/> },
