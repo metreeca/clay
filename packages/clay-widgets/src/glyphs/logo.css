@@ -58,6 +58,13 @@ clay-logo {
         object-fit: contain; /* The square takes an image of any proportions without cropping it. */
 
         /*
+         * The mark is never enlarged as an image in the text is, nor shows the cursor offering it: a click and the
+         * pointer land on whatever holds the logo instead, so a logo inside a link still follows it.
+         */
+
+        pointer-events: none;
+
+        /*
          * The mark is centred on the capitals rather than on the line, whose middle sits lower or higher by however
          * much the face hangs below its baseline. The margins fold the mark into a point at its own centre, which is
          * raised to half the capitals, so a mark taller than the line overflows it rather than pushing it apart.
