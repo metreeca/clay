@@ -15,12 +15,13 @@
  */
 
 /*
- * The shell takes no height of its own, so the screen gives it the whole of the window, and its heads are set a step
- * larger than the text, as the screen title they carry asks.
+ * The shell takes no height of its own, so the screen gives it the whole of the window, keeping a little clear of its
+ * edges, and its heads are set a step larger than the text, as the screen title they carry asks.
  */
 
 clay-tool {
 
+    --clay-tool-frame-gutter: var(--skin--spacing-075);
     --clay-tool-head-font-size: var(--skin--font-size-large);
 
     block-size: 100dvh;

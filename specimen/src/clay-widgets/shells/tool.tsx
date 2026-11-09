@@ -195,6 +195,7 @@ export function ToolScreen() {
 			<tbody>
 				<tr><td><code>--clay-tool-side-width</code></td><td>the width of the side column</td></tr>
 				<tr><td><code>--clay-tool-main-width</code></td><td>the widest the main column grows before the columns centre</td></tr>
+				<tr><td><code>--clay-tool-frame-gutter</code></td><td>the inline gutter of the frame, against the window edges</td></tr>
 				<tr><td><code>--clay-tool-side-gutter</code></td><td>the inline gutter of the side column</td></tr>
 				<tr><td><code>--clay-tool-main-gutter</code></td><td>the inline gutter of the main column</td></tr>
 				<tr><td><code>--clay-tool-head-gutter</code></td><td>the block gutter of the heads</td></tr>
