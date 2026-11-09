@@ -15,11 +15,21 @@
  */
 
 /*
- * A choice is one boxed row of segments set at the size of a label, the chosen one filled with the subtle accent. The
- * radio buttons carrying the choice stay in the document, out of view, so the platform keeps their keys and focus.
+ * A choice is drawn as the design system draws a field: one box in the field border, with the corners, the room and
+ * the type of a select, so it sits in a row of buttons and selects as one of them. The chosen segment is tinted inside
+ * the box, held off its border by an inset as the value of a meter is. The radio buttons carrying the choice stay in
+ * the document, out of view, so the platform keeps their keys and focus.
  */
 
 clay-choice {
+
+    /*
+     * The inset holding the segments off the border alike on every side, none at present so the tint of the chosen
+     * segment fills its stretch of the box; whatever it is set to is taken out of the padding of the segments above
+     * and below, so the box keeps the height of a button.
+     */
+
+    --clay-choice-inset: 0px;
 
     display: inline-block;
 
@@ -28,17 +38,30 @@ clay-choice {
         display: flex;
 
         margin: 0;
-        padding: var(--skin--spacing-025);
+        padding: var(--clay-choice-inset);
 
         border-style: var(--skin--border-style);
-        border-radius: var(--skin--border-radius-050);
+        border-color: var(--skin--border-color-field);
+        border-radius: var(--skin--border-radius-025);
+        background-color: transparent;
 
-        font-size: var(--skin--font-size-small);
+        /*
+         * An option is a control rather than text, so a press or a drag across the row chooses rather than selects
+         * its label, as with a button.
+         */
 
         & > label {
 
             position: relative;
             cursor: pointer;
+            user-select: none;
+
+            /*
+             * The reset hands every box the colour of the one around it, which would paint the square corners of the
+             * labels over the rounding of the segments, so labels are left unpainted.
+             */
+
+            background-color: transparent;
 
             & > input {
                 position: absolute;
@@ -46,13 +69,36 @@ clay-choice {
                 pointer-events: none;
             }
 
+            /*
+             * A segment takes the height of a button less the inset, so the box stands as tall as a button or a select
+             * beside it, and more inline room than a button, so the tint of the chosen segment stands clear of its
+             * label.
+             *
+             * Every segment keeps a border, transparent unless chosen, so moving the choice never shifts the row, and
+             * is pulled out over the border of the box by the width of one, so the border of the chosen segment lies
+             * on the border of the box along its stretch rather than inside it.
+             *
+             * A glyph sits on the baseline of the line it is set in, riding high in the segment, so what a segment
+             * carries is centred instead, and the segment is floored at the height of a line of text, keeping a row of
+             * glyphs at the height of a row of labels.
+             */
+
             & > span {
-                display: block;
-                padding: var(--skin--spacing-025) var(--skin--spacing-075);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                min-height: calc(1lh + 2 * (var(--skin--spacing-025) - var(--clay-choice-inset) + var(--skin--border-width)));
+                margin: calc(-1 * var(--skin--border-width));
+                padding:
+                    calc(var(--skin--spacing-025) - var(--clay-choice-inset))
+                    var(--skin--spacing-075);
+                border: var(--skin--border-width) var(--skin--border-style) transparent;
                 border-radius: var(--skin--border-radius-025);
+                background-color: transparent;
+                background-clip: padding-box; /* keeps the tint off the border of the box it overlaps */
                 color: var(--skin--color-label);
                 white-space: nowrap;
-                transition-property: color, background-color;
+                transition-property: color, border-color, background-color;
                 transition-duration: var(--skin--duration-fast);
                 transition-timing-function: var(--skin--easing-standard);
             }
@@ -62,14 +108,16 @@ clay-choice {
             }
 
             /*
-             * The chosen segment is filled with the subtle accent and inked in the page colour, the checked state
-             * telling assistive technology the same; the ring marks the segment the keyboard stands on, which the
-             * radio button kept out of view cannot draw for itself on the label it sits in.
+             * The chosen segment is sunk into the page, bordered in the field border of the box and inked in
+             * the text colour, standing out of the receding labels around it, the checked state telling assistive
+             * technology the same; the ring marks the segment the keyboard stands on, which the radio button kept out
+             * of view cannot draw for itself.
              */
 
             & > input:checked + span {
-                background-color: var(--skin--color-subtle);
-                color: var(--skin--background-color);
+                border-color: var(--skin--border-color-field);
+                background-color: var(--skin--background-color-sunken);
+                color: var(--skin--color);
             }
 
             & > input:focus-visible + span {
@@ -79,6 +127,87 @@ clay-choice {
 
         }
 
+    }
+
+    /*
+     * The quiet step drops the box and the inset, draws the segments in closer and marks the chosen one by the
+     * selection accent alone, leaving them to read as part of the text around them, while the strong one sets the
+     * labels in the strong weight and inks the chosen one in the accent on top of its tint. A glyph carries no weight
+     * of its own, so its stroke is drawn half again as thick to keep it on the footing of a bold label.
+     */
+
+    &[look="subtle"] > fieldset {
+
+        padding: 0;
+        border-style: none;
+
+        & > label > span {
+            margin: 0;
+            padding-inline: var(--skin--spacing-025);
+        }
+
+        & > label > input:checked + span {
+            border-color: transparent;
+            background-color: transparent;
+            color: var(--skin--color-selected);
+        }
+
+    }
+
+    &[look="strong"] > fieldset > label {
+
+        font-weight: var(--skin--font-weight-strong);
+
+        & .lucide {
+            stroke-width: calc(1.5 * var(--skin--stroke-width));
+        }
+
+        & > input:checked + span {
+            color: var(--skin--color-selected);
+        }
+
+    }
+
+    /*
+     * A choice stating no look of its own takes the one the area around it is written in, read off the `--skin--look`
+     * token through a style query, restating the declarations of the attribute rules above: a style query is a
+     * conditional group taking rules of its own, so the two forms of the same step cannot be written as one selector.
+     */
+
+    @container style(--skin--look: subtle) {
+        &:not([look]) > fieldset {
+
+            padding: 0;
+            border-style: none;
+
+            & > label > span {
+                margin: 0;
+                padding-inline: var(--skin--spacing-025);
+            }
+
+            & > label > input:checked + span {
+                border-color: transparent;
+                background-color: transparent;
+                color: var(--skin--color-selected);
+            }
+
+        }
+    }
+
+    @container style(--skin--look: strong) {
+        &:not([look]) > fieldset > label {
+
+            font-weight: var(--skin--font-weight-strong);
+
+            & .lucide {
+                stroke-width: calc(1.5 * var(--skin--stroke-width));
+            }
+
+            & > input:checked + span {
+                color: var(--skin--color-selected);
+            }
+
+        }
     }
 
 }

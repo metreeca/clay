@@ -84,6 +84,26 @@ describe("Choice", () => {
 
 	});
 
+	describe("look", () => {
+
+		it("carries the look given", async () => {
+
+			const choice = mount(<Choice name="Colour scheme" options={schemes} look="strong"/>);
+
+			expect(choice?.getAttribute("look")).toBe("strong");
+
+		});
+
+		it("carries no look if none is given", async () => {
+
+			const choice = mount(<Choice name="Colour scheme" options={schemes}/>);
+
+			expect(choice?.hasAttribute("look")).toBe(false);
+
+		});
+
+	});
+
 	describe("value", () => {
 
 		it("shows the value given as chosen", async () => {

@@ -28,6 +28,7 @@ import { app } from "@metreeca/clay";
 import { isContent } from "@metreeca/clay-widgets";
 import { Button } from "@metreeca/clay-widgets/button";
 import { Choice } from "@metreeca/clay-widgets/choice";
+import { Icon } from "@metreeca/clay-widgets/icon";
 import { Link } from "@metreeca/clay-widgets/link";
 import { Strip } from "@metreeca/clay-widgets/strip";
 import { TOC, type TOCEntry } from "@metreeca/clay-widgets/toc";
@@ -74,7 +75,11 @@ export type Sample = {
 })
 
 
-export const schemes = { auto: "System", light: "Light", dark: "Dark" };
+export const schemes = {
+	auto: <Icon.Monitor aria-label="System"><title>System Theme</title></Icon.Monitor>,
+	light: <Icon.Sun aria-label="Light"><title>Light Theme</title></Icon.Sun>,
+	dark: <Icon.Moon aria-label="Dark"><title>Dark Theme</title></Icon.Moon>
+};
 
 type Scheme = keyof typeof schemes
 
@@ -130,7 +135,7 @@ export function Page({
 
 			<small>v{VERSION}</small>
 
-			<Choice name="Colour scheme" options={schemes} value={scheme} onChange={setScheme}/>
+			<Choice name="Colour scheme" look="subtle" options={schemes} value={scheme} onChange={setScheme}/>
 
 		</Strip>}
 

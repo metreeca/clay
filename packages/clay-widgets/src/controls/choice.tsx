@@ -17,8 +17,8 @@
 /**
  * Segmented choice.
  *
- * Offers a choice among a few options as one boxed row of segments, every option in view and the chosen one filled, so
- * a setting such as the colour scheme is read and changed in a single glance and gesture.
+ * Offers a choice among a few options as one row of segments, every option in view and the chosen one marked, so a
+ * setting such as the colour scheme is read and changed in a single glance and gesture.
  *
  * @module choice
  */
@@ -28,13 +28,15 @@ import { useId } from "preact/hooks";
 import "./choice.css";
 
 
+// noinspection JSCommentMatchesSignature
+
 /**
  * Creates a segmented choice.
  *
  * Lays the options out in the order given as a group of radio buttons, so the platform supplies the keys and the focus
  * a choice owes: `Tab` reaches the group as one stop, landing on the chosen option, and the arrow keys move the choice
- * to either neighbour, wrapping at both ends. The chosen option is filled with the subtle accent and carries the
- * checked state assistive technology reads, so the choice never rests on colour alone.
+ * to either neighbour, wrapping at both ends. The chosen option is marked as `look` sets out, and carries the checked
+ * state assistive technology reads, so the choice reaches a reader who cannot see the mark.
  *
  * The choice is held by the caller: the widget shows `value` as chosen and hands each new choice to `onChange`, so a
  * caller keeping the choice somewhere of its own, such as the storage of the page, passes it back as `value`.
@@ -49,6 +51,8 @@ export function Choice<V extends string>({
 
 	name,
 
+	look, // deliberately left undefaulted, so an unstated look falls through to the ambient `--skin--look`
+
 	options,
 	value,
 
@@ -60,6 +64,16 @@ export function Choice<V extends string>({
 	 * The accessible name of the group, such as `Colour scheme`, saying what is being chosen.
 	 */
 	name: string
+
+	/**
+	 * How loud the choice appears: `subtle` drops the box so the options read as part of the text around them, the
+	 * chosen one inked in the selection accent; `normal` boxes the options as a select is boxed, the chosen one sunk
+	 * into the page; `strong` also sets the options in the strong weight and inks the chosen one in the accent.
+	 *
+	 * A choice stating nothing takes the look the area around it is written in, from the `--skin--look` token the
+	 * design system carries, which is `normal` where nothing assigns it. Stating a look here answers to that alone.
+	 */
+	look?: "subtle" | "normal" | "strong"
 
 	/**
 	 * The label of each option, keyed by its value, in display order.
@@ -82,7 +96,7 @@ export function Choice<V extends string>({
 
 	const group = useId();
 
-	return createElement("clay-choice", {}, <fieldset aria-label={name}>{entries(options).map(([option, label]) =>
+	return createElement("clay-choice", { look }, <fieldset aria-label={name}>{entries(options).map(([option, label]) =>
 
 		<label key={option}>
 
