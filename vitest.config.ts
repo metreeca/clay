@@ -31,6 +31,11 @@ export default defineConfig({
 		passWithNoTests: true,
 
 		/**
+		 * Runs every test in a DOM, whether launched by `npm run check` or straight from the IDE.
+		 */
+		environment: "happy-dom",
+
+		/**
 		 * Keeps DOM tests off the network: a link a test leaves to its default behaviour, such as one targeting
 		 * `_blank`, would otherwise open a page loading its URL from a server that does not exist.
 		 */

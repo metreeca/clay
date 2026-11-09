@@ -197,7 +197,9 @@ against `src/` without a prior build. Packages installed from the registry keep 
 > while their packages ship no `src/`, and Vite does not fall back to `default` on a missing target, so a global
 > condition breaks every package installed from the registry that declares it, as happens under `npm ci` in CI.
 
-Headless state is tested without a DOM: a widget test that needs one supplies its own environment.
+The root `vitest.config.ts` also sets the `happy-dom` environment for every test, so a suite runs alike under
+`npm run check` and from the IDE, which reads the config but not the flags a package script passes. Environment
+settings belong there, never on the `check` command line. Headless state still never relies on the DOM it is given.
 
 # Specimen
 

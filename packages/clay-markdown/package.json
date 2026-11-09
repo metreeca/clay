@@ -49,7 +49,7 @@
   "scripts": {
     "clean": "ush rm dist docs node_modules '*.tsbuildinfo'",
     "build": "tsc -b tsconfig.build.json && ush cp dist 'src/*.css'",
-    "check": "npx vitest --config ../../vitest.config.ts --root . --typecheck --passWithNoTests --environment happy-dom run"
+    "check": "npx vitest --config ../../vitest.config.ts --root . --typecheck --passWithNoTests run"
   },
   "dependencies": {
     "@metreeca/clay-widgets": "^0.1.0",
