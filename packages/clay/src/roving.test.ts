@@ -17,204 +17,321 @@
 import { createElement, render } from "preact";
 import { useState } from "preact/hooks";
 import { act } from "preact/test-utils";
-import { afterEach, describe, expect, it } from "vitest";
-import { step, stop } from "./roving.core.js";
-import { useRoving } from "./roving.js";
-
-
-function Group({ items, orientation, wrap }: {
-	items: readonly string[],
-	orientation?: "horizontal" | "vertical" | "both",
-	wrap?: boolean
-}) {
-
-	const [active, setActive] = useState<string>();
-	const { tabIndex, onKeyDown } = useRoving({ items, active, id: item => `item-${item}`, orientation, wrap, onMove: setActive });
-
-	return createElement("div", { id: "group", onKeyDown }, ...items.map(item =>
-		createElement("button", { key: item, id: `item-${item}`, tabIndex: tabIndex(item) }, item)
-	));
-
-}
-
-function mount(props: Parameters<typeof Group>[0]): void {
-	act(() => render(createElement(Group, props), document.body));
-}
-
-function press(key: string): KeyboardEvent {
-
-	const event = new KeyboardEvent("keydown", { key, bubbles: true, cancelable: true });
-
-	act(() => { (document.activeElement ?? document.body).dispatchEvent(event); });
-
-	return event;
-
-}
-
-function stops(): readonly string[] {
-	return [...document.querySelectorAll<HTMLElement>("#group > button")]
-		.filter(button => button.tabIndex === 0)
-		.map(button => button.textContent ?? "");
-}
-
-function focused(): string {
-	return document.activeElement?.textContent ?? "";
-}
-
-
-afterEach(() => {
-	act(() => render(null, document.body));
-});
+import { afterEach, describe, expect, it, vi } from "vitest";
+import { fielded, useRoving } from "./roving.js";
 
 
 describe("useRoving()", () => {
 
-	it("holds a single stop, on the first item by default", () => {
+	function Group({ items, controls = items, active: initial, orientation, wrap, onMove }: {
+		items: readonly string[]
+		controls?: readonly string[]
+		active?: string
+		orientation?: "horizontal" | "vertical" | "both"
+		wrap?: boolean
+		onMove?: (item: string) => void
+	}) {
 
-		mount({ items: ["a", "b", "c"] });
+		const [active, setActive] = useState(initial);
 
-		expect(stops()).toEqual(["a"]);
+		const { tabIndex, onKeyDown } = useRoving({
+			items, active, id: item => `item-${item}`, orientation, wrap, onMove: item => {
+				onMove?.(item);
+				setActive(item);
+			}
+		});
+
+		return createElement("div", { id: "group", onKeyDown }, ...controls.map(item =>
+			createElement("button", { key: item, id: `item-${item}`, tabIndex: tabIndex(item) }, item)
+		));
+
+	}
+
+	function mount(props: Parameters<typeof Group>[0]): void {
+		act(() => render(createElement(Group, props), document.body));
+	}
+
+	function focus(item: string): void {
+		document.getElementById(`item-${item}`)!.focus(); // test harness: control rendered
+	}
+
+	function press(key: string, init: KeyboardEventInit = {}): KeyboardEvent {
+
+		const event = new KeyboardEvent("keydown", { key, bubbles: true, cancelable: true, ...init });
+
+		act(() => { (document.activeElement ?? document.body).dispatchEvent(event); });
+
+		return event;
+
+	}
+
+	function stops(): readonly string[] {
+		return [...document.querySelectorAll<HTMLElement>("#group > button")]
+			.filter(button => button.tabIndex === 0)
+			.map(button => button.textContent ?? "");
+	}
+
+	function focused(): string {
+		return document.activeElement?.textContent ?? "";
+	}
+
+
+	afterEach(() => {
+		act(() => render(null, document.body));
+	});
+
+
+	describe("tabIndex", () => {
+
+		it("holds a single stop, on the first item by default", () => {
+
+			mount({ items: ["a", "b", "c"] });
+
+			expect(stops()).toEqual(["a"]);
+
+		});
+
+		it("holds the stop on the active item", () => {
+
+			mount({ items: ["a", "b", "c"], active: "b" });
+
+			expect(stops()).toEqual(["b"]);
+
+		});
+
+		it("falls back on the first item where the active item is gone", () => {
+
+			mount({ items: ["a", "b", "c"], active: "x" });
+
+			expect(stops()).toEqual(["a"]);
+
+		});
+
+		it("holds no stop where no item is roved", () => {
+
+			mount({ items: [], controls: ["a", "b"] });
+
+			expect(stops()).toEqual([]);
+
+		});
 
 	});
 
-	it("moves the focus and the stop with the arrow keys", () => {
+	describe("onKeyDown", () => {
 
-		mount({ items: ["a", "b", "c"] });
+		it("moves the focus and the stop with the arrow keys", () => {
 
-		document.getElementById("item-a")!.focus(); // test harness: item rendered
+			mount({ items: ["a", "b", "c"] });
 
-		const event = press("ArrowRight");
+			focus("a");
 
-		expect(event.defaultPrevented).toBe(true);
-		expect(focused()).toBe("b");
-		expect(stops()).toEqual(["b"]);
+			const event = press("ArrowRight");
 
-		press("ArrowUp");
+			expect(event.defaultPrevented).toBeTruthy();
+			expect(focused()).toBe("b");
+			expect(stops()).toEqual(["b"]);
 
-		expect(focused()).toBe("a");
+			press("ArrowUp");
 
-	});
+			expect(focused()).toBe("a");
 
-	it("reaches the ends with Home and End", () => {
+		});
 
-		mount({ items: ["a", "b", "c"] });
+		it("notifies the move before focusing the item", () => {
 
-		document.getElementById("item-a")!.focus(); // test harness: item rendered
+			const onMove = vi.fn(() => focused());
 
-		press("End");
-		expect(focused()).toBe("c");
+			mount({ items: ["a", "b", "c"], onMove });
 
-		press("Home");
-		expect(focused()).toBe("a");
+			focus("a");
+			press("ArrowRight");
 
-	});
+			expect(onMove).toHaveBeenCalledWith("b");
+			expect(onMove.mock.results[0]?.value).toBe("a");
 
-	it("stops at the ends unless wrapping", () => {
+		});
 
-		mount({ items: ["a", "b"] });
+		it("reaches the ends with Home and End", () => {
 
-		document.getElementById("item-b")!.focus(); // test harness: item rendered
+			mount({ items: ["a", "b", "c"] });
 
-		press("ArrowRight");
-		press("ArrowRight");
+			focus("a");
 
-		expect(focused()).toBe("b");
+			press("End");
+			expect(focused()).toBe("c");
 
-	});
+			press("Home");
+			expect(focused()).toBe("a");
 
-	it("comes round when wrapping", () => {
+		});
 
-		mount({ items: ["a", "b"], wrap: true });
+		it("stops at the ends unless wrapping", () => {
 
-		document.getElementById("item-a")!.focus(); // test harness: item rendered
+			mount({ items: ["a", "b"] });
 
-		press("ArrowRight");
-		press("ArrowRight");
+			focus("b");
 
-		expect(focused()).toBe("a");
+			press("ArrowRight");
+			press("ArrowRight");
 
-	});
+			expect(focused()).toBe("b");
 
-	it("leaves the keys pressed on a field to the field", () => {
+		});
 
-		mount({ items: ["a", "b"] });
+		it("comes round when wrapping", () => {
 
-		const field = document.createElement("input");
+			mount({ items: ["a", "b"], wrap: true });
 
-		document.getElementById("group")!.append(field); // test harness: group rendered
-		field.focus();
+			focus("a");
 
-		const event = press("ArrowRight");
+			press("ArrowRight");
+			press("ArrowRight");
 
-		expect(event.defaultPrevented).toBe(false);
-		expect(document.activeElement).toBe(field);
+			expect(focused()).toBe("a");
 
-	});
+		});
 
-	it("leaves the keys of the other axis to the browser", () => {
+		it("reaches the ends with Home and End even when wrapping", () => {
 
-		mount({ items: ["a", "b"], orientation: "horizontal" });
+			mount({ items: ["a", "b", "c"], wrap: true });
 
-		document.getElementById("item-a")!.focus(); // test harness: item rendered
+			focus("b");
 
-		const event = press("ArrowDown");
+			press("End");
+			expect(focused()).toBe("c");
 
-		expect(event.defaultPrevented).toBe(false);
-		expect(focused()).toBe("a");
+			press("Home");
+			expect(focused()).toBe("a");
+
+		});
+
+		it("steps from the first item where the active item is gone", () => {
+
+			mount({ items: ["a", "b", "c"], active: "x" });
+
+			focus("a");
+			press("ArrowRight");
+
+			expect(focused()).toBe("b");
+
+		});
+
+		it("passes over the controls left out of the items", () => {
+
+			mount({ items: ["a", "c"], controls: ["a", "b", "c"] });
+
+			focus("a");
+			press("ArrowRight");
+
+			expect(focused()).toBe("c");
+
+		});
+
+		it("moves nowhere where no item is roved", () => {
+
+			mount({ items: [], controls: ["a", "b"] });
+
+			focus("a");
+
+			const event = press("ArrowRight");
+
+			expect(event.defaultPrevented).toBeFalsy();
+			expect(focused()).toBe("a");
+
+		});
+
+		it("leaves the keys pressed on a field to the field", () => {
+
+			mount({ items: ["a", "b"] });
+
+			const field = document.createElement("input");
+
+			document.getElementById("group")!.append(field); // test harness: group rendered
+			field.focus();
+
+			const event = press("ArrowRight");
+
+			expect(event.defaultPrevented).toBeFalsy();
+			expect(document.activeElement).toBe(field);
+
+		});
+
+		it.each([
+			"altKey",
+			"ctrlKey",
+			"metaKey"
+		] as const)("leaves the keys pressed with %s to the browser", modifier => {
+
+			mount({ items: ["a", "b"] });
+
+			focus("a");
+
+			const event = press("ArrowRight", { [modifier]: true });
+
+			expect(event.defaultPrevented).toBeFalsy();
+			expect(focused()).toBe("a");
+
+		});
+
+		it.each([
+			["horizontal", "ArrowDown"],
+			["vertical", "ArrowRight"]
+		] as const)("leaves the keys of the other axis to the browser when %s", (orientation, key) => {
+
+			mount({ items: ["a", "b"], orientation });
+
+			focus("a");
+
+			const event = press(key);
+
+			expect(event.defaultPrevented).toBeFalsy();
+			expect(focused()).toBe("a");
+
+		});
 
 	});
 
 });
 
+describe("fielded()", () => {
 
-const items = ["a", "b", "c"];
+	function target(html: string): Element {
+
+		const host = document.createElement("div");
+
+		host.innerHTML = html;
+
+		return host.querySelector("[data-target]")!; // test harness: markup carries the target
+	}
 
 
-describe("stop()", () => {
-
-	it("keeps the active item", () => {
-		expect(stop(items, "b")).toBe("b");
+	it.each([
+		"<input data-target>",
+		"<input type='search' data-target>",
+		"<select data-target></select>",
+		"<textarea data-target></textarea>",
+		"<div contenteditable data-target></div>",
+		"<div contenteditable><span data-target></span></div>",
+		"<div role='textbox' data-target></div>",
+		"<div role='combobox' data-target></div>"
+	])("tells a field: %s", html => {
+		expect(fielded(target(html))).toBeTruthy();
 	});
 
-	it("falls back on the first item", () => {
-		expect(stop(items, undefined)).toBe("a");
-		expect(stop(items, "x")).toBe("a");
+	it.each([
+		"<button data-target></button>",
+		"<input disabled data-target>",
+		"<input type='checkbox' data-target>",
+		"<input type='button' data-target>",
+		"<div contenteditable='false' data-target></div>",
+		"<div role='button' data-target></div>"
+	])("tells no field: %s", html => {
+		expect(fielded(target(html))).toBeFalsy();
 	});
 
-	it("holds no stop in an empty group", () => {
-		expect(stop([], "a")).toBeUndefined();
-	});
-
-});
-
-describe("step()", () => {
-
-	it("steps forwards and backwards", () => {
-		expect(step(items, "a", +1, false)).toBe("b");
-		expect(step(items, "c", -1, false)).toBe("b");
-	});
-
-	it("stops at the ends unless wrapping", () => {
-		expect(step(items, "c", +1, false)).toBe("c");
-		expect(step(items, "a", -1, false)).toBe("a");
-	});
-
-	it("comes round when wrapping", () => {
-		expect(step(items, "c", +1, true)).toBe("a");
-		expect(step(items, "a", -1, true)).toBe("c");
-	});
-
-	it("reaches the ends", () => {
-		expect(step(items, "b", +Infinity, true)).toBe("c");
-		expect(step(items, "b", -Infinity, true)).toBe("a");
-	});
-
-	it("steps from the stop where the active item is gone", () => {
-		expect(step(items, "x", +1, false)).toBe("b");
-	});
-
-	it("steps nowhere in an empty group", () => {
-		expect(step([], "a", +1, true)).toBeUndefined();
+	it("tells no field for a target that is no element", () => {
+		expect(fielded(null)).toBeFalsy();
+		expect(fielded(new EventTarget())).toBeFalsy();
 	});
 
 });

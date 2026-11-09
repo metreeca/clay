@@ -43,7 +43,6 @@
  */
 
 import { type Optional } from "@metreeca/core";
-import { Fields, step, stop } from "./roving.core.js";
 
 
 /**
@@ -55,6 +54,21 @@ const Keys: Readonly<Record<"horizontal" | "vertical" | "both", Readonly<Record<
 	both: { ArrowRight: +1, ArrowDown: +1, ArrowLeft: -1, ArrowUp: -1, Home: -Infinity, End: +Infinity }
 };
 
+/**
+ * The fields that keep the keys and presses aimed at them, moving a caret or a value rather than the focus or the
+ * item they stand in: enabled text and value controls, native or carrying the matching role, and editable regions.
+ */
+const Fields = [
+	"input:not([disabled]):not([type='button']):not([type='checkbox']):not([type='color']):not([type='file'])"
+	+":not([type='image']):not([type='radio']):not([type='reset']):not([type='submit'])",
+	"select:not([disabled])",
+	"textarea:not([disabled])",
+	"[contenteditable]:not([contenteditable='false'])",
+	...["combobox", "scrollbar", "searchbox", "slider", "spinbutton", "textbox"].map(role => `[role~='${role}']`)
+].join(", ");
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /**
  * Makes a group of controls a single stop for `Tab`.
@@ -125,7 +139,6 @@ export function useRoving({
 } {
 
 	const holder = stop(items, active);
-	const offsets = Keys[orientation];
 
 	return {
 
@@ -133,9 +146,8 @@ export function useRoving({
 
 		onKeyDown: event => {
 
-			const offset = offsets[event.key];
-			const field = event.target instanceof Element && event.target.closest(Fields) !== null;
-			const target = offset === undefined || field || event.altKey || event.ctrlKey || event.metaKey
+			const offset = Keys[orientation][event.key];
+			const target = offset === undefined || fielded(event.target) || event.altKey || event.ctrlKey || event.metaKey
 				? undefined
 				: step(items, active, offset, wrap);
 
@@ -152,5 +164,58 @@ export function useRoving({
 		}
 
 	};
+
+}
+
+/**
+ * Tells whether a key or a press lands in a field.
+ *
+ * @param target The target of the event the key or the press raised
+ *
+ * @returns `true` if `target` is an element standing in a field, so the key or the press is left to the field, which
+ *     moves its caret or its value with it rather than the focus or the item it stands in; `false` otherwise
+ */
+export function fielded(target: EventTarget | null): boolean {
+	return target instanceof Element && target.closest(Fields) !== null;
+}
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/**
+ * Picks the item holding the `Tab` stop of a group.
+ *
+ * @param items The keys of the items of the group, in display order
+ * @param active The key of the item the focus last stood on, if any
+ *
+ * @returns `active` if it still stands among `items`, or the first of `items` otherwise; undefined for no items
+ */
+function stop(items: readonly string[], active: Optional<string>): Optional<string> {
+	return active !== undefined && items.includes(active) ? active : items[0];
+}
+
+/**
+ * Steps from an item of a group to another.
+ *
+ * @param items The keys of the items of the group, in display order
+ * @param active The key of the item the focus stands on, if any; where it stands among no item, the step starts
+ *     from the {@link stop} of the group, which the first item holds once the item the focus left is gone
+ * @param offset How many items to step by, forwards if positive; `±Infinity` reaches the last or the first item
+ * @param wrap Whether a step past either end comes round from the other, rather than stopping at the end
+ *
+ * @returns The key of the item stepped to; undefined if `items` is empty
+ */
+function step(items: readonly string[], active: Optional<string>, offset: number, wrap: boolean): Optional<string> {
+
+	const from = items.indexOf(stop(items, active) ?? "");
+	const target = from+offset;
+
+	// an infinite offset has no remainder, so it reaches the end by clamping whether wrapping or not
+
+	const index = wrap && Number.isFinite(offset)
+		? ((target%items.length)+items.length)%items.length
+		: Math.min(Math.max(target, 0), items.length-1);
+
+	return items[index];
 
 }

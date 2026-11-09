@@ -108,7 +108,7 @@
 import { type Optional } from "@metreeca/core";
 import { type ComponentChildren, createContext, createElement } from "preact";
 import { useContext, useEffect, useLayoutEffect, useState } from "preact/hooks";
-import { Fields } from "./roving.core.js";
+import { fielded } from "./roving.js";
 import { accepts, announcement, describe, edge, type Edge, milliseconds, type Outcome, settle } from "./transfer.core.js";
 
 export type { Edge, Outcome } from "./transfer.core.js";
@@ -818,7 +818,7 @@ function bind(
 	const surface = grip === root;
 
 	function onPointerDown(event: PointerEvent): void {
-		grip.draggable = !(surface && event.target instanceof Element && event.target.closest(Fields) !== null);
+		grip.draggable = !(surface && fielded(event.target));
 	}
 
 	function onDragStart(event: DragEvent): void {
