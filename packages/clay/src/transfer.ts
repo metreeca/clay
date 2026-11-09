@@ -751,16 +751,20 @@ function createService(announce: (message: string) => void): Service {
 
 		drop: (target, landing, edge) => {
 
-			const source = "source" in landing ? landing.source : undefined;
-			const from = "source" in landing ? landing.from : undefined;
-			const item = "source" in landing ? landing.source.name : describe(landing.files);
+			const { source, from, item, content } = "source" in landing ? {
+				source: landing.source,
+				from: landing.from,
+				item: landing.source.name,
+				content: { source: { id: landing.source.id, type: landing.source.type, data: landing.source.data } }
+			} : {
+				source: undefined,
+				from: undefined,
+				item: describe(landing.files),
+				content: { files: landing.files, strings: landing.strings }
+			};
 
-			const at = { id: target.id, data: target.data };
 			const side = edge === undefined || !target.edges ? {} : { edge };
-
-			const drop: Drop = "source" in landing
-				? { source: { id: landing.source.id, type: landing.source.type, data: landing.source.data }, target: at, ...side }
-				: { files: landing.files, strings: landing.strings, target: at, ...side };
+			const drop: Drop = { ...content, target: { id: target.id, data: target.data }, ...side };
 
 			const outcome = target.onDrop?.(drop);
 			const waiting = outcome instanceof Promise;
@@ -1104,12 +1108,10 @@ function touch(document: Document): () => void {
 
 		const touch = event.touches[0];
 
-		if ( touch === undefined ) {
-			return;
-		} else if ( drag !== undefined ) {
+		if ( touch !== undefined && drag !== undefined ) {
 			event.preventDefault(); // the finger drags rather than scrolls
 			move(touch.clientX, touch.clientY);
-		} else if ( press !== undefined && Math.hypot(touch.clientX-press.x, touch.clientY-press.y) > Slop ) {
+		} else if ( touch !== undefined && press !== undefined && Math.hypot(touch.clientX-press.x, touch.clientY-press.y) > Slop ) {
 			end(touch.clientX, touch.clientY, true);
 		}
 
