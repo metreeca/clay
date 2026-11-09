@@ -94,7 +94,7 @@
  * Each widget still owes the parts that depend on how it is drawn:
  *
  * - a visible control opening the moves: the grip doubling as the menu button where moving is the item's sole action,
- *   or a `More` button where the item is dragged by its whole surface, never both (2.5.7)
+ *   or an overflow (⋯) menu button where the item is dragged by its whole surface, never both (2.5.7)
  * - a native file input beside a zone taking files (2.5.7)
  * - controls named after their item, with `aria-haspopup` and `aria-expanded` on menu buttons (4.1.2), menus closing
  *   on `Escape` and handing the focus back (2.1.2), and visible focus rings (2.4.7)
