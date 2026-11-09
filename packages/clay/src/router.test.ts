@@ -249,8 +249,8 @@ describe("Router", () => {
 		it("should move the focus to the main landmark when following a link", async () => {
 
 			mount({
-				"/": createElement("main", { tabIndex: -1 }, createElement("a", { href: "/other" }, "link")),
-				"/other": createElement("main", { tabIndex: -1 }, "other")
+				"/": createElement<JSX.HTMLAttributes<HTMLElement>>("main", { tabIndex: -1 }, createElement("a", { href: "/other" }, "link")),
+				"/other": createElement<JSX.HTMLAttributes<HTMLElement>>("main", { tabIndex: -1 }, "other")
 			});
 
 			document.querySelector("a")?.focus();
@@ -266,7 +266,7 @@ describe("Router", () => {
 
 			shell([
 				createElement("button", { key: "outside" }, "outside"),
-				createElement(Routes, {
+				createElement<{ children: Routing }>(Routes, {
 					key: "routes", children: {
 						"/": createElement("a", { href: "/other" }, "link"),
 						"/other": createElement("p", {}, "other")
@@ -286,7 +286,7 @@ describe("Router", () => {
 
 			history.replaceState(null, "", "/items");
 
-			mount({ "/items": createElement("main", { tabIndex: -1 }, createElement("a", { href: "/items;table" }, "table")) });
+			mount({ "/items": createElement<JSX.HTMLAttributes<HTMLElement>>("main", { tabIndex: -1 }, createElement("a", { href: "/items;table" }, "table")) });
 
 			document.querySelector("a")?.focus();
 
