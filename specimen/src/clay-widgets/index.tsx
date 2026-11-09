@@ -20,7 +20,7 @@
  * @module
  */
 
-import { Page, type Sample, JunkPath } from "@metreeca/specimen/index.core.js";
+import { Page, type Sample, JunkPath, ToolPath } from "@metreeca/specimen/index.core.js";
 import { Buttons } from "@metreeca/specimen/clay-widgets/button.js";
 import { Cards } from "@metreeca/specimen/clay-widgets/card.js";
 import { Choices } from "@metreeca/specimen/clay-widgets/choice.js";
@@ -48,6 +48,7 @@ import { Contents } from "@metreeca/specimen/clay-widgets/toc.js";
 const samples: readonly Sample[] = [
 
 	{ id: "junk", group: "Shells", title: "Junk", href: JunkPath },
+	{ id: "tool", group: "Shells", title: "Tool", href: ToolPath },
 
 	{ id: "stack", group: "Layouts", title: "Stack", view: <Stacks/> },
 	{ id: "strip", group: "Layouts", title: "Strip", view: <Strips/> },

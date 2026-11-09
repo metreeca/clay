@@ -46,6 +46,7 @@ export const ClayWidgetsPath = "/clay-widgets/";
 export const ClayMarkdownPath = "/clay-markdown/";
 
 export const JunkPath = `${ClayWidgetsPath}junk`;
+export const ToolPath = `${ClayWidgetsPath}tool`;
 
 
 /**

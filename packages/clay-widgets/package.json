@@ -105,6 +105,14 @@
       "@metreeca/source": "./src/shells/junk.css",
       "default": "./dist/shells/junk.css"
     },
+    "./tool": {
+      "@metreeca/source": "./src/shells/tool.tsx",
+      "default": "./dist/shells/tool.js"
+    },
+    "./tool.css": {
+      "@metreeca/source": "./src/shells/tool.css",
+      "default": "./dist/shells/tool.css"
+    },
     "./stack": {
       "@metreeca/source": "./src/layouts/stack.tsx",
       "default": "./dist/layouts/stack.js"

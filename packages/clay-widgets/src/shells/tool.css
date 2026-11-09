@@ -1,0 +1,147 @@
+/*
+ * Copyright © 2023-2026 Metreeca srl
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/*
+ * The frame is a grid of two columns by three rows, the side column beside the main one, each a head over a body over
+ * a foot. The columns dissolve into the grid, so the heads of both share one row, and so do the feet, whichever holds
+ * more. The frame fills the height its host gives it, the body of each column scrolling within what the bars leave.
+ */
+
+/*
+ * The knobs below tune the geometry and type of the frame. They are properties of this shell rather than design system
+ * tokens, so a single dash keeps them apart from the `--skin--` contract. An app retunes one shell by restating a knob
+ * on it, or every shell inside an element by restating it there. A knob defaulting to a design system token carries no
+ * initial value and is read with that token as fallback, so while it is left untouched it follows the theme.
+ */
+
+/* The width of the side column, room for a navigation label or a filter at the text size. */
+
+@property --clay-tool-side-width {
+    syntax: "*";
+    inherits: true;
+    initial-value: 15rem;
+}
+
+/*
+ * The widest the main column grows, gutters included. Past it, the two columns stand centred in the frame, so a wide
+ * window leaves the screen as it was rather than stretching its lines and controls apart.
+ */
+
+@property --clay-tool-main-width {
+    syntax: "*";
+    inherits: true;
+    initial-value: 60rem;
+}
+
+/* The inline gutter of the side column, defaulting to the standard spacing step. */
+
+@property --clay-tool-side-gutter {
+    syntax: "*";
+    inherits: true;
+}
+
+/* The inline gutter of the main column, defaulting to the standard spacing step. */
+
+@property --clay-tool-main-gutter {
+    syntax: "*";
+    inherits: true;
+}
+
+/* The block gutter of the head row, defaulting to half the standard spacing step. */
+
+@property --clay-tool-head-gutter {
+    syntax: "*";
+    inherits: true;
+}
+
+/* The block gutter of the body row, defaulting to the standard spacing step. */
+
+@property --clay-tool-body-gutter {
+    syntax: "*";
+    inherits: true;
+}
+
+/* The block gutter of the foot row, defaulting to half the standard spacing step. */
+
+@property --clay-tool-foot-gutter {
+    syntax: "*";
+    inherits: true;
+}
+
+/* The font size of the head row, defaulting to the text size. */
+
+@property --clay-tool-head-font-size {
+    syntax: "*";
+    inherits: true;
+}
+
+/* The font size of the foot row, defaulting to the small size. */
+
+@property --clay-tool-foot-font-size {
+    syntax: "*";
+    inherits: true;
+}
+
+
+clay-tool {
+
+    display: grid;
+    grid-template-columns: var(--clay-tool-side-width) minmax(0, var(--clay-tool-main-width));
+    grid-template-rows: auto minmax(0, 1fr) auto;
+    justify-content: center;
+
+    /* The columns step out of the box tree, leaving their parts as grid items, while keeping their landmarks. */
+
+    & > :is(aside, main) {
+        display: contents;
+    }
+
+    & > aside > * {
+        grid-column: 1;
+        padding-inline: var(--clay-tool-side-gutter, var(--skin--spacing-100));
+    }
+
+    & > main > * {
+        grid-column: 2;
+        padding-inline: var(--clay-tool-main-gutter, var(--skin--spacing-100));
+    }
+
+    /* Heads and feet stretch to the taller of each pair and centre what they hold, so the two columns line up. */
+
+    & > * > :is(header, footer) {
+        display: grid;
+        align-content: center;
+    }
+
+    & > * > header {
+        grid-row: 1;
+        padding-block: var(--clay-tool-head-gutter, var(--skin--spacing-050));
+        font-size: var(--clay-tool-head-font-size, var(--skin--font-size));
+    }
+
+    & > * > div {
+        grid-row: 2;
+        padding-block: var(--clay-tool-body-gutter, var(--skin--spacing-100));
+        overflow: auto;
+    }
+
+    & > * > footer {
+        grid-row: 3;
+        padding-block: var(--clay-tool-foot-gutter, var(--skin--spacing-050));
+        font-size: var(--clay-tool-foot-font-size, var(--skin--font-size-small));
+    }
+
+}
