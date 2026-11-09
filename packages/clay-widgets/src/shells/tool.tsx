@@ -135,8 +135,9 @@ export function Tool({
 	head?: ComponentChildren
 
 	/**
-	 * The menu of the screen, such as its actions, at the end of the head of the main column. While the shell is
-	 * waiting, a turning mark stands in its place, and the head keeps its height and layout.
+	 * The menu of the screen, such as its actions, at the end of the head of the main column. It keeps its full width
+	 * and is never clipped, while the other items of the head give way to it. While the shell is waiting, a turning
+	 * mark stands in its place until the exchanges settle, and the head keeps its height and layout.
 	 */
 	menu?: ComponentChildren
 

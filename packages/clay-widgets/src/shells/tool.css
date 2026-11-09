@@ -476,7 +476,8 @@ clay-tool {
             }
 
             /*
-             * The menu stands apart from the head, pushed to its end whatever the head holds. While a turning mark
+             * The menu stands apart from the head, pushed to its end whatever the head holds. Never shrinking, it clips
+             * nothing, so the button ending it reaches into the gutter as at the end of any bar. While a turning mark
              * stands over it, the menu keeps its box hidden beneath, so the head neither shrinks nor shifts.
              */
 
@@ -486,6 +487,7 @@ clay-tool {
                 flex: none;
                 align-items: center;
                 margin-inline-start: auto;
+                overflow: visible;
 
                 &:has(+ .busy) {
                     visibility: hidden;
