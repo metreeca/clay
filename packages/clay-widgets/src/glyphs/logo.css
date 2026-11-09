@@ -43,14 +43,6 @@ clay-logo {
     vertical-align: calc(0.5cap - 0.5 * var(--clay-logo-mark));
 
     /*
-     * The eye finds the middle of a word between its capitals and its lowercase letters, lower than the middle of the
-     * capitals, so the mark is nudged down by half that gap. It reads level beside lowercase and capitals alike, off
-     * either by under a pixel at text sizes, and the nudge follows the face, as both measures are read off it.
-     */
-
-    translate: 0 calc(0.25 * (1cap - 1ex));
-
-    /*
      * The mark is a square measured against the capitals beside it. `cap` is read off the face in use, so an app
      * changing its face carries the logo along rather than needing a figure retuned.
      *
