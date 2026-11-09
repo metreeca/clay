@@ -70,6 +70,12 @@ clay-tool {
             background-color: var(--skin--background-color-stripe);
         }
 
+        /* The menu stands at the end of the head, apart from what the head holds. */
+
+        & header {
+            justify-content: space-between;
+        }
+
         /* A body rests the closing notice at its bottom, as the shell does with short content. */
 
         & section {

@@ -37,7 +37,8 @@ import "./tool.css";
  *
  * Lays a screen out as two columns, the side column beside the main one, each with a head, a body and a foot. The
  * heads of the two columns share one row, so they always match in height, and the feet do the same. The body of each
- * column scrolls on its own, while its head and foot stay in view, so what they hold is always within reach.
+ * column scrolls on its own, while its head and foot stay in view, so what they hold is always within reach. Heads
+ * and feet keep the height of a single line: text too wide for them is clipped and ends with an ellipsis.
  *
  * The shell fills the height its host gives it and sets none of its own. Without a definite height, the bodies grow
  * with their content instead of scrolling, and the heads and feet scroll out of view with the page.
@@ -48,9 +49,9 @@ import "./tool.css";
  * set on, or every shell inside the element it is set on, leaving the other properties of the shell to their defaults.
  *
  * Waiting is stated by the shell itself: while the {@link @metreeca/clay!fetch.Fetch shared client} has exchanges in
- * flight, the frame is veiled, shows a turning mark at the end of the main head, and marks itself busy for assistive
- * technology. Both columns stay out of reach for pointer and keyboard alike until the exchanges settle, so a screen
- * states waiting just by running its exchanges through that client, with no flag or call of its own.
+ * flight, the frame is veiled, shows a turning mark at the end of the main head in place of the menu, and marks itself
+ * busy for assistive technology. Both columns stay out of reach for pointer and keyboard alike until the exchanges
+ * settle, so a screen states waiting by running its exchanges through that client, with no flag or call of its own.
  *
  * The main column is named after `head` and takes the focus as the {@link @metreeca/clay!router.Router router} lands a
  * screen, without adding a tab stop, so a reader hears which screen they are on rather than a control of the last one.
@@ -76,6 +77,7 @@ export function Tool({
 	more,
 
 	head,
+	menu,
 	copy,
 	foot,
 
@@ -107,34 +109,40 @@ export function Tool({
 
 
 	/**
-	 * What stands in the head of the side column, such as the mark of the app and its release.
+	 * The identity of the app, such as its mark and release, in the head of the side column.
 	 */
 	meta?: ComponentChildren
 
 	/**
-	 * The standing controls of the side column, such as the sections of the app and the filters in force.
+	 * The standing controls of the app, such as its sections and the filters in force, in the body of the side column.
 	 */
 	tray?: ComponentChildren
 
 	/**
-	 * What stands in the foot of the side column, such as settings, help and signing out.
+	 * The secondary controls of the app, such as settings, help and signing out, in the foot of the side column.
 	 */
 	more?: ComponentChildren
 
 
 	/**
-	 * What stands in the head of the main column, such as the title of the screen and its actions.
+	 * The heading of the screen, such as its title, in the head of the main column.
 	 */
 	head?: ComponentChildren
 
 	/**
-	 * What closes the content itself, such as a copyright notice. It scrolls with the content rather than standing in
-	 * a foot, and rests at the bottom of the body where the content is too short to fill it.
+	 * The menu of the screen, such as its actions, at the end of the head of the main column. While the shell is
+	 * waiting, a turning mark stands in its place, and the head keeps its height and layout.
+	 */
+	menu?: ComponentChildren
+
+	/**
+	 * The closing notice of the content, such as a copyright, in the body of the main column. It scrolls with the
+	 * content rather than standing in a foot, and rests at the bottom of a body the content is too short to fill.
 	 */
 	copy?: ComponentChildren
 
 	/**
-	 * What stands in the foot of the main column, such as a status line or the terms.
+	 * The standing notes of the screen, such as a status line or the terms, in the foot of the main column.
 	 */
 	foot?: ComponentChildren
 
@@ -214,7 +222,7 @@ export function Tool({
 		{/*
 		 * The main column takes the focus from code alone, so a navigation can land the focus on it and a reader hears
 		 * its name, taken from the head, without a tab stop being added. The head is held in a box of its own only to
-		 * be referenced as that name: the box stands aside from the layout, leaving the head laid out as given.
+		 * be referenced as that name, standing aside from the layout so the head lays out what it holds directly.
 		 */}
 
 		<main aria-labelledby={title} tabIndex={-1} inert={open || fetching}>
@@ -226,10 +234,12 @@ export function Tool({
 				{head && <div id={title}>{head}</div>}
 
 				{/*
-				 * The turning mark is a bare glyph rather than a control: it offers nothing to press and is already
-				 * told by `aria-busy` on the frame, so it is inert and a reader meets nothing there.
+				 * The turning mark stands over the menu, which keeps its place hidden beneath, so the head holds its
+				 * height. It is a bare glyph rather than a control: it offers nothing to press, and waiting is told by
+				 * `aria-busy` on the frame, so the mark is inert and a reader meets nothing where it stands.
 				 */}
 
+				{menu && <div class="menu">{menu}</div>}
 				{fetching && <span class="busy" inert><Icon.Reload/></span>}
 
 			</header>

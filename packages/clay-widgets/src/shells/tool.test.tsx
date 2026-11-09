@@ -77,6 +77,25 @@ describe("Tool", () => {
 
 		});
 
+		it("ends its head with the menu, beside the head rather than inside it", async () => {
+
+			const tool = rendered(<Tool head={<span>Projects</span>} menu={<button>Edit</button>}>content</Tool>);
+			const header = tool.querySelector(":scope > main > header")!;
+			const label = tool.querySelector(":scope > main")!.getAttribute("aria-labelledby");
+
+			expect(header.lastElementChild?.textContent).toBe("Edit");
+			expect(document.getElementById(label!)?.textContent).toBe("Projects");
+
+		});
+
+		it("ends its head with the menu without a head", async () => {
+
+			const tool = rendered(<Tool menu={<button>Edit</button>}>content</Tool>);
+
+			expect(tool.querySelector(":scope > main > header")?.lastElementChild?.textContent).toBe("Edit");
+
+		});
+
 	});
 
 
@@ -133,6 +152,21 @@ describe("Tool", () => {
 
 			expect(container.querySelector("clay-tool > main > header > .busy svg")).not.toBeNull();
 			expect(rendered(<Tool>content</Tool>).querySelector(".busy")).toBeNull();
+
+		});
+
+		it("keeps the menu in place beside the turning mark while an exchange is in flight", async () => {
+
+			const pending = () => new Promise<Response>(() => {});
+
+			const container = document.createElement("div");
+
+			await act(async () => {
+				render(<Fetch fetch={pending}><Tool menu={<button>Edit</button>}><Request/></Tool></Fetch>, container);
+			});
+
+			expect(container.querySelector("clay-tool > main > header > .menu")?.textContent).toBe("Edit");
+			expect(container.querySelector("clay-tool > main > header > .busy")).not.toBeNull();
 
 		});
 

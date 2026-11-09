@@ -46,7 +46,7 @@ render(<Specimen/>, host("clay-specimen"));
 
 function Specimen() {
 
-	return <Fetch fetch={createFetch(mock({ delay: 2500 }))}>
+	return <Fetch fetch={createFetch(mock({ delay: 2000 }))}>
 
 		<Transfer>
 

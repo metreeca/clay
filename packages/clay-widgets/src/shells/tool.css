@@ -146,9 +146,9 @@ clay-tool {
 
     --clay-tool-side-inset: var(--clay-tool-side-gutter, var(--skin--spacing-100));
     --clay-tool-main-inset: var(--clay-tool-main-gutter, var(--skin--spacing-100));
-    --clay-tool-head-inset: var(--clay-tool-head-gutter, var(--skin--spacing-075));
-    --clay-tool-body-inset: var(--clay-tool-body-gutter, var(--skin--spacing-100));
-    --clay-tool-foot-inset: var(--clay-tool-foot-gutter, var(--skin--spacing-075));
+    --clay-tool-head-inset: var(--clay-tool-head-gutter, var(--skin--spacing-100));
+    --clay-tool-body-inset: var(--clay-tool-body-gutter, var(--skin--spacing-050));
+    --clay-tool-foot-inset: var(--clay-tool-foot-gutter, var(--skin--spacing-100));
 
     /* The track of the main column, capped at the width limit unless the frame goes wide. */
 
@@ -336,10 +336,36 @@ clay-tool {
 
             position: relative;
 
-            /* The box naming the column stands aside from the layout, leaving the head laid out as given. */
+            /* The box naming the column stands aside from the layout, what it holds clipped as items of the bar. */
 
-            & > div {
+            & > div:not(.menu) {
+
                 display: contents;
+
+                & > * {
+                    min-inline-size: 0;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                }
+
+            }
+
+            /*
+             * The menu stands apart from the head, pushed to its end whatever the head holds. While a turning mark
+             * stands over it, the menu keeps its box hidden beneath, so the head neither shrinks nor shifts.
+             */
+
+            & > .menu {
+
+                display: flex;
+                flex: none;
+                align-items: center;
+                margin-inline-start: auto;
+
+                &:has(+ .busy) {
+                    visibility: hidden;
+                }
+
             }
 
             /*
@@ -356,12 +382,11 @@ clay-tool {
             }
 
             /*
-             * A turning mark stands at the end of the head, above the veil, over whatever control ends the head, on a
-             * solid disc of the page colour. It takes the box an edge button takes, glyph and padding reaching into the
-             * gutter alike, so it covers that control exactly, and a wide ring of the page colour drawn outside the box
-             * parts it from what lies around without moving it. It turns once a second whatever motion the reader asked
-             * for: the turn is what tells waiting, a still mark saying nothing, and a small glyph turning in place
-             * carries none of the travel reduced motion guards against, so its duration is stated outright.
+             * The turning mark stands over the end of the head, above the veil and out of the flow, so the head keeps
+             * its height and layout; it takes the box an edge button takes, glyph and padding reaching into the gutter
+             * alike. It turns once a second whatever motion the reader asked for: the turn is what tells waiting, a
+             * still mark saying nothing, and a glyph turning in place carries none of the travel reduced motion guards
+             * against, so its duration is stated outright rather than read from a motion token of the design system.
              */
 
             & > .busy {
@@ -375,12 +400,8 @@ clay-tool {
                 block-size: fit-content;
                 margin-block: auto;
                 padding: var(--skin--spacing-025);
-                border-radius: 50%;
 
                 color: var(--skin--color-label);
-                background-color: var(--skin--background-color);
-                box-shadow: 0 0 0 var(--skin--spacing-050) var(--skin--background-color);
-                pointer-events: none;
 
                 & svg {
                     animation: clay-tool-turn 1s linear infinite;
@@ -412,13 +433,22 @@ clay-tool {
 
     /*
      * Heads and feet are rows stretching to the taller of each pair and centring what they hold vertically, so the two
-     * columns line up. What they hold keeps its own width from the start of the bar, unless it grows to fill the row.
+     * columns line up. What they hold keeps its own width from the start of the bar, unless it grows to fill the row,
+     * and never breaks onto a second line, so a bar keeps the height of a single row whatever text it carries. Items
+     * too wide for the bar shrink, clipping what overflows them and ending clipped text with an ellipsis.
      */
 
     & > * > :is(header, footer) {
 
         display: flex;
         align-items: center;
+        white-space: nowrap;
+
+        & > * {
+            min-inline-size: 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
 
         /*
          * A button at either end of a bar, standing in it or in the row filling it, reaches into the gutter by the

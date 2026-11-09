@@ -120,13 +120,13 @@ export function Page({
 			onClick={() => router(Root)}
 		/>}
 
-		head={<Strip grow place="head" align="center" space="spacing100">
+		head={<nav class="packages" aria-label="Packages">
+			<Link active look="subtle" href={`${ClayPath}*`}>Hooks</Link>
+			<Link active look="subtle" href={`${ClayWidgetsPath}*`}>Widgets</Link>
+			<Link active look="subtle" href={`${ClayMarkdownPath}*`}>Markdown</Link>
+		</nav>}
 
-			<nav class="packages" aria-label="Packages">
-				<Link active look="subtle" href={`${ClayPath}*`}>Hooks</Link>
-				<Link active look="subtle" href={`${ClayWidgetsPath}*`}>Widgets</Link>
-				<Link active look="subtle" href={`${ClayMarkdownPath}*`}>Markdown</Link>
-			</nav>
+		menu={<Strip align="center" space="spacing100">
 
 			<small>v{VERSION}</small>
 

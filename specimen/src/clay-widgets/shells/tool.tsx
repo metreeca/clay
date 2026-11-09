@@ -72,9 +72,9 @@ export function ToolScreen() {
 
 		more={<Button icon={<Icon.Settings/>} look="subtle" name="Settings" title="Settings"/>}
 
-		head={<Strip grow place="head" align="center">
+		head={<strong>Tool Shell</strong>}
 
-			<strong>Tool Shell</strong>
+		menu={<Strip align="center">
 
 			<Button
 				icon={main ? <Icon.PanelLeftOpen/> : <Icon.PanelLeftClose/>}
@@ -141,7 +141,7 @@ export function ToolScreen() {
 			</div>
 
 			<div>
-				<header><code>head</code></header>
+				<header><code>head</code><code>menu</code></header>
 				<section><code>children</code><code>copy</code></section>
 				<footer><code>foot</code></footer>
 			</div>
@@ -166,6 +166,7 @@ export function ToolScreen() {
 				<tr><td><code>tray</code></td><td>the body of the side column</td><td>the outline of this screen</td></tr>
 				<tr><td><code>more</code></td><td>the foot of the side column</td><td>the settings</td></tr>
 				<tr><td><code>head</code></td><td>the head of the main column</td><td>the name of the screen</td></tr>
+				<tr><td><code>menu</code></td><td>the end of the head of the main column</td><td>the switches and the send button</td></tr>
 				<tr><td><code>children</code></td><td>the body of the main column</td><td>this documentation</td></tr>
 				<tr><td><code>copy</code></td><td>the close of the content, scrolling with it</td><td>the copyright</td></tr>
 				<tr><td><code>foot</code></td><td>the foot of the main column</td><td>the module</td></tr>
@@ -178,7 +179,7 @@ export function ToolScreen() {
 			<h2>Switches</h2>
 		</hgroup>
 
-		<p>Three switches reshape the frame, each worked from the buttons at the end of the main head:</p>
+		<p>Three switches reshape the frame, each worked from the buttons in the menu at the end of the main head:</p>
 
 		<ul>
 			<li><code>main</code> leaves the side column out of the frame, for a screen meant to be seen through rather
@@ -191,7 +192,7 @@ export function ToolScreen() {
 
 		<p>Waiting is stated by the shell itself: while the shared fetch client has a request in flight, the frame fades
 			and marks itself busy for assistive technology. The send button runs a request against a mock answering
-			after a second, so the whole of it can be watched.</p>
+			after two seconds, so the whole of it can be watched.</p>
 
 		<hgroup id="knobs">
 			<p>Tool Shell</p>
