@@ -18,13 +18,13 @@ import { type Awaitable } from "@metreeca/core/async";
 import { type ComponentChildren, createElement, render } from "preact";
 import { act } from "preact/test-utils";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { type Drop, Transfer, useSource, useTarget } from "./transfer.js";
+import { type Drop, Transfer, useTransferSource, useTransferTarget } from "./transfer.js";
 
 
 const Card = "application/x-card";
 
-type SourceState = ReturnType<typeof useSource>;
-type TargetState = ReturnType<typeof useTarget>;
+type SourceState = ReturnType<typeof useTransferSource>;
+type TargetState = ReturnType<typeof useTransferTarget>;
 
 const sources = new Map<string, SourceState>();
 const targets = new Map<string, TargetState>();
@@ -46,7 +46,7 @@ function Item({ id, type = Card, handle = false, focus = false, field = false, p
 
 	const element = `item-${id}`;
 
-	sources.set(id, useSource({
+	sources.set(id, useTransferSource({
 		id, name: `Item ${id}`, element,
 		handle: handle ? `grip-${id}` : undefined,
 		focus: focus ? `focus-${id}` : undefined,
@@ -74,7 +74,7 @@ function Zone({ id, accept = [Card], sides, onDrop, at, children }: {
 	children?: ComponentChildren
 }) {
 
-	targets.set(id, useTarget({ id, name: `Zone ${id}`, element: `zone-${id}`, data: { zone: id }, accept, sides, onDrop }));
+	targets.set(id, useTransferTarget({ id, name: `Zone ${id}`, element: `zone-${id}`, data: { zone: id }, accept, sides, onDrop }));
 
 	return createElement("div", { id: `zone-${id}`, "data-at": at }, children);
 
@@ -242,7 +242,7 @@ describe("Transfer", () => {
 });
 
 
-describe("useSource()", () => {
+describe("useTransferSource()", () => {
 
 	it("stays inert outside a Transfer context", async () => {
 
@@ -593,7 +593,7 @@ describe("useSource()", () => {
 });
 
 
-describe("useTarget()", () => {
+describe("useTransferTarget()", () => {
 
 	it("stays inert outside a Transfer context", async () => {
 

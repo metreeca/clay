@@ -20,7 +20,7 @@
  * @module
  */
 
-import { type Drop, type Side, useSource, useTarget } from "@metreeca/clay/transfer";
+import { type Drop, type Side, useTransferSource, useTransferTarget } from "@metreeca/clay/transfer";
 import { Icon } from "@metreeca/clay-widgets/icon";
 import { Moves, opening } from "@metreeca/specimen/clay/moves.js";
 import { useId, useState } from "preact/hooks";
@@ -130,7 +130,7 @@ function Column({
 	const element = useId();
 	const heading = useId();
 
-	const { target } = useTarget({ id: column, name: column, element, accept: [Issue], onDrop });
+	const { target } = useTransferTarget({ id: column, name: column, element, accept: [Issue], onDrop });
 
 	return <section id={element} aria-labelledby={heading} data-target={target || undefined}>
 
@@ -148,7 +148,7 @@ function Card({ item }: { item: Issue }) {
 	const element = useId();
 	const more = useId();
 
-	const { dragging, dropping, pending, targets, move } = useSource({
+	const { dragging, dropping, pending, targets, move } = useTransferSource({
 		id: item.id, name: item.title, element, focus: more, type: Issue, payload: { "text/plain": item.title }
 	});
 
@@ -251,8 +251,8 @@ function Step({
 	const handle = useId();
 	const grip = useId();
 
-	const { dragging, dropping, move } = useSource({ id: item, name: item, element, handle, focus: grip, type: StepType });
-	const { side } = useTarget({ id: item, name: item, element, accept: [StepType], sides: true, onDrop });
+	const { dragging, dropping, move } = useTransferSource({ id: item, name: item, element, handle, focus: grip, type: StepType });
+	const { side } = useTransferTarget({ id: item, name: item, element, accept: [StepType], sides: true, onDrop });
 
 	const choices = [
 		...(previous === undefined ? [] : [{ label: "Move up", action: () => void move(previous, "before") }]),
@@ -295,7 +295,7 @@ function Uploads() {
 	const [received, setReceived] = useState<readonly string[]>([]);
 	const [chosen, setChosen] = useState("");
 
-	const { target } = useTarget({
+	const { target } = useTransferTarget({
 		id: "uploads", name: "Uploads", element, accept: ["Files", "text/uri-list"],
 		onDrop: drop => drop.source ? false : setReceived(received => [
 			...received,

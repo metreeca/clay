@@ -29,7 +29,7 @@
  * function Card({ card }: { card: Card }) {
  *
  *   const element = useId();
- *   const { dragging, targets, move } = useSource({
+ *   const { dragging, targets, move } = useTransferSource({
  *     id: card.id, name: card.title, element, type: "application/x-card"
  *   });
  *
@@ -43,7 +43,7 @@
  * function Column({ column }: { column: Column }) {
  *
  *   const element = useId();
- *   const { target } = useTarget({
+ *   const { target } = useTransferTarget({
  *     id: column.id, name: column.title, element, accept: ["application/x-card"],
  *     onDrop: drop => drop.source ? store.move(drop.source.id, column.id) : false
  *   });
@@ -86,7 +86,7 @@
  *
  * Measured against WCAG 2.2 AA, the module guarantees the parts every widget would otherwise get wrong alike:
  *
- * - a path for every move that needs no drag (2.5.7, 2.1.1), through the `targets` and `move` of {@link useSource}
+ * - a path for every move needing no drag (2.5.7, 2.1.1), through the `targets` and `move` of {@link useTransferSource}
  * - the focus following a moved item (2.4.3), and the announcement closing each move (4.1.3)
  * - drops settled on release, a drop outside any target or `Escape` cancelling (2.5.2)
  * - the glide skipped where the reader prefers reduced motion (2.3.3)
@@ -146,9 +146,75 @@ const TransferContext = createContext<Optional<Transfer>>(undefined);
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /**
- * A source or a target taking part in a drop.
+ * The state of an item bound by {@link useTransferSource}, with the moves open to it.
+ *
+ * A component draws the drag states of the item from its flags and offers a move menu listing `targets`, each entry
+ * calling `move`, so every move a drag allows is also open to a single pointer and to the keyboard.
  */
-export interface Endpoint {
+export type TransferSource = {
+
+	/**
+	 * Whether the item is being dragged.
+	 */
+	readonly dragging: boolean
+
+	/**
+	 * Whether the item is gliding into the place it was moved to.
+	 */
+	readonly dropping: boolean
+
+	/**
+	 * Whether a move of the item is waiting for its target to settle it.
+	 */
+	readonly pending: boolean
+
+	/**
+	 * The targets taking the type of the item, in the order they were bound, for a move menu to list.
+	 */
+	readonly targets: readonly TargetBinding[]
+
+	/**
+	 * Moves the item to a target without dragging it.
+	 *
+	 * @param target The identifier of the target to move the item to
+	 * @param side The side of the target the item is to land on, such as `"before"` for *Move up*; none if omitted
+	 *
+	 * @returns A promise resolving once the move settles: to `true` if the target took the item, to `false` otherwise
+	 */
+	readonly move: (target: string, side?: Side) => Promise<boolean>
+
+}
+
+/**
+ * The state of a target bound by {@link useTransferTarget}.
+ *
+ * A component draws the drop indicator of the target from it, showing where a dragged item would land.
+ */
+export type TransferTarget = {
+
+	/**
+	 * Whether an item or content the target takes is being dragged over it.
+	 */
+	readonly target: boolean
+
+	/**
+	 * The side of the target the pointer stands nearest while something it takes is dragged over it; undefined
+	 * otherwise, and always for a target taking no `sides`, which only tells whether it is met.
+	 */
+	readonly side: Optional<Side>
+
+	/**
+	 * Whether a drop onto the target is waiting for it to be settled.
+	 */
+	readonly pending: boolean
+
+}
+
+
+/**
+ * A source or a target bound to the enclosing {@link Transfer} context, as a drop or a move menu names it.
+ */
+export interface Binding {
 
 	/**
 	 * The identifier the source or the target was bound under.
@@ -166,7 +232,7 @@ export interface Endpoint {
 /**
  * The item a drop moves.
  */
-export interface Source extends Endpoint {
+export interface SourceBinding extends Binding {
 
 	/**
 	 * The MIME type the item was bound with.
@@ -178,7 +244,7 @@ export interface Source extends Endpoint {
 /**
  * A target items may be moved to, as a drop lands on it or a move menu lists it.
  */
-export interface Target extends Endpoint {
+export interface TargetBinding extends Binding {
 
 	/**
 	 * The accessible name of the target, telling it apart in move menus and in announcements.
@@ -206,7 +272,7 @@ export interface Destination {
 	/**
 	 * The target the drop landed on.
 	 */
-	readonly target: Target;
+	readonly target: TargetBinding;
 
 	/**
 	 * The side of the target the drop landed on; undefined for a target taking no sides, such as a board column, or
@@ -224,7 +290,7 @@ export interface Internal extends Destination {
 	/**
 	 * The item moved.
 	 */
-	readonly source: Source;
+	readonly source: SourceBinding;
 
 }
 
@@ -480,7 +546,7 @@ export function Transfer({
  *
  * The item is dragged by its handle or, with no handle, by its whole surface. Presses {@link isReserved | reserved}
  * for a field inside the item stay with that field. The item is also moved without dragging, through the
- * {@link Target | targets} taking its type and the `move` transition, which a component offers as a move menu.
+ * {@link TargetBinding | targets} taking its type and the `move` transition, which a component offers as a move menu.
  *
  * Renders the component again whenever the item starts or stops being dragged or waiting for a move to settle, glides
  * into a new place, or the targets taking its type change, so a move menu always lists the current ones.
@@ -489,7 +555,7 @@ export function Transfer({
  *
  * @returns The state of the item and the moves open to it
  */
-export function useSource({
+export function useTransferSource({
 
 	id,
 	name,
@@ -551,43 +617,11 @@ export function useSource({
 	 */
 	payload?: Readonly<Record<string, string>>
 
-}): {
-
-	/**
-	 * Whether the item is being dragged.
-	 */
-	readonly dragging: boolean
-
-	/**
-	 * Whether the item is gliding into the place it was moved to.
-	 */
-	readonly dropping: boolean
-
-	/**
-	 * Whether a move of the item is waiting for its target to settle it.
-	 */
-	readonly pending: boolean
-
-	/**
-	 * The targets taking the type of the item, in the order they were bound, for a move menu to list.
-	 */
-	readonly targets: readonly Target[]
-
-	/**
-	 * Moves the item to a target without dragging it.
-	 *
-	 * @param target The identifier of the target to move the item to
-	 * @param side The side of the target the item is to land on, such as `"before"` for *Move up*; none if omitted
-	 *
-	 * @returns A promise resolving once the move settles: to `true` if the target took the item, to `false` otherwise
-	 */
-	readonly move: (target: string, side?: Side) => Promise<boolean>
-
-} {
+}): TransferSource {
 
 	const service = useContext(TransferContext);
 
-	const entry = useEntry<SourceEntry>(service, {
+	const entry = useTransferEntry<SourceEntry>(service, {
 
 		id,
 		name,
@@ -648,6 +682,7 @@ export function useSource({
 
 }
 
+
 /**
  * Makes an element a target items can be moved to.
  *
@@ -661,7 +696,7 @@ export function useSource({
  *
  * @returns The state of the target
  */
-export function useTarget({
+export function useTransferTarget({
 
 	sides = false,
 
@@ -720,29 +755,11 @@ export function useTarget({
 	 */
 	onDrop?: (drop: Drop) => Awaitable<boolean | void>
 
-}): {
-
-	/**
-	 * Whether an item or content the target takes is being dragged over it.
-	 */
-	readonly target: boolean
-
-	/**
-	 * The side of the target the pointer stands nearest while something it takes is dragged over it; undefined
-	 * otherwise, and always for a target taking no `sides`, which only tells whether it is met.
-	 */
-	readonly side: Optional<Side>
-
-	/**
-	 * Whether a drop onto the target is waiting for it to be settled.
-	 */
-	readonly pending: boolean
-
-} {
+}): TransferTarget {
 
 	const service = useContext(TransferContext);
 
-	const entry = useEntry<TargetEntry>(service, {
+	const entry = useTransferEntry<TargetEntry>(service, {
 
 		sides,
 
@@ -782,14 +799,14 @@ export function useTarget({
  * A bound source, as held by the service while its component stands. Mutable: the hook copies the props of each
  * render into the entry, so the service and the listeners holding it always read the current ones.
  */
-type SourceEntry = Parameters<typeof useSource>[0]
+type SourceEntry = Parameters<typeof useTransferSource>[0]
 
 /**
  * A bound target, as held by the service while its component stands, mutable as a {@link SourceEntry} is. Carries
  * its `sides` settled and no `element`: the service never reaches the element, which only the listeners bound by the
  * hook meet, where it does reach the element of a source to glide it and hand it the focus.
  */
-type TargetEntry = Omit<Parameters<typeof useTarget>[0], "element" | "sides"> & { sides: boolean }
+type TargetEntry = Omit<Parameters<typeof useTransferTarget>[0], "element" | "sides"> & { sides: boolean }
 
 /**
  * The phase a move involving an item or a target stands in while under way.
@@ -864,7 +881,7 @@ function touch(): () => void {
 		readonly source: HTMLElement,
 		readonly x: number,
 		readonly y: number,
-		readonly timer: number
+		readonly timer: ReturnType<typeof setTimeout>
 	}>;
 	let drag: Optional<{
 		readonly source: HTMLElement,
@@ -1079,7 +1096,7 @@ function scrollable(element: Element): Optional<Element> {
  *
  * @returns The entry bound to the service, the same object across renders
  */
-function useEntry<T extends object>(
+function useTransferEntry<T extends object>(
 	service: Optional<Transfer>,
 	props: T,
 	add: (service: Transfer) => (entry: T) => () => void
