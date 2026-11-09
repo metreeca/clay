@@ -30,7 +30,6 @@ import { Headings } from "@metreeca/specimen/clay-widgets/content/heading.js";
 import { Icons } from "@metreeca/specimen/clay-widgets/glyphs/icon.js";
 import { Images } from "@metreeca/specimen/clay-widgets/content/image.js";
 import { Infoboxes } from "@metreeca/specimen/clay-widgets/content/infobox.js";
-import { Labels } from "@metreeca/specimen/clay-widgets/content/label.js";
 import { Links } from "@metreeca/specimen/clay-widgets/controls/link.js";
 import { Logos } from "@metreeca/specimen/clay-widgets/glyphs/logo.js";
 import { Triggers } from "@metreeca/specimen/clay-widgets/controls/more.js";
@@ -56,7 +55,6 @@ const samples: readonly Sample[] = [
 
 	{ id: "heading", group: "Content", title: "Heading", view: <Headings/> },
 	{ id: "text", group: "Content", title: "Text", view: <Texts/> },
-	{ id: "label", group: "Content", title: "Label", view: <Labels/> },
 	{ id: "image", group: "Content", title: "Image", view: <Images/> },
 	{ id: "infobox", group: "Content", title: "Infobox", view: <Infoboxes/> },
 	{ id: "empty", group: "Content", title: "Empty", view: <Empties/> },

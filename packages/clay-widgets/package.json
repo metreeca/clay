@@ -169,14 +169,6 @@
       "@metreeca/source": "./src/content/infobox.css",
       "default": "./dist/content/infobox.css"
     },
-    "./label": {
-      "@metreeca/source": "./src/content/label.tsx",
-      "default": "./dist/content/label.js"
-    },
-    "./label.css": {
-      "@metreeca/source": "./src/content/label.css",
-      "default": "./dist/content/label.css"
-    },
     "./text": {
       "@metreeca/source": "./src/content/text.tsx",
       "default": "./dist/content/text.js"
