@@ -813,18 +813,14 @@ export function useAnnex(): string {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /**
- * Splits a route into its steps and the annex its last step carries.
+ * Checks whether following a link lands the reader afresh on the page it leads to.
  *
- * @returns The route without the annex, and the annex following the first `;` of the last step, empty if none
- */
-/**
- * Tells whether following a link lands the page afresh: a link leading to another route does, and so does one leading
- * back to the current place, while one changing the query or the annex alone keeps the reader where they stood.
+ * Links to another route or back to the current place land afresh; links changing only the query or annex do not.
  *
- * @param before The place, path and query, the link was followed from
+ * @param before The place the link was followed from, path and query
  * @param after The place the link led to
  *
- * @returns `true` if the route changed, or if neither the query nor the annex did
+ * @returns true if the route changed, or if neither the query nor the annex changed; false otherwise
  */
 function lands(before: string, after: string): boolean {
 
@@ -837,6 +833,13 @@ function lands(before: string, after: string): boolean {
 
 }
 
+/**
+ * Splits a route into its steps and the annex its last step carries.
+ *
+ * @param route The route to split, without any query
+ *
+ * @returns The route without the annex, and the annex following the first `;` of the last step, empty if none
+ */
 function split(route: string): Readonly<{ route: string, annex: string }> {
 
 	const [, steps = route, annex = ""] = /^(.*?\/[^/;]*)(?:;([^/]*))?$/.exec(route) ?? [];

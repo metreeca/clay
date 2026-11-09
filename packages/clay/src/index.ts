@@ -19,61 +19,129 @@
  *
  * Provides what the app states about itself, so a component carries the app identity wherever it is assembled without
  * being handed it. Also provides the element the app renders into, already fitted to the page, so a screen that fills
- * the window needs no root of its own. The package contexts and hooks come from their own modules, so a component
- * imports only the ones it is wired to, and an app pulls in no service it never provides.
+ * the window needs no root of its own. Tells which keys and presses belong to a field, so a widget handling them over
+ * its surface leaves the fields it holds working as usual. The package contexts and hooks come from their own modules,
+ * so a component imports only the ones it is wired to, and an app pulls in no service it never provides.
  *
- * Importing this module reads the document, so a test or a server render has to supply a DOM before importing it.
+ * Importing this module needs no DOM. The app identity is read from the document on first access, so a test or a
+ * server render reading it has to supply a DOM first, already carrying the title and tags the app states itself by.
  *
  * @module index
  */
 
+import { type Optional } from "@metreeca/core";
 import { resolve } from "@metreeca/core/resource";
 import { immutable } from "@metreeca/core/values";
 
 
 /**
+ * Matches the fields that keep their keys and presses for moving a caret or changing a value: enabled text and value
+ * controls, native or carrying a matching ARIA role, and editable regions such as rich text editors.
+ */
+const Fields = [
+	"input:not([disabled]):not([type='button']):not([type='checkbox']):not([type='color']):not([type='file'])"
+	+":not([type='image']):not([type='radio']):not([type='reset']):not([type='submit'])",
+	"select:not([disabled])",
+	"textarea:not([disabled])",
+	"[contenteditable]:not([contenteditable='false'])",
+	...["combobox", "scrollbar", "searchbox", "slider", "spinbutton", "textbox"].map(role => `[role~='${role}']`)
+].join(", ");
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/**
+ * Holds each entry of {@link app}, once first read.
+ */
+const cache: {
+
+	root?: string
+	base?: string
+
+	name?: string
+	icon?: string
+	info?: string
+	copy?: string
+
+} = {};
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/**
  * What the app says about itself, as its document states it.
  *
- * Read once on import and immutable thereafter, so a later edit to the document is never picked up.
+ * Read on first access and immutable thereafter, so a later edit to the document is never picked up.
  */
 export const app = immutable({
 
 	/**
 	 * The absolute root URL of the site, with a trailing slash.
 	 */
-	root: resolve(location.href, "/"),
+	get root(): string {
+		return cache.root ??= resolve(location.href, "/");
+	},
 
 	/**
 	 * The absolute base URL the app is published at, with a trailing slash, as `<base>` states it, or the site root.
 	 */
-	base: resolve(resolve(location.href, "/"),
-		(document.querySelector("base")?.href || "/").replace(/\/*$/, "/")
-	),
+	get base(): string {
+		return cache.base ??= resolve(app.root, (document.querySelector("base")?.href || "/").replace(/\/*$/, "/"));
+	},
+
 
 	/**
 	 * The app name, as the `<title>` tag states it, or `undefined` if the tag is missing or empty.
 	 */
-	name: document.title || undefined,
+	get name(): Optional<string> {
+		return "name" in cache ? cache.name : cache.name = document.title || undefined;
+	},
 
 	/**
 	 * The URL of the app icon, as the `<link rel="icon">` tag states it, or `undefined` if the tag is missing.
 	 */
-	icon: document.querySelector<HTMLLinkElement>("link[rel=icon]")?.href || undefined,
+	get icon(): Optional<string> {
+		return "icon" in cache ? cache.icon : cache.icon = document.querySelector("link[rel=icon]")?.href || undefined;
+	},
 
 	/**
 	 * The app description, as the `<meta name="description">` tag states it, or `undefined` if missing or empty.
 	 */
-	info: document.querySelector<HTMLMetaElement>("meta[name=description]")?.content || undefined,
+	get info(): Optional<string> {
+		return "info" in cache ? cache.info : cache.info = document.querySelector("meta[name=description]")?.content || undefined;
+	},
 
 	/**
 	 * The app copyright, as the `<meta name="copyright">` tag states it, or `undefined` if missing or empty.
 	 */
-	copy: document.querySelector<HTMLMetaElement>("meta[name=copyright]")?.content || undefined
+	get copy(): Optional<string> {
+		return "copy" in cache ? cache.copy : cache.copy = document.querySelector("meta[name=copyright]")?.content || undefined;
+	}
 
 });
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/**
+ * Checks whether an event is reserved for the field it lands in.
+ *
+ * A widget handling keys or presses on its own, for example moving the focus with arrow keys or dragging an item by
+ * its surface, leaves reserved events alone. A field inside the widget then keeps the keys and presses that move its
+ * caret or change its value, and works there as it does anywhere else on the page.
+ *
+ * Fields are enabled text and value controls, native or carrying a matching ARIA role, and editable regions. Buttons,
+ * checkboxes, radio buttons and the other controls acting on a single press are not fields.
+ *
+ * @param event The key or pointer event to check
+ *
+ * @returns true if `event` targets a field or an element inside one; false otherwise
+ */
+export function isReserved(event: Event): boolean {
+
+	return event.target instanceof Element && event.target.closest(Fields) !== null;
+
+}
 
 /**
  * Settles the custom element a page is rendered into.

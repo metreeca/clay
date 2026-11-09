@@ -108,7 +108,7 @@
 import { type Optional } from "@metreeca/core";
 import { type ComponentChildren, createContext, createElement } from "preact";
 import { useContext, useEffect, useLayoutEffect, useState } from "preact/hooks";
-import { fielded } from "./roving.js";
+import { isReserved } from "./index.js";
 import { accepts, announcement, describe, edge, type Edge, milliseconds, type Outcome, settle } from "./transfer.core.js";
 
 export type { Edge, Outcome } from "./transfer.core.js";
@@ -289,9 +289,9 @@ export function Transfer({
 /**
  * Makes an element an item that can be moved.
  *
- * The item is dragged by its handle or, with no handle, by its whole surface, a press on a field it holds being left
- * to the field; it is moved without dragging through the {@link Destination | targets} taking its type and the `move`
- * transition, which a component offers as a move menu.
+ * The item is dragged by its handle or, with no handle, by its whole surface. Presses {@link isReserved | reserved}
+ * for a field inside the item stay with that field. The item is also moved without dragging, through the
+ * {@link Destination | targets} taking its type and the `move` transition, which a component offers as a move menu.
  *
  * Renders the component again whenever the item starts or stops being dragged, starts or stops waiting for a move to
  * settle, glides into a new place, or the targets taking it change.
@@ -818,7 +818,7 @@ function bind(
 	const surface = grip === root;
 
 	function onPointerDown(event: PointerEvent): void {
-		grip.draggable = !(surface && fielded(event.target));
+		grip.draggable = !(surface && isReserved(event));
 	}
 
 	function onDragStart(event: DragEvent): void {

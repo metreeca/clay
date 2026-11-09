@@ -43,6 +43,7 @@
  */
 
 import { type Optional } from "@metreeca/core";
+import { isReserved } from "./index.js";
 
 
 /**
@@ -53,19 +54,6 @@ const Keys: Readonly<Record<"horizontal" | "vertical" | "both", Readonly<Record<
 	vertical: { ArrowDown: +1, ArrowUp: -1, Home: -Infinity, End: +Infinity },
 	both: { ArrowRight: +1, ArrowDown: +1, ArrowLeft: -1, ArrowUp: -1, Home: -Infinity, End: +Infinity }
 };
-
-/**
- * The fields that keep the keys and presses aimed at them, moving a caret or a value rather than the focus or the
- * item they stand in: enabled text and value controls, native or carrying the matching role, and editable regions.
- */
-const Fields = [
-	"input:not([disabled]):not([type='button']):not([type='checkbox']):not([type='color']):not([type='file'])"
-	+":not([type='image']):not([type='radio']):not([type='reset']):not([type='submit'])",
-	"select:not([disabled])",
-	"textarea:not([disabled])",
-	"[contenteditable]:not([contenteditable='false'])",
-	...["combobox", "scrollbar", "searchbox", "slider", "spinbutton", "textbox"].map(role => `[role~='${role}']`)
-].join(", ");
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -130,9 +118,9 @@ export function useRoving({
 	readonly tabIndex: (item: string) => 0 | -1
 
 	/**
-	 * Handles the keys moving the focus, claiming them from the browser; the group attaches the handler to the
-	 * element holding its items, which receives the keys pressed on any of them as they bubble up to it. Keys pressed
-	 * on a field inside an item, such as a text input, are left to the field, which moves its caret or value with them.
+	 * Handles the keys moving the focus, claiming them from the browser. The group attaches the handler to the element
+	 * holding its items, so it receives the keys pressed on any of them. Keys {@link isReserved | reserved} for a
+	 * field inside an item, such as a text input, are left to the field to move its caret or change its value.
 	 */
 	readonly onKeyDown: (event: KeyboardEvent) => void
 
@@ -147,7 +135,7 @@ export function useRoving({
 		onKeyDown: event => {
 
 			const offset = Keys[orientation][event.key];
-			const target = offset === undefined || fielded(event.target) || event.altKey || event.ctrlKey || event.metaKey
+			const target = offset === undefined || isReserved(event) || event.altKey || event.ctrlKey || event.metaKey
 				? undefined
 				: step(items, active, offset, wrap);
 
@@ -165,18 +153,6 @@ export function useRoving({
 
 	};
 
-}
-
-/**
- * Tells whether a key or a press lands in a field.
- *
- * @param target The target of the event the key or the press raised
- *
- * @returns `true` if `target` is an element standing in a field, so the key or the press is left to the field, which
- *     moves its caret or its value with it rather than the focus or the item it stands in; `false` otherwise
- */
-export function fielded(target: EventTarget | null): boolean {
-	return target instanceof Element && target.closest(Fields) !== null;
 }
 
 

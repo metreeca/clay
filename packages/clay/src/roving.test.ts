@@ -18,7 +18,7 @@ import { createElement, render } from "preact";
 import { useState } from "preact/hooks";
 import { act } from "preact/test-utils";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { fielded, useRoving } from "./roving.js";
+import { useRoving } from "./roving.js";
 
 
 describe("useRoving()", () => {
@@ -289,49 +289,6 @@ describe("useRoving()", () => {
 
 		});
 
-	});
-
-});
-
-describe("fielded()", () => {
-
-	function target(html: string): Element {
-
-		const host = document.createElement("div");
-
-		host.innerHTML = html;
-
-		return host.querySelector("[data-target]")!; // test harness: markup carries the target
-	}
-
-
-	it.each([
-		"<input data-target>",
-		"<input type='search' data-target>",
-		"<select data-target></select>",
-		"<textarea data-target></textarea>",
-		"<div contenteditable data-target></div>",
-		"<div contenteditable><span data-target></span></div>",
-		"<div role='textbox' data-target></div>",
-		"<div role='combobox' data-target></div>"
-	])("tells a field: %s", html => {
-		expect(fielded(target(html))).toBeTruthy();
-	});
-
-	it.each([
-		"<button data-target></button>",
-		"<input disabled data-target>",
-		"<input type='checkbox' data-target>",
-		"<input type='button' data-target>",
-		"<div contenteditable='false' data-target></div>",
-		"<div role='button' data-target></div>"
-	])("tells no field: %s", html => {
-		expect(fielded(target(html))).toBeFalsy();
-	});
-
-	it("tells no field for a target that is no element", () => {
-		expect(fielded(null)).toBeFalsy();
-		expect(fielded(new EventTarget())).toBeFalsy();
 	});
 
 });

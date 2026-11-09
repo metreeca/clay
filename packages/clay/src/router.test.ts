@@ -17,13 +17,15 @@
 import { type ComponentChildren, createElement, type FunctionComponent, type JSX, render, type VNode } from "preact";
 import { useEffect } from "preact/hooks";
 import { act } from "preact/test-utils";
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
+import { app } from "./index.js";
 import { Router, Routes, useAnnex, useRoute, useRouter } from "./router.js";
 
 
-vi.hoisted(() => {
-	document.title = "App"; // the app name, read as the module is imported
+beforeAll(async () => {
+	document.title = "App";
+	expect(app.name).toBe("App"); // the app name, settled on first access
 });
 
 

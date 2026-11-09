@@ -26,8 +26,8 @@ npm install preact          # peer dependency
 
 > [!WARNING]
 >
-> Importing the package root reads the app identity from the document, so it needs a browser: a test or a server render
-> has to supply a DOM before the import runs, as a test environment such as happy-dom does.
+> Reading the app identity from the package root needs a browser, since it is taken from the document on first access.
+> A test or a server render reading it supplies a DOM first, as happy-dom does, carrying the title and tags it states.
 
 # Usage
 

@@ -16,8 +16,91 @@
 
 import { describe, expect, it } from "vitest";
 
-import { host } from "./index.js";
+import { app, host, isReserved } from "./index.js";
 
+
+describe("app", () => {
+
+	it("reads the document on first access rather than on import", async () => {
+
+		document.title = "Clay Late";
+
+		expect(app.name).toBe("Clay Late");
+
+	});
+
+	it("keeps the first reading", async () => {
+
+		document.title = "Clay Later";
+
+		expect(app.name).toBe("Clay Late");
+
+	});
+
+	it("keeps a missing entry missing", async () => {
+
+		expect(app.icon).toBeUndefined();
+
+		document.head.appendChild(Object.assign(document.createElement("link"), { rel: "icon", href: "/icon.svg" }));
+
+		expect(app.icon).toBeUndefined();
+
+	});
+
+});
+
+describe("isReserved", () => {
+
+	function dispatched(target: EventTarget): Event {
+
+		const event = new Event("keydown");
+
+		target.dispatchEvent(event);
+
+		return event;
+
+	}
+
+	function target(html: string): Element {
+
+		const host = document.createElement("div");
+
+		host.innerHTML = html;
+
+		return host.querySelector("[data-target]")!; // test harness: markup carries the target
+	}
+
+
+	it.each([
+		"<input data-target>",
+		"<input type='search' data-target>",
+		"<select data-target></select>",
+		"<textarea data-target></textarea>",
+		"<div contenteditable data-target></div>",
+		"<div contenteditable><span data-target></span></div>",
+		"<div role='textbox' data-target></div>",
+		"<div role='combobox' data-target></div>"
+	])("reserves an event landing in a field: %s", html => {
+		expect(isReserved(dispatched(target(html)))).toBeTruthy();
+	});
+
+	it.each([
+		"<button data-target></button>",
+		"<input disabled data-target>",
+		"<input type='checkbox' data-target>",
+		"<input type='button' data-target>",
+		"<div contenteditable='false' data-target></div>",
+		"<div role='button' data-target></div>"
+	])("leaves an event landing outside fields: %s", html => {
+		expect(isReserved(dispatched(target(html)))).toBeFalsy();
+	});
+
+	it("leaves an event with no element target", () => {
+		expect(isReserved(new Event("keydown"))).toBeFalsy();
+		expect(isReserved(dispatched(new EventTarget()))).toBeFalsy();
+	});
+
+});
 
 describe("host", () => {
 
