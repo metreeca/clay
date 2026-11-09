@@ -72,6 +72,7 @@ export function Tool({
 	more,
 
 	head,
+	copy,
 	foot,
 
 	children
@@ -121,6 +122,12 @@ export function Tool({
 	 * What stands in the head of the main column, such as the title of the screen and its actions.
 	 */
 	head?: ComponentChildren
+
+	/**
+	 * What closes the content itself, such as a copyright notice. It scrolls with the content rather than standing in
+	 * a foot, and rests at the bottom of the body where the content is too short to fill it.
+	 */
+	copy?: ComponentChildren
 
 	/**
 	 * What stands in the foot of the main column, such as a status line or the terms.
@@ -223,7 +230,10 @@ export function Tool({
 
 			</header>
 
-			<div tabIndex={0}>{children}</div>
+			<div tabIndex={0}>
+				<div>{children}</div>
+				{copy && <footer>{copy}</footer>}
+			</div>
 			{feet && <footer>{foot}</footer>}
 
 		</main>

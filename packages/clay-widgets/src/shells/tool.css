@@ -452,6 +452,23 @@ clay-tool {
         scroll-timeline: var(--clay-tool-scroll) block;
     }
 
+    /*
+     * The main body holds the content in a block of its own, which takes whatever room the body leaves, so the copy
+     * after it rests at the bottom of a body the content is too short to fill and follows the content otherwise. The
+     * content keeps the plain flow of a block, its margins meeting as they would anywhere else.
+     */
+
+    & > main > div {
+
+        display: flex;
+        flex-direction: column;
+
+        & > div {
+            flex: auto;
+        }
+
+    }
+
     & > * > footer {
 
         grid-row: 3;
