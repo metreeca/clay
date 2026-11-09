@@ -127,6 +127,19 @@ const Hidden = {
 	overflow: "hidden", clip: "rect(0 0 0 0)", whiteSpace: "nowrap", border: "0"
 };
 
+/**
+ * How long a finger rests on a draggable element before a drag starts, in milliseconds; a shorter press is left to the
+ * scroll or the tap the reader meant, so lists stay scrollable under the finger.
+ */
+const Hold = 350;
+
+/**
+ * How far a finger may wander while held before the press is taken as a scroll, in CSS pixels.
+ */
+const Slop = 8;
+
+const ServiceContext = createContext<Optional<Service>>(undefined);
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /**
@@ -221,76 +234,6 @@ export interface Destination {
 	readonly name: string;
 
 }
-
-
-
-/**
- * A bound source, as held by the service while its component stands.
- */
-interface SourceEntry {
-	id: string
-	name: string
-	type: string
-	data: unknown
-	payload: Optional<Readonly<Record<string, string>>>
-	element: string
-	handle: Optional<string>
-	focus: Optional<string>
-}
-
-/**
- * A bound target, as held by the service while its component stands.
- */
-interface TargetEntry {
-	id: string
-	name: string
-	data: unknown
-	accept: readonly string[]
-	edges: boolean
-	onDrop: Optional<(drop: Drop) => Outcome>
-}
-
-/**
- * The state of an item or a target while a move involving it is under way.
- */
-type State = "pending" | "dropping";
-
-/**
- * A drag standing over a target that takes it, with the side the item would land on if the target takes edges.
- */
-interface Over {
-	readonly edge: Optional<Edge>
-}
-
-/**
- * What lands on a target: an item of the page, with the box it was dropped from if it is to glide to its new place,
- * or content brought from outside the page, such as files from the desktop or a link from another app.
- */
-type Landing =
-	| { readonly source: SourceEntry, readonly from: Optional<DOMRect> }
-	| { readonly files: readonly File[], readonly strings: Readonly<Record<string, string>> };
-
-/**
- * The transfer service behind {@link Transfer}, shared by the hooks of every component inside it.
- */
-interface Service {
-
-	readonly targets: () => readonly TargetEntry[]
-	readonly addTarget: (entry: TargetEntry) => () => void
-	readonly addSource: (entry: SourceEntry) => () => void
-
-	readonly dragged: () => Optional<SourceEntry>
-	readonly begin: (source: SourceEntry) => void
-	readonly end: () => void
-
-	readonly state: (id: string) => Optional<State>
-	readonly subscribe: (listener: () => void) => () => void
-
-	readonly drop: (target: TargetEntry, landing: Landing, edge: Optional<Edge>) => Promise<boolean>
-
-}
-
-const ServiceContext = createContext<Optional<Service>>(undefined);
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -595,6 +538,75 @@ export function useTarget({
 		edge: over?.edge,
 		pending: service?.state(id) === "pending"
 	};
+
+}
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/**
+ * A bound source, as held by the service while its component stands.
+ */
+interface SourceEntry {
+	id: string
+	name: string
+	type: string
+	data: unknown
+	payload: Optional<Readonly<Record<string, string>>>
+	element: string
+	handle: Optional<string>
+	focus: Optional<string>
+}
+
+/**
+ * A bound target, as held by the service while its component stands.
+ */
+interface TargetEntry {
+	id: string
+	name: string
+	data: unknown
+	accept: readonly string[]
+	edges: boolean
+	onDrop: Optional<(drop: Drop) => Outcome>
+}
+
+/**
+ * The state of an item or a target while a move involving it is under way.
+ */
+type State = "pending" | "dropping";
+
+/**
+ * A drag standing over a target that takes it, with the side the item would land on if the target takes edges.
+ */
+interface Over {
+	readonly edge: Optional<Edge>
+}
+
+/**
+ * What lands on a target: an item of the page, with the box it was dropped from if it is to glide to its new place,
+ * or content brought from outside the page, such as files from the desktop or a link from another app.
+ */
+type Landing =
+	| { readonly source: SourceEntry, readonly from: Optional<DOMRect> }
+	| { readonly files: readonly File[], readonly strings: Readonly<Record<string, string>> };
+
+/**
+ * The transfer service behind {@link Transfer}, shared by the hooks of every component inside it.
+ */
+interface Service {
+
+	readonly targets: () => readonly TargetEntry[]
+	readonly addTarget: (entry: TargetEntry) => () => void
+	readonly addSource: (entry: SourceEntry) => () => void
+
+	readonly dragged: () => Optional<SourceEntry>
+	readonly begin: (source: SourceEntry) => void
+	readonly end: () => void
+
+	readonly state: (id: string) => Optional<State>
+	readonly subscribe: (listener: () => void) => () => void
+
+	readonly drop: (target: TargetEntry, landing: Landing, edge: Optional<Edge>) => Promise<boolean>
 
 }
 
@@ -948,17 +960,6 @@ function listen(
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-/**
- * How long a finger rests on a draggable element before a drag starts, in milliseconds; a shorter press is left to the
- * scroll or the tap the reader meant, so lists stay scrollable under the finger.
- */
-const Hold = 350;
-
-/**
- * How far a finger may wander while held before the press is taken as a scroll, in CSS pixels.
- */
-const Slop = 8;
 
 /**
  * Checks whether the browser leaves touch drags undone.

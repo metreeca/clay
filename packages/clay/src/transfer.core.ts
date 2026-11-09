@@ -37,6 +37,8 @@ export type Edge = "before" | "after";
 export type Outcome = void | boolean | Promise<void | boolean>;
 
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 /**
  * Checks whether a target takes any of the types a transfer carries.
  *
