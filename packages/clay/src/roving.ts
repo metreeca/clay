@@ -25,7 +25,9 @@
  * function Toolbar({ tools }: { tools: readonly string[] }) {
  *
  *   const [active, setActive] = useState<string>();
- *   const { tabIndex, onKeyDown } = useRoving({ items: tools, active, id: tool => `tool-${tool}`, onMove: setActive });
+ *   const { tabIndex, onKeyDown } = useRoving({
+ *     items: tools, active, id: tool => `tool-${tool}`, onMove: setActive
+ *   });
  *
  *   return <div role="toolbar" onKeyDown={onKeyDown}>{tools.map(tool =>
  *     <button key={tool} id={`tool-${tool}`} tabIndex={tabIndex(tool)} onFocus={() => setActive(tool)}>{tool}</button>
@@ -37,23 +39,56 @@
  * The group keeps the item it last stood on as its state, so the stop stays where the reader left it; the hook moves
  * the focus and leaves keeping it in step to the group, which updates it as an item is focused by any means.
  *
- * @see [ARIA Authoring Practices: Managing Focus Within Components Using a Roving tabindex](https://www.w3.org/WAI/ARIA/apg/practices/keyboard-interface/#kbd_roving_tabindex)
+ * @see [ARIA Authoring Practices: Managing Focus Within Components Using a Roving
+ *     tabindex](https://www.w3.org/WAI/ARIA/apg/practices/keyboard-interface/#kbd_roving_tabindex)
  *
  * @module
  */
 
 import { type Optional } from "@metreeca/core";
+import { immutable } from "@metreeca/core/values";
 import { isReserved } from "./index.js";
 
 
 /**
  * The keys moving the focus along each orientation, with the step each one takes.
  */
-const Keys: Readonly<Record<"horizontal" | "vertical" | "both", Readonly<Record<string, number>>>> = {
-	horizontal: { ArrowRight: +1, ArrowLeft: -1, Home: -Infinity, End: +Infinity },
-	vertical: { ArrowDown: +1, ArrowUp: -1, Home: -Infinity, End: +Infinity },
-	both: { ArrowRight: +1, ArrowDown: +1, ArrowLeft: -1, ArrowUp: -1, Home: -Infinity, End: +Infinity }
-};
+const Keys: Readonly<Record<"horizontal" | "vertical" | "both", Readonly<Record<string, number>>>> = immutable({
+
+	horizontal: {
+
+		Home: -Infinity,
+		End: +Infinity,
+
+		ArrowRight: +1,
+		ArrowLeft: -1
+
+	},
+
+	vertical: {
+
+		Home: -Infinity,
+		End: +Infinity,
+
+
+		ArrowDown: +1,
+		ArrowUp: -1
+
+	},
+
+	both: {
+
+		Home: -Infinity,
+		End: +Infinity,
+
+		ArrowRight: +1,
+		ArrowDown: +1,
+		ArrowLeft: -1,
+		ArrowUp: -1
+
+	}
+
+});
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
