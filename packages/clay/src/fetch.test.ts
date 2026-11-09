@@ -40,7 +40,7 @@ function Probe() {
 
 function mount(fetch?: Client): void {
 	act(() => render(fetch
-			? createElement(Fetch, { fetch }, createElement(Probe, {}))
+			? createElement(Fetch, { fetch, children: createElement(Probe, {}) })
 			: createElement(Probe, {}),
 		document.body
 	));
