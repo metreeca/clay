@@ -16,11 +16,22 @@
 
 import { type JSX, render } from "preact";
 import { act } from "preact/test-utils";
-import { describe, expect, it, vi } from "vitest";
+import { beforeAll, describe, expect, it, vi } from "vitest";
 import { Tool } from "./tool.js";
 
 
 describe("Tool", () => {
+
+	/*
+	 * Browsers give every element an `ontoggle` handler, popovers firing `toggle` too, and Preact listens for the
+	 * lowercase event only where the element has one: happy-dom gives it to `details` alone, so it is supplied here.
+	 */
+
+	beforeAll(() => {
+		if ( !("ontoggle" in HTMLElement.prototype) ) {
+			Object.defineProperty(HTMLElement.prototype, "ontoggle", { value: null, writable: true });
+		}
+	});
 
 	const rendered = (element: JSX.Element): HTMLElement => {
 
@@ -37,6 +48,20 @@ describe("Tool", () => {
 	const menu = (tool: HTMLElement) => tool.querySelector<HTMLButtonElement>(":scope > main > header > button");
 	const close = (tool: HTMLElement) => tool.querySelector<HTMLButtonElement>(":scope > aside > header > button");
 	const side = (tool: HTMLElement) => tool.querySelector<HTMLElement>(":scope > aside");
+
+
+	describe("bodies", () => {
+
+		it("lets the keyboard reach and scroll each body", async () => {
+
+			const tool = rendered(<Tool tray={<p>tray</p>}>content</Tool>);
+
+			expect(tool.querySelector<HTMLElement>(":scope > aside > div")?.tabIndex).toBe(0);
+			expect(tool.querySelector<HTMLElement>(":scope > main > div")?.tabIndex).toBe(0);
+
+		});
+
+	});
 
 
 	describe("drawer", () => {
@@ -105,10 +130,44 @@ describe("Tool", () => {
 
 		});
 
+		it("names the side column for assistive technology", async () => {
+
+			expect(side(rendered(<Tool>content</Tool>))?.getAttribute("aria-label")).toBe("Menu");
+
+		});
+
+		it("leaves the side column out of light dismiss while it is locked", async () => {
+
+			expect(side(rendered(<Tool lock>content</Tool>))?.getAttribute("popover")).toBe("manual");
+
+		});
+
 		it("disables the menu button while the side column is locked", async () => {
 
 			expect(menu(rendered(<Tool lock>content</Tool>))?.disabled).toBe(true);
 			expect(menu(rendered(<Tool>content</Tool>))?.disabled).toBe(false);
+
+		});
+
+		it("takes the main column out of reach while the drawer is open", async () => {
+
+			const tool = rendered(<Tool>content</Tool>);
+			const aside = side(tool)!;
+			const main = tool.querySelector<HTMLElement>(":scope > main")!;
+
+			const toggle = (state: "open" | "closed") => act(async () => {
+				aside.dispatchEvent(Object.assign(new Event("toggle"), { newState: state }));
+			});
+
+			expect(main.inert).toBe(false);
+
+			await toggle("open");
+
+			expect(main.inert).toBe(true);
+
+			await toggle("closed");
+
+			expect(main.inert).toBe(false);
 
 		});
 

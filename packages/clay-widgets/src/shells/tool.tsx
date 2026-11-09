@@ -23,7 +23,9 @@
  * @module tool
  */
 
-import { type ComponentChildren, createElement, type TargetedMouseEvent } from "preact";
+import { useModel } from "@metreeca/clay/model";
+import { createState } from "@metreeca/core/state";
+import { type ComponentChildren, createElement, type TargetedEvent, type TargetedMouseEvent } from "preact";
 import { useId } from "preact/hooks";
 import { Icon } from "../glyphs/icon.js";
 import "./tool.css";
@@ -130,6 +132,16 @@ export function Tool({
 
 	const side = `${useId()}-side`;
 
+	const { open, toggle } = useModel(() => createState<Drawer>({
+
+		open: false,
+
+		toggle(open: boolean) {
+			return { open };
+		}
+
+	}));
+
 	return createElement("clay-tool", {
 
 		wide,
@@ -141,10 +153,22 @@ export function Tool({
 		{/*
 		 * The side column is a popover, shown as a column wherever two fit and as a drawer elsewhere: the platform then
 		 * dismisses it on Escape and on a click outside, exposes the expanded state of the button opening it, and
-		 * returns focus to that button as it closes. Locking takes it out of reach for every gesture at once.
+		 * returns focus to that button as it closes. Locking takes it out of reach for every gesture at once. While the
+		 * drawer is open the main column it covers is out of reach as well, so focus never lands out of sight under it.
+		 * Each body takes the focus, so a keyboard scrolls it in every browser, holding focusable content or not.
+		 *
+		 * The drawer is named after the button opening it, so a reader hears what has opened. A locked side column is
+		 * taken out of light dismiss: the switch closes a drawer left open, and the disabled menu button keeps it shut.
 		 */}
 
-		{!main && <aside id={side} popover="auto" inert={lock} onClick={follow}>
+		{!main && <aside
+			id={side}
+			aria-label="Menu"
+			popover={lock ? "manual" : "auto"}
+			inert={lock}
+			onClick={follow}
+			onToggle={event => toggle(opened(event))}
+		>
 
 			<header>
 				{meta}
@@ -153,12 +177,12 @@ export function Tool({
 				</button>
 			</header>
 
-			<div>{tray}</div>
+			<div tabIndex={0}>{tray}</div>
 			<footer>{more}</footer>
 
 		</aside>}
 
-		<main>
+		<main inert={open}>
 
 			<header>
 				{!main && <button type="button" popovertarget={side} disabled={lock} aria-label="Open menu">
@@ -167,13 +191,47 @@ export function Tool({
 				{head}
 			</header>
 
-			<div>{children}</div>
+			<div tabIndex={0}>{children}</div>
 			<footer>{foot}</footer>
 
 		</main>
 
 	</>);
 
+}
+
+
+/**
+ * Whether the drawer is open, as the side column shows it.
+ */
+interface Drawer {
+
+	/**
+	 * Whether the side column is on show as a drawer over the main column.
+	 */
+	readonly open: boolean;
+
+	/**
+	 * Records the drawer as opened or closed.
+	 *
+	 * @param open Whether the drawer is now open
+	 *
+	 * @returns The drawer as it now stands
+	 */
+	toggle(open: boolean): Drawer;
+
+}
+
+
+/**
+ * Tells whether a toggle of the side column left it open.
+ *
+ * @param event The toggle the side column went through
+ *
+ * @returns `true` if the side column is now open as a drawer
+ */
+function opened(event: TargetedEvent<HTMLElement>): boolean {
+	return "newState" in event && event.newState === "open";
 }
 
 
