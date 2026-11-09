@@ -20,12 +20,14 @@
  * @module
  */
 
+import { app } from "@metreeca/clay";
 import { Button } from "@metreeca/clay-widgets/button";
 import { Icon } from "@metreeca/clay-widgets/icon";
 import { Logo } from "@metreeca/clay-widgets/logo";
 import { Strip } from "@metreeca/clay-widgets/strip";
 import { TOC } from "@metreeca/clay-widgets/toc";
 import { Tool } from "@metreeca/clay-widgets/tool";
+import { useFetch } from "@metreeca/clay/fetch";
 import { useRouter } from "@metreeca/clay/router";
 import { ClayWidgetsPath } from "@metreeca/specimen/index.core.js";
 import { useState } from "preact/hooks";
@@ -42,6 +44,7 @@ import "./tool.css";
 export function ToolScreen() {
 
 	const router = useRouter();
+	const fetch = useFetch();
 
 	const [wide, setWide] = useState(false);
 	const [lock, setLock] = useState(false);
@@ -95,6 +98,14 @@ export function ToolScreen() {
 				name={wide ? "Cap the main column" : "Go wide"}
 				title={wide ? "Cap the main column" : "Go wide"}
 				onClick={() => setWide(!wide)}
+			/>
+
+			<Button
+				icon={<Icon.Send/>}
+				look="subtle"
+				name="Send a request"
+				title="Send a request"
+				onClick={() => { void fetch(app.base); }}
 			/>
 
 		</Strip>}
@@ -174,6 +185,10 @@ export function ToolScreen() {
 			<li><code>wide</code> lets the main column take the whole width of the frame, past its width limit; the
 				chevrons set it</li>
 		</ul>
+
+		<p>Waiting is stated by the shell itself: while the shared fetch client has a request in flight, the frame fades
+			and marks itself busy for assistive technology. The send button runs a request against a mock answering
+			after a second, so the whole of it can be watched.</p>
 
 		<hgroup id="knobs">
 			<p>Tool Shell</p>
