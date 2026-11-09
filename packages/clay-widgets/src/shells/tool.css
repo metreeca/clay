@@ -209,6 +209,82 @@ clay-tool {
     }
 
     /*
+     * The menu and close buttons are bare glyphs standing only where the side column is a drawer, the menu button
+     * leading the main head and the close button ending the side head, clear of what the head holds. Their padding
+     * widens the target past the glyph, and the negative margin keeps the glyph on the edge of the column.
+     */
+
+    & > * > header > button {
+
+        display: none;
+        flex: none;
+        padding: var(--skin--spacing-025);
+        margin-inline: calc(-1 * var(--skin--spacing-025)) var(--skin--spacing-025);
+        border-style: none;
+        background-color: transparent;
+        color: inherit;
+        cursor: pointer;
+
+        &:disabled {
+            opacity: var(--skin--opacity-disabled);
+            cursor: default;
+        }
+
+    }
+
+    /*
+     * An open side column is a drawer: it covers the main column from the start edge, as wide as the side column but
+     * never wider than the window, over a blanket dimming what lies underneath. It slides in and the blanket fades in
+     * over the fastest step, so the reader sees where the drawer came from and where it will go; it leaves at once.
+     */
+
+    & > aside:popover-open {
+
+        display: grid;
+        grid-template-rows: auto minmax(0, 1fr) auto;
+
+        position: fixed;
+        inset-block: 0;
+        inset-inline: 0 auto;
+        inline-size: min(100%, var(--clay-tool-side-width));
+        block-size: 100%;
+        overflow: hidden;
+
+        color: inherit;
+        background-color: var(--skin--background-color-overlay);
+
+        translate: 0;
+        transition: translate var(--skin--duration-fast) ease-out;
+
+        @starting-style {
+            translate: -100% 0;
+        }
+
+        &:dir(rtl) {
+            @starting-style {
+                translate: 100% 0;
+            }
+        }
+
+        & > header > button {
+            display: inline-flex;
+            margin-inline: auto calc(-1 * var(--skin--spacing-025));
+        }
+
+        &::backdrop {
+
+            background-color: var(--skin--background-color-blanket);
+            transition: background-color var(--skin--duration-fast) ease-out;
+
+            @starting-style {
+                background-color: transparent;
+            }
+
+        }
+
+    }
+
+    /*
      * A rule parts each bar from the body only while content lies hidden past it, so the reader sees there is more to
      * scroll to rather than taking the edge of the body for the end of it. The rule under a head draws in over the
      * first step of scrolling down, and the one over a foot draws out over the last step before the end. A body with
@@ -274,6 +350,39 @@ clay-tool {
 
     to {
         border-block-start-color: transparent;
+    }
+
+}
+
+/*
+ * Below the medium viewport two columns no longer fit: the main column takes the whole frame, the side column stays
+ * out of view until it is opened as a drawer, and the menu button leading the main head opens it. On a phone held
+ * upright, below the small viewport, the drawer spans the whole window, as a side column narrower than that would
+ * leave a sliver of the main column too thin to read. From the medium viewport up the frame keeps its two columns.
+ */
+
+@container style(--skin--viewport-medium: off) {
+
+    clay-tool {
+
+        grid-template-columns: var(--clay-tool-main-track);
+
+        & > aside:not(:popover-open) {
+            display: none;
+        }
+
+        & > main > header > button {
+            display: inline-flex;
+        }
+
+    }
+
+}
+
+@container style(--skin--viewport-small: off) {
+
+    clay-tool > aside:popover-open {
+        inline-size: 100%;
     }
 
 }

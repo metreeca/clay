@@ -23,7 +23,9 @@
  * @module tool
  */
 
-import { type ComponentChildren, createElement } from "preact";
+import { type ComponentChildren, createElement, type TargetedMouseEvent } from "preact";
+import { useId } from "preact/hooks";
+import { Icon } from "../glyphs/icon.js";
 import "./tool.css";
 
 
@@ -41,6 +43,12 @@ import "./tool.css";
  * of the side column, the gutters, and the font sizes of heads and feet are tuned through custom properties named
  * after what they tune, such as `--clay-tool-side-width` or `--clay-tool-head-gutter`. Each retunes the shell it is
  * set on, or every shell inside the element it is set on, leaving the other properties of the shell to their defaults.
+ *
+ * On a viewport too narrow for two columns, the main column takes the whole frame and the side column becomes a drawer
+ * opened from a menu button leading the main head. The drawer covers the main column, across the whole width of a
+ * phone and as wide as the side column on a tablet, while the main column stays in place underneath and keeps its
+ * state. A close button ends the head of the drawer, and focus moves to it as the drawer opens. Escape, a click
+ * outside the drawer, or a link followed inside it closes the drawer and returns focus to the menu button.
  *
  * @param options The widget configuration
  *
@@ -120,6 +128,8 @@ export function Tool({
 
 }) {
 
+	const side = `${useId()}-side`;
+
 	return createElement("clay-tool", {
 
 		wide,
@@ -128,20 +138,53 @@ export function Tool({
 
 	}, <>
 
-		{/* locking takes the side column out of reach for every gesture at once, rather than for the pointer alone */}
+		{/*
+		 * The side column is a popover, shown as a column wherever two fit and as a drawer elsewhere: the platform then
+		 * dismisses it on Escape and on a click outside, exposes the expanded state of the button opening it, and
+		 * returns focus to that button as it closes. Locking takes it out of reach for every gesture at once.
+		 */}
 
-		{!main && <aside inert={lock}>
-			<header>{meta}</header>
+		{!main && <aside id={side} popover="auto" inert={lock} onClick={follow}>
+
+			<header>
+				{meta}
+				<button type="button" popovertarget={side} popovertargetaction="hide" autofocus aria-label="Close menu">
+					<Icon.Close/>
+				</button>
+			</header>
+
 			<div>{tray}</div>
 			<footer>{more}</footer>
+
 		</aside>}
 
 		<main>
-			<header>{head}</header>
+
+			<header>
+				{!main && <button type="button" popovertarget={side} disabled={lock} aria-label="Open menu">
+					<Icon.Menu/>
+				</button>}
+				{head}
+			</header>
+
 			<div>{children}</div>
 			<footer>{foot}</footer>
+
 		</main>
 
 	</>);
 
+}
+
+
+/**
+ * Closes the drawer once a link inside it is followed, so the reader lands on the destination rather than on the
+ * drawer still covering it; a click landing anywhere else in the drawer leaves it open.
+ *
+ * @param event The click inside the side column
+ */
+function follow(event: TargetedMouseEvent<HTMLElement>): void {
+	if ( event.target instanceof Element && event.target.closest("a[href]") ) {
+		event.currentTarget.togglePopover(false);
+	}
 }
