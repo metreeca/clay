@@ -22,11 +22,11 @@
 
 import { Button } from "@metreeca/clay-widgets/button";
 import { Icon } from "@metreeca/clay-widgets/icon";
-import { Link } from "@metreeca/clay-widgets/link";
 import { Logo } from "@metreeca/clay-widgets/logo";
 import { Strip } from "@metreeca/clay-widgets/strip";
 import { TOC } from "@metreeca/clay-widgets/toc";
 import { Tool } from "@metreeca/clay-widgets/tool";
+import { useRouter } from "@metreeca/clay/router";
 import { ClayWidgetsPath } from "@metreeca/specimen/index.core.js";
 import { useState } from "preact/hooks";
 import "./tool.css";
@@ -41,6 +41,8 @@ import "./tool.css";
  */
 export function ToolScreen() {
 
+	const router = useRouter();
+
 	const [wide, setWide] = useState(false);
 	const [lock, setLock] = useState(false);
 	const [main, setMain] = useState(false);
@@ -51,9 +53,13 @@ export function ToolScreen() {
 		lock={lock}
 		main={main}
 
-		meta={<Link look="subtle" href={`${ClayWidgetsPath}#tool`}>
-			<Logo/>@metreeca/clay
-		</Link>}
+		meta={<Button
+			icon={<Logo/>}
+			look="subtle"
+			name="@metreeca/clay"
+			title="@metreeca/clay"
+			onClick={() => router(`${ClayWidgetsPath}#tool`)}
+		/>}
 
 		tray={<TOC name="Sections" compact entries={[
 			{ label: "Slots", href: "#slots" },
