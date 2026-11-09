@@ -39,7 +39,9 @@ import "./tool.css";
  * Lays a screen out as two columns, the side column beside the main one, each with a head, a body and a foot. The
  * heads of the two columns share one row, so they always match in height, and the feet do the same. The body of each
  * column scrolls on its own, while its head and foot stay in view, so what they hold is always within reach. Heads
- * and feet keep the height of a single line: text too wide for them is clipped and ends with an ellipsis.
+ * and feet keep the height of a single line: text too wide for them is clipped and ends with an ellipsis. Content
+ * made sticky in a body pins flush against the head or foot of its column, leaving no strip of scrolled content
+ * showing between them, while the body keeps its gutter around everything else.
  *
  * The shell fills the height its host gives it and sets none of its own. Without a definite height, the bodies grow
  * with their content instead of scrolling, and the heads and feet scroll out of view with the page.
@@ -248,7 +250,9 @@ export function Tool({
 				</button>
 			</header>
 
-			<div tabIndex={0}>{tray}</div>
+			<div tabIndex={0}>
+				<div>{tray}</div>
+			</div>
 			{feet && <footer>{more}</footer>}
 
 		</aside>}
