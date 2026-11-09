@@ -358,7 +358,8 @@ clay-tool {
             /*
              * A turning mark stands at the end of the head, above the veil, over whatever control ends the head, on a
              * solid disc of the page colour. It takes the box an edge button takes, glyph and padding reaching into the
-             * gutter alike, so it covers that control exactly. It turns once a second whatever motion the reader asked
+             * gutter alike, so it covers that control exactly, and a wide ring of the page colour drawn outside the box
+             * parts it from what lies around without moving it. It turns once a second whatever motion the reader asked
              * for: the turn is what tells waiting, a still mark saying nothing, and a small glyph turning in place
              * carries none of the travel reduced motion guards against, so its duration is stated outright.
              */
@@ -378,6 +379,7 @@ clay-tool {
 
                 color: var(--skin--color-label);
                 background-color: var(--skin--background-color);
+                box-shadow: 0 0 0 var(--skin--spacing-050) var(--skin--background-color);
                 pointer-events: none;
 
                 & svg {
