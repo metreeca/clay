@@ -150,6 +150,10 @@ clay-tool {
     grid-template-rows: auto minmax(0, 1fr) auto;
     justify-content: center;
 
+    /* The frame keeps a little room from the edges of the window, so neither column runs right up against them. */
+
+    padding-inline: var(--skin--spacing-050);
+
     /* The scroll position of each body reaches the bars beside it, which are its siblings rather than its children. */
 
     timeline-scope: --clay-tool-side-scroll, --clay-tool-main-scroll;
