@@ -32,15 +32,15 @@ import { Images } from "@metreeca/specimen/clay-widgets/content/image.js";
 import { Infoboxes } from "@metreeca/specimen/clay-widgets/content/infobox.js";
 import { Links } from "@metreeca/specimen/clay-widgets/controls/link.js";
 import { Logos } from "@metreeca/specimen/clay-widgets/glyphs/logo.js";
-import { Triggers } from "@metreeca/specimen/clay-widgets/controls/more.js";
-import { Notes } from "@metreeca/specimen/clay-widgets/alerts/note.js";
+import { Triggers } from "@metreeca/specimen/clay-widgets/signals/more.js";
+import { Notes } from "@metreeca/specimen/clay-widgets/signals/note.js";
 import { Paths } from "@metreeca/specimen/clay-widgets/controls/path.js";
 import { Stacks } from "@metreeca/specimen/clay-widgets/layouts/stack.js";
 import { Strips } from "@metreeca/specimen/clay-widgets/layouts/strip.js";
 import { Styles } from "@metreeca/specimen/clay-widgets/scopes/style.js";
 import { Tabbed } from "@metreeca/specimen/clay-widgets/layouts/tabs.js";
 import { Texts } from "@metreeca/specimen/clay-widgets/content/text.js";
-import { Toasted } from "@metreeca/specimen/clay-widgets/alerts/toasts.js";
+import { Toasted } from "@metreeca/specimen/clay-widgets/signals/toasts.js";
 import { Contents } from "@metreeca/specimen/clay-widgets/controls/toc.js";
 
 
@@ -64,10 +64,10 @@ const samples: readonly Sample[] = [
 	{ id: "contents", group: "Controls", title: "Table of Contents", label: "ToC", view: <Contents/> },
 	{ id: "button", group: "Controls", title: "Button", view: <Buttons/> },
 	{ id: "choice", group: "Controls", title: "Choice", view: <Choices/> },
-	{ id: "more", group: "Controls", title: "More", view: <Triggers/> },
 
-	{ id: "note", group: "Alerts", title: "Note", view: <Notes/> },
-	{ id: "toasts", group: "Alerts", title: "Toasts", view: <Toasted/> },
+	{ id: "more", group: "Signals", title: "More", view: <Triggers/> },
+	{ id: "note", group: "Signals", title: "Note", view: <Notes/> },
+	{ id: "toasts", group: "Signals", title: "Toasts", view: <Toasted/> },
 
 	{ id: "icon", group: "Glyphs", title: "Icon", view: <Icons/> },
 	{ id: "logo", group: "Glyphs", title: "Logo", view: <Logos/> },

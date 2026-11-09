@@ -73,14 +73,6 @@
       "@metreeca/source": "./src/controls/link.css",
       "default": "./dist/controls/link.css"
     },
-    "./more": {
-      "@metreeca/source": "./src/controls/more.tsx",
-      "default": "./dist/controls/more.js"
-    },
-    "./more.css": {
-      "@metreeca/source": "./src/controls/more.css",
-      "default": "./dist/controls/more.css"
-    },
     "./path": {
       "@metreeca/source": "./src/controls/path.tsx",
       "default": "./dist/controls/path.js"
@@ -177,21 +169,29 @@
       "@metreeca/source": "./src/content/text.css",
       "default": "./dist/content/text.css"
     },
+    "./more": {
+      "@metreeca/source": "./src/signals/more.tsx",
+      "default": "./dist/signals/more.js"
+    },
+    "./more.css": {
+      "@metreeca/source": "./src/signals/more.css",
+      "default": "./dist/signals/more.css"
+    },
     "./note": {
-      "@metreeca/source": "./src/alerts/note.tsx",
-      "default": "./dist/alerts/note.js"
+      "@metreeca/source": "./src/signals/note.tsx",
+      "default": "./dist/signals/note.js"
     },
     "./note.css": {
-      "@metreeca/source": "./src/alerts/note.css",
-      "default": "./dist/alerts/note.css"
+      "@metreeca/source": "./src/signals/note.css",
+      "default": "./dist/signals/note.css"
     },
     "./toasts": {
-      "@metreeca/source": "./src/alerts/toasts.tsx",
-      "default": "./dist/alerts/toasts.js"
+      "@metreeca/source": "./src/signals/toasts.tsx",
+      "default": "./dist/signals/toasts.js"
     },
     "./toasts.css": {
-      "@metreeca/source": "./src/alerts/toasts.css",
-      "default": "./dist/alerts/toasts.css"
+      "@metreeca/source": "./src/signals/toasts.css",
+      "default": "./dist/signals/toasts.css"
     },
     "./guard": {
       "@metreeca/source": "./src/scopes/guard.tsx",

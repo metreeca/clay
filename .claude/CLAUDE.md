@@ -94,7 +94,8 @@ behind it (no keyboard dragging, menus as the single-pointer path, native drag a
 module documentation, which also lists what the module guarantees and what each widget still owes for WCAG 2.2 AA.
 
 - A widget offers every move it allows through a visible control: the grip doubling as the menu button where moving is
-  the item's sole action, or a `More` button where the item is dragged by its whole surface; never both on one item
+  the item's sole action, or an overflow (⋯) menu button where the item is dragged by its whole surface; never both on
+  one item
 - A widget accepting files beside a drop zone offers a native file input as well, WCAG 2.5.7 asking a single-pointer
   path for every drag
 
@@ -214,7 +215,7 @@ Each specimen page lists its samples in the order its outline shows them, so a r
 elements built from it:
 
 - **Groups run top-down**: from the structure of a screen to the parts it holds, as shells, then layouts, content,
-  controls and alerts, then glyphs; helpers wrapping other elements rather than drawing anything, such as scopes, last
+  controls and signals, then glyphs; helpers wrapping other elements rather than drawing anything, such as scopes, last
 - **Items run simple to complex**: within a group, an element precedes the elements built on it, as `Stack` precedes
   `Card`
 - **Shells stand alone**: a shell fills the window, so its outline entry opens a screen of its own in a new tab,
