@@ -18,24 +18,24 @@ import { createElement, render } from "preact";
 import { useState } from "preact/hooks";
 import { act } from "preact/test-utils";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { useRoving } from "./roving.js";
+import { useFocus } from "./focus.js";
 
 
-describe("useRoving()", () => {
+describe("useFocus()", () => {
 
-	function Group({ items, controls = items, active: initial, orientation, wrap, onMove }: {
+	function Group({ wrap, orientation, items, controls = items, active: initial, onMove }: {
+		wrap?: boolean
+		orientation?: "horizontal" | "vertical"
 		items: readonly string[]
 		controls?: readonly string[]
 		active?: string
-		orientation?: "horizontal" | "vertical" | "both"
-		wrap?: boolean
 		onMove?: (item: string) => void
 	}) {
 
 		const [active, setActive] = useState(initial);
 
-		const { tabIndex, onKeyDown } = useRoving({
-			items, active, id: item => `item-${item}`, orientation, wrap, onMove: item => {
+		const { tabIndex, onKeyDown } = useFocus({
+			wrap, orientation, items, active, identify: item => `item-${item}`, onMove: item => {
 				onMove?.(item);
 				setActive(item);
 			}
@@ -81,6 +81,12 @@ describe("useRoving()", () => {
 	});
 
 
+	it("returns an immutable object", () => {
+
+		expect(Object.isFrozen(useFocus({ items: ["a"], identify: item => item }))).toBe(true);
+
+	});
+
 	describe("tabIndex", () => {
 
 		it("holds a single stop, on the first item by default", () => {
@@ -119,7 +125,7 @@ describe("useRoving()", () => {
 
 	describe("onKeyDown", () => {
 
-		it("moves the focus and the stop with the arrow keys", () => {
+		it("moves the focus and the stop with the arrow keys of either axis where no orientation is set", () => {
 
 			mount({ items: ["a", "b", "c"] });
 
@@ -130,6 +136,14 @@ describe("useRoving()", () => {
 			expect(event.defaultPrevented).toBeTruthy();
 			expect(focused()).toBe("b");
 			expect(stops()).toEqual(["b"]);
+
+			press("ArrowDown");
+
+			expect(focused()).toBe("c");
+
+			press("ArrowLeft");
+
+			expect(focused()).toBe("b");
 
 			press("ArrowUp");
 

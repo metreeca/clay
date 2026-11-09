@@ -50,9 +50,9 @@
       "@metreeca/source": "./src/router.ts",
       "default": "./dist/router.js"
     },
-    "./roving": {
-      "@metreeca/source": "./src/roving.ts",
-      "default": "./dist/roving.js"
+    "./focus": {
+      "@metreeca/source": "./src/focus.ts",
+      "default": "./dist/focus.js"
     },
     "./storage": {
       "@metreeca/source": "./src/storage.ts",

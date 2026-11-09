@@ -15,12 +15,12 @@
  */
 
 /**
- * Roving focus samples.
+ * Group focus samples.
  *
  * @module
  */
 
-import { useRoving } from "@metreeca/clay/roving";
+import { useFocus } from "@metreeca/clay/focus";
 import { useId, useState } from "preact/hooks";
 import "../clay-widgets/index.css";
 
@@ -29,26 +29,26 @@ const tools = ["Bold", "Italic", "Underline", "Code", "Link"];
 
 
 /**
- * Creates the roving section.
+ * Creates the focus section.
  *
  * Makes a toolbar a single tab stop, the arrow keys moving the focus between its buttons.
  *
- * @returns The roving section
+ * @returns The focus section
  */
-export function Roving() {
+export function Focus() {
 
 	const id = useId();
 
 	const [active, setActive] = useState(tools[0]);
 	const [pressed, setPressed] = useState<string>();
 
-	const { tabIndex, onKeyDown } = useRoving({
-		items: tools, active, id: tool => `${id}-${tools.indexOf(tool)}`, orientation: "horizontal", wrap: true, onMove: setActive
+	const { tabIndex, onKeyDown } = useFocus({
+		wrap: true, orientation: "horizontal", items: tools, active, identify: tool => `${id}-${tools.indexOf(tool)}`, onMove: setActive
 	});
 
 	return <>
 
-		<p>A group of controls takes a single stop with <code>useRoving</code>: <kbd>Tab</kbd> lands on the item last
+		<p>A group of controls takes a single stop with <code>useFocus</code>: <kbd>Tab</kbd> lands on the item last
 			moved to, the arrow keys move from item to item, wrapping at both ends, and <kbd>Home</kbd> and <kbd>End</kbd>
 			reach either end. Tabs, cards and menus build on the same hook. Tab into the toolbar below and try the keys.</p>
 

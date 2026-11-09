@@ -23,7 +23,7 @@
 import { Board } from "@metreeca/specimen/clay/board.js";
 import { Fetch } from "@metreeca/specimen/clay/fetch.js";
 import { Model } from "@metreeca/specimen/clay/model.js";
-import { Roving } from "@metreeca/specimen/clay/roving.js";
+import { Focus } from "@metreeca/specimen/clay/focus.js";
 import { Storage } from "@metreeca/specimen/clay/storage.js";
 import { Transfer } from "@metreeca/specimen/clay/transfer.js";
 import { Page, type Sample } from "@metreeca/specimen/index.core.js";
@@ -37,7 +37,7 @@ const samples: readonly Sample[] = [
 	{ id: "fetch", group: "Services", title: "Fetch", view: <Fetch/> },
 	{ id: "board", group: "Services", title: "Board", view: <Board/> },
 
-	{ id: "roving", group: "Interaction", title: "Roving", view: <Roving/> },
+	{ id: "focus", group: "Interaction", title: "Focus", view: <Focus/> },
 	{ id: "transfer", group: "Interaction", title: "Transfer", view: <Transfer/> }
 
 ];

@@ -24,7 +24,7 @@
  */
 
 import { useModel } from "@metreeca/clay/model";
-import { useRoving } from "@metreeca/clay/roving";
+import { useFocus } from "@metreeca/clay/focus";
 import { opt, type Optional } from "@metreeca/core";
 import { type ComponentChildren, createElement } from "preact";
 import { useEffect, useId, useState } from "preact/hooks";
@@ -119,8 +119,8 @@ export function Tabs({
 	const order = Object.keys(labels);
 	const enabled = order.filter(label => labels[label]);
 
-	const { tabIndex, onKeyDown } = useRoving({
-		items: enabled, active, id: label => tab(order.indexOf(label)), orientation: "horizontal", wrap: true, onMove: select
+	const { tabIndex, onKeyDown } = useFocus({
+		wrap: true, orientation: "horizontal", items: enabled, active, identify: label => tab(order.indexOf(label)), onMove: select
 	});
 
 	/*

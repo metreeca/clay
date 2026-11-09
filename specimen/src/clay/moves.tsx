@@ -20,7 +20,7 @@
  * @module
  */
 
-import { useRoving } from "@metreeca/clay/roving";
+import { useFocus } from "@metreeca/clay/focus";
 import { type ComponentChildren } from "preact";
 import { useId, useState } from "preact/hooks";
 
@@ -89,8 +89,8 @@ export function Moves({
 	const labels = choices.map(choice => choice.label);
 	const item = (label: string) => `${menu}-${labels.indexOf(label)}`; // ids by position, labels carrying spaces
 
-	const { tabIndex, onKeyDown } = useRoving({
-		items: labels, active, id: item, orientation: "vertical", wrap: true, onMove: setActive
+	const { tabIndex, onKeyDown } = useFocus({
+		wrap: true, orientation: "vertical", items: labels, active, identify: item, onMove: setActive
 	});
 
 	function show(): void {
