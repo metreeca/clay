@@ -42,7 +42,7 @@ export function Focus() {
 	const [active, setActive] = useState(tools[0]);
 	const [pressed, setPressed] = useState<string>();
 
-	const { tabIndex, onKeyDown } = useFocus({
+	const { tabIndex, onKeyDown, onFocus } = useFocus({
 		wrap: true, orientation: "horizontal", items: tools, active, identify: tool => `${id}-${tools.indexOf(tool)}`, onMove: setActive
 	});
 
@@ -59,8 +59,9 @@ export function Focus() {
 				type="button"
 				tabIndex={tabIndex(tool)}
 				aria-pressed={tool === pressed}
+				onFocus={() => onFocus(tool)}
 				onClick={() => {
-					setActive(tool);
+					onFocus(tool); // Safari leaves a clicked button unfocused
 					setPressed(tool === pressed ? undefined : tool);
 				}}
 			>{tool}</button>

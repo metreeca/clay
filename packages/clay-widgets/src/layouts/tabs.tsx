@@ -167,7 +167,7 @@ export function Tabs({
 				id={tab(index)}
 				key={label}
 				role="tab"
-				tabIndex={labels[label] ? tabIndex(label) : -1}
+				tabIndex={tabIndex(label)}
 
 				onClick={() => select(label)} // a disabled label is refused by the model, leaving the strip as it was
 

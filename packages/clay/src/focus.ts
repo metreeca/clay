@@ -32,20 +32,23 @@
  * function Toolbar({ tools }: { tools: readonly string[] }) {
  *
  *   const [active, setActive] = useState<string>();
- *   const { tabIndex, onKeyDown } = useFocus({
+ *   const { tabIndex, onKeyDown, onFocus } = useFocus({
  *     items: tools, active, identify: tool => `tool-${tool}`, onMove: setActive
  *   });
  *
  *   return <div role="toolbar" onKeyDown={onKeyDown}>{tools.map(tool =>
- *     <button key={tool} id={`tool-${tool}`} tabIndex={tabIndex(tool)} onFocus={() => setActive(tool)}>{tool}</button>
+ *     <button key={tool} id={`tool-${tool}`} tabIndex={tabIndex(tool)}
+ *       onFocus={() => onFocus(tool)} onClick={() => onFocus(tool)}
+ *     >{tool}</button>
  *   )}</div>;
  *
  * }
  * ```
  *
- * The group remembers the item the focus last stood on, so `Tab` brings the reader back where they left it. The item is
- * held in the state of the group, not in the hook: the group updates it from the focus events of its items, so the
- * stop follows the focus however it moves, by keys, by pointer or by a script calling `focus()`.
+ * The group remembers the item the focus last stood on, so `Tab` brings the reader back where they left it, whether a
+ * key, a pointer or a script calling `focus()` took them there. The group holds that item in its own state: the hook
+ * notifies each move and reads the item back on the next render. For the stop to follow every move, the group binds
+ * the focus event of each item to `onFocus`, as well as the keys of the group to `onKeyDown`.
  *
  * @see [ARIA Authoring Practices: Managing Focus Within Components Using a Roving
  *     tabindex](https://www.w3.org/WAI/ARIA/apg/practices/keyboard-interface/#kbd_roving_tabindex)
@@ -61,8 +64,9 @@ import { isReserved } from "./index.js";
 /**
  * Focus bindings of a group of controls, as returned by {@link useFocus}.
  *
- * The group gives each item the tab index retrieved by `tabIndex` and attaches `onKeyDown` to the element holding its
- * items, so the whole group takes a single stop in the `Tab` sequence and the arrow keys move the focus among them.
+ * The group gives each item the tab index retrieved by `tabIndex`, binds `onFocus` to the focus event of each item and
+ * attaches `onKeyDown` to the element holding its items. The whole group then takes a single stop in the `Tab`
+ * sequence, the arrow keys move the focus among its items, and the stop follows the focus however it moves.
  */
 export type Focus = {
 
@@ -78,6 +82,14 @@ export type Focus = {
 	 */
 	readonly onKeyDown: (event: KeyboardEvent) => void
 
+	/**
+	 * Moves the stop to an item focused without the arrow keys, such as by a pointer or by a script calling `focus()`.
+	 * The group calls it from the focus event of each item, so `Tab` brings the reader back to the item they left.
+	 * Focusing the item that already holds the stop notifies nothing. A group of buttons also calls it from their
+	 * click event, since Safari leaves a clicked button unfocused and so fires no focus event for it.
+	 */
+	readonly onFocus: (item: string) => void
+
 }
 
 
@@ -86,13 +98,13 @@ export type Focus = {
 /**
  * Makes a group of controls a single stop for `Tab`, moving the focus among its items with the arrow keys.
  *
- * The group renders each item with the tab index the hook returns and attaches the keyboard handler to the element
- * holding the items. It stores the item the focus lands on, from `onMove` and from the focus events of the items, and
- * hands it back as `active` on the next render, so the stop stays on the item the reader left.
+ * The group renders each item with the tab index and the focus handler the hook returns, and attaches the keyboard
+ * handler to the element holding the items. The group stores the item `onMove` notifies and passes it back as
+ * `active` on the next render, so the stop stays on the item the reader left, however they reached it.
  *
  * @param options The group configuration
  *
- * @returns The tab index of each item and the keyboard handler of the group
+ * @returns The tab index and the focus handler of each item and the keyboard handler of the group
  */
 export function useFocus({
 
@@ -127,10 +139,10 @@ export function useFocus({
 	items: readonly string[]
 
 	/**
-	 * The key of the item the focus last stood on, which holds the stop of the group; the first item holds it
-	 * instead where `active` is omitted, or where the item it names is no longer among the `items` of the group.
+	 * The key of the item the focus last stood on, which holds the stop of the group. If `active` is omitted, or if
+	 * the item it names is no longer among the `items` of the group, the first item holds the stop instead.
 	 */
-	active?: Optional<string>
+	active?: string
 
 	/**
 	 * Retrieves the DOM id of the element standing for an item, which takes the focus once moved to.
@@ -139,10 +151,11 @@ export function useFocus({
 
 
 	/**
-	 * Notified with the key of the item a key moved the focus to, before the focus moves, so the group stores
-	 * the key and hands it back as `active` from the next render, keeping the stop where the reader left it.
+	 * Notified with the key of the item the focus moves to. The group stores the key and passes it back as `active`
+	 * on the next render, keeping the stop where the reader left it. A key move notifies before the focus moves and
+	 * may notify again with the same key once the focus lands, so the handler stores the key rather than toggling.
 	 */
-	onMove?: (item: string) => void
+	onMove: (item: string) => void
 
 }): Focus {
 
@@ -163,13 +176,15 @@ export function useFocus({
 
 				event.preventDefault();
 
-				onMove?.(target);
+				onMove(target);
 
 				document.getElementById(identify(target))?.focus();
 
 			}
 
-		}
+		},
+
+		onFocus: item => item === holder ? undefined : onMove(item)
 
 	});
 

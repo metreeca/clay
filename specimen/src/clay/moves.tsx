@@ -89,7 +89,7 @@ export function Moves({
 	const labels = choices.map(choice => choice.label);
 	const item = (label: string) => `${menu}-${labels.indexOf(label)}`; // ids by position, labels carrying spaces
 
-	const { tabIndex, onKeyDown } = useFocus({
+	const { tabIndex, onKeyDown, onFocus } = useFocus({
 		wrap: true, orientation: "vertical", items: labels, active, identify: item, onMove: setActive
 	});
 
@@ -133,7 +133,7 @@ export function Moves({
 
 			<li key={choice.label} role="none">
 				<button id={item(choice.label)} type="button" role="menuitem" tabIndex={tabIndex(choice.label)}
-					onFocus={() => setActive(choice.label)}
+					onFocus={() => onFocus(choice.label)}
 					onClick={() => { choice.action(); close(); }}
 				>{choice.label}</button>
 			</li>

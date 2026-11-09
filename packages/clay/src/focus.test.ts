@@ -34,7 +34,7 @@ describe("useFocus()", () => {
 
 		const [active, setActive] = useState(initial);
 
-		const { tabIndex, onKeyDown } = useFocus({
+		const { tabIndex, onKeyDown, onFocus } = useFocus({
 			wrap, orientation, items, active, identify: item => `item-${item}`, onMove: item => {
 				onMove?.(item);
 				setActive(item);
@@ -42,7 +42,9 @@ describe("useFocus()", () => {
 		});
 
 		return createElement("div", { id: "group", onKeyDown }, ...controls.map(item =>
-			createElement("button", { key: item, id: `item-${item}`, tabIndex: tabIndex(item) }, item)
+			createElement("button", {
+				key: item, id: `item-${item}`, tabIndex: tabIndex(item), onFocus: () => onFocus(item)
+			}, item)
 		));
 
 	}
@@ -83,7 +85,7 @@ describe("useFocus()", () => {
 
 	it("returns an immutable object", () => {
 
-		expect(Object.isFrozen(useFocus({ items: ["a"], identify: item => item }))).toBe(true);
+		expect(Object.isFrozen(useFocus({ items: ["a"], identify: item => item, onMove: () => {} }))).toBe(true);
 
 	});
 
@@ -118,6 +120,36 @@ describe("useFocus()", () => {
 			mount({ items: [], controls: ["a", "b"] });
 
 			expect(stops()).toEqual([]);
+
+		});
+
+	});
+
+	describe("onFocus", () => {
+
+		it("moves the stop to the item focused by other means", () => {
+
+			const onMove = vi.fn();
+
+			mount({ items: ["a", "b", "c"], onMove });
+
+			act(() => focus("c"));
+
+			expect(onMove).toHaveBeenCalledExactlyOnceWith("c");
+			expect(stops()).toEqual(["c"]);
+
+		});
+
+		it("leaves the stop as it stands where its item is focused", () => {
+
+			const onMove = vi.fn();
+
+			mount({ items: ["a", "b", "c"], active: "b", onMove });
+
+			act(() => focus("b"));
+
+			expect(onMove).not.toHaveBeenCalled();
+			expect(stops()).toEqual(["b"]);
 
 		});
 
@@ -160,7 +192,7 @@ describe("useFocus()", () => {
 			focus("a");
 			press("ArrowRight");
 
-			expect(onMove).toHaveBeenCalledWith("b");
+			expect(onMove).toHaveBeenNthCalledWith(1, "b");
 			expect(onMove.mock.results[0]?.value).toBe("a");
 
 		});

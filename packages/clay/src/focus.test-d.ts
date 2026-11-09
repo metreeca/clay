@@ -15,7 +15,7 @@
  */
 
 import { describe, expectTypeOf, it } from "vitest";
-import { useFocus } from "./focus.js";
+import { type Focus, useFocus } from "./focus.js";
 
 
 describe("useFocus()", () => {
@@ -23,6 +23,14 @@ describe("useFocus()", () => {
 	it("takes no orientation beyond the two axes", () => {
 		expectTypeOf<NonNullable<Parameters<typeof useFocus>[0]["orientation"]>>()
 			.toEqualTypeOf<"horizontal" | "vertical">();
+	});
+
+	it("hands out a focus handler per item", () => {
+		expectTypeOf<Focus["onFocus"]>().toEqualTypeOf<(item: string) => void>();
+	});
+
+	it("requires the move callback", () => {
+		expectTypeOf<Parameters<typeof useFocus>[0]["onMove"]>().toEqualTypeOf<(item: string) => void>();
 	});
 
 });
