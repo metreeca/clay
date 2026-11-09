@@ -301,7 +301,7 @@ export function Transfer({
 		let targets: readonly TargetEntry[] = [];
 		let sources: ReadonlyMap<string, SourceEntry> = new Map();
 		let dragged: Optional<SourceEntry>;
-		let states: ReadonlyMap<string, State> = new Map();
+		let phases: ReadonlyMap<string, Phase> = new Map();
 
 		const listeners = new Set<() => void>();
 
@@ -309,11 +309,11 @@ export function Transfer({
 			listeners.forEach(listener => listener());
 		}
 
-		function mark(ids: readonly string[], state: Optional<State>): void {
+		function mark(ids: readonly string[], phase: Optional<Phase>): void {
 
-			states = new Map([
-				...[...states].filter(([id]) => !ids.includes(id)),
-				...(state === undefined ? [] : ids.map((id): [string, State] => [id, state]))
+			phases = new Map([
+				...[...phases].filter(([id]) => !ids.includes(id)),
+				...(phase === undefined ? [] : ids.map((id): [string, Phase] => [id, phase]))
 			]);
 
 			notify();
@@ -413,16 +413,16 @@ export function Transfer({
 			begin: source => { dragged = source; },
 			end: () => { dragged = undefined; },
 
-			state: id => states.get(id),
+			phase: id => phases.get(id),
 
 			subscribe: listener => {
 				listeners.add(listener);
 				return () => listeners.delete(listener);
 			},
 
-			drop: (target, load, side) => {
+			drop: ({ target, side }, load) => {
 
-				const { source, from, item, content } = "source" in load ? {
+				const { source, from, item, content } = load.source ? {
 					source: load.source,
 					from: load.from,
 					item: load.source.name,
@@ -434,11 +434,10 @@ export function Transfer({
 					content: { files: load.files, strings: load.strings }
 				};
 
-				const placed = side === undefined || !target.sides ? {} : { side };
 				const drop: Drop = immutable({
 					...content,
 					target: { id: target.id, name: target.name, data: target.data },
-					...placed
+					...(side === undefined || !target.sides ? {} : { side })
 				});
 
 				const outcome = target.onDrop?.(drop);
@@ -614,7 +613,7 @@ export function useSource({
 
 	}, [service, element, handle]);
 
-	const state = service?.state(id);
+	const phase = service?.phase(id);
 
 	function takes(target: TargetEntry): boolean {
 		return target.id !== id && accepts(target.accept, [type]);
@@ -623,8 +622,8 @@ export function useSource({
 	return immutable({
 
 		dragging,
-		dropping: state === "dropping",
-		pending: state === "pending",
+		dropping: phase === "dropping",
+		pending: phase === "pending",
 
 		targets: (service?.targets() ?? []).filter(takes).map(target => ({
 			id: target.id,
@@ -637,10 +636,10 @@ export function useSource({
 			const $target = service?.targets().find(candidate => candidate.id === target && takes(candidate));
 
 			return service && $target
-				? service.drop($target, {
+				? service.drop({ target: $target, side }, {
 					source: entry,
 					from: document.getElementById(element)?.getBoundingClientRect()
-				}, side)
+				})
 				: Promise.resolve(false);
 
 		}
@@ -757,20 +756,21 @@ export function useTarget({
 
 	}, service => service.addTarget);
 
-	const [over, setOver] = useState<Optional<Over>>(undefined);
+	const [target, setTarget] = useState(false);
+	const [side, setSide] = useState<Optional<Side>>(undefined);
 
 	useEffect(() => {
 
 		const root = document.getElementById(element);
 
-		return service && root ? listen(service, entry, root, setOver) : undefined;
+		return service && root ? listen(service, entry, root, setTarget, setSide) : undefined;
 
 	}, [service, element]);
 
 	return immutable({
-		target: over !== undefined,
-		side: over?.side,
-		pending: service?.state(id) === "pending"
+		target,
+		side,
+		pending: service?.phase(id) === "pending"
 	});
 
 }
@@ -779,34 +779,31 @@ export function useTarget({
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /**
- * A bound source, as held by the service while its component stands.
+ * A bound source, as held by the service while its component stands. Mutable: the hook copies the props of each
+ * render into the entry, so the service and the listeners holding it always read the current ones.
  */
 type SourceEntry = Parameters<typeof useSource>[0]
 
 /**
- * A bound target, as held by the service while its component stands.
+ * A bound target, as held by the service while its component stands, mutable as a {@link SourceEntry} is. Carries
+ * its `sides` settled and no `element`: the service never reaches the element, which only the listeners bound by the
+ * hook meet, where it does reach the element of a source to glide it and hand it the focus.
  */
-type TargetEntry = Omit<Parameters<typeof useTarget>[0], "element">
+type TargetEntry = Omit<Parameters<typeof useTarget>[0], "element" | "sides"> & { sides: boolean }
 
 /**
- * The state of an item or a target while a move involving it is under way.
+ * The phase a move involving an item or a target stands in while under way.
  */
-type State = "pending" | "dropping";
-
-/**
- * A drag standing over a target that takes it, with the side the item would land on if the target takes sides.
- */
-interface Over {
-	readonly side: Optional<Side>;
-}
+type Phase = "pending" | "dropping"
 
 /**
  * What lands on a target: an item of the page, with the box it was dropped from if it is to glide to its new place,
- * or content brought from outside the page, such as files from the desktop or a link from another app.
+ * or content brought from outside the page, such as files from the desktop or a link from another app. As with the
+ * drop handed to the target, `load.source` tells the two apart, standing for the item moved or undefined for content.
  */
 type Load =
 	| { readonly source: SourceEntry, readonly from: Optional<DOMRect> }
-	| { readonly files: readonly File[], readonly strings: Readonly<Record<string, string>> };
+	| { readonly source?: undefined, readonly files: External["files"], readonly strings: External["strings"] }
 
 /**
  * The transfer service behind {@link Transfer}, shared by the hooks of every component inside it.
@@ -821,10 +818,13 @@ interface Transfer {
 	readonly begin: (source: SourceEntry) => void;
 	readonly end: () => void;
 
-	readonly state: (id: string) => Optional<State>;
+	readonly phase: (id: string) => Optional<Phase>;
 	readonly subscribe: (listener: () => void) => () => void;
 
-	readonly drop: (target: TargetEntry, load: Load, side: Optional<Side>) => Promise<boolean>;
+	readonly drop: (
+		destination: { readonly target: TargetEntry, readonly side: Optional<Side> },
+		load: Load
+	) => Promise<boolean>;
 
 }
 
@@ -870,6 +870,7 @@ function touch(): () => void {
 		readonly source: HTMLElement,
 		readonly data: DataTransfer,
 		readonly ghost: HTMLElement,
+		readonly box: DOMRect,
 		readonly over: Optional<Element>,
 		readonly accepted: boolean
 	}>;
@@ -910,7 +911,7 @@ function touch(): () => void {
 			});
 
 			press = undefined;
-			drag = { source, data: new DataTransfer(), ghost, over: undefined, accepted: false };
+			drag = { source, data: new DataTransfer(), ghost, box, over: undefined, accepted: false };
 
 			document.body.append(ghost);
 			dispatch("dragstart", source, x, y);
@@ -923,8 +924,9 @@ function touch(): () => void {
 
 		if ( drag !== undefined ) {
 
-			const { ghost, over } = drag;
-			const box = ghost.getBoundingClientRect();
+			const { ghost, box, over } = drag;
+
+			// translated from the box the preview was placed at, which its own box would carry along
 
 			ghost.style.translate = `${x-box.left-box.width/2}px ${y-box.top-box.height/2}px`;
 
@@ -1140,7 +1142,6 @@ function bind(
 	function onDragEnd(): void {
 		service.end();
 		setDragging(false);
-		grip.draggable = true;
 	}
 
 	grip.draggable = true;
@@ -1167,7 +1168,8 @@ function listen(
 	service: Transfer,
 	entry: TargetEntry,
 	root: HTMLElement,
-	setOver: (over: Optional<Over>) => void
+	setTarget: (target: boolean) => void,
+	setSide: (side: Optional<Side>) => void
 ): () => void {
 
 	function locate({ clientY }: DragEvent): Optional<Side> {
@@ -1176,6 +1178,11 @@ function listen(
 
 		return !entry.sides ? undefined : clientY < top+height/2 ? "before" : "after";
 
+	}
+
+	function leave(): void {
+		setTarget(false);
+		setSide(undefined);
 	}
 
 	function taken(event: DragEvent): event is DragEvent & { readonly dataTransfer: DataTransfer } {
@@ -1191,14 +1198,15 @@ function listen(
 
 			event.dataTransfer.dropEffect = service.dragged() ? "move" : "copy";
 
-			setOver({ side: locate(event) });
+			setTarget(true);
+			setSide(locate(event));
 
 		}
 
 	}
 
 	function onDragLeave(event: DragEvent): void {
-		if ( !(event.relatedTarget instanceof Node && root.contains(event.relatedTarget)) ) { setOver(undefined); }
+		if ( !(event.relatedTarget instanceof Node && root.contains(event.relatedTarget)) ) { leave(); }
 	}
 
 	function onDrop(event: DragEvent): void {
@@ -1208,7 +1216,7 @@ function listen(
 			event.preventDefault();
 			event.stopPropagation();
 
-			setOver(undefined);
+			leave();
 
 			const { dataTransfer, clientX, clientY } = event;
 
@@ -1232,14 +1240,14 @@ function listen(
 					)
 				};
 
-			void service.drop(entry, load, locate(event));
+			void service.drop({ target: entry, side: locate(event) }, load);
 
 		}
 
 	}
 
 	function onDragEnd(): void {
-		setOver(undefined);
+		leave();
 	}
 
 	root.addEventListener("dragenter", onDragOver);

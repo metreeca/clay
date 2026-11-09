@@ -150,6 +150,98 @@ afterEach(() => {
 });
 
 
+describe("Transfer", () => {
+
+	describe("touch", () => {
+
+		/**
+		 * Dispatches a touch event on an element, with a single finger at a point in the viewport.
+		 */
+		function touch(type: string, element: string, x: number, y: number): void {
+
+			const event = new Event(type, { bubbles: true, cancelable: true });
+
+			Object.defineProperties(event, {
+				touches: { value: [{ clientX: x, clientY: y }] },
+				changedTouches: { value: [{ clientX: x, clientY: y }] }
+			});
+
+			act(() => { document.getElementById(element)!.dispatchEvent(event); }); // test harness: element rendered
+
+		}
+
+		/*
+		 * The page runs as on Firefox for Android, which fires no drag events from a finger, and lays elements out as
+		 * layout() does, the translation an element carries moving its box as a browser would. The test environment
+		 * drops the position and the data transfer a drag event is created with, so they are carried by hand.
+		 */
+
+		beforeEach(() => {
+
+			vi.useFakeTimers();
+			vi.spyOn(navigator, "userAgent", "get").mockReturnValue("Mozilla/5.0 (Android; Mobile) Firefox/120.0");
+			vi.spyOn(navigator, "maxTouchPoints", "get").mockReturnValue(1);
+
+			vi.stubGlobal("DragEvent", class extends Event {
+
+				constructor(type: string, { clientX = 0, clientY = 0, dataTransfer = null, ...init }: DragEventInit = {}) {
+					super(type, init);
+					Object.assign(this, { clientX, clientY, dataTransfer });
+				}
+
+			});
+
+			vi.spyOn(Element.prototype, "getBoundingClientRect").mockImplementation(function (this: Element) {
+
+				const translate = this instanceof HTMLElement ? this.style.translate : "";
+				const [dx = 0, dy = 0] = translate.split(" ").map(parseFloat);
+
+				return new DOMRect(dx || 0, Number(this.getAttribute("data-at") ?? 0)+(dy || 0), 100, 40);
+
+			});
+
+		});
+
+		afterEach(() => {
+			vi.useRealTimers();
+			vi.unstubAllGlobals();
+		});
+
+		it("drags a preview centred under the finger, wherever it stands", async () => {
+
+			mount(createElement(Item, { id: "a", at: 0 }));
+
+			// the test environment reflects the draggable property to no attribute, as a browser would
+
+			document.getElementById("item-a")!.setAttribute("draggable", "true"); // test harness: item rendered
+
+			touch("touchstart", "item-a", 10, 10);
+			act(() => { vi.advanceTimersByTime(350); });
+
+			expect(source("a").dragging).toBe(true);
+
+			const ghost = document.body.lastElementChild as HTMLElement; // ;(cast) the preview is appended to the body
+
+			touch("touchmove", "item-a", 200, 300);
+
+			expect(ghost.style.translate).toBe("150px 280px");
+
+			touch("touchmove", "item-a", 200, 300);
+
+			expect(ghost.style.translate).toBe("150px 280px");
+
+			touch("touchend", "item-a", 200, 300);
+
+			expect(source("a").dragging).toBe(false);
+			expect(ghost.isConnected).toBe(false);
+
+		});
+
+	});
+
+});
+
+
 describe("useSource()", () => {
 
 	it("stays inert outside a Transfer context", async () => {
