@@ -374,8 +374,10 @@ clay-junk {
             background-color: transparent;
             pointer-events: none;
 
+            /* The mark turns once a second whatever motion the reader asked for, as a turn is what tells waiting. */
+
             & svg {
-                animation: clay-junk-turn calc(2 * var(--skin--duration-slow)) linear infinite;
+                animation: clay-junk-turn 1s linear infinite;
             }
 
         }

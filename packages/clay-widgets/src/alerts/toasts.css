@@ -304,9 +304,15 @@ clay-toasts {
         &[status="pending"] > div > div {
 
             --clay-toasts-tint: var(--skin--background-color-note);
+
+            /*
+             * The mark turns once a second whatever motion the reader asked for: the turn is what tells waiting, and a
+             * small glyph turning in place carries none of the travel reduced motion guards against.
+             */
+
             & > svg {
                 color: var(--skin--color-note);
-                animation: clay-toasts-turn calc(2 * var(--skin--duration-slow)) linear infinite;
+                animation: clay-toasts-turn 1s linear infinite;
             }
 
         }

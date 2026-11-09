@@ -26,13 +26,13 @@ clay-more {
     color: var(--skin--color-disabled);
 
     /*
-     * The mark turns at twice the slowest step, as the busy mark of a junk shell does: waiting covers no distance,
-     * so it has no step of its own. A reader who asked for less motion gets a still mark, its duration collapsing to
-     * zero with every other duration on the page, with no rule of its own needed for the purpose.
+     * The mark turns once a second whatever motion the reader asked for, as the busy mark of a tool shell does: the
+     * turn is what tells waiting, a still mark saying nothing, and a small glyph turning in place carries none of the
+     * travel reduced motion guards against, so its duration is stated outright rather than read from the steps.
      */
 
     & > svg {
-        animation: clay-more-turn calc(2 * var(--skin--duration-slow)) linear infinite;
+        animation: clay-more-turn 1s linear infinite;
     }
 
 }
