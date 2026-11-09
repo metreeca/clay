@@ -61,6 +61,9 @@ const nowhere: Board = {
 
 };
 
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 /**
  * The board provided by the enclosing {@link Board}, as returned by {@link useBoard}; outside any, {@link nowhere}.
  */
