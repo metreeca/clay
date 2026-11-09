@@ -38,8 +38,9 @@ import "./tool.css";
  * with their content instead of scrolling, and the heads and feet scroll out of view with the page.
  *
  * The main column grows up to a width limit, past which both columns stand centred in the frame. The limit, the width
- * of the side column, the gutters, and the font sizes of heads and feet are tuned through the `--clay-tool-*` custom
- * properties, set on a single shell, or on any element containing shells to retune all of them at once.
+ * of the side column, the gutters, and the font sizes of heads and feet are tuned through custom properties named
+ * after what they tune, such as `--clay-tool-side-width` or `--clay-tool-head-gutter`. Each retunes the shell it is
+ * set on, or every shell inside the element it is set on, leaving the other properties of the shell to their defaults.
  *
  * @param options The widget configuration
  *
