@@ -36,7 +36,10 @@
 
 }
 
-/* The packages stand as a row of quiet links ahead of the page settings, the one on show marked by the link itself. */
+/*
+ * The packages stand as a row of quiet links ahead of the page settings, the one on show marked by the link itself,
+ * and step out of the bar below the medium viewport, where it has no room for them.
+ */
 
 .packages {
 
@@ -45,45 +48,45 @@
     margin-inline-end: var(--skin--spacing-100);
     font-size: var(--skin--font-size-small);
 
-}
-
-@container style(--skin--viewport-medium: off) {
-
-    .packages {
+    @container style(--skin--viewport-medium: off) {
         display: none;
     }
 
 }
 
-/*
- * The heading group opening the page keeps the display size the design system gives it, while the one opening each
- * sample stands a step above the text, so the page title alone reads as the loudest line on the page.
- */
+clay-junk {
 
-clay-junk hgroup {
+    /*
+     * The heading group opening the page keeps the display size the design system gives it, while the one opening
+     * each sample stands a step above the text, so the page title alone reads as the loudest line on the page.
+     */
 
-    padding-top: var(--skin--spacing-150);
+    & hgroup {
 
-    &:has(> h2) {
+        padding-top: var(--skin--spacing-150);
 
-        padding-top: var(--skin--spacing-100);
+        &:has(> h2) {
 
-        & > h2 {
-            font-size: var(--skin--font-size-large);
+            padding-top: var(--skin--spacing-100);
+
+            & > h2 {
+                font-size: var(--skin--font-size-large);
+            }
+
         }
 
     }
 
-}
+    /*
+     * A row of samples stands in a framed panel, rounded and ruled, so the widgets it holds read against a surface of
+     * their own; the panel keeps clear of the prose before and after it, as a figure does.
+     */
 
-/*
- * A row of samples stands in a framed panel, rounded and ruled, so the widgets it holds read against a surface of
- * their own; the panel keeps clear of the prose before and after it, as a figure does.
- */
+    & :is(.controls, .toolbar, .columns, .frames, .paths, .notes) {
+        padding: var(--skin--spacing-150);
+        border-style: var(--skin--border-style);
+        border-radius: var(--skin--border-radius-075);
+        margin-block: var(--skin--spacing-100) var(--skin--spacing-150);
+    }
 
-clay-junk :is(.controls, .toolbar, .columns, .frames, .paths, .notes) {
-    padding: var(--skin--spacing-150);
-    border-style: var(--skin--border-style);
-    border-radius: var(--skin--border-radius-075);
-    margin-block: var(--skin--spacing-100) var(--skin--spacing-150);
 }
