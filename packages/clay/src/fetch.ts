@@ -41,8 +41,17 @@ import { type ComponentChildren, createContext, createElement } from "preact";
 import { useContext, useState } from "preact/hooks";
 
 
-const Client = createContext<Fetch>(globalThis.fetch);
-const Status = createContext<boolean>(false);
+/**
+ * The client offered by the innermost enclosing {@link Fetch} context; the global fetch function outside any.
+ */
+const ClientContext = createContext<Fetch>(globalThis.fetch);
+
+/**
+ * Whether the client of the innermost enclosing {@link Fetch} context is busy; false outside any.
+ *
+ * Kept apart from the client, so that components reading only the client never render as its status changes.
+ */
+const StatusContext = createContext<boolean>(false);
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -93,8 +102,8 @@ export function Fetch({
 		transport(fetch)
 	));
 
-	return createElement(Client.Provider, { value: client },
-		createElement(Status.Provider, { value: status, children })
+	return createElement(ClientContext.Provider, { value: client },
+		createElement(StatusContext.Provider, { value: status, children })
 	);
 
 }
@@ -110,7 +119,7 @@ export function Fetch({
  * @returns The client of the innermost enclosing {@link Fetch} context; outside any, the global fetch function
  */
 export function useFetch(): Fetch {
-	return useContext(Client);
+	return useContext(ClientContext);
 }
 
 /**
@@ -123,5 +132,5 @@ export function useFetch(): Fetch {
  * @returns true if the client of the innermost enclosing {@link Fetch} context has exchanges in flight; false otherwise
  */
 export function useFetching(): boolean {
-	return useContext(Status);
+	return useContext(StatusContext);
 }
