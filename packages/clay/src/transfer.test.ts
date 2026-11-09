@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
+import { type Awaitable } from "@metreeca/core/async";
 import { type ComponentChildren, createElement, render } from "preact";
 import { act } from "preact/test-utils";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { type Drop, type Outcome, Transfer, useSource, useTarget } from "./transfer.js";
+import { type Drop, Transfer, useSource, useTarget } from "./transfer.js";
 
 
 const Card = "application/x-card";
@@ -64,16 +65,16 @@ function Item({ id, type = Card, handle = false, focus = false, field = false, p
 /**
  * A zone bound as a target, rendered as `zone-<id>`.
  */
-function Zone({ id, accept = [Card], edges, onDrop, at, children }: {
+function Zone({ id, accept = [Card], sides, onDrop, at, children }: {
 	id: string
 	accept?: readonly string[]
-	edges?: boolean
-	onDrop?: (drop: Drop) => Outcome
+	sides?: boolean
+	onDrop?: (drop: Drop) => Awaitable<boolean | void>
 	at?: number
 	children?: ComponentChildren
 }) {
 
-	targets.set(id, useTarget({ id, name: `Zone ${id}`, element: `zone-${id}`, data: { zone: id }, accept, edges, onDrop }));
+	targets.set(id, useTarget({ id, name: `Zone ${id}`, element: `zone-${id}`, data: { zone: id }, accept, sides, onDrop }));
 
 	return createElement("div", { id: `zone-${id}`, "data-at": at }, children);
 
@@ -92,7 +93,7 @@ function target(id: string): TargetState {
 }
 
 function status(): string {
-	return document.querySelector("[role='status']")?.textContent ?? "";
+	return document.querySelector("[role='status'][data-offscreen]")?.textContent ?? "";
 }
 
 /**
@@ -157,6 +158,16 @@ describe("useSource()", () => {
 
 		expect(source("a").targets).toEqual([]);
 		await expect(source("a").move("x")).resolves.toBe(false);
+
+	});
+
+	it("returns an immutable state", async () => {
+
+		mount(createElement(Item, { id: "a" }), createElement(Zone, { id: "x" }));
+
+		expect(Object.isFrozen(source("a"))).toBe(true);
+		expect(Object.isFrozen(source("a").targets)).toBe(true);
+		expect(Object.isFrozen(source("a").targets[0])).toBe(true);
 
 	});
 
@@ -234,7 +245,10 @@ describe("useSource()", () => {
 				createElement(Zone, { id: "z", accept: ["APPLICATION/X-CARD"] })
 			);
 
-			expect(source("a").targets).toEqual([{ id: "x", name: "Zone x" }, { id: "z", name: "Zone z" }]);
+			expect(source("a").targets).toEqual([
+				{ id: "x", name: "Zone x", data: { zone: "x" } },
+				{ id: "z", name: "Zone z", data: { zone: "z" } }
+			]);
 
 		});
 
@@ -245,7 +259,7 @@ describe("useSource()", () => {
 
 		it("moves to a target", async () => {
 
-			const onDrop = vi.fn<(drop: Drop) => Outcome>();
+			const onDrop = vi.fn<(drop: Drop) => Awaitable<boolean | void>>();
 
 			mount(createElement(Item, { id: "a" }), createElement(Zone, { id: "x", onDrop }));
 
@@ -256,25 +270,25 @@ describe("useSource()", () => {
 			expect(taken).toBe(true);
 			expect(onDrop).toHaveBeenCalledWith({
 				source: { id: "a", type: Card, data: { id: "a" } },
-				target: { id: "x", data: { zone: "x" } }
+				target: { id: "x", name: "Zone x", data: { zone: "x" } }
 			});
 			await flush();
 			expect(status()).toBe("Item a moved to Zone x.");
 
 		});
 
-		it("moves next to a target taking edges", async () => {
+		it("moves next to a target taking sides", async () => {
 
-			const onDrop = vi.fn<(drop: Drop) => Outcome>();
+			const onDrop = vi.fn<(drop: Drop) => Awaitable<boolean | void>>();
 
-			mount(createElement(Item, { id: "a" }), createElement(Zone, { id: "x", edges: true, onDrop }));
+			mount(createElement(Item, { id: "a" }), createElement(Zone, { id: "x", sides: true, onDrop }));
 
 			await act(async () => { await source("a").move("x", "before"); });
 
 			expect(onDrop).toHaveBeenCalledWith({
 				source: { id: "a", type: Card, data: { id: "a" } },
-				target: { id: "x", data: { zone: "x" } },
-				edge: "before"
+				target: { id: "x", name: "Zone x", data: { zone: "x" } },
+				side: "before"
 			});
 			await flush();
 			expect(status()).toBe("Item a moved before Zone x.");
@@ -283,7 +297,7 @@ describe("useSource()", () => {
 
 		it("refuses moves to targets not taking its type, or to no target", async () => {
 
-			const onDrop = vi.fn<(drop: Drop) => Outcome>();
+			const onDrop = vi.fn<(drop: Drop) => Awaitable<boolean | void>>();
 
 			mount(createElement(Item, { id: "a" }), createElement(Zone, { id: "x", accept: ["text/plain"], onDrop }));
 
@@ -298,7 +312,8 @@ describe("useSource()", () => {
 			["true", () => true, true],
 			["false", () => false, false],
 			["a promise of nothing", () => Promise.resolve(), true],
-			["a promise of false", () => Promise.resolve(false), false]
+			["a promise of false", () => Promise.resolve(false), false],
+			["a thenable of false", (): PromiseLike<boolean> => ({ then: resolve => Promise.resolve(false).then(resolve) }), false]
 		])("takes a target answering %s as %s", async (_, onDrop, taken) => {
 
 			mount(createElement(Item, { id: "a" }), createElement(Zone, { id: "x", onDrop }));
@@ -336,23 +351,26 @@ describe("useSource()", () => {
 		it.each([
 			[undefined, "Moving Item a to Zone x was refused."],
 			["after", "Moving Item a after Zone x was refused."]
-		] as const)("announces refusals, naming the side %s", async (edge, message) => {
+		] as const)("announces refusals, naming the side %s", async (side, message) => {
 
-			mount(createElement(Item, { id: "a" }), createElement(Zone, { id: "x", edges: true, onDrop: () => false }));
+			mount(createElement(Item, { id: "a" }), createElement(Zone, { id: "x", sides: true, onDrop: () => false }));
 
-			await act(async () => { await source("a").move("x", edge); });
+			await act(async () => { await source("a").move("x", side); });
 			await flush();
 
 			expect(status()).toBe(message);
 
 		});
 
-		it("waits for pending moves on both ends", async () => {
+		it.each([
+			["a promise", (promise: Promise<boolean>): PromiseLike<boolean> => promise],
+			["a thenable", (promise: Promise<boolean>): PromiseLike<boolean> => ({ then: (resolve, reject) => promise.then(resolve, reject) })]
+		])("waits for pending moves on both ends, answered with %s", async (_, wrap) => {
 
 			let release: (value: boolean) => void = () => {};
 
 			mount(createElement(Item, { id: "a" }), createElement(Zone, {
-				id: "x", onDrop: () => new Promise<boolean>(resolve => { release = resolve; })
+				id: "x", onDrop: () => wrap(new Promise<boolean>(resolve => { release = resolve; }))
 			}));
 
 			let moving: Promise<boolean> = Promise.resolve(false);
@@ -501,12 +519,36 @@ describe("useTarget()", () => {
 
 	});
 
+	it("returns an immutable state", async () => {
+
+		mount(createElement(Zone, { id: "x" }));
+
+		expect(Object.isFrozen(target("x"))).toBe(true);
+
+	});
+
+	it("hands immutable drops to its handler", async () => {
+
+		const onDrop = vi.fn<(drop: Drop) => Awaitable<boolean | void>>();
+
+		mount(createElement(Item, { id: "a" }), createElement(Zone, { id: "x", onDrop }));
+
+		await act(async () => { await source("a").move("x"); });
+
+		const drop = onDrop.mock.calls[0]?.[0];
+
+		expect(Object.isFrozen(drop)).toBe(true);
+		expect(Object.isFrozen(drop?.source)).toBe(true);
+		expect(Object.isFrozen(drop?.target)).toBe(true);
+
+	});
+
 
 	describe("target", () => {
 
 		it("meets items it takes while dragged over", async () => {
 
-			const onDrop = vi.fn<(drop: Drop) => Outcome>();
+			const onDrop = vi.fn<(drop: Drop) => Awaitable<boolean | void>>();
 
 			mount(createElement(Item, { id: "a" }), createElement(Zone, { id: "x", onDrop }));
 
@@ -518,7 +560,7 @@ describe("useTarget()", () => {
 
 			expect(over.defaultPrevented).toBe(true);
 			expect(target("x").target).toBe(true);
-			expect(target("x").edge).toBeUndefined();
+			expect(target("x").side).toBeUndefined();
 
 			dispatch("drop", "zone-x", transfer);
 			dispatch("dragend", "item-a", transfer);
@@ -526,7 +568,7 @@ describe("useTarget()", () => {
 			expect(target("x").target).toBe(false);
 			expect(onDrop).toHaveBeenCalledWith({
 				source: { id: "a", type: Card, data: { id: "a" } },
-				target: { id: "x", data: { zone: "x" } }
+				target: { id: "x", name: "Zone x", data: { zone: "x" } }
 			});
 
 		});
@@ -575,8 +617,8 @@ describe("useTarget()", () => {
 
 		it("is met as the innermost target under the pointer alone", async () => {
 
-			const onOuter = vi.fn<(drop: Drop) => Outcome>();
-			const onInner = vi.fn<(drop: Drop) => Outcome>();
+			const onOuter = vi.fn<(drop: Drop) => Awaitable<boolean | void>>();
+			const onInner = vi.fn<(drop: Drop) => Awaitable<boolean | void>>();
 
 			mount(
 				createElement(Item, { id: "a" }),
@@ -601,7 +643,7 @@ describe("useTarget()", () => {
 	});
 
 
-	describe("edge", () => {
+	describe("side", () => {
 
 		beforeEach(layout);
 
@@ -610,22 +652,22 @@ describe("useTarget()", () => {
 			[119, "before"],
 			[120, "after"],
 			[140, "after"]
-		] as const)("locates the pointer at %i on the side %s, if taking edges", async (y, edge) => {
+		] as const)("locates the pointer at %i on the side %s, if taking sides", async (y, side) => {
 
-			const onDrop = vi.fn<(drop: Drop) => Outcome>();
+			const onDrop = vi.fn<(drop: Drop) => Awaitable<boolean | void>>();
 
-			mount(createElement(Item, { id: "a" }), createElement(Zone, { id: "x", edges: true, at: 100, onDrop }));
+			mount(createElement(Item, { id: "a" }), createElement(Zone, { id: "x", sides: true, at: 100, onDrop }));
 
 			const transfer = new DataTransfer();
 
 			dispatch("dragstart", "item-a", transfer);
 			dispatch("dragover", "zone-x", transfer, y);
 
-			expect(target("x").edge).toBe(edge);
+			expect(target("x").side).toBe(side);
 
 			dispatch("drop", "zone-x", transfer, y);
 
-			expect(onDrop).toHaveBeenCalledWith(expect.objectContaining({ edge }));
+			expect(onDrop).toHaveBeenCalledWith(expect.objectContaining({ side }));
 
 		});
 
@@ -636,7 +678,7 @@ describe("useTarget()", () => {
 
 		it("takes outside content of the types it accepts", async () => {
 
-			const onDrop = vi.fn<(drop: Drop) => Outcome>();
+			const onDrop = vi.fn<(drop: Drop) => Awaitable<boolean | void>>();
 
 			mount(createElement(Zone, { id: "x", accept: ["text/uri-list"], onDrop }));
 
@@ -650,7 +692,7 @@ describe("useTarget()", () => {
 			expect(onDrop).toHaveBeenCalledWith({
 				files: [],
 				strings: { "text/uri-list": "https://example.com/" },
-				target: { id: "x", data: { zone: "x" } }
+				target: { id: "x", name: "Zone x", data: { zone: "x" } }
 			});
 			await flush();
 			expect(status()).toBe("Content moved to Zone x.");
@@ -662,7 +704,7 @@ describe("useTarget()", () => {
 			[["report.pdf", "notes.txt"], "2 files moved to Zone x."]
 		])("takes files dropped from outside, announcing %j", async (names, message) => {
 
-			const onDrop = vi.fn<(drop: Drop) => Outcome>();
+			const onDrop = vi.fn<(drop: Drop) => Awaitable<boolean | void>>();
 
 			mount(createElement(Zone, { id: "x", accept: ["text/plain"], onDrop }));
 

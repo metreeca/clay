@@ -20,7 +20,7 @@
  * @module
  */
 
-import { type Drop, type Edge, useSource, useTarget } from "@metreeca/clay/transfer";
+import { type Drop, type Side, useSource, useTarget } from "@metreeca/clay/transfer";
 import { Icon } from "@metreeca/clay-widgets/icon";
 import { Moves, opening } from "@metreeca/specimen/clay/moves.js";
 import { useId, useState } from "preact/hooks";
@@ -103,7 +103,7 @@ function Columns() {
 		<div class="transfer-board">{columns.map(column =>
 
 			<Column key={column} column={column} items={items.filter(item => item.column === column)}
-				onDrop={drop => "source" in drop ? move(drop.source.id, column) : false}
+				onDrop={drop => drop.source ? move(drop.source.id, column) : false}
 			/>
 
 		)}</div>
@@ -184,10 +184,10 @@ const steps = ["Gather the requirements", "Sketch the screens", "Build the proto
 /**
  * Reorders a list, moving an item next to another one.
  */
-function reorder(items: readonly string[], item: string, next: string, edge: Edge): readonly string[] {
+function reorder(items: readonly string[], item: string, next: string, side: Side): readonly string[] {
 
 	const rest = items.filter(key => key !== item);
-	const index = rest.indexOf(next)+(edge === "after" ? 1 : 0);
+	const index = rest.indexOf(next)+(side === "after" ? 1 : 0);
 
 	return [...rest.slice(0, index), item, ...rest.slice(index)];
 
@@ -207,8 +207,8 @@ function List() {
 	const [items, setItems] = useState<readonly string[]>(steps);
 
 	function onDrop(drop: Drop, next: string): void {
-		if ( "source" in drop && drop.source.id !== next ) {
-			setItems(items => reorder(items, drop.source.id, next, drop.edge ?? "before"));
+		if ( drop.source && drop.source.id !== next ) {
+			setItems(items => reorder(items, drop.source.id, next, drop.side ?? "before"));
 		}
 	}
 
@@ -252,7 +252,7 @@ function Step({
 	const grip = useId();
 
 	const { dragging, dropping, move } = useSource({ id: item, name: item, element, handle, focus: grip, type: StepType });
-	const { edge } = useTarget({ id: item, name: item, element, accept: [StepType], edges: true, onDrop });
+	const { side } = useTarget({ id: item, name: item, element, accept: [StepType], sides: true, onDrop });
 
 	const choices = [
 		...(previous === undefined ? [] : [{ label: "Move up", action: () => void move(previous, "before") }]),
@@ -261,7 +261,7 @@ function Step({
 
 	return <li id={element} class="transfer-item"
 		data-state={dragging ? "dragging" : dropping ? "dropping" : undefined}
-		data-edge={dragging ? undefined : edge}
+		data-side={dragging ? undefined : side}
 		onContextMenu={opening(grip)}
 	>
 
@@ -297,7 +297,7 @@ function Uploads() {
 
 	const { target } = useTarget({
 		id: "uploads", name: "Uploads", element, accept: ["Files", "text/uri-list"],
-		onDrop: drop => "source" in drop ? false : setReceived(received => [
+		onDrop: drop => drop.source ? false : setReceived(received => [
 			...received,
 			...drop.files.map(file => file.name),
 			...(drop.strings["text/uri-list"]?.split(/\r?\n/).filter(line => line && !line.startsWith("#")) ?? [])

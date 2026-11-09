@@ -58,11 +58,11 @@
      * role, which holds the 3:1 a non-text mark takes on every surface it stands against.
      */
 
-    &[data-edge="before"] {
+    &[data-side="before"] {
         box-shadow: 0 calc(-2 * var(--skin--border-width)) 0 var(--skin--color-selected), var(--skin--box-shadow-raised);
     }
 
-    &[data-edge="after"] {
+    &[data-side="after"] {
         box-shadow: 0 calc(2 * var(--skin--border-width)) 0 var(--skin--color-selected), var(--skin--box-shadow-raised);
     }
 
