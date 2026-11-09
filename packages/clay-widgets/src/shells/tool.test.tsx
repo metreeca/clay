@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 
+import { Fetch, useFetch } from "@metreeca/clay/fetch";
 import { type JSX, render } from "preact";
+import { useEffect } from "preact/hooks";
 import { act } from "preact/test-utils";
 import { beforeAll, describe, expect, it, vi } from "vitest";
 import { Tool } from "./tool.js";
@@ -48,6 +50,116 @@ describe("Tool", () => {
 	const menu = (tool: HTMLElement) => tool.querySelector<HTMLButtonElement>(":scope > main > header > button");
 	const close = (tool: HTMLElement) => tool.querySelector<HTMLButtonElement>(":scope > aside > header > button");
 	const side = (tool: HTMLElement) => tool.querySelector<HTMLElement>(":scope > aside");
+
+
+	describe("main column", () => {
+
+		it("takes the focus from code without standing in the tab order", async () => {
+
+			expect(rendered(<Tool>content</Tool>).querySelector(":scope > main")?.getAttribute("tabindex")).toBe("-1");
+
+		});
+
+		it("is named by its head", async () => {
+
+			const tool = rendered(<Tool head={<span>Projects</span>}>content</Tool>);
+			const main = tool.querySelector(":scope > main")!;
+			const label = main.getAttribute("aria-labelledby");
+
+			expect(label).not.toBeNull();
+			expect(document.getElementById(label!)?.textContent).toBe("Projects");
+
+		});
+
+		it("carries no name without a head", async () => {
+
+			expect(rendered(<Tool>content</Tool>).querySelector(":scope > main")?.hasAttribute("aria-labelledby")).toBe(false);
+
+		});
+
+	});
+
+
+	describe("waiting", () => {
+
+		function Request() {
+
+			const fetch = useFetch();
+
+			useEffect(() => { void fetch("https://example.org/"); }, []);
+
+			return null;
+
+		}
+
+		it("marks itself busy while an exchange is in flight", async () => {
+
+			const pending = () => new Promise<Response>(() => {});
+
+			const container = document.createElement("div");
+
+			await act(async () => {
+				render(<Fetch fetch={pending}><Tool><Request/></Tool></Fetch>, container);
+			});
+
+			expect(container.querySelector("clay-tool")?.getAttribute("aria-busy")).toBe("true");
+
+		});
+
+		it("takes both columns out of reach while an exchange is in flight", async () => {
+
+			const pending = () => new Promise<Response>(() => {});
+
+			const container = document.createElement("div");
+
+			await act(async () => {
+				render(<Fetch fetch={pending}><Tool><Request/></Tool></Fetch>, container);
+			});
+
+			expect(container.querySelector<HTMLElement>("clay-tool > aside")?.inert).toBe(true);
+			expect(container.querySelector<HTMLElement>("clay-tool > main")?.inert).toBe(true);
+
+		});
+
+		it("shows a turning mark only while an exchange is in flight", async () => {
+
+			const pending = () => new Promise<Response>(() => {});
+
+			const container = document.createElement("div");
+
+			await act(async () => {
+				render(<Fetch fetch={pending}><Tool><Request/></Tool></Fetch>, container);
+			});
+
+			expect(container.querySelector("clay-tool > main > header > .busy svg")).not.toBeNull();
+			expect(rendered(<Tool>content</Tool>).querySelector(".busy")).toBeNull();
+
+		});
+
+		it("is not busy while no exchange is in flight", async () => {
+
+			expect(rendered(<Tool>content</Tool>).getAttribute("aria-busy")).not.toBe("true");
+
+		});
+
+	});
+
+
+	describe("bars", () => {
+
+		it("renders no feet when neither column has anything for them", async () => {
+
+			expect(rendered(<Tool>content</Tool>).querySelector(":scope > * > footer")).toBeNull();
+
+		});
+
+		it("renders both feet when either column has something for them", async () => {
+
+			expect(rendered(<Tool foot={<span>foot</span>}>content</Tool>).querySelectorAll(":scope > * > footer").length).toBe(2);
+
+		});
+
+	});
 
 
 	describe("bodies", () => {

@@ -23,6 +23,7 @@
  * @module tool
  */
 
+import { useFetching } from "@metreeca/clay/fetch";
 import { useModel } from "@metreeca/clay/model";
 import { createState } from "@metreeca/core/state";
 import { type ComponentChildren, createElement, type TargetedEvent, type TargetedMouseEvent } from "preact";
@@ -45,6 +46,10 @@ import "./tool.css";
  * of the side column, the gutters, and the font sizes of heads and feet are tuned through custom properties named
  * after what they tune, such as `--clay-tool-side-width` or `--clay-tool-head-gutter`. Each retunes the shell it is
  * set on, or every shell inside the element it is set on, leaving the other properties of the shell to their defaults.
+ *
+ * Waiting is stated by the shell itself: while the {@link @metreeca/clay!fetch.Fetch shared client} has exchanges in
+ * flight, the frame is veiled, marks itself busy for assistive technology, and takes both columns out of reach for
+ * pointer and keyboard alike until the exchanges settle. A screen states waiting by going through that client alone.
  *
  * On a viewport too narrow for two columns, the main column takes the whole frame and the side column becomes a drawer
  * opened from a menu button leading the main head. The drawer covers the main column, across the whole width of a
@@ -130,7 +135,18 @@ export function Tool({
 
 }) {
 
-	const side = `${useId()}-side`;
+	const id = useId();
+	const side = `${id}-side`;
+
+	// the landmark is named by the head on show, so the reference stands or falls with its target and never dangles
+
+	const title = head ? `${id}-title` : undefined;
+
+	// a foot stands in both columns as soon as either has something for it, so the bodies end level
+
+	const feet = Boolean(foot || (!main && more));
+
+	const fetching = useFetching();
 
 	const { open, toggle } = useModel(() => createState<Drawer>({
 
@@ -143,6 +159,8 @@ export function Tool({
 	}));
 
 	return createElement("clay-tool", {
+
+		"aria-busy": fetching,
 
 		wide,
 		locked: lock,
@@ -165,7 +183,7 @@ export function Tool({
 			id={side}
 			aria-label="Menu"
 			popover={lock ? "manual" : "auto"}
-			inert={lock}
+			inert={lock || fetching}
 			onClick={follow}
 			onToggle={event => toggle(opened(event))}
 		>
@@ -178,21 +196,35 @@ export function Tool({
 			</header>
 
 			<div tabIndex={0}>{tray}</div>
-			<footer>{more}</footer>
+			{feet && <footer>{more}</footer>}
 
 		</aside>}
 
-		<main inert={open}>
+		{/*
+		 * The main column takes the focus from code alone, so a navigation can land the focus on it and a reader hears
+		 * its name, taken from the head, without a tab stop being added. The head is held in a box of its own only to
+		 * be referenced as that name: the box stands aside from the layout, leaving the head laid out as given.
+		 */}
+
+		<main aria-labelledby={title} tabIndex={-1} inert={open || fetching}>
 
 			<header>
 				{!main && <button type="button" popovertarget={side} disabled={lock} aria-label="Open menu">
 					<Icon.Menu/>
 				</button>}
-				{head}
+				{head && <div id={title}>{head}</div>}
+
+				{/*
+				 * The turning mark is a bare glyph rather than a control: it offers nothing to press and is already
+				 * told by `aria-busy` on the frame, so it is inert and a reader meets nothing there.
+				 */}
+
+				{fetching && <span class="busy" inert><Icon.Reload/></span>}
+
 			</header>
 
 			<div tabIndex={0}>{children}</div>
-			<footer>{foot}</footer>
+			{feet && <footer>{foot}</footer>}
 
 		</main>
 

@@ -146,7 +146,7 @@ clay-tool {
     --clay-tool-side-inset: var(--clay-tool-side-gutter, var(--skin--spacing-100));
     --clay-tool-main-inset: var(--clay-tool-main-gutter, var(--skin--spacing-100));
     --clay-tool-head-inset: var(--clay-tool-head-gutter, var(--skin--spacing-075));
-    --clay-tool-body-inset: var(--clay-tool-body-gutter, var(--skin--spacing-150));
+    --clay-tool-body-inset: var(--clay-tool-body-gutter, var(--skin--spacing-100));
     --clay-tool-foot-inset: var(--clay-tool-foot-gutter, var(--skin--spacing-075));
 
     /* The track of the main column, capped at the width limit unless the frame goes wide. */
@@ -174,24 +174,115 @@ clay-tool {
         grid-template-columns: var(--clay-tool-main-track);
     }
 
-    /* The columns step out of the box tree, leaving their parts as grid items, while keeping their landmarks. */
+    /* Waiting fades the frame by the loading step: the content is on its way out rather than unavailable. */
+
+    /*
+     * Waiting lays a veil of the page colour over the frame, washing everything toward the page by the same share, bold
+     * and large text included, where a fade would leave the heaviest text standing out. The columns beneath are out of
+     * reach meanwhile, so the veil itself takes no gesture: the platform answers none until the exchange settles.
+     */
+
+    position: relative;
+
+    &[aria-busy="true"]::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background-color: color-mix(in oklab, var(--skin--background-color) 60%, transparent);
+        backdrop-filter: blur(0.5px); /* A slight blur takes the edge off the text beneath, headings included. */
+        pointer-events: none;
+    }
+
+    /*
+     * A turning mark stands at the end of the main head, above the veil, over whatever control ends the head, on a
+     * solid disc of the page colour. It takes the box an edge button takes, glyph and padding reaching into the gutter
+     * alike, so it covers that control exactly. It turns once a second whatever motion the reader asked for: the turn
+     * is what tells waiting, a still mark saying nothing, and a small glyph turning in place carries none of the travel
+     * reduced motion guards against, so its duration is stated outright rather than read from the collapsing steps.
+     */
+
+    & > main > header {
+
+        position: relative;
+
+        & > .busy {
+
+            position: absolute;
+            inset-block: 0;
+            inset-inline-end: calc(var(--clay-tool-main-inset) - var(--skin--spacing-025));
+            z-index: 1;
+
+            display: flex;
+            block-size: fit-content;
+            margin-block: auto;
+            padding: var(--skin--spacing-025);
+            border-radius: 50%;
+
+            color: var(--skin--color-label);
+            background-color: var(--skin--background-color);
+            pointer-events: none;
+
+            & svg {
+                animation: clay-tool-turn 1s linear infinite;
+            }
+
+        }
+
+    }
+
+    /*
+     * Each column spans the three rows of the frame and lays its parts out on them, so the heads of both share one row
+     * and the feet another, while the column stays a box of its own that can carry the focus and its landmark.
+     */
 
     & > :is(aside, main) {
-        display: contents;
+        display: grid;
+        grid-row: 1 / -1;
+        grid-template-rows: subgrid;
+        min-inline-size: 0;
+        min-block-size: 0;
     }
 
     /* Each column names the timeline its body scrolls, for the bars of the column to read. */
 
+    /*
+     * The side column is a popover, which the platform places as a fixed box sized by what it holds; standing as a
+     * column it takes its track instead, until it is opened as a drawer.
+     */
+
     & > aside {
+
+        grid-column: 1;
         --clay-tool-scroll: --clay-tool-side-scroll;
+
+        position: static;
+        inset: auto;
+        inline-size: auto;
+        block-size: auto;
+        overflow: visible;
+
     }
 
     & > main {
+
+        grid-column: -2;
         --clay-tool-scroll: --clay-tool-main-scroll;
+
+        /* The column takes the focus only to be announced, so it draws no ring a reader could take for a control. */
+
+        &:focus {
+            outline: none;
+        }
+
+        /* The box naming the column stands aside from the layout, leaving the head laid out as given. */
+
+        & > header > div {
+            display: contents;
+        }
+
     }
 
     & > aside > * {
-        grid-column: 1;
         padding-inline: var(--clay-tool-side-inset);
     }
 
@@ -201,10 +292,7 @@ clay-tool {
         opacity: var(--skin--opacity-locked);
     }
 
-    /* The main column takes the last track, whether or not the side column stands before it. */
-
     & > main > * {
-        grid-column: -2;
         padding-inline: var(--clay-tool-main-inset);
     }
 
@@ -221,16 +309,19 @@ clay-tool {
         /*
          * A button at either end of a bar, standing in it or in the row filling it, reaches into the gutter by the
          * padding around what it carries, so its glyph or label stands on the edge the rest of the column starts from
-         * rather than inset by a padding that shows only on hover.
+         * rather than inset by a padding that shows only on hover. The box naming the main column counts as the bar
+         * it stands aside in, so a row it holds is reached through it.
          */
 
         & > :is(button, clay-button):first-child,
-        & > :not(clay-button):first-child > :is(button, clay-button):first-child {
+        & > :not(clay-button):first-child > :is(button, clay-button):first-child,
+        & > div:first-child > :not(clay-button):first-child > :is(button, clay-button):first-child {
             margin-inline-start: calc(-1 * var(--skin--spacing-025));
         }
 
-        & > :is(button, clay-button):last-child,
-        & > :not(clay-button):last-child > :is(button, clay-button):last-child {
+        & > :is(button, clay-button):nth-last-child(1 of :not(.busy)),
+        & > :not(clay-button):nth-last-child(1 of :not(.busy)) > :is(button, clay-button):last-child,
+        & > div:nth-last-child(1 of :not(.busy)) > :not(clay-button):last-child > :is(button, clay-button):last-child {
             margin-inline-end: calc(-1 * var(--skin--spacing-025));
         }
 
@@ -378,6 +469,7 @@ clay-tool {
 
 }
 
+
 @keyframes clay-tool-head-rule {
 
     from {
@@ -401,6 +493,7 @@ clay-tool {
     }
 
 }
+
 
 /*
  * Below the medium viewport two columns no longer fit: the main column takes the whole frame, the side column stays
@@ -438,6 +531,14 @@ clay-tool {
 
     clay-tool > aside:popover-open {
         inline-size: 100%;
+    }
+
+}
+
+@keyframes clay-tool-turn {
+
+    to {
+        rotate: 1turn;
     }
 
 }
