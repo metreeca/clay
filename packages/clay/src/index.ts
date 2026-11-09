@@ -38,14 +38,30 @@ import { immutable } from "@metreeca/core/values";
  * Matches the fields that keep their keys and presses for moving a caret or changing a value: enabled text and value
  * controls, native or carrying a matching ARIA role, and editable regions such as rich text editors.
  */
-const Fields = [
-	"input:not([disabled]):not([type='button']):not([type='checkbox']):not([type='color']):not([type='file'])"
-	+":not([type='image']):not([type='radio']):not([type='reset']):not([type='submit'])",
-	"select:not([disabled])",
-	"textarea:not([disabled])",
-	"[contenteditable]:not([contenteditable='false'])",
-	...["combobox", "scrollbar", "searchbox", "slider", "spinbutton", "textbox"].map(role => `[role~='${role}']`)
-].join(", ");
+const Fields = `
+	input:not(
+		[disabled],
+		[type=button],
+		[type=checkbox],
+		[type=color],
+		[type=file],
+		[type=image],
+		[type=radio],
+		[type=reset],
+		[type=submit]
+	),
+	select:not([disabled]),
+	textarea:not([disabled]),
+	[contenteditable]:not([contenteditable=false]),
+	[role~=combobox],
+	[role~=scrollbar],
+	[role~=searchbox],
+	[role~=slider],
+	[role~=spinbutton],
+	[role~=textbox]
+`.replace(
+	/\s+/g, " "
+);
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
