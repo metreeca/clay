@@ -65,9 +65,9 @@ const samples: readonly Sample[] = [
 	{ id: "button", group: "Controls", title: "Button", view: <Buttons/> },
 	{ id: "choice", group: "Controls", title: "Choice", view: <Choices/> },
 
-	{ id: "more", group: "Signals", title: "More", view: <Triggers/> },
-	{ id: "note", group: "Signals", title: "Note", view: <Notes/> },
 	{ id: "toasts", group: "Signals", title: "Toasts", view: <Toasted/> },
+	{ id: "note", group: "Signals", title: "Note", view: <Notes/> },
+	{ id: "more", group: "Signals", title: "More", view: <Triggers/> },
 
 	{ id: "icon", group: "Glyphs", title: "Icon", view: <Icons/> },
 	{ id: "logo", group: "Glyphs", title: "Logo", view: <Logos/> },
