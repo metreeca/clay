@@ -46,6 +46,14 @@
     initial-value: 60rem;
 }
 
+/* The inline gutter of the frame, keeping both columns clear of the edges of the window; none by default. */
+
+@property --clay-tool-frame-gutter {
+    syntax: "*";
+    inherits: true;
+    initial-value: 0;
+}
+
 /* The inline gutter of the side column. */
 
 @property --clay-tool-side-gutter {
@@ -150,9 +158,7 @@ clay-tool {
     grid-template-rows: auto minmax(0, 1fr) auto;
     justify-content: center;
 
-    /* The frame keeps a little room from the edges of the window, so neither column runs right up against them. */
-
-    padding-inline: var(--skin--spacing-050);
+    padding-inline: var(--clay-tool-frame-gutter);
 
     /* The scroll position of each body reaches the bars beside it, which are its siblings rather than its children. */
 
