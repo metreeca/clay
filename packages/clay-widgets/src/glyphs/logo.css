@@ -34,11 +34,21 @@
 clay-logo {
 
     /*
-     * The logo stands exactly one line of the text beside it tall, with the baseline where the text has it, so a row
-     * centring its items, aligning them on the baseline or stacking them inline leaves the mark level with the text.
+     * The logo is a box exactly as tall as its mark, so a row centring its items centres the mark on the text beside
+     * it. In running text the box is raised to the same place, the middle of the capitals, and is short enough to sit
+     * within the line rather than pushing the lines above and below it apart, whatever the text size.
      */
 
     display: inline-block;
+    vertical-align: calc(0.5cap - 0.5 * var(--clay-logo-mark));
+
+    /*
+     * The eye finds the middle of a word between its capitals and its lowercase letters, lower than the middle of the
+     * capitals, so the mark is nudged down by half that gap. It reads level beside lowercase and capitals alike, off
+     * either by under a pixel at text sizes, and the nudge follows the face, as both measures are read off it.
+     */
+
+    translate: 0 calc(0.25 * (1cap - 1ex));
 
     /*
      * The mark is a square measured against the capitals beside it. `cap` is read off the face in use, so an app
@@ -52,6 +62,8 @@ clay-logo {
 
     & > img {
 
+        display: block; /* The box takes the height of the mark alone, with no line around it. */
+
         height: var(--clay-logo-mark);
         aspect-ratio: 1;
 
@@ -63,15 +75,6 @@ clay-logo {
          */
 
         pointer-events: none;
-
-        /*
-         * The mark is centred on the capitals rather than on the line, whose middle sits lower or higher by however
-         * much the face hangs below its baseline. The margins fold the mark into a point at its own centre, which is
-         * raised to half the capitals, so a mark taller than the line overflows it rather than pushing it apart.
-         */
-
-        margin-block: calc(-0.5 * var(--clay-logo-mark));
-        vertical-align: 0.5cap;
 
     }
 
