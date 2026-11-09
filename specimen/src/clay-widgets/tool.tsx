@@ -24,9 +24,11 @@ import { Button } from "@metreeca/clay-widgets/button";
 import { Icon } from "@metreeca/clay-widgets/icon";
 import { Link } from "@metreeca/clay-widgets/link";
 import { Logo } from "@metreeca/clay-widgets/logo";
+import { Strip } from "@metreeca/clay-widgets/strip";
 import { TOC } from "@metreeca/clay-widgets/toc";
 import { Tool } from "@metreeca/clay-widgets/tool";
 import { ClayWidgetsPath } from "@metreeca/specimen/index.core.js";
+import { useState } from "preact/hooks";
 import "./tool.css";
 
 
@@ -39,7 +41,15 @@ import "./tool.css";
  */
 export function ToolScreen() {
 
+	const [wide, setWide] = useState(false);
+	const [lock, setLock] = useState(false);
+	const [main, setMain] = useState(false);
+
 	return <Tool
+
+		wide={wide}
+		lock={lock}
+		main={main}
 
 		meta={<Link look="subtle" href={`${ClayWidgetsPath}#tool`}>
 			<Logo/>@metreeca/clay
@@ -47,12 +57,41 @@ export function ToolScreen() {
 
 		tray={<TOC name="Sections" compact entries={[
 			{ label: "Slots", href: "#slots" },
+			{ label: "Switches", href: "#switches" },
 			{ label: "Knobs", href: "#knobs" }
 		]}/>}
 
 		more={<Button icon={<Icon.Settings/>} look="subtle" name="Settings" title="Settings"/>}
 
-		head="Tool Shell"
+		head={<Strip grow place="head" align="center">
+
+			<span>Tool Shell</span>
+
+			<Button
+				icon={main ? <Icon.PanelLeftOpen/> : <Icon.PanelLeftClose/>}
+				look="subtle"
+				name={main ? "Show the side column" : "Leave the side column out"}
+				title={main ? "Show the side column" : "Leave the side column out"}
+				onClick={() => setMain(!main)}
+			/>
+
+			<Button
+				icon={lock ? <Icon.Unlock/> : <Icon.Lock/>}
+				look="subtle"
+				name={lock ? "Unlock the side column" : "Lock the side column"}
+				title={lock ? "Unlock the side column" : "Lock the side column"}
+				onClick={() => setLock(!lock)}
+			/>
+
+			<Button
+				icon={wide ? <Icon.ChevronsRightLeft/> : <Icon.ChevronsLeftRight/>}
+				look="subtle"
+				name={wide ? "Cap the main column" : "Go wide"}
+				title={wide ? "Cap the main column" : "Go wide"}
+				onClick={() => setWide(!wide)}
+			/>
+
+		</Strip>}
 
 		foot={<code>@metreeca/clay-widgets/tool</code>}
 
@@ -113,6 +152,22 @@ export function ToolScreen() {
 			</tbody>
 
 		</table>
+
+		<hgroup id="switches">
+			<p>Tool Shell</p>
+			<h2>Switches</h2>
+		</hgroup>
+
+		<p>Three switches reshape the frame, each worked from the buttons at the end of the main head:</p>
+
+		<ul>
+			<li><code>main</code> leaves the side column out of the frame, for a screen meant to be seen through rather
+				than moved around in; the panel button sets it</li>
+			<li><code>lock</code> takes the side column out of reach for pointer and keyboard alike, fading what it
+				holds; the padlock sets it</li>
+			<li><code>wide</code> lets the main column take the whole width of the frame, past its width limit; the
+				chevrons set it</li>
+		</ul>
 
 		<hgroup id="knobs">
 			<p>Tool Shell</p>

@@ -46,49 +46,49 @@
     initial-value: 60rem;
 }
 
-/* The inline gutter of the side column, defaulting to the standard spacing step. */
+/* The inline gutter of the side column. */
 
 @property --clay-tool-side-gutter {
     syntax: "*";
     inherits: true;
 }
 
-/* The inline gutter of the main column, defaulting to the standard spacing step. */
+/* The inline gutter of the main column. */
 
 @property --clay-tool-main-gutter {
     syntax: "*";
     inherits: true;
 }
 
-/* The block gutter of the head row, defaulting to three quarters of the standard spacing step. */
+/* The block gutter of the head row. */
 
 @property --clay-tool-head-gutter {
     syntax: "*";
     inherits: true;
 }
 
-/* The block gutter of the body row, defaulting to three quarters of the standard spacing step. */
+/* The block gutter of the body row. */
 
 @property --clay-tool-body-gutter {
     syntax: "*";
     inherits: true;
 }
 
-/* The block gutter of the foot row, defaulting to half the standard spacing step. */
+/* The block gutter of the foot row. */
 
 @property --clay-tool-foot-gutter {
     syntax: "*";
     inherits: true;
 }
 
-/* The font size of the head row, defaulting to the text size. */
+/* The font size of the head row. */
 
 @property --clay-tool-head-font-size {
     syntax: "*";
     inherits: true;
 }
 
-/* The font size of the foot row, defaulting to the small size. */
+/* The font size of the foot row. */
 
 @property --clay-tool-foot-font-size {
     syntax: "*";
@@ -98,10 +98,24 @@
 
 clay-tool {
 
+    /* The track of the main column, capped at the width limit unless the frame goes wide. */
+
+    --clay-tool-main-track: minmax(0, var(--clay-tool-main-width));
+
     display: grid;
-    grid-template-columns: var(--clay-tool-side-width) minmax(0, var(--clay-tool-main-width));
+    grid-template-columns: var(--clay-tool-side-width) var(--clay-tool-main-track);
     grid-template-rows: auto minmax(0, 1fr) auto;
     justify-content: center;
+
+    &[wide] {
+        --clay-tool-main-track: minmax(0, 1fr);
+    }
+
+    /* A frame showing the main column alone takes the side column out of the track list, leaving no room for it. */
+
+    &[main] {
+        grid-template-columns: var(--clay-tool-main-track);
+    }
 
     /* The columns step out of the box tree, leaving their parts as grid items, while keeping their landmarks. */
 
@@ -114,20 +128,27 @@ clay-tool {
         padding-inline: var(--clay-tool-side-gutter, var(--skin--spacing-100));
     }
 
+    /* A locked side column fades what it holds, while the column itself keeps its place. */
+
+    &[locked] > aside > * {
+        opacity: var(--skin--opacity-locked);
+    }
+
+    /* The main column takes the last track, whether or not the side column stands before it. */
+
     & > main > * {
-        grid-column: 2;
+        grid-column: -2;
         padding-inline: var(--clay-tool-main-gutter, var(--skin--spacing-100));
     }
 
     /*
-     * Heads and feet stretch to the taller of each pair and centre what they hold vertically, so the two columns line
-     * up, while what they hold keeps its own width at the start of the bar.
+     * Heads and feet are rows stretching to the taller of each pair and centring what they hold vertically, so the two
+     * columns line up. What they hold keeps its own width from the start of the bar, unless it grows to fill the row.
      */
 
     & > * > :is(header, footer) {
-        display: grid;
-        align-content: center;
-        justify-items: start;
+        display: flex;
+        align-items: center;
     }
 
     & > * > header {

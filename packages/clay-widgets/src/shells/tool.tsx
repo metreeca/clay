@@ -47,6 +47,10 @@ import "./tool.css";
  */
 export function Tool({
 
+	wide = false,
+	lock = false,
+	main = false,
+
 	meta,
 	tray,
 	more,
@@ -57,6 +61,29 @@ export function Tool({
 	children
 
 }: {
+
+	/**
+	 * Whether the main column takes the whole width of the frame rather than stopping at its width limit. Set it for
+	 * content that never has too much room, such as a table, a chart or a map, and leave it off for prose, which long
+	 * lines make harder to read. Capped at the width limit if omitted.
+	 */
+	wide?: boolean
+
+	/**
+	 * Whether the side column is out of reach, as while the main column needs the full attention of the reader. What
+	 * it holds fades while the column keeps its place, and drops out of the tab order and the accessibility tree until
+	 * the lock is lifted. Reachable if omitted.
+	 */
+	lock?: boolean
+
+	/**
+	 * Whether the main column stands alone, with the side column left out of the frame rather than merely locked. The
+	 * main column takes the room the side column held, and nothing passed to `meta`, `tray` or `more` is shown. Set it
+	 * for screens meant to be seen through rather than moved around in, such as a sign-in or a splash. The side column
+	 * stands if omitted.
+	 */
+	main?: boolean
+
 
 	/**
 	 * What stands in the head of the side column, such as the mark of the app and its release.
@@ -92,13 +119,21 @@ export function Tool({
 
 }) {
 
-	return createElement("clay-tool", {}, <>
+	return createElement("clay-tool", {
 
-		<aside>
+		wide,
+		locked: lock,
+		main
+
+	}, <>
+
+		{/* locking takes the side column out of reach for every gesture at once, rather than for the pointer alone */}
+
+		{!main && <aside inert={lock}>
 			<header>{meta}</header>
 			<div>{tray}</div>
 			<footer>{more}</footer>
-		</aside>
+		</aside>}
 
 		<main>
 			<header>{head}</header>
