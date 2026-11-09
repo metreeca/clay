@@ -48,8 +48,12 @@ import "./tool.css";
  * set on, or every shell inside the element it is set on, leaving the other properties of the shell to their defaults.
  *
  * Waiting is stated by the shell itself: while the {@link @metreeca/clay!fetch.Fetch shared client} has exchanges in
- * flight, the frame is veiled, marks itself busy for assistive technology, and takes both columns out of reach for
- * pointer and keyboard alike until the exchanges settle. A screen states waiting by going through that client alone.
+ * flight, the frame is veiled, shows a turning mark at the end of the main head, and marks itself busy for assistive
+ * technology. Both columns stay out of reach for pointer and keyboard alike until the exchanges settle, so a screen
+ * states waiting just by running its exchanges through that client, with no flag or call of its own.
+ *
+ * The main column is named after `head` and takes the focus as the {@link @metreeca/clay!router.Router router} lands a
+ * screen, without adding a tab stop, so a reader hears which screen they are on rather than a control of the last one.
  *
  * On a viewport too narrow for two columns, the main column takes the whole frame and the side column becomes a drawer
  * opened from a menu button leading the main head. The drawer covers the main column, across the whole width of a
@@ -89,7 +93,7 @@ export function Tool({
 	/**
 	 * Whether the side column is out of reach, as while the main column needs the full attention of the reader. What
 	 * it holds fades while the column keeps its place, and drops out of the tab order and the accessibility tree until
-	 * the lock is lifted. Reachable if omitted.
+	 * the lock is lifted. On a narrow viewport the lock closes the drawer and keeps it shut. Reachable if omitted.
 	 */
 	lock?: boolean
 

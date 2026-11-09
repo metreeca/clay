@@ -226,9 +226,8 @@ export function Tabs({
 				 * The panel takes no stop of its own: a stop is owed only by a panel holding nothing focusable, which
 				 * a widget handed arbitrary content cannot tell without walking the DOM, and one taken where the
 				 * content is reachable already lands the reader on the whole area on the way past. What a stop would
-				 * have been good for, scrolling a panel by key, is handed by the browser to whichever box actually
-				 * scrolls and holds nothing focusable, which inside a shell is the body of the content column
-				 * rather than the panel within it.
+				 * have been good for, scrolling a panel by key, the browser hands to whichever box actually scrolls and
+				 * holds nothing focusable: inside a shell, the body of the main column rather than the panel within it.
 				 */
 
 				role={collapsed ? "region" : "tabpanel"}

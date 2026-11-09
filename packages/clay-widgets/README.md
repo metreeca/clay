@@ -5,7 +5,7 @@
 Preact interface components for [@metreeca/clay](https://github.com/metreeca/clay).
 
 The components an interface is assembled from: buttons, links and icons, the app logo, text runs, labels and captioned
-images, notices and placeholders, breadcrumb trails and incremental loading triggers, a frame for the whole screen,
+images, notices and placeholders, breadcrumb trails and incremental loading triggers, a shell for app screens,
 stacks, strips and cards optionally set on surfaces of their own, tabs, property panels, transient notices and failure
 boundaries. A custom widget built on the shared class and keyboard helpers, and marked with the same role-named glyphs,
 behaves and looks like the stock ones without restating their keyboard handling or visual vocabulary.
