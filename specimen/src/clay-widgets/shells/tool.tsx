@@ -65,7 +65,7 @@ export function ToolScreen() {
 
 		head={<Strip grow place="head" align="center">
 
-			<span>Tool Shell</span>
+			<strong>Tool Shell</strong>
 
 			<Button
 				icon={main ? <Icon.PanelLeftOpen/> : <Icon.PanelLeftClose/>}
