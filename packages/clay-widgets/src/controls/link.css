@@ -29,7 +29,7 @@ clay-link {
      * kept apart from it by a gap wider than a space, so the glyph reads as a mark set beside the words it leads.
      *
      * A link short of room cuts its wording short with an ellipsis, wherever the area around it caps its width and
-     * keeps it to one line. Logos and icons beside the wording are left whole.
+     * keeps it to one line. Logos and icons beside the wording are left whole, however little room remains.
      */
 
     & > a {
