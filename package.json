@@ -13,12 +13,11 @@
     "setup": "npm ci && ush ln",
     "build": "npm run build --workspaces && ush rm docs && npx typedoc",
     "check": "npm run check --workspaces --if-present",
-    "proof": "npm run build && npx wds --root-dir docs --open",
+    "proof": "npm run build && ush ws --open docs",
     "watch": "npm run watch -w specimen"
   },
   "devDependencies": {
     "@metreeca/rack": "^0.6.0",
-    "@web/dev-server": "^1.0.0",
     "typedoc": "^0.28.20",
     "vitest": "^5.0.5"
   },
