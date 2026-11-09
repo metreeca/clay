@@ -16,8 +16,9 @@
 
 /*
  * The frame is a grid of two columns by three rows, the side column beside the main one, each a head over a body over
- * a foot. The columns dissolve into the grid, so the heads of both share one row, and so do the feet, whichever holds
- * more. The frame fills the height its host gives it, the body of each column scrolling within what the bars leave.
+ * a foot. Each column lays its parts out on the rows of the frame, so the heads of both share one row, and so do the
+ * feet, whichever holds more. The frame fills the height its host gives it, each body scrolling within what its bars
+ * leave.
  */
 
 /*
@@ -153,6 +154,8 @@ clay-tool {
 
     --clay-tool-main-track: minmax(0, var(--clay-tool-main-width));
 
+    position: relative;
+
     display: grid;
     grid-template-columns: var(--clay-tool-side-width) var(--clay-tool-main-track);
     grid-template-rows: auto minmax(0, 1fr) auto;
@@ -174,15 +177,11 @@ clay-tool {
         grid-template-columns: var(--clay-tool-main-track);
     }
 
-    /* Waiting fades the frame by the loading step: the content is on its way out rather than unavailable. */
-
     /*
      * Waiting lays a veil of the page colour over the frame, washing everything toward the page by the same share, bold
      * and large text included, where a fade would leave the heaviest text standing out. The columns beneath are out of
      * reach meanwhile, so the veil itself takes no gesture: the platform answers none until the exchange settles.
      */
-
-    position: relative;
 
     &[aria-busy="true"]::after {
         content: "";
@@ -193,46 +192,27 @@ clay-tool {
         pointer-events: none;
     }
 
-    /*
-     * A turning mark stands at the end of the main head, above the veil, over whatever control ends the head, on a
-     * solid disc of the page colour. It takes the box an edge button takes, glyph and padding reaching into the gutter
-     * alike, so it covers that control exactly. It turns once a second whatever motion the reader asked for: the turn
-     * is what tells waiting, a still mark saying nothing, and a small glyph turning in place carries none of the travel
-     * reduced motion guards against, so its duration is stated outright rather than read from the collapsing steps.
-     */
+    /* A locked side column fades what it holds, while the column itself keeps its place. */
 
-    & > main > header {
-
-        position: relative;
-
-        & > .busy {
-
-            position: absolute;
-            inset-block: 0;
-            inset-inline-end: calc(var(--clay-tool-main-inset) - var(--skin--spacing-025));
-            z-index: 1;
-
-            display: flex;
-            block-size: fit-content;
-            margin-block: auto;
-            padding: var(--skin--spacing-025);
-            border-radius: 50%;
-
-            color: var(--skin--color-label);
-            background-color: var(--skin--background-color);
-            pointer-events: none;
-
-            & svg {
-                animation: clay-tool-turn 1s linear infinite;
-            }
-
-        }
-
+    &[locked] > aside > * {
+        opacity: var(--skin--opacity-locked);
     }
 
     /*
+     * Below the medium viewport two columns no longer fit: the main column takes the whole frame, and the side column
+     * stays out of view until the menu button leading the main head opens it as a drawer. From the medium viewport up
+     * the frame keeps its two columns.
+     */
+
+    @container style(--skin--viewport-medium: off) {
+        grid-template-columns: var(--clay-tool-main-track);
+    }
+
+
+    /*
      * Each column spans the three rows of the frame and lays its parts out on them, so the heads of both share one row
-     * and the feet another, while the column stays a box of its own that can carry the focus and its landmark.
+     * and the feet another, while the column stays a box of its own that can carry the focus and its landmark. Each
+     * names the timeline its body scrolls, for the bars of the column to read.
      */
 
     & > :is(aside, main) {
@@ -243,8 +223,6 @@ clay-tool {
         min-block-size: 0;
     }
 
-    /* Each column names the timeline its body scrolls, for the bars of the column to read. */
-
     /*
      * The side column is a popover, which the platform places as a fixed box sized by what it holds; standing as a
      * column it takes its track instead, until it is opened as a drawer.
@@ -252,8 +230,9 @@ clay-tool {
 
     & > aside {
 
-        grid-column: 1;
         --clay-tool-scroll: --clay-tool-side-scroll;
+
+        grid-column: 1;
 
         position: static;
         inset: auto;
@@ -261,12 +240,87 @@ clay-tool {
         block-size: auto;
         overflow: visible;
 
+        & > * {
+            padding-inline: var(--clay-tool-side-inset);
+        }
+
+        @container style(--skin--viewport-medium: off) {
+            &:not(:popover-open) {
+                display: none;
+            }
+        }
+
+        /*
+         * An open side column is a drawer: it covers the main column from the start edge, as wide as the side column
+         * but never wider than the window, over a blanket dimming what lies underneath. On a phone held upright, below
+         * the small viewport, it spans the whole window, as a narrower drawer would leave a sliver of the main column
+         * too thin to read. It slides in and the blanket fades in over the fastest step, so the reader sees where the
+         * drawer came from and where it will go; it leaves at once.
+         */
+
+        &:popover-open {
+
+            display: grid;
+            grid-template-rows: auto minmax(0, 1fr) auto;
+
+            position: fixed;
+            inset-block: 0;
+            inset-inline: 0 auto;
+            inline-size: min(100%, var(--clay-tool-side-width));
+            block-size: 100%;
+            overflow: hidden;
+
+            color: inherit;
+            background-color: var(--skin--background-color-overlay);
+
+            translate: 0;
+            transition: translate var(--skin--duration-fast) ease-out;
+
+            @starting-style {
+                translate: -100% 0;
+            }
+
+            @container style(--skin--viewport-small: off) {
+                inline-size: 100%;
+            }
+
+            &:dir(rtl) {
+                @starting-style {
+                    translate: 100% 0;
+                }
+            }
+
+            /*
+             * The close glyph is drawn in the middle half of its square, so beyond the padding every edge button
+             * gives up it reaches out by an eighth of the glyph, short of the quarter left blank, so the width of the
+             * stroke stays inside the edge of the drawer rather than spilling past it.
+             */
+
+            & > header > button {
+                display: inline-flex;
+                margin-inline: auto calc(-1 * (var(--skin--spacing-025) + var(--skin--scaling-100) / 8));
+            }
+
+            &::backdrop {
+
+                background-color: var(--skin--background-color-blanket);
+                transition: background-color var(--skin--duration-fast) ease-out;
+
+                @starting-style {
+                    background-color: transparent;
+                }
+
+            }
+
+        }
+
     }
 
     & > main {
 
-        grid-column: -2;
         --clay-tool-scroll: --clay-tool-main-scroll;
+
+        grid-column: -2;
 
         /* The column takes the focus only to be announced, so it draws no ring a reader could take for a control. */
 
@@ -274,27 +328,85 @@ clay-tool {
             outline: none;
         }
 
-        /* The box naming the column stands aside from the layout, leaving the head laid out as given. */
+        & > * {
+            padding-inline: var(--clay-tool-main-inset);
+        }
 
-        & > header > div {
-            display: contents;
+        & > header {
+
+            position: relative;
+
+            /* The box naming the column stands aside from the layout, leaving the head laid out as given. */
+
+            & > div {
+                display: contents;
+            }
+
+            /*
+             * The menu glyph leaves a sixth of its square blank on either side, so beyond the padding every edge button
+             * gives up it reaches out by that blank, and its stroke stands on the edge of the main column as the close
+             * stroke does on the edge of the drawer.
+             */
+
+            @container style(--skin--viewport-medium: off) {
+                & > button:first-child {
+                    display: inline-flex;
+                    margin-inline-start: calc(-1 * (var(--skin--spacing-025) + var(--skin--scaling-100) / 6));
+                }
+            }
+
+            /*
+             * A turning mark stands at the end of the head, above the veil, over whatever control ends the head, on a
+             * solid disc of the page colour. It takes the box an edge button takes, glyph and padding reaching into the
+             * gutter alike, so it covers that control exactly. It turns once a second whatever motion the reader asked
+             * for: the turn is what tells waiting, a still mark saying nothing, and a small glyph turning in place
+             * carries none of the travel reduced motion guards against, so its duration is stated outright.
+             */
+
+            & > .busy {
+
+                position: absolute;
+                inset-block: 0;
+                inset-inline-end: calc(var(--clay-tool-main-inset) - var(--skin--spacing-025));
+                z-index: 1;
+
+                display: flex;
+                block-size: fit-content;
+                margin-block: auto;
+                padding: var(--skin--spacing-025);
+                border-radius: 50%;
+
+                color: var(--skin--color-label);
+                background-color: var(--skin--background-color);
+                pointer-events: none;
+
+                & svg {
+                    animation: clay-tool-turn 1s linear infinite;
+                }
+
+            }
+
+        }
+
+        /*
+         * The body holds the content in a block of its own, which takes whatever room the body leaves, so the copy
+         * after it rests at the bottom of a body the content is too short to fill and follows the content otherwise.
+         * The content keeps the plain flow of a block, its margins meeting as they would anywhere else.
+         */
+
+        & > div {
+
+            display: flex;
+            flex-direction: column;
+
+            & > div {
+                flex: auto;
+            }
+
         }
 
     }
 
-    & > aside > * {
-        padding-inline: var(--clay-tool-side-inset);
-    }
-
-    /* A locked side column fades what it holds, while the column itself keeps its place. */
-
-    &[locked] > aside > * {
-        opacity: var(--skin--opacity-locked);
-    }
-
-    & > main > * {
-        padding-inline: var(--clay-tool-main-inset);
-    }
 
     /*
      * Heads and feet are rows stretching to the taller of each pair and centring what they hold vertically, so the two
@@ -310,115 +422,20 @@ clay-tool {
          * A button at either end of a bar, standing in it or in the row filling it, reaches into the gutter by the
          * padding around what it carries, so its glyph or label stands on the edge the rest of the column starts from
          * rather than inset by a padding that shows only on hover. The box naming the main column counts as the bar
-         * it stands aside in, so a row it holds is reached through it.
+         * it stands aside in, so a row it holds is reached through it, and a turning mark is not counted as an end.
+         * The ends are matched without weight, so a control that reaches out by a measure of its own states it plainly.
          */
 
-        & > :is(button, clay-button):first-child,
-        & > :not(clay-button):first-child > :is(button, clay-button):first-child,
-        & > div:first-child > :not(clay-button):first-child > :is(button, clay-button):first-child {
+        & > :is(button, clay-button):where(:first-child),
+        & > :not(clay-button):where(:first-child) > :is(button, clay-button):where(:first-child),
+        & > div:where(:first-child) > :not(clay-button):where(:first-child) > :is(button, clay-button):where(:first-child) {
             margin-inline-start: calc(-1 * var(--skin--spacing-025));
         }
 
-        & > :is(button, clay-button):nth-last-child(1 of :not(.busy)),
-        & > :not(clay-button):nth-last-child(1 of :not(.busy)) > :is(button, clay-button):last-child,
-        & > div:nth-last-child(1 of :not(.busy)) > :not(clay-button):last-child > :is(button, clay-button):last-child {
+        & > :is(button, clay-button):where(:nth-last-child(1 of :not(.busy))),
+        & > :not(clay-button):where(:nth-last-child(1 of :not(.busy))) > :is(button, clay-button):where(:last-child),
+        & > div:where(:nth-last-child(1 of :not(.busy))) > :not(clay-button):where(:last-child) > :is(button, clay-button):where(:last-child) {
             margin-inline-end: calc(-1 * var(--skin--spacing-025));
-        }
-
-    }
-
-    /*
-     * The menu and close buttons are bare glyphs standing only where the side column is a drawer, the menu button
-     * leading the main head and the close button ending the side head, clear of what the head holds. Their padding
-     * widens the target past the glyph, and the menu button keeps the same distance from the title beside it.
-     */
-
-    & > * > header > button {
-
-        display: none;
-        flex: none;
-        padding: var(--skin--spacing-025);
-        margin-inline-end: var(--skin--spacing-025);
-        border-style: none;
-        background-color: transparent;
-        color: inherit;
-        cursor: pointer;
-
-        /*
-         * They answer the pointer as a subtle button does, deepening the surface under them by a share of the page
-         * ink on hover and twice that while pressed, so the reader sees the whole target rather than the glyph alone.
-         */
-
-        &:enabled:hover {
-            background-color: color-mix(in oklab, var(--skin--color) 6%, transparent);
-        }
-
-        &:enabled:active {
-            background-color: color-mix(in oklab, var(--skin--color) 12%, transparent);
-        }
-
-        &:disabled {
-            opacity: var(--skin--opacity-disabled);
-            cursor: default;
-        }
-
-    }
-
-    /*
-     * An open side column is a drawer: it covers the main column from the start edge, as wide as the side column but
-     * never wider than the window, over a blanket dimming what lies underneath. It slides in and the blanket fades in
-     * over the fastest step, so the reader sees where the drawer came from and where it will go; it leaves at once.
-     */
-
-    & > aside:popover-open {
-
-        display: grid;
-        grid-template-rows: auto minmax(0, 1fr) auto;
-
-        position: fixed;
-        inset-block: 0;
-        inset-inline: 0 auto;
-        inline-size: min(100%, var(--clay-tool-side-width));
-        block-size: 100%;
-        overflow: hidden;
-
-        color: inherit;
-        background-color: var(--skin--background-color-overlay);
-
-        translate: 0;
-        transition: translate var(--skin--duration-fast) ease-out;
-
-        @starting-style {
-            translate: -100% 0;
-        }
-
-        &:dir(rtl) {
-            @starting-style {
-                translate: 100% 0;
-            }
-        }
-
-        & > header > button {
-            /*
-             * The close glyph is drawn in the middle half of its square, so beyond the padding every edge button
-             * gives up it reaches out by an eighth of the glyph, short of the quarter left blank, so the width of
-             * the stroke stays inside the edge of the drawer rather than spilling past it.
-             */
-
-            display: inline-flex;
-            margin-inline: auto calc(-1 * (var(--skin--spacing-025) + var(--skin--scaling-100) / 8));
-
-        }
-
-        &::backdrop {
-
-            background-color: var(--skin--background-color-blanket);
-            transition: background-color var(--skin--duration-fast) ease-out;
-
-            @starting-style {
-                background-color: transparent;
-            }
-
         }
 
     }
@@ -443,6 +460,43 @@ clay-tool {
         animation-timeline: var(--clay-tool-scroll);
         animation-range: 0 var(--skin--spacing-100);
 
+        /*
+         * The menu and close buttons are bare glyphs standing only where the side column is a drawer, the menu button
+         * leading the main head and the close button ending the side head, clear of what the head holds. Their padding
+         * widens the target past the glyph, and the menu button keeps the same distance from the title beside it.
+         */
+
+        & > button {
+
+            display: none;
+            flex: none;
+            padding: var(--skin--spacing-025);
+            margin-inline-end: var(--skin--spacing-025);
+            border-style: none;
+            background-color: transparent;
+            color: inherit;
+            cursor: pointer;
+
+            /*
+             * They answer the pointer as a subtle button does, deepening the surface under them by a share of the page
+             * ink on hover and twice that while pressed, so the reader sees the whole target rather than the glyph.
+             */
+
+            &:enabled:hover {
+                background-color: color-mix(in oklab, var(--skin--color) 6%, transparent);
+            }
+
+            &:enabled:active {
+                background-color: color-mix(in oklab, var(--skin--color) 12%, transparent);
+            }
+
+            &:disabled {
+                opacity: var(--skin--opacity-disabled);
+                cursor: default;
+            }
+
+        }
+
     }
 
     & > * > div {
@@ -450,23 +504,6 @@ clay-tool {
         padding-block: var(--clay-tool-body-inset);
         overflow: auto;
         scroll-timeline: var(--clay-tool-scroll) block;
-    }
-
-    /*
-     * The main body holds the content in a block of its own, which takes whatever room the body leaves, so the copy
-     * after it rests at the bottom of a body the content is too short to fill and follows the content otherwise. The
-     * content keeps the plain flow of a block, its margins meeting as they would anywhere else.
-     */
-
-    & > main > div {
-
-        display: flex;
-        flex-direction: column;
-
-        & > div {
-            flex: auto;
-        }
-
     }
 
     & > * > footer {
@@ -507,47 +544,6 @@ clay-tool {
 
     to {
         border-block-start-color: transparent;
-    }
-
-}
-
-
-/*
- * Below the medium viewport two columns no longer fit: the main column takes the whole frame, the side column stays
- * out of view until it is opened as a drawer, and the menu button leading the main head opens it. On a phone held
- * upright, below the small viewport, the drawer spans the whole window, as a side column narrower than that would
- * leave a sliver of the main column too thin to read. From the medium viewport up the frame keeps its two columns.
- */
-
-@container style(--skin--viewport-medium: off) {
-
-    clay-tool {
-
-        grid-template-columns: var(--clay-tool-main-track);
-
-        & > aside:not(:popover-open) {
-            display: none;
-        }
-
-        /*
-         * The menu glyph leaves a sixth of its square blank on either side, so beyond the padding every edge button
-         * gives up it reaches out by that blank, and its stroke stands on the edge of the main column as the close
-         * stroke does on the edge of the drawer.
-         */
-
-        & > main > header > button:first-child {
-            display: inline-flex;
-            margin-inline-start: calc(-1 * (var(--skin--spacing-025) + var(--skin--scaling-100) / 6));
-        }
-
-    }
-
-}
-
-@container style(--skin--viewport-small: off) {
-
-    clay-tool > aside:popover-open {
-        inline-size: 100%;
     }
 
 }
