@@ -53,7 +53,7 @@ clay-tabs {
             /*
              * The mark and the label are eased rather than switched, so the eye follows the strip to whichever tab
              * took over. The fast step is what a pointer change owes, and a reader who asked for less motion gets
-             * none of it, the duration collapsing to zero on its own.
+             * none of it, the duration collapsing to zero on its own with no rule of this sheet needed for it.
              */
 
             transition-property: color, border-bottom-color;
@@ -74,8 +74,8 @@ clay-tabs {
             /*
              * A tab carries no box of its own, so the mark is drawn around the label, held clear of the word by the
              * offset so the two are not read as one. The colour the strip marks its choice with is left to the rule
-             * below, which a focused tab never restates: the ring says where the keyboard stands, the rule says
-             * which panel is on show.
+             * below, which a focused tab never restates: the ring says where the keyboard stands, while the rule
+             * says which panel is on show, and the two never stand in for each other.
              */
 
             &:focus-visible {
@@ -132,8 +132,7 @@ clay-tabs {
 
         /*
          * The menu takes the width of its labels, so the ring left on it after a choice wraps the control rather
-         * than the whole bar; it gives that width up where the labels outrun the room, the platform clipping what
-         * is left.
+         * than the whole bar. It gives that width up where the labels outrun the room, and the platform clips the rest.
          */
 
         & > select {
@@ -173,8 +172,7 @@ clay-tabs {
 
             /*
              * The list is drawn by the platform, on a surface of its own that the inherited page colours would not
-             * stand against. Each entry is handed the page colours outright, so it stays readable wherever it is
-             * drawn.
+             * stand against. Each entry is handed the page colours outright, so it stays readable there.
              */
 
             & > option {
@@ -196,8 +194,7 @@ clay-tabs {
      * How loud the tabs appear is told in the rule closing them off, and never in colour. The quiet step keeps none,
      * the labels reading as part of what surrounds them where the ordinary step sets the panel on show apart from
      * them. The strip and the bar standing in for it drop the rule alike, so the two go on looking the same, and the
-     * mark the chosen tab wears stays either way: it is what the strip says its choice with rather than part of the
-     * rule.
+     * mark the chosen tab wears stays either way: it states the choice, and is no part of the rule.
      */
 
     &[look="subtle"] {
@@ -222,7 +219,7 @@ clay-tabs {
         /*
          * A panel takes no stop of its own, so it reaches the keyboard only where it is the box that scrolls and the
          * browser hands it one on that account. It is a box either way, so the ring is drawn on its contour, the
-         * padding setting it clear of what it holds.
+         * padding above setting it clear of the first line of whatever the panel holds.
          */
 
         &:focus-visible {
@@ -232,31 +229,34 @@ clay-tabs {
 
     }
 
-}
+    /*
+     * Tabs stating no look of their own take the one the area around them is written in, read off the `--skin--look`
+     * token through a style query: a rule has no other way to branch on a value, and the token inherits, so every
+     * widget sits inside a container answering for it without a rule declaring one. The attribute has to be absent
+     * for the container to have a say, which is why the widget renders it only where the consumer asked for a look,
+     * and why the rules here hold themselves to tabs carrying none, leaving a stated look to the rules above.
+     *
+     * Only the quiet step is restated, the ordinary one being what the rules above already draw; an area written loud
+     * lands there too, there being no step above it here. The declarations are the ones the attribute rules carry,
+     * restated rather than shared: a style query is a conditional group and takes rules of its own, so the two forms
+     * of the same step cannot be written as one selector, nor as one rule nested under the other.
+     */
 
+    &:not([look]) {
 
-/*
- * Tabs stating no look of their own take the one the area around them is written in, read off the `--skin--look`
- * token through a style query: a rule has no other way to branch on a value, and the token inherits, so every widget
- * sits inside a container answering for it without a rule declaring one. The attribute has to be absent for the
- * container to have a say, which is why the widget renders it only where the consumer asked for a look, and why each
- * rule here holds itself to tabs carrying none.
- *
- * Only the quiet step is restated, the ordinary one being what the rules above already draw; an area written loud
- * lands there too, there being no step above it here. The declarations are the ones the attribute rules carry,
- * restated rather than shared: a style query is a conditional group and takes rules of its own, so the two forms of
- * the same step cannot be written as one selector.
- */
+        @container style(--skin--look: subtle) {
 
-@container style(--skin--look: subtle) {
+            & > nav,
+            & > span {
+                border-bottom-style: none;
+            }
 
-    clay-tabs:not([look]) > nav,
-    clay-tabs:not([look]) > span {
-        border-bottom-style: none;
-    }
+            & > nav > label {
+                padding-bottom: var(--skin--spacing-025);
+            }
 
-    clay-tabs:not([look]) > nav > label {
-        padding-bottom: var(--skin--spacing-025);
+        }
+
     }
 
 }

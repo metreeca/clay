@@ -83,32 +83,27 @@ clay-empty {
 
     }
 
-}
+    /*
+     * An area stating no look of its own takes the one the area around it is written in, read off the `--skin--look`
+     * token through a style query, as buttons and links do: the attribute has to be absent for the container to have
+     * a say, so each rule here holds itself to an area carrying none, restating the declarations of the rules above.
+     */
 
-
-/*
- * An area stating no look of its own takes the one the area around it is written in, read off the `--skin--look`
- * token through a style query, as buttons and links do: the attribute has to be absent for the container to have a
- * say, so each rule here holds itself to an area carrying none, restating the declarations of the rules above.
- */
-
-@container style(--skin--look: normal) {
-
-    clay-empty:not([look]) {
-        padding: var(--skin--spacing-100);
-        border: var(--skin--border-width) dotted var(--skin--border-color);
-        border-radius: var(--skin--border-radius-050);
+    @container style(--skin--look: normal) {
+        &:not([look]) {
+            padding: var(--skin--spacing-100);
+            border: var(--skin--border-width) dotted var(--skin--border-color);
+            border-radius: var(--skin--border-radius-050);
+        }
     }
 
-}
-
-@container style(--skin--look: strong) {
-
-    clay-empty:not([look]) {
-        padding: var(--skin--spacing-100);
-        border: var(--skin--border-width) dotted var(--skin--border-color);
-        border-radius: var(--skin--border-radius-050);
-        background-color: var(--skin--background-color-sunken);
+    @container style(--skin--look: strong) {
+        &:not([look]) {
+            padding: var(--skin--spacing-100);
+            border: var(--skin--border-width) dotted var(--skin--border-color);
+            border-radius: var(--skin--border-radius-050);
+            background-color: var(--skin--background-color-sunken);
+        }
     }
 
 }

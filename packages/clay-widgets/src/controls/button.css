@@ -332,68 +332,67 @@ clay-button {
 
     }
 
-}
+    /*
+     * A button stating no look of its own takes the one the area around it is written in, read off the `--skin--look`
+     * token through a style query: a rule has no other way to branch on a value, and the token inherits, so every
+     * button sits inside a container answering for it without a rule declaring one. The attribute has to be absent
+     * for the container to have a say, which is why the widget renders it only where the consumer asked for a look,
+     * and why each rule here holds itself to a button carrying none.
+     *
+     * The declarations are the ones the attribute rules above carry, restated rather than shared: a style query is a
+     * conditional group and takes rules of its own, so the two forms of a step cannot be written as one selector.
+     */
 
+    @container style(--skin--look: normal) {
 
-/*
- * A button stating no look of its own takes the one the area around it is written in, read off the `--skin--look`
- * token through a style query: a rule has no other way to branch on a value, and the token inherits, so every button
- * sits inside a container answering for it without a rule declaring one. The attribute has to be absent for the
- * container to have a say, which is why the widget renders it only where the consumer asked for a look, and why each
- * rule here holds itself to a button carrying none.
- *
- * The declarations are the ones the attribute rules above carry, restated rather than shared: a style query is a
- * conditional group and takes rules of its own, so the two forms of the same step cannot be written as one selector.
- */
+        &:not([look]) > button {
+            border: var(--skin--border-width) var(--skin--border-style) var(--skin--border-color);
+        }
 
-@container style(--skin--look: normal) {
-
-    clay-button:not([look]) > button {
-        border: var(--skin--border-width) var(--skin--border-style) var(--skin--border-color);
     }
 
-}
+    @container style(--skin--look: strong) {
 
-@container style(--skin--look: strong) {
+        &:not([look]) {
 
-    clay-button:not([look]) {
+            & > button {
 
-        & > button {
+                border: var(--skin--border-width) var(--skin--border-style) var(--skin--border-color);
+                font-weight: var(--skin--font-weight-strong);
 
-            border: var(--skin--border-width) var(--skin--border-style) var(--skin--border-color);
-            font-weight: var(--skin--font-weight-strong);
+                & .lucide {
+                    stroke-width: calc(1.5 * var(--skin--stroke-width));
+                }
 
-            & .lucide {
-                stroke-width: calc(1.5 * var(--skin--stroke-width));
+            }
+
+            &:not([labelled]) > button {
+                border-color: color-mix(in oklab, var(--skin--border-color) 50%, var(--skin--color));
+            }
+
+            &:not([mode="normal"]) > button:enabled {
+                border-color: currentColor;
+            }
+
+            &[labelled] > button .lucide {
+                stroke-width: calc(1.25 * var(--skin--stroke-width));
             }
 
         }
 
-        &:not([labelled]) > button {
-            border-color: color-mix(in oklab, var(--skin--border-color) 50%, var(--skin--color));
-        }
-
-        &:not([mode="normal"]) > button:enabled {
-            border-color: currentColor;
-        }
-
-        &[labelled] > button .lucide {
-            stroke-width: calc(1.25 * var(--skin--stroke-width));
-        }
-
     }
 
-}
+    @container style(--skin--look: subtle) {
 
-@container style(--skin--look: subtle) {
+        &:not([look]) > button {
 
-    clay-button:not([look]) > button {
+            column-gap: var(--skin--spacing-025);
+            border-style: none;
 
-        column-gap: var(--skin--spacing-025);
-        border-style: none;
+            &:enabled {
+                background-color: transparent;
+            }
 
-        &:enabled {
-            background-color: transparent;
         }
 
     }

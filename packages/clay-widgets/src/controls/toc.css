@@ -23,23 +23,21 @@ clay-toc {
 
     display: block;
 
-}
+    /* From the large viewport up the whole column fits, so the summary steps out of view and the entries always show. */
 
-/*
- * From the large viewport up the whole column fits, so the summary steps out of view and the entries always show.
- */
+    @container style(--skin--viewport-large: on) {
 
-@container style(--skin--viewport-large: on) {
+        & > details {
 
-    clay-toc > details {
+            & > summary {
+                display: none;
+            }
 
-        & > summary {
-            display: none;
-        }
+            &::details-content {
+                content-visibility: visible;
+                display: contents;
+            }
 
-        &::details-content {
-            content-visibility: visible;
-            display: contents;
         }
 
     }

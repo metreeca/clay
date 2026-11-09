@@ -90,42 +90,41 @@ clay-image {
 
     }
 
-}
+    /*
+     * An image stating no look of its own takes the one the area around it is written in, read off the `--skin--look`
+     * token through a style query, as buttons and links do: the attribute has to be absent for the container to have
+     * a say, so each rule here holds itself to an image carrying none, restating the declarations of the rules above.
+     */
 
+    @container style(--skin--look: normal) {
 
-/*
- * An image stating no look of its own takes the one the area around it is written in, read off the `--skin--look`
- * token through a style query, as buttons and links do: the attribute has to be absent for the container to have a
- * say, so each rule here holds itself to an image carrying none, restating the declarations of the rules above.
- */
+        &:not([look]) {
 
-@container style(--skin--look: normal) {
+            & img {
+                border: var(--skin--border-width) var(--skin--border-style) var(--skin--border-color);
+            }
 
-    clay-image:not([look]) {
+            & figcaption {
+                padding-inline: var(--skin--border-width);
+            }
 
-        & img {
-            border: var(--skin--border-width) var(--skin--border-style) var(--skin--border-color);
-        }
-
-        & figcaption {
-            padding-inline: var(--skin--border-width);
         }
 
     }
 
-}
+    @container style(--skin--look: strong) {
 
-@container style(--skin--look: strong) {
+        &:not([look]) {
 
-    clay-image:not([look]) {
+            padding: var(--skin--spacing-050);
 
-        padding: var(--skin--spacing-050);
+            border: var(--skin--border-width) var(--skin--border-style) var(--skin--border-color);
+            border-radius: var(--skin--border-radius-050);
 
-        border: var(--skin--border-width) var(--skin--border-style) var(--skin--border-color);
-        border-radius: var(--skin--border-radius-050);
+            & img {
+                border-radius: var(--skin--border-radius-025);
+            }
 
-        & img {
-            border-radius: var(--skin--border-radius-025);
         }
 
     }

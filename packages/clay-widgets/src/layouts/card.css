@@ -70,31 +70,32 @@ clay-card {
     /* The title and the badge share the first row, sitting on a common baseline as an infobox entry does. */
 
     & > span {
+
         grid-row: 1;
         align-self: baseline;
+
+        /* The title names the resource the card sums up, so it reads at the strong weight whatever it holds. */
+
+        &:not(.badge) {
+            grid-column: 1;
+            justify-self: stretch;
+            font-weight: var(--skin--font-weight-strong);
+        }
+
     }
 
-    & > div,
-    & > i {
-        grid-row: 2;
-    }
-
-    & > span:not(.badge),
     & > div {
+
+        grid-row: 2;
         grid-column: 1;
         justify-self: stretch;
-    }
 
-    /* The title names the resource the card sums up, so it reads at the strong weight whatever it holds. */
+        /* A description with no image beneath the side column runs on under the badge. */
 
-    & > span:not(.badge) {
-        font-weight: var(--skin--font-weight-strong);
-    }
+        &:last-child {
+            grid-column: 1 / -1;
+        }
 
-    /* A description with no image beneath the side column runs on under the badge. */
-
-    & > div:last-child {
-        grid-column: 1 / -1;
     }
 
     /*
@@ -128,6 +129,7 @@ clay-card {
         /* The image may shrink below its own width, so a picture wider than the cap leaves the column as capped. */
 
         min-width: 0;
+        grid-row: 2;
         grid-column: 2;
         justify-self: end;
         text-align: end;

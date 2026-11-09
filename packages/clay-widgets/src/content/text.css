@@ -30,27 +30,22 @@ clay-text {
         font-weight: var(--skin--font-weight-strong);
     }
 
-}
+    /*
+     * A run stating no look of its own takes the one the area around it is written in, read off the `--skin--look`
+     * token through a style query, restating the declarations of the attribute rules above: a style query is a
+     * conditional group taking rules of its own, so the two forms of the same step cannot be written as one selector.
+     */
 
-
-/*
- * A run stating no look of its own takes the one the area around it is written in, read off the `--skin--look`
- * token through a style query, restating the declarations of the attribute rules above: a style query is a
- * conditional group taking rules of its own, so the two forms of the same step cannot be written as one selector.
- */
-
-@container style(--skin--look: subtle) {
-
-    clay-text:not([look]) {
-        color: var(--skin--color-label);
+    @container style(--skin--look: subtle) {
+        &:not([look]) {
+            color: var(--skin--color-label);
+        }
     }
 
-}
-
-@container style(--skin--look: strong) {
-
-    clay-text:not([look]) {
-        font-weight: var(--skin--font-weight-strong);
+    @container style(--skin--look: strong) {
+        &:not([look]) {
+            font-weight: var(--skin--font-weight-strong);
+        }
     }
 
 }
