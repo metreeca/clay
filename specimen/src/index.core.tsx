@@ -32,7 +32,7 @@ import { Icon } from "@metreeca/clay-widgets/icon";
 import { Link } from "@metreeca/clay-widgets/link";
 import { Logo } from "@metreeca/clay-widgets/logo";
 import { TOC, type TOCEntry } from "@metreeca/clay-widgets/toc";
-import { Tool } from "@metreeca/clay-widgets/tool";
+import { Junk } from "@metreeca/clay-widgets/junk";
 import { useFetch } from "@metreeca/clay/fetch";
 import { useStorage } from "@metreeca/clay/storage";
 import { type ComponentChildren, createElement, Fragment } from "preact";
@@ -45,7 +45,7 @@ export const ClayPath = "/clay/";
 export const ClayWidgetsPath = "/clay-widgets/";
 export const ClayMarkdownPath = "/clay-markdown/";
 
-export const ToolPath = `${ClayWidgetsPath}tool`;
+export const JunkPath = `${ClayWidgetsPath}junk`;
 
 
 /**
@@ -126,7 +126,7 @@ export function Page({
 	}
 
 
-	return <Tool
+	return <Junk
 
 		wide={wide}
 		lock={lock}
@@ -198,7 +198,7 @@ export function Page({
 			{sample.view}
 		</Fragment>)}
 
-	</Tool>;
+	</Junk>;
 
 }
 

@@ -90,7 +90,7 @@ export interface TOCEntry {
  * column on demand, folding again as soon as one of its links is followed, so it takes one line above the content.
  *
  * The outline follows the box its sections scroll in, whatever lays the page out: the nearest scrolling ancestor of
- * the first section on the page, such as the content column of a {@link @metreeca/clay-widgets!tool.Tool tool}, or
+ * the first section on the page, such as the content column of a {@link @metreeca/clay-widgets!junk.Junk junk}, or
  * the document where no ancestor scrolls. The reading line and the end of the page are measured on the part of that
  * box left in view, short of its scroll padding, so a header standing over the box is not counted as room to read in.
  *

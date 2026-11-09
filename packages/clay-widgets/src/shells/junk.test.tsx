@@ -16,10 +16,10 @@
 
 import { type JSX, render } from "preact";
 import { describe, expect, it } from "vitest";
-import { Tool } from "./tool.js";
+import { Junk } from "./junk.js";
 
 
-describe("Tool", () => {
+describe("Junk", () => {
 
 	const rendered = (element: JSX.Element): null | HTMLElement => {
 
@@ -27,7 +27,7 @@ describe("Tool", () => {
 
 		render(element, container);
 
-		return container.querySelector<HTMLElement>(":scope > clay-tool");
+		return container.querySelector<HTMLElement>(":scope > clay-junk");
 
 	};
 
@@ -46,19 +46,19 @@ describe("Tool", () => {
 
 		it("sets the tray beside the content", async () => {
 
-			expect(parts(<Tool tray="Tray">Content</Tool>)).toEqual(["aside", "main"]);
+			expect(parts(<Junk tray="Tray">Content</Junk>)).toEqual(["aside", "main"]);
 
 		});
 
 		it("leaves out the tray for content standing on its own", async () => {
 
-			expect(parts(<Tool main logo="Logo" tray="Tray" info="Info">Content</Tool>)).toEqual(["main"]);
+			expect(parts(<Junk main logo="Logo" tray="Tray" info="Info">Content</Junk>)).toEqual(["main"]);
 
 		});
 
 		it("lays each column out as a header over a body over a footer", async () => {
 
-			const shell = rendered(<Tool logo="Logo" tray="Tray" info="Info" head="Head" foot="Foot">Content</Tool>);
+			const shell = rendered(<Junk logo="Logo" tray="Tray" info="Info" head="Head" foot="Foot">Content</Junk>);
 
 			expect(column(shell, "aside")).toEqual(["header", "section", "footer"]);
 			expect(column(shell, "main")).toEqual(["header", "section", "footer"]);
@@ -67,7 +67,7 @@ describe("Tool", () => {
 
 		it("keeps the header and footer of a column standing while its opposite number holds something", async () => {
 
-			const shell = rendered(<Tool logo="Logo" tray="Tray" foot="Foot">Content</Tool>);
+			const shell = rendered(<Junk logo="Logo" tray="Tray" foot="Foot">Content</Junk>);
 
 			expect(column(shell, "aside")).toEqual(["header", "section", "footer"]);
 			expect(column(shell, "main")).toEqual(["header", "section", "footer"]);
@@ -76,7 +76,7 @@ describe("Tool", () => {
 
 		it("leaves out the headers and the footers when neither column has anything for them", async () => {
 
-			const shell = rendered(<Tool tray="Tray">Content</Tool>);
+			const shell = rendered(<Junk tray="Tray">Content</Junk>);
 
 			expect(column(shell, "aside")).toEqual(["section"]);
 			expect(column(shell, "main")).toEqual(["section"]);
@@ -89,7 +89,7 @@ describe("Tool", () => {
 
 		it("sets the mark at its start and the meta at its end", async () => {
 
-			const shell = rendered(<Tool logo="Logo" meta="Meta">Content</Tool>);
+			const shell = rendered(<Junk logo="Logo" meta="Meta">Content</Junk>);
 
 			expect(Array.from(shell?.querySelectorAll(":scope > aside > header > *") ?? [], node => node.textContent))
 				.toEqual(["Logo", "Meta"]);
@@ -98,7 +98,7 @@ describe("Tool", () => {
 
 		it("holds the meta at its end with no mark before it", async () => {
 
-			const shell = rendered(<Tool meta="Meta">Content</Tool>);
+			const shell = rendered(<Junk meta="Meta">Content</Junk>);
 
 			expect(Array.from(shell?.querySelectorAll(":scope > aside > header > *") ?? [], node => node.textContent))
 				.toEqual(["Meta"]);
@@ -111,7 +111,7 @@ describe("Tool", () => {
 
 		it("holds the standing controls over the info", async () => {
 
-			const shell = rendered(<Tool tray="Tray" info="Info">Content</Tool>);
+			const shell = rendered(<Junk tray="Tray" info="Info">Content</Junk>);
 
 			expect(text(shell, ":scope > aside > section")).toBe("Tray");
 			expect(text(shell, ":scope > aside > footer")).toBe("Info");
@@ -120,8 +120,8 @@ describe("Tool", () => {
 
 		it("takes the tray out of reach while locked", async () => {
 
-			expect(rendered(<Tool lock tray="Tray">Content</Tool>)?.querySelector("aside")?.inert).toBe(true);
-			expect(rendered(<Tool tray="Tray">Content</Tool>)?.querySelector("aside")?.inert).toBe(false);
+			expect(rendered(<Junk lock tray="Tray">Content</Junk>)?.querySelector("aside")?.inert).toBe(true);
+			expect(rendered(<Junk tray="Tray">Content</Junk>)?.querySelector("aside")?.inert).toBe(false);
 
 		});
 
@@ -131,7 +131,7 @@ describe("Tool", () => {
 
 		it("holds the content and the notice closing it", async () => {
 
-			const shell = rendered(<Tool copy="Copy">Content</Tool>);
+			const shell = rendered(<Junk copy="Copy">Content</Junk>);
 
 			expect(text(shell, ":scope > main > section > div")).toBe("Content");
 			expect(text(shell, ":scope > main > section > footer")).toBe("Copy");
@@ -140,7 +140,7 @@ describe("Tool", () => {
 
 		it("is named by the heading on show", async () => {
 
-			const shell = rendered(<Tool head="Widgets">Content</Tool>);
+			const shell = rendered(<Junk head="Widgets">Content</Junk>);
 			const main = shell?.querySelector(":scope > main");
 			const title = main?.getAttribute("aria-labelledby");
 
@@ -151,7 +151,7 @@ describe("Tool", () => {
 
 		it("is named by the way out where one stands in place of the heading", async () => {
 
-			const shell = rendered(<Tool head="Widgets" done="Done">Content</Tool>);
+			const shell = rendered(<Junk head="Widgets" done="Done">Content</Junk>);
 			const title = shell?.querySelector(":scope > main")?.getAttribute("aria-labelledby");
 
 			expect(shell?.querySelector(`[id="${title}"]`)?.textContent).toBe("Done");
@@ -160,13 +160,13 @@ describe("Tool", () => {
 
 		it("is left unnamed with no heading on show", async () => {
 
-			expect(rendered(<Tool>Content</Tool>)?.querySelector("main")?.hasAttribute("aria-labelledby")).toBe(false);
+			expect(rendered(<Junk>Content</Junk>)?.querySelector("main")?.hasAttribute("aria-labelledby")).toBe(false);
 
 		});
 
 		it("takes the focus a navigation lands on without standing in the tab order", async () => {
 
-			expect(rendered(<Tool>Content</Tool>)?.querySelector("main")?.getAttribute("tabindex")).toBe("-1");
+			expect(rendered(<Junk>Content</Junk>)?.querySelector("main")?.getAttribute("tabindex")).toBe("-1");
 
 		});
 
@@ -176,7 +176,7 @@ describe("Tool", () => {
 
 		it("sets the heading at the start of the header and the menu at its end", async () => {
 
-			const shell = rendered(<Tool head="Head" menu="Menu">Content</Tool>);
+			const shell = rendered(<Junk head="Head" menu="Menu">Content</Junk>);
 
 			expect(Array.from(shell?.querySelectorAll(":scope > main > header > *") ?? [], node => node.textContent))
 				.toEqual(["Head", "Menu"]);
@@ -185,7 +185,7 @@ describe("Tool", () => {
 
 		it("sets the foot in the footer", async () => {
 
-			expect(text(rendered(<Tool foot="Foot">Content</Tool>), ":scope > main > footer")).toBe("Foot");
+			expect(text(rendered(<Junk foot="Foot">Content</Junk>), ":scope > main > footer")).toBe("Foot");
 
 		});
 
@@ -195,7 +195,7 @@ describe("Tool", () => {
 
 		it("states the switches on the frame", async () => {
 
-			const shell = rendered(<Tool lock main wide>Content</Tool>);
+			const shell = rendered(<Junk lock main wide>Content</Junk>);
 
 			expect(["locked", "main", "wide"].map(name => shell?.hasAttribute(name))).toEqual([true, true, true]);
 
@@ -203,7 +203,7 @@ describe("Tool", () => {
 
 		it("leaves the switches off the frame when not set", async () => {
 
-			const shell = rendered(<Tool>Content</Tool>);
+			const shell = rendered(<Junk>Content</Junk>);
 
 			expect(["locked", "main", "wide"].map(name => shell?.hasAttribute(name))).toEqual([false, false, false]);
 

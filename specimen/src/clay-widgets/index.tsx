@@ -20,7 +20,7 @@
  * @module
  */
 
-import { Page, type Sample, ToolPath } from "@metreeca/specimen/index.core.js";
+import { Page, type Sample, JunkPath } from "@metreeca/specimen/index.core.js";
 import { Buttons } from "@metreeca/specimen/clay-widgets/button.js";
 import { Cards } from "@metreeca/specimen/clay-widgets/card.js";
 import { Choices } from "@metreeca/specimen/clay-widgets/choice.js";
@@ -47,7 +47,7 @@ import { Contents } from "@metreeca/specimen/clay-widgets/toc.js";
 
 const samples: readonly Sample[] = [
 
-	{ id: "tool", group: "Shells", title: "Tool", href: ToolPath },
+	{ id: "junk", group: "Shells", title: "Junk", href: JunkPath },
 
 	{ id: "stack", group: "Layouts", title: "Stack", view: <Stacks/> },
 	{ id: "strip", group: "Layouts", title: "Strip", view: <Strips/> },
@@ -90,7 +90,7 @@ export function ClayWidgets() {
 		title="Interface Components"
 		lead={<>
 			The pieces an interface is assembled from, each drawn from the design system tokens alone. Every sample on
-			this page is a live widget, laid out in a tool shell; the shells listed first in the outline open on screens of their own.
+			this page is a live widget, laid out in a junk shell; the shells listed first in the outline open on screens of their own.
 		</>}
 
 		samples={samples}

@@ -15,7 +15,7 @@
  */
 
 /**
- * Tool shell samples.
+ * Junk shell samples.
  *
  * @module
  */
@@ -27,22 +27,22 @@ import { Icon } from "@metreeca/clay-widgets/icon";
 import { Link } from "@metreeca/clay-widgets/link";
 import { Logo } from "@metreeca/clay-widgets/logo";
 import { TOC } from "@metreeca/clay-widgets/toc";
-import { Tool } from "@metreeca/clay-widgets/tool";
+import { Junk } from "@metreeca/clay-widgets/junk";
 import { useFetch } from "@metreeca/clay/fetch";
 import { ClayWidgetsPath, schemes, useScheme } from "@metreeca/specimen/index.core.js";
 import { useState } from "preact/hooks";
-import "./tool.css";
+import "./junk.css";
 
 
 /**
- * Creates the tool shell screen.
+ * Creates the junk shell screen.
  *
- * Lays a whole screen out in a tool shell, filling every slot and offering every switch from the bars of the shell
+ * Lays a whole screen out in a junk shell, filling every slot and offering every switch from the bars of the shell
  * itself, while the content documents what each slot holds and what each switch does.
  *
- * @returns The tool shell screen
+ * @returns The junk shell screen
  */
-export function ToolScreen() {
+export function JunkScreen() {
 
 	const fetch = useFetch();
 
@@ -62,13 +62,13 @@ export function ToolScreen() {
 	}
 
 
-	return <Tool
+	return <Junk
 
 		wide={wide}
 		lock={lock}
 		main={main}
 
-		logo={<Link look="subtle" href={`${ClayWidgetsPath}#tool`}>
+		logo={<Link look="subtle" href={`${ClayWidgetsPath}#junk`}>
 			<Logo/><span class="brand">@metreeca/<strong>clay</strong></span>
 		</Link>}
 
@@ -84,7 +84,7 @@ export function ToolScreen() {
 			title="Lock the tray" onClick={edit}
 		/>}
 
-		head="Tool Shell"
+		head="Junk Shell"
 
 		menu={<>
 
@@ -118,13 +118,13 @@ export function ToolScreen() {
 
 		copy={<span>{app.copy}</span>}
 
-		foot={<code>@metreeca/clay-widgets/tool</code>}
+		foot={<code>@metreeca/clay-widgets/junk</code>}
 
 	>
 
 		<hgroup>
 			<p>@metreeca/clay-widgets</p>
-			<h1>Tool Shell</h1>
+			<h1>Junk Shell</h1>
 			<p>The frame the screens of an app or a tool are laid out in. A screen states what goes in each slot and
 				leaves arranging and scrolling them to the shell.</p>
 		</hgroup>
@@ -135,7 +135,7 @@ export function ToolScreen() {
 			footers, whichever holds more.</p>
 
 		<hgroup id="slots">
-			<p>Tool Shell</p>
+			<p>Junk Shell</p>
 			<h2>Slots</h2>
 		</hgroup>
 
@@ -184,7 +184,7 @@ export function ToolScreen() {
 		</table>
 
 		<hgroup id="switches">
-			<p>Tool Shell</p>
+			<p>Junk Shell</p>
 			<h2>Switches</h2>
 		</hgroup>
 
@@ -200,7 +200,7 @@ export function ToolScreen() {
 		</ul>
 
 		<hgroup id="waiting">
-			<p>Tool Shell</p>
+			<p>Junk Shell</p>
 			<h2>Waiting</h2>
 		</hgroup>
 
@@ -208,6 +208,6 @@ export function ToolScreen() {
 			turning mark stands in place of the controls at the end of the content header. The search control there runs
 			an exchange against a mock answering after a second, so the whole of it can be watched.</p>
 
-	</Tool>;
+	</Junk>;
 
 }

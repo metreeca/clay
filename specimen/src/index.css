@@ -60,7 +60,7 @@
  * sample stands a step above the text, so the page title alone reads as the loudest line on the page.
  */
 
-clay-tool hgroup {
+clay-junk hgroup {
 
     padding-top: var(--skin--spacing-150);
 
@@ -81,7 +81,7 @@ clay-tool hgroup {
  * their own; the panel keeps clear of the prose before and after it, as a figure does.
  */
 
-clay-tool :is(.controls, .toolbar, .columns, .frames, .paths, .notes) {
+clay-junk :is(.controls, .toolbar, .columns, .frames, .paths, .notes) {
     padding: var(--skin--spacing-150);
     border-style: var(--skin--border-style);
     border-radius: var(--skin--border-radius-075);

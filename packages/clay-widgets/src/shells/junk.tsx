@@ -15,13 +15,13 @@
  */
 
 /**
- * Tool shell.
+ * Junk shell.
  *
  * Offers the frame the screens of an app or a tool are laid out in: a tray of standing controls beside the content of
  * the moment, each with a header and a footer of its own, so a screen states what goes in each slot and leaves
  * arranging and scrolling them, and keeping the bars of the two columns level, to the frame itself.
  *
- * @module tool
+ * @module junk
  */
 
 import { useFetching } from "@metreeca/clay/fetch";
@@ -29,11 +29,11 @@ import { opt } from "@metreeca/core";
 import { type ComponentChildren, createElement } from "preact";
 import { useEffect, useId } from "preact/hooks";
 import { Icon } from "../glyphs/icon.js";
-import "./tool.css";
+import "./junk.css";
 
 
 /**
- * Creates a tool shell.
+ * Creates a junk shell.
  *
  * Lays a screen out as two columns filling the window, the tray beside the content, each a header over a body over a
  * footer. Each column scrolls on its own, the whole height of the window: its header and its footer stay in view at
@@ -77,9 +77,9 @@ import "./tool.css";
  *
  * @param options The widget configuration
  *
- * @returns The tool shell
+ * @returns The junk shell
  */
-export function Tool({
+export function Junk({
 
 	wide = false,
 	lock = false,
@@ -222,8 +222,8 @@ export function Tool({
 		// whole pixels, so neither bar rounds to a height of its own and the rules of the two land on the same line
 
 		const level = () => {
-			element.style.setProperty("--clay-tool-head-size", `${Math.ceil(natural(element, "header"))}px`);
-			element.style.setProperty("--clay-tool-foot-size", `${Math.ceil(natural(element, "footer"))}px`);
+			element.style.setProperty("--clay-junk-head-size", `${Math.ceil(natural(element, "header"))}px`);
+			element.style.setProperty("--clay-junk-foot-size", `${Math.ceil(natural(element, "footer"))}px`);
 		};
 
 		const observer = new ResizeObserver(level);
@@ -252,7 +252,7 @@ export function Tool({
 
 	const busy = fetching && <span class="busy" inert><Icon.RefreshCw/></span>;
 
-	return createElement("clay-tool", {
+	return createElement("clay-junk", {
 
 		"aria-busy": fetching,
 
