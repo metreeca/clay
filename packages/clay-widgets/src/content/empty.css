@@ -16,12 +16,11 @@
 
 /* An empty state fills its space and centres a large glyph over the wording saying why the content is missing. */
 
-/* The largest share of the area the glyph takes. */
+/* The size of the glyph, falling back to twice the wording when unset. */
 
 @property --clay-empty-icon-size {
     syntax: "*";
     inherits: true;
-    initial-value: 20%;
 }
 
 clay-empty {
@@ -30,10 +29,14 @@ clay-empty {
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    gap: var(--skin--spacing-100);
 
     width: 100%;
     height: 100%;
 
+    /* Set on the area rather than on a sibling of the glyph, since the wording is usually a bare text node. */
+
+    font-size: var(--skin--font-size-large);
     text-align: center;
 
     /* The wording carries meaning, so it takes the label colour, which holds its contrast. */
@@ -62,24 +65,16 @@ clay-empty {
 
     & > svg:first-child {
 
-        aspect-ratio: 1;
+        flex: none;
 
-        width: 100%;
-        height: 100%;
-
-        max-width: var(--clay-empty-icon-size);
-        max-height: var(--clay-empty-icon-size);
+        width: var(--clay-empty-icon-size, var(--skin--scaling-200));
+        height: var(--clay-empty-icon-size, var(--skin--scaling-200));
 
         color: var(--skin--color-disabled);
 
-        /* A share of the standard weight, which would otherwise grow heavy with the glyph. */
+        /* A little over the inverse of the 2× scaling above, so the strokes draw a shade heavier than inline glyphs. */
 
-        stroke-width: calc(0.3 * var(--skin--stroke-width));
-
-        & + * {
-            margin-top: var(--skin--spacing-100);
-            font-size: var(--skin--font-size-large);
-        }
+        stroke-width: calc(0.6 * var(--skin--stroke-width));
 
     }
 

@@ -31,8 +31,8 @@ import "./empty.css";
  * Creates an empty state.
  *
  * Fills the space it is handed and centres what it carries there, so a table, a list or a media frame with nothing to
- * show holds its place instead of collapsing. A glyph leading the content is drawn large, as the mark of the whole
- * area, with the wording beneath it.
+ * show holds its place instead of collapsing. A glyph leading the content marks the area above the wording, drawn at
+ * twice its size whatever the size of the area, unless the `--clay-empty-icon-size` property sets a size of its own.
  *
  * @param options The widget configuration
  *
