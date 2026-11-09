@@ -117,21 +117,24 @@ export const app = immutable({
 	 * The URL of the app icon, as the `<link rel="icon">` tag states it, or `undefined` if the tag is missing.
 	 */
 	get icon(): Optional<string> {
-		return "icon" in cache ? cache.icon : cache.icon = document.querySelector<HTMLLinkElement>("link[rel=icon]")?.href || undefined;
+		return "icon" in cache ? cache.icon
+			: cache.icon = document.querySelector<HTMLLinkElement>("link[rel=icon]")?.href || undefined;
 	},
 
 	/**
 	 * The app description, as the `<meta name="description">` tag states it, or `undefined` if missing or empty.
 	 */
 	get info(): Optional<string> {
-		return "info" in cache ? cache.info : cache.info = document.querySelector<HTMLMetaElement>("meta[name=description]")?.content || undefined;
+		return "info" in cache ? cache.info
+			: cache.info = document.querySelector<HTMLMetaElement>("meta[name=description]")?.content || undefined;
 	},
 
 	/**
 	 * The app copyright, as the `<meta name="copyright">` tag states it, or `undefined` if missing or empty.
 	 */
 	get copy(): Optional<string> {
-		return "copy" in cache ? cache.copy : cache.copy = document.querySelector<HTMLMetaElement>("meta[name=copyright]")?.content || undefined;
+		return "copy" in cache ? cache.copy
+			: cache.copy = document.querySelector<HTMLMetaElement>("meta[name=copyright]")?.content || undefined;
 	}
 
 });
