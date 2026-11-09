@@ -362,9 +362,36 @@ describe("Tool", () => {
 			expect(button?.getAttribute("popovertarget")).toBe(side(tool)?.id);
 			expect(button?.getAttribute("popovertargetaction")).toBe("hide");
 			expect(button?.getAttribute("aria-label")).toBe("Close menu");
-			expect(button?.hasAttribute("autofocus")).toBe(true);
 			expect(button?.previousElementSibling?.textContent).toBe("meta");
 			expect(button?.nextElementSibling).toBeNull();
+
+		});
+
+		it("moves the focus to the close button as the drawer opens", async () => {
+
+			const tool = rendered(<Tool>content</Tool>);
+			const aside = side(tool)!;
+			const main = tool.querySelector<HTMLElement>(":scope > main")!;
+
+			const toggle = (state: "open" | "closed") => act(async () => {
+				aside.dispatchEvent(Object.assign(new Event("toggle"), { newState: state }));
+			});
+
+			main.focus();
+
+			await toggle("closed");
+
+			expect(document.activeElement).toBe(main);
+
+			await toggle("open");
+
+			expect(document.activeElement).toBe(close(tool));
+
+		});
+
+		it("leaves autofocus off the close button, which browsers flag on addresses with a fragment", async () => {
+
+			expect(close(rendered(<Tool>content</Tool>))?.hasAttribute("autofocus")).toBe(false);
 
 		});
 

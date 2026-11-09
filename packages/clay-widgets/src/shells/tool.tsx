@@ -235,12 +235,15 @@ export function Tool({
 			popover={lock ? "manual" : "auto"}
 			inert={lock || fetching}
 			onClick={follow}
-			onToggle={event => toggle(opened(event))}
+			onToggle={event => {
+				reveal(event);
+				toggle(opened(event));
+			}}
 		>
 
 			<header>
 				{meta}
-				<button type="button" popovertarget={side} popovertargetaction="hide" autofocus aria-label="Close menu">
+				<button type="button" popovertarget={side} popovertargetaction="hide" aria-label="Close menu">
 					<Icon.Close/>
 				</button>
 			</header>
@@ -351,6 +354,19 @@ function medium(): boolean {
  */
 function opened(event: TargetedEvent<HTMLElement>): boolean {
 	return "newState" in event && event.newState === "open";
+}
+
+
+/**
+ * Moves the focus to the close button as the drawer opens, so a keyboard lands inside what now covers the main column;
+ * `autofocus` would take it there too, but browsers flag it on every page loaded from an address with a fragment.
+ *
+ * @param event The toggle the side column went through
+ */
+function reveal(event: TargetedEvent<HTMLElement>): void {
+	if ( opened(event) ) {
+		event.currentTarget.querySelector<HTMLElement>(":scope > header > button")?.focus();
+	}
 }
 
 
