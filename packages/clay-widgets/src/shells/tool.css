@@ -95,8 +95,51 @@
     inherits: true;
 }
 
+/*
+ * The gutters every part reads, settled once on the frame. They are registered as lengths so a gutter stated in `em`
+ * resolves against the type of the frame and is handed down as a fixed length, rather than resolving against each
+ * part: a head or a foot set in a size of its own keeps the gutters of the parts beside and below it, and what the
+ * columns hold stays on one line from head to foot. They are internal, offering no consumer anything beyond the knobs.
+ */
+
+@property --clay-tool-side-inset {
+    syntax: "<length>";
+    inherits: true;
+    initial-value: 0px;
+}
+
+@property --clay-tool-main-inset {
+    syntax: "<length>";
+    inherits: true;
+    initial-value: 0px;
+}
+
+@property --clay-tool-head-inset {
+    syntax: "<length>";
+    inherits: true;
+    initial-value: 0px;
+}
+
+@property --clay-tool-body-inset {
+    syntax: "<length>";
+    inherits: true;
+    initial-value: 0px;
+}
+
+@property --clay-tool-foot-inset {
+    syntax: "<length>";
+    inherits: true;
+    initial-value: 0px;
+}
+
 
 clay-tool {
+
+    --clay-tool-side-inset: var(--clay-tool-side-gutter, var(--skin--spacing-100));
+    --clay-tool-main-inset: var(--clay-tool-main-gutter, var(--skin--spacing-100));
+    --clay-tool-head-inset: var(--clay-tool-head-gutter, var(--skin--spacing-075));
+    --clay-tool-body-inset: var(--clay-tool-body-gutter, var(--skin--spacing-150));
+    --clay-tool-foot-inset: var(--clay-tool-foot-gutter, var(--skin--spacing-075));
 
     /* The track of the main column, capped at the width limit unless the frame goes wide. */
 
@@ -125,7 +168,7 @@ clay-tool {
 
     & > aside > * {
         grid-column: 1;
-        padding-inline: var(--clay-tool-side-gutter, var(--skin--spacing-100));
+        padding-inline: var(--clay-tool-side-inset);
     }
 
     /* A locked side column fades what it holds, while the column itself keeps its place. */
@@ -138,7 +181,7 @@ clay-tool {
 
     & > main > * {
         grid-column: -2;
-        padding-inline: var(--clay-tool-main-gutter, var(--skin--spacing-100));
+        padding-inline: var(--clay-tool-main-inset);
     }
 
     /*
@@ -153,19 +196,19 @@ clay-tool {
 
     & > * > header {
         grid-row: 1;
-        padding-block: var(--clay-tool-head-gutter, var(--skin--spacing-075));
+        padding-block: var(--clay-tool-head-inset);
         font-size: var(--clay-tool-head-font-size, var(--skin--font-size));
     }
 
     & > * > div {
         grid-row: 2;
-        padding-block: var(--clay-tool-body-gutter, var(--skin--spacing-150));
+        padding-block: var(--clay-tool-body-inset);
         overflow: auto;
     }
 
     & > * > footer {
         grid-row: 3;
-        padding-block: var(--clay-tool-foot-gutter, var(--skin--spacing-075));
+        padding-block: var(--clay-tool-foot-inset);
         font-size: var(--clay-tool-foot-font-size, var(--skin--font-size-small));
     }
 
