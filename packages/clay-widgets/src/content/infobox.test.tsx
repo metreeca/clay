@@ -38,6 +38,22 @@ describe("Infobox", () => {
 		Array.from(rendered(element)?.querySelectorAll("dd") ?? [], ({ textContent }) => textContent);
 
 
+	describe("wrapping", () => {
+
+		it("keeps values to one line by default", async () => {
+
+			expect(rendered(<Infobox>{{ label: "value" }}</Infobox>)?.hasAttribute("wrap")).toBe(false);
+
+		});
+
+		it("wraps values if required", async () => {
+
+			expect(rendered(<Infobox wrap>{{ label: "value" }}</Infobox>)?.hasAttribute("wrap")).toBe(true);
+
+		});
+
+	});
+
 	describe("placement", () => {
 
 		it("places at the start by default", async () => {

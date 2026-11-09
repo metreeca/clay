@@ -45,6 +45,7 @@ import "./infobox.css";
  */
 export function Infobox({
 
+	wrap = false,
 	place = "start",
 
 	children
@@ -52,11 +53,17 @@ export function Infobox({
 }: {
 
 	/**
-	 * Where labels and values sit across the infobox. At the `start`, the default, labels keep to the left edge of their
-	 * column as values do, wrapping alike, so both columns read as aligned text; in the `center`, labels sit flush
-	 * against the values they introduce and long values wrap across lines, as fits the body of a page; with `spread`,
-	 * labels keep to the left edge and values to the right one, clipped to a single line, so that each pair spans the
-	 * full width of the infobox without wrapping and a list of properties stays compact, as fits a narrow sidebar.
+	 * Whether long values wrap across lines, so each is shown in full, as fits the body of a page. A word too long for
+	 * its column breaks wherever needed. By default each value is clipped to a single line with an ellipsis, so a long
+	 * value never stretches its row and a list of properties stays compact, as fits a narrow sidebar.
+	 */
+	wrap?: boolean
+
+	/**
+	 * Where labels and values sit across the infobox. At the `start`, the default, labels keep to the left edge of
+	 * their column as values do, so both columns read as aligned text. In the `center`, labels sit flush against the
+	 * values they introduce. With `spread`, labels keep to the left edge and values to the right one, so each pair
+	 * spans the full width of the infobox and reads as a single row from one edge to the other.
 	 */
 	place?: "start" | "center" | "spread"
 
@@ -81,6 +88,7 @@ export function Infobox({
 
 	return entries.length > 0 ? createElement("clay-infobox", {
 
+		wrap,
 		place
 
 	}, <dl>{entries.map(({ label, value }, index) =>
