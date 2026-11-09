@@ -97,14 +97,6 @@
       "@metreeca/source": "./src/controls/toc.css",
       "default": "./dist/controls/toc.css"
     },
-    "./junk": {
-      "@metreeca/source": "./src/shells/junk.tsx",
-      "default": "./dist/shells/junk.js"
-    },
-    "./junk.css": {
-      "@metreeca/source": "./src/shells/junk.css",
-      "default": "./dist/shells/junk.css"
-    },
     "./tool": {
       "@metreeca/source": "./src/shells/tool.tsx",
       "default": "./dist/shells/tool.js"

@@ -28,15 +28,14 @@ import { app } from "@metreeca/clay";
 import { isContent } from "@metreeca/clay-widgets";
 import { Button } from "@metreeca/clay-widgets/button";
 import { Choice } from "@metreeca/clay-widgets/choice";
-import { Icon } from "@metreeca/clay-widgets/icon";
 import { Link } from "@metreeca/clay-widgets/link";
-import { Logo } from "@metreeca/clay-widgets/logo";
+import { Strip } from "@metreeca/clay-widgets/strip";
 import { TOC, type TOCEntry } from "@metreeca/clay-widgets/toc";
-import { Junk } from "@metreeca/clay-widgets/junk";
-import { useFetch } from "@metreeca/clay/fetch";
+import { Tool } from "@metreeca/clay-widgets/tool";
+import { useRouter } from "@metreeca/clay/router";
 import { useStorage } from "@metreeca/clay/storage";
 import { type ComponentChildren, createElement, Fragment } from "preact";
-import { useEffect, useState } from "preact/hooks";
+import { useEffect } from "preact/hooks";
 
 
 export const Root = "/";
@@ -45,7 +44,6 @@ export const ClayPath = "/clay/";
 export const ClayWidgetsPath = "/clay-widgets/";
 export const ClayMarkdownPath = "/clay-markdown/";
 
-export const JunkPath = `${ClayWidgetsPath}junk`;
 export const ToolPath = `${ClayWidgetsPath}tool`;
 
 
@@ -109,86 +107,36 @@ export function Page({
 
 }) {
 
-	const fetch = useFetch();
-
-	const [wide, setWide] = useState(false);
-	const [lock, setLock] = useState(false);
-	const [user, setUser] = useState<string>();
+	const router = useRouter();
 
 	const [scheme, setScheme] = useScheme();
 
+	return <Tool
 
-	function edit() {
+		meta={<Button
+			icon={<span class="brand">@metreeca/<strong>clay</strong></span>}
+			look="subtle"
+			name="@metreeca/clay"
+			onClick={() => router(Root)}
+		/>}
 
-		setLock(true);
+		head={<Strip grow place="head" align="center" space="spacing100">
 
-		setTimeout(() => setLock(false), 1000);
+			<nav class="packages" aria-label="Packages">
+				<Link active look="subtle" href={`${ClayPath}*`}>Hooks</Link>
+				<Link active look="subtle" href={`${ClayWidgetsPath}*`}>Widgets</Link>
+				<Link active look="subtle" href={`${ClayMarkdownPath}*`}>Markdown</Link>
+			</nav>
 
-	}
-
-
-	return <Junk
-
-		wide={wide}
-		lock={lock}
-
-		logo={<Link look="subtle" href={Root}>
-			<Logo/><span class="brand">@metreeca/<strong>clay</strong></span>
-		</Link>}
-
-		head={<nav class="packages" aria-label="Packages">
-			<Link active look="subtle" href={`${ClayPath}*`}>Hooks</Link>
-			<Link active look="subtle" href={`${ClayWidgetsPath}*`}>Widgets</Link>
-			<Link active look="subtle" href={`${ClayMarkdownPath}*`}>Markdown</Link>
-		</nav>}
-
-		menu={<>
-
-			<Button
-				icon={wide ? <Icon.ChevronsRightLeft/> : <Icon.ChevronsLeftRight/>}
-				look="subtle"
-				name={wide ? "Cap the measure" : "Go widescreen"}
-				title={wide ? "Cap the measure" : "Go widescreen"}
-				onClick={() => setWide(!wide)}
-			/>
-
-			<Button
-				icon={<Icon.Search/>}
-				look="subtle"
-				name="Run an exchange"
-				title="Run an exchange"
-				onClick={() => { void fetch(app.base); }}
-			/>
+			<small>v{VERSION}</small>
 
 			<Choice name="Colour scheme" options={schemes} value={scheme} onChange={setScheme}/>
 
-		</>}
+		</Strip>}
 
 		tray={<TOC name="Sections" compact entries={outline(samples)}/>}
 
-		info={user
-
-			? <>
-				<span>{user}</span>
-				<Button icon={<Icon.LogOut/>} look="subtle" name="Sign out" title="Sign out"
-					onClick={() => setUser(undefined)}
-				/>
-			</>
-
-			: <>
-				<Button icon={<Icon.LogIn/>} look="subtle" name="Sign in" title="Sign in"
-					onClick={() => setUser("user@example.com")}
-				/>
-				<Button icon={lock ? <Icon.Unlock/> : <Icon.Lock/>} look="subtle" name="Lock the tray"
-					title="Lock the tray" onClick={edit}
-				/>
-			</>
-		}
-
-		foot={<>
-			<span>{app.copy}</span>
-			<span>v{VERSION}</span>
-		</>}
+		copy={<small>{app.copy}</small>}
 
 	>
 
@@ -199,7 +147,7 @@ export function Page({
 			{sample.view}
 		</Fragment>)}
 
-	</Junk>;
+	</Tool>;
 
 }
 

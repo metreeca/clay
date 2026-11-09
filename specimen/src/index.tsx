@@ -30,11 +30,10 @@ import { Router, Routes } from "@metreeca/clay/router";
 import { Transfer } from "@metreeca/clay/transfer";
 import { createFetch } from "@metreeca/http";
 import { mock } from "@metreeca/http/mock";
-import { ClayMarkdownPath, ClayPath, ClayWidgetsPath, Root, JunkPath, ToolPath } from "@metreeca/specimen/index.core.js";
+import { ClayMarkdownPath, ClayPath, ClayWidgetsPath, Root, ToolPath } from "@metreeca/specimen/index.core.js";
 import { Clay } from "@metreeca/specimen/clay/index.js";
 import { ClayMarkdown } from "@metreeca/specimen/clay-markdown/index.js";
 import { ClayWidgets } from "@metreeca/specimen/clay-widgets/index.js";
-import { JunkScreen } from "@metreeca/specimen/clay-widgets/shells/junk.js";
 import { ToolScreen } from "@metreeca/specimen/clay-widgets/shells/tool.js";
 import { render } from "preact";
 import "./index.css";
@@ -57,8 +56,7 @@ function Specimen() {
 
 					[Root]: ClayPath,
 
-					[JunkPath]: <JunkScreen/>, // ahead of the package page whose subtree it lies in
-					[ToolPath]: <ToolScreen/>,
+					[ToolPath]: <ToolScreen/>, // ahead of the package page whose subtree it lies in
 
 					[ClayPath]: <Clay/>,
 					[ClayWidgetsPath]: <ClayWidgets/>,

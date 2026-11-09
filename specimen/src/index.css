@@ -25,7 +25,6 @@
 .brand {
 
     font-family: var(--skin--font-family-heading);
-    font-size: var(--skin--font-size-large);
     font-weight: var(--skin--font-weight-strong);
     color: var(--skin--color-subtle);
 
@@ -54,25 +53,36 @@
 
 }
 
-clay-junk {
+clay-tool {
+
+    /* The shell takes no height of its own, so every page gives it the whole of the window. */
+
+    block-size: 100dvh;
+
+    /* The home button spans the side head, its brand set at the start, so the whole bar leads back home. */
+
+    & > aside > header > clay-button {
+
+        flex: auto;
+
+        & > button {
+            justify-content: flex-start;
+        }
+
+    }
 
     /*
-     * The heading group opening the page keeps the display size the design system gives it, while the one opening
-     * each sample stands a step above the text, so the page title alone reads as the loudest line on the page.
+     * The heading group opening the page keeps the display size the design system gives it and starts the body, level
+     * with the first line of the outline beside it. The one opening each sample stands a step above the text and a
+     * step clear of the sample before it, so the page title alone reads as the loudest line on the page.
      */
 
-    & hgroup {
+    & hgroup:has(> h2) {
 
-        padding-top: var(--skin--spacing-150);
+        padding-top: var(--skin--spacing-100);
 
-        &:has(> h2) {
-
-            padding-top: var(--skin--spacing-100);
-
-            & > h2 {
-                font-size: var(--skin--font-size-large);
-            }
-
+        & > h2 {
+            font-size: var(--skin--font-size-large);
         }
 
     }
