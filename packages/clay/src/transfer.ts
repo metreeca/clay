@@ -109,9 +109,18 @@ import { type Optional } from "@metreeca/core";
 import { type ComponentChildren, createContext, createElement } from "preact";
 import { useContext, useEffect, useLayoutEffect, useState } from "preact/hooks";
 import { isReserved } from "./index.js";
-import { accepts, announcement, describe, edge, type Edge, milliseconds, type Outcome, settle } from "./transfer.core.js";
 
-export type { Edge, Outcome } from "./transfer.core.js";
+
+/**
+ * How long a finger rests on a draggable element before a drag starts, in milliseconds; a shorter press is left to the
+ * scroll or the tap the reader meant, so lists stay scrollable under the finger.
+ */
+const Hold = 350;
+
+/**
+ * How far a finger may wander while held before the press is taken as a scroll, in CSS pixels.
+ */
+const Slop = 8;
 
 /**
  * How close to the edge of a scrolling container the pointer brings a drag before the container scrolls, in CSS
@@ -127,18 +136,14 @@ const Hidden = {
 	overflow: "hidden", clip: "rect(0 0 0 0)", whiteSpace: "nowrap", border: "0"
 };
 
-/**
- * How long a finger rests on a draggable element before a drag starts, in milliseconds; a shorter press is left to the
- * scroll or the tap the reader meant, so lists stay scrollable under the finger.
- */
-const Hold = 350;
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /**
- * How far a finger may wander while held before the press is taken as a scroll, in CSS pixels.
+ * The service of the enclosing {@link Transfer} context; undefined outside any, leaving sources and targets inert.
  */
-const Slop = 8;
-
 const ServiceContext = createContext<Optional<Service>>(undefined);
+
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -235,6 +240,18 @@ export interface Destination {
 
 }
 
+/**
+ * The side of a target an item lands on, nearest the pointer along the vertical axis.
+ */
+export type Edge = "before" | "after";
+
+/**
+ * The answer of a target to a drop.
+ *
+ * Nothing takes the drop and `false` refuses it; a promise keeps it waiting until it settles, refusing it on `false`.
+ */
+export type Outcome = void | boolean | Promise<void | boolean>;
+
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -275,8 +292,8 @@ export function Transfer({
 		requestAnimationFrame(() => setMessage(message));
 	}));
 
-	useEffect(() => lacking(window) ? touch(document) : undefined, []);
-	useEffect(() => scroll(document), []);
+	useEffect(() => lacking() ? touch() : undefined, []);
+	useEffect(() => scroll(), []);
 
 	return createElement(ServiceContext.Provider, { value: service },
 		children,
@@ -874,8 +891,12 @@ function listen(
 	setOver: (over: Optional<Over>) => void
 ): () => void {
 
-	function side(event: DragEvent): Optional<Edge> {
-		return entry.edges ? edge(root.getBoundingClientRect(), event.clientY) : undefined;
+	function side({ clientY }: DragEvent): Optional<Edge> {
+
+		const { top, height } = root.getBoundingClientRect();
+
+		return !entry.edges ? undefined : clientY < top+height/2 ? "before" : "after";
+
 	}
 
 	function taken(event: DragEvent): event is DragEvent & { readonly dataTransfer: DataTransfer } {
@@ -966,30 +987,24 @@ function listen(
  *
  * Firefox for Android and Samsung Internet fire no drag events from a finger; other touch browsers drag natively.
  *
- * @param window The window to check
- *
- * @returns `true` if `window` runs on a touch device whose browser fires no drag events from a finger
+ * @returns `true` if the page runs on a touch device whose browser fires no drag events from a finger
  */
-function lacking(window: Window): boolean {
+function lacking(): boolean {
 
-	const { userAgent, maxTouchPoints } = window.navigator;
+	const { userAgent, maxTouchPoints } = navigator;
 
 	return maxTouchPoints > 0 && /Android/.test(userAgent) && /Firefox|SamsungBrowser/.test(userAgent);
 
 }
 
 /**
- * Follows touch gestures on the draggable elements of a document, dispatching the drag events they stand for: a long
+ * Follows touch gestures on the draggable elements of the page, dispatching the drag events they stand for: a long
  * press on a draggable element starts a drag, and the native drag events follow as the finger moves and lifts, so
  * sources and targets need no touch code of their own, the drag reaching them as a pointer drag would.
  *
- * @param document The document whose draggable elements are to follow touch; left alone if it has no window
- *
  * @returns A function removing the touch listeners and cancelling any drag under way
  */
-function touch(document: Document): () => void {
-
-	const window = document.defaultView;
+function touch(): () => void {
 
 	/*
 	 * The gesture is a foreign lifetime spanning several events, so its state is held in two locals the listeners
@@ -1068,7 +1083,7 @@ function touch(document: Document): () => void {
 	function end(x: number, y: number, cancelled: boolean): void {
 
 		if ( press !== undefined ) {
-			window?.clearTimeout(press.timer);
+			clearTimeout(press.timer);
 			press = undefined;
 		}
 
@@ -1099,8 +1114,8 @@ function touch(document: Document): () => void {
 			? event.target.closest<HTMLElement>("[draggable='true']")
 			: null;
 
-		if ( touch && source && window ) {
-			press = { source, x: touch.clientX, y: touch.clientY, timer: window.setTimeout(start, Hold) };
+		if ( touch && source ) {
+			press = { source, x: touch.clientX, y: touch.clientY, timer: setTimeout(start, Hold) };
 		}
 
 	}
@@ -1147,7 +1162,7 @@ function touch(document: Document): () => void {
  *
  * @returns A function removing the listener
  */
-function scroll(document: Document): () => void {
+function scroll(): () => void {
 
 	function onDragOver({ target, clientX, clientY }: DragEvent): void {
 
@@ -1181,5 +1196,95 @@ function scrollable(element: Element): Optional<Element> {
 		&& (element.scrollHeight > element.clientHeight || element.scrollWidth > element.clientWidth);
 
 	return scrolls ? element : element.parentElement ? scrollable(element.parentElement) : undefined;
+
+}
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/**
+ * Checks whether a target takes any of the types a transfer carries.
+ *
+ * Types are compared regardless of case, since browsers lowercase the types they expose during a drag.
+ *
+ * @param accept The MIME types the target takes
+ * @param types The MIME types the transfer carries
+ *
+ * @returns `true` if `accept` and `types` share at least one type
+ */
+function accepts(accept: readonly string[], types: readonly string[]): boolean {
+
+	const taken = new Set(accept.map(type => type.toLowerCase()));
+
+	return types.some(type => taken.has(type.toLowerCase()));
+
+}
+
+/**
+ * Settles the answer of a target to a drop.
+ *
+ * A rejected promise ends the wait as a fulfilled one does, taking the drop, and is passed on unhandled, as if it had
+ * never been returned, so a target reporting failures catches them in the promise it returns.
+ *
+ * @param outcome The answer of the target
+ *
+ * @returns A promise resolving to `false` if the target refused the drop, and to `true` otherwise
+ */
+function settle(outcome: Outcome): Promise<boolean> {
+
+	return Promise.resolve(outcome).then(value => value !== false, error => {
+
+		void Promise.reject(error); // passed on unhandled, as if the target had never returned it
+
+		return true;
+
+	});
+
+}
+
+/**
+ * Words the announcement closing a transfer.
+ *
+ * @param source The name of the item moved
+ * @param target The name of the target it was moved to
+ * @param taken Whether the target took the item
+ * @param edge The side of the target the item landed on, for a target taking edges; the target itself if omitted
+ *
+ * @returns The English sentence telling a reader how the transfer ended
+ */
+function announcement(source: string, target: string, taken: boolean, edge?: Edge): string {
+
+	const place = `${edge ?? "to"} ${target}`;
+
+	return taken ? `${source} moved ${place}.` : `Moving ${source} ${place} was refused.`;
+
+}
+
+/**
+ * Names the content of an outside drop for announcements.
+ *
+ * @param files The files dropped
+ *
+ * @returns The name of the file dropped, the count of the files dropped, or `Content` where no file was dropped
+ */
+function describe(files: readonly File[]): string {
+	return files.length > 1 ? `${files.length} files` : files[0]?.name ?? "Content";
+}
+
+/**
+ * Converts a CSS time to milliseconds.
+ *
+ * Takes both units CSS states times in: a registered `<time>` property reads back in seconds whatever unit it took.
+ *
+ * @param time The CSS time, such as `200ms` or `0.2s`
+ *
+ * @returns The duration of `time` in milliseconds, or `0` if `time` is no CSS time
+ */
+function milliseconds(time: string): number {
+
+	const match = /^\s*(-?[\d.]+)(ms|s)\s*$/i.exec(time);
+	const value = match ? parseFloat(match[1] ?? "") : NaN;
+
+	return Number.isFinite(value) ? match?.[2]?.toLowerCase() === "s" ? value*1000 : value : 0;
 
 }
