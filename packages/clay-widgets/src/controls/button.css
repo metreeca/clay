@@ -16,31 +16,34 @@
 
 /*
  * The colour, the type and the states of a button are the design system's, so the sheet holds only what the widget
- * owes on top of them. The element itself stands aside, laying the control out as the row or the grid around it
- * would lay out a button written by hand.
+ * owes on top of them. The element is a box exactly as large as the control it holds, so the row or the grid around
+ * it lays the button out, and offsets it at an edge, as it would a button written by hand.
  */
 
 clay-button {
 
-    display: contents;
+    /*
+     * A control is sized by what it carries, so it sits in a line of text as the native element does rather than
+     * taking the width of the block around it, which is what the flex row the design system gives every button
+     * would otherwise leave it with.
+     */
+
+    display: inline-flex;
+
+    /*
+     * A flex row takes its baseline from the first thing it carries, which is the glyph where a button is marked with
+     * one, so a row of buttons would sit at as many heights as it holds kinds. They line up on their middles instead,
+     * which is the one anchor a glyph and a label share.
+     */
+
+    vertical-align: middle;
 
     & > button {
 
-        /*
-         * A control is sized by what it carries, so it sits in a line of text as the native element does rather than
-         * taking the width of the block around it, which is what the flex row the design system gives every button
-         * would otherwise leave it with.
-         */
+        /* The control fills the element, so a row or a grid stretching the element stretches the control along. */
 
+        flex: auto;
         display: inline-flex;
-
-        /*
-         * A flex row takes its baseline from the first thing it carries, which is the glyph where a button is marked
-         * with one, so a row of buttons would sit at as many heights as it holds kinds. They line up on their middles
-         * instead, which is the one anchor a glyph and a label share.
-         */
-
-        vertical-align: middle;
 
         /*
          * A glyph standing alone leaves a box smaller than the minimum a pointer target is held to, so the control is
