@@ -41,24 +41,24 @@ export interface TOCEntry {
 	/**
 	 * What the entry reads as.
 	 */
-	readonly label: ComponentChildren
+	readonly label: ComponentChildren;
 
 	/**
 	 * The location the entry links to; a fragment naming an element on the page (`#colours`) makes the entry one the
 	 * outline marks while the reader is in its section. A group label leading nowhere if omitted.
 	 */
-	readonly href?: string
+	readonly href?: string;
 
 	/**
 	 * The browsing context the entry opens its location in, such as `_blank` for a screen of its own in a new tab,
 	 * which leaves the page holding the outline in place; the current one if omitted.
 	 */
-	readonly target?: string
+	readonly target?: string;
 
 	/**
 	 * The entries nested under this one, in page order; none if omitted.
 	 */
-	readonly entries?: readonly TOCEntry[]
+	readonly entries?: readonly TOCEntry[];
 
 }
 
@@ -81,9 +81,10 @@ export interface TOCEntry {
  *
  * A section the reader asks for, by following one of its links or by arriving with a fragment naming it, is marked at
  * once and stays marked while the page scrolls to it, until the reader scrolls on their own with the wheel, by touch,
- * with the pointer or from the keyboard. The location fragment follows the section marked in turn, replaced rather
- * than pushed so that scrolling adds no entries to the history, and cleared above the first section, so a reload or a
- * shared address lands on the section where the reader stood when the address was taken.
+ * with the pointer or from the keyboard. A section named on arrival is scrolled into view by the outline, even where
+ * the page renders its sections after loading or scrolls them in a box of its own. The location fragment follows the
+ * section marked in turn, replaced rather than pushed so that scrolling adds no entries to the history, and cleared
+ * above the first section, so a reload or a shared address lands where the reader stood when the address was taken.
  *
  * From the large viewport up, the outline stands as a column of entries; below it, the outline folds behind a single
  * line naming the section the reader is in, or the outline itself above the first section, and unfolds into the same
@@ -168,9 +169,14 @@ export function TOC({
 		const scroll = () => take(latest.scroll(metrics(latest.sections)));
 		const release = () => take(latest.release());
 
-		// a section the fragment names on arrival is pinned, and following the page leaves a pinned section alone
+		/*
+		 * A section the fragment names on arrival is pinned, and following the page leaves a pinned section alone. The
+		 * browser looks for it before the page is rendered, and never in a box scrolling of its own, so it is brought
+		 * into view here; a link followed later is left to the browser, which finds its section already on the page.
+		 */
 
 		select();
+		reveal(latest);
 		scroll();
 
 		/*
@@ -225,7 +231,10 @@ export function TOC({
  */
 function metrics(sections: readonly string[]): TOCMetrics {
 
-	const elements = sections.flatMap(id => opt(document.getElementById(id) ?? undefined, element => [{ id, element }], []));
+	const elements = sections.flatMap(id => opt(document.getElementById(id) ?? undefined, element => [{
+		id,
+		element
+	}], []));
 	const box = opt(elements[0]?.element, scroller);
 
 	const root = document.documentElement;
@@ -235,21 +244,26 @@ function metrics(sections: readonly string[]): TOCMetrics {
 	const paddingBottom = parseFloat(style.scrollPaddingBottom) || 0;
 
 	const { offset, client, scrolled, total } = box
-		? { offset: box.getBoundingClientRect().top, client: box.clientHeight, scrolled: box.scrollTop, total: box.scrollHeight }
+		? {
+			offset: box.getBoundingClientRect().top,
+			client: box.clientHeight,
+			scrolled: box.scrollTop,
+			total: box.scrollHeight
+		}
 		: { offset: 0, client: window.innerHeight, scrolled: window.scrollY, total: root.scrollHeight };
 
-	const origin = offset + paddingTop;
-	const height = client - paddingTop - paddingBottom;
+	const origin = offset+paddingTop;
+	const height = client-paddingTop-paddingBottom;
 
 	return {
 
-		tops: Object.fromEntries(elements.map(({ id, element }) => [id, element.getBoundingClientRect().top - origin])),
+		tops: Object.fromEntries(elements.map(({ id, element }) => [id, element.getBoundingClientRect().top-origin])),
 
 		height,
 
 		// a box with nothing to scroll is at its start as much as at its end, and is read by the reading line
 
-		end: scrolled > 0 && scrolled + client >= total - 1
+		end: scrolled > 0 && scrolled+client >= total-1
 
 	};
 
@@ -303,6 +317,13 @@ function observe(sections: readonly string[], listener: () => void): () => void 
 }
 
 /**
+ * Brings the section chosen into view, leaving the page where it stands if no section is chosen.
+ */
+function reveal({ current, pinned }: Outline): void {
+	opt(pinned ? current : undefined, id => document.getElementById(id)?.scrollIntoView());
+}
+
+/**
  * Brings the location fragment in step with the section the page puts the reader in, replacing the entry on show so
  * that scrolling leaves the history alone, and handing the router the state it keeps there unchanged.
  */
@@ -320,7 +341,10 @@ function sync({ current, pinned }: Outline): void {
  * Collects the ids of the sections an outline links to by fragment, in page order.
  */
 function targets(entries: readonly TOCEntry[]): readonly string[] {
-	return entries.flatMap(({ href, entries = [] }) => [fragment(href), ...targets(entries)]).filter(id => id !== undefined);
+	return entries.flatMap(({
+		href,
+		entries = []
+	}) => [fragment(href), ...targets(entries)]).filter(id => id !== undefined);
 }
 
 /**
@@ -355,7 +379,8 @@ function list(entries: readonly TOCEntry[], current: Optional<string>, accordion
 
 				{href === undefined
 					? <span>{label}</span>
-					: <a href={href} target={target} aria-current={current !== undefined && fragment(href) === current ? "location" : undefined}
+					:
+					<a href={href} target={target} aria-current={current !== undefined && fragment(href) === current ? "location" : undefined}
 						onClick={({ currentTarget }) => currentTarget.closest("clay-toc > details")?.removeAttribute("open")}
 					>{label}</a>
 				}

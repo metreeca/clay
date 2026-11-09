@@ -704,6 +704,42 @@ describe("TOC", () => {
 
 		});
 
+		it("brings the section the fragment names into view on arrival", async () => {
+
+			const reveal = vi.spyOn(Element.prototype, "scrollIntoView").mockImplementation(() => {});
+
+			history.replaceState(history.state, "", "#spacing");
+
+			await mount({ colours: 100, spacing: 800 });
+
+			expect(reveal).toHaveBeenCalledOnce();
+			expect(reveal.mock.contexts[0]).toBe(document.getElementById("spacing"));
+
+		});
+
+		it("leaves the page where it stands on arrival without a fragment naming a section", async () => {
+
+			const reveal = vi.spyOn(Element.prototype, "scrollIntoView").mockImplementation(() => {});
+
+			history.replaceState(history.state, "", "#elsewhere");
+
+			await mount({ colours: 100, spacing: 800 });
+
+			expect(reveal).not.toHaveBeenCalled();
+
+		});
+
+		it("leaves scrolling to a followed link to the browser", async () => {
+
+			const reveal = vi.spyOn(Element.prototype, "scrollIntoView").mockImplementation(() => {});
+
+			await mount({ colours: 100, spacing: 800 });
+			await follow("#spacing", { colours: -100, spacing: 600 });
+
+			expect(reveal).not.toHaveBeenCalled();
+
+		});
+
 		it("follows the page again once the reader scrolls on their own", async () => {
 
 			await mount({ colours: 100, spacing: 800 });
