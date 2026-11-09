@@ -150,6 +150,10 @@ clay-tool {
     grid-template-rows: auto minmax(0, 1fr) auto;
     justify-content: center;
 
+    /* The scroll position of each body reaches the bars beside it, which are its siblings rather than its children. */
+
+    timeline-scope: --clay-tool-side-scroll, --clay-tool-main-scroll;
+
     &[wide] {
         --clay-tool-main-track: minmax(0, 1fr);
     }
@@ -164,6 +168,16 @@ clay-tool {
 
     & > :is(aside, main) {
         display: contents;
+    }
+
+    /* Each column names the timeline its body scrolls, for the bars of the column to read. */
+
+    & > aside {
+        --clay-tool-scroll: --clay-tool-side-scroll;
+    }
+
+    & > main {
+        --clay-tool-scroll: --clay-tool-main-scroll;
     }
 
     & > aside > * {
@@ -194,22 +208,72 @@ clay-tool {
         align-items: center;
     }
 
+    /*
+     * A rule parts each bar from the body only while content lies hidden past it, so the reader sees there is more to
+     * scroll to rather than taking the edge of the body for the end of it. The rule under a head draws in over the
+     * first step of scrolling down, and the one over a foot draws out over the last step before the end. A body with
+     * nothing to scroll leaves both rules out, as does a browser unable to follow the scroll position.
+     */
+
     & > * > header {
+
         grid-row: 1;
         padding-block: var(--clay-tool-head-inset);
         font-size: var(--clay-tool-head-font-size, var(--skin--font-size));
+
+        border-block-end-style: var(--skin--border-style);
+        border-block-end-color: transparent;
+
+        animation: clay-tool-head-rule linear both;
+        animation-timeline: var(--clay-tool-scroll);
+        animation-range: 0 var(--skin--spacing-100);
+
     }
 
     & > * > div {
         grid-row: 2;
         padding-block: var(--clay-tool-body-inset);
         overflow: auto;
+        scroll-timeline: var(--clay-tool-scroll) block;
     }
 
     & > * > footer {
+
         grid-row: 3;
         padding-block: var(--clay-tool-foot-inset);
         font-size: var(--clay-tool-foot-font-size, var(--skin--font-size-small));
+
+        border-block-start-style: var(--skin--border-style);
+        border-block-start-color: transparent;
+
+        animation: clay-tool-foot-rule linear both;
+        animation-timeline: var(--clay-tool-scroll);
+        animation-range: calc(100% - var(--skin--spacing-100)) 100%;
+
+    }
+
+}
+
+@keyframes clay-tool-head-rule {
+
+    from {
+        border-block-end-color: transparent;
+    }
+
+    to {
+        border-block-end-color: var(--skin--border-color);
+    }
+
+}
+
+@keyframes clay-tool-foot-rule {
+
+    from {
+        border-block-start-color: var(--skin--border-color);
+    }
+
+    to {
+        border-block-start-color: transparent;
     }
 
 }
