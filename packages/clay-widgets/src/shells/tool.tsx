@@ -26,8 +26,9 @@
 import { useFetching } from "@metreeca/clay/fetch";
 import { useModel } from "@metreeca/clay/model";
 import { createState } from "@metreeca/core/state";
+import { skin } from "@metreeca/skin";
 import { type ComponentChildren, createElement, type TargetedEvent, type TargetedMouseEvent } from "preact";
-import { useId } from "preact/hooks";
+import { useEffect, useId } from "preact/hooks";
 import { Icon } from "../glyphs/icon.js";
 import "./tool.css";
 
@@ -61,6 +62,9 @@ import "./tool.css";
  * phone and as wide as the side column on a tablet, while the main column stays in place underneath and keeps its
  * state. A close button ends the head of the drawer, and focus moves to it as the drawer opens. Escape, a click
  * outside the drawer, or a link followed inside it closes the drawer and returns focus to the menu button.
+ *
+ * On such a viewport the heading of the screen also moves from the main head to the top of the main body, and scrolls
+ * away with the content it names. The main head keeps only the menu button and the menu, leaving the room to content.
  *
  * @param options The widget configuration
  *
@@ -125,7 +129,8 @@ export function Tool({
 
 
 	/**
-	 * The heading of the screen, such as its title, in the head of the main column.
+	 * The heading of the screen, such as its title, in the head of the main column. On a viewport too narrow for two
+	 * columns it opens the body of the main column instead, scrolling away with the content rather than standing over it.
 	 */
 	head?: ComponentChildren
 
@@ -177,6 +182,31 @@ export function Tool({
 
 	}));
 
+	const { split, sync } = useModel(() => createState<Viewport>({
+
+		split: medium(),
+
+		sync() {
+			return { split: medium() };
+		}
+
+	}));
+
+	/*
+	 * The switch lives in the cascade, which notifies no change, so the shell reads it again as the window is resized.
+	 * A transition starts from the state the render read, so the observer is renewed with every crossing it reports.
+	 */
+
+	useEffect(() => {
+
+		const observer = new ResizeObserver(() => sync());
+
+		observer.observe(document.documentElement);
+
+		return () => observer.disconnect();
+
+	}, [sync]);
+
 	return createElement("clay-tool", {
 
 		"aria-busy": fetching,
@@ -222,7 +252,8 @@ export function Tool({
 		{/*
 		 * The main column takes the focus from code alone, so a navigation can land the focus on it and a reader hears
 		 * its name, taken from the head, without a tab stop being added. The head is held in a box of its own only to
-		 * be referenced as that name, standing aside from the layout so the head lays out what it holds directly.
+		 * be referenced as that name, standing aside from the layout so the head lays out what it holds directly. Where
+		 * two columns do not fit, the head opens the body instead, as the copy closes it.
 		 */}
 
 		<main aria-labelledby={title} tabIndex={-1} inert={open || fetching}>
@@ -231,7 +262,7 @@ export function Tool({
 				{!main && <button type="button" popovertarget={side} disabled={lock} aria-label="Open menu">
 					<Icon.Menu/>
 				</button>}
-				{head && <div id={title}>{head}</div>}
+				{split && head && <div id={title}>{head}</div>}
 
 				{/*
 				 * The turning mark stands over the menu, which keeps its place hidden beneath, so the head holds its
@@ -245,6 +276,7 @@ export function Tool({
 			</header>
 
 			<div tabIndex={0}>
+				{!split && head && <header id={title}>{head}</header>}
 				<div>{children}</div>
 				{copy && <footer>{copy}</footer>}
 			</div>
@@ -276,6 +308,36 @@ interface Drawer {
 	 */
 	toggle(open: boolean): Drawer;
 
+}
+
+/**
+ * Whether the viewport fits two columns, as the design system states it.
+ */
+interface Viewport {
+
+	/**
+	 * Whether the side column stands beside the main one rather than as a drawer over it.
+	 */
+	readonly split: boolean;
+
+	/**
+	 * Reads the viewport again, once the window is resized.
+	 *
+	 * @returns The viewport as it now stands
+	 */
+	sync(): Viewport;
+
+}
+
+
+/**
+ * Tells whether the viewport fits two columns, reading the switch the design system turns on from the medium width up,
+ * so the shell follows the threshold wherever the design system sets it and whatever an app forces it to.
+ *
+ * @returns `true` if the medium viewport switch is on
+ */
+function medium(): boolean {
+	return getComputedStyle(document.documentElement).getPropertyValue(skin.viewportMedium).trim() === "on";
 }
 
 

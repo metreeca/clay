@@ -212,15 +212,140 @@ clay-tool {
     /*
      * Each column spans the three rows of the frame and lays its parts out on them, so the heads of both share one row
      * and the feet another, while the column stays a box of its own that can carry the focus and its landmark. Each
-     * names the timeline its body scrolls, for the bars of the column to read.
+     * names the timeline its body scrolls, for the bars of the column to read. The columns are matched without weight,
+     * so the parts both share weigh no more than they did as bare children, and the rules of either column win.
      */
 
-    & > :is(aside, main) {
+    & > :where(aside, main) {
+
         display: grid;
         grid-row: 1 / -1;
         grid-template-rows: subgrid;
         min-inline-size: 0;
         min-block-size: 0;
+
+        /*
+         * Heads and feet are rows stretching to the taller of each pair and centring what they hold vertically, so the
+         * two columns line up. What they hold keeps its own width from the start of the bar, unless it grows to fill
+         * the row, and never wraps, so a bar keeps the height of a single row whatever text it carries. Items too wide
+         * for the bar shrink, clipping what overflows them and ending clipped text with an ellipsis.
+         */
+
+        & > :is(header, footer) {
+
+            display: flex;
+            align-items: center;
+            white-space: nowrap;
+
+            & > * {
+                min-inline-size: 0;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+            /*
+             * A button at either end of a bar, standing in it or in the row filling it, reaches into the gutter by the
+             * padding around what it carries, so its glyph or label stands on the edge the rest of the column starts
+             * from rather than inset by a padding showing only on hover. The box naming the main column counts as the
+             * bar it stands aside in, so a row it holds is reached through it, and a turning mark is not counted as an
+             * end. The ends are matched without weight, so a control reaching out by a measure of its own states it.
+             */
+
+            & > :is(button, clay-button):where(:first-child),
+            & > :not(clay-button):where(:first-child) > :is(button, clay-button):where(:first-child),
+            & > div:where(:first-child) > :not(clay-button):where(:first-child) > :is(button, clay-button):where(:first-child) {
+                margin-inline-start: calc(-1 * var(--skin--spacing-025));
+            }
+
+            & > :is(button, clay-button):where(:nth-last-child(1 of :not(.busy))),
+            & > :not(clay-button):where(:nth-last-child(1 of :not(.busy))) > :is(button, clay-button):where(:last-child),
+            & > div:where(:nth-last-child(1 of :not(.busy))) > :not(clay-button):where(:last-child) > :is(button, clay-button):where(:last-child) {
+                margin-inline-end: calc(-1 * var(--skin--spacing-025));
+            }
+
+        }
+
+        /*
+         * A rule parts each bar from the body only while content lies hidden past it, so the reader sees there is more
+         * to scroll to rather than taking the edge of the body for the end of it. The rule under a head draws in over
+         * the first step of scrolling down, and the one over a foot draws out over the last step before the end. A body
+         * with nothing to scroll leaves both rules out, as does a browser unable to follow the scroll position.
+         */
+
+        & > header {
+
+            grid-row: 1;
+            padding-block: var(--clay-tool-head-inset);
+            font-size: var(--clay-tool-head-font-size, var(--skin--font-size));
+
+            border-block-end-style: var(--skin--border-style);
+            border-block-end-color: transparent;
+
+            animation: clay-tool-head-rule linear both;
+            animation-timeline: var(--clay-tool-scroll);
+            animation-range: 0 var(--skin--spacing-100);
+
+            /*
+             * The menu and close buttons are bare glyphs shown only where the side column is a drawer, the menu button
+             * leading the main head and the close button ending the side head, clear of what the head holds. Their
+             * padding widens the target past the glyph, and the menu button keeps that distance from the title too.
+             */
+
+            & > button {
+
+                display: none;
+                flex: none;
+                padding: var(--skin--spacing-025);
+                margin-inline-end: var(--skin--spacing-025);
+                border-style: none;
+                background-color: transparent;
+                color: inherit;
+                cursor: pointer;
+
+                /*
+                 * They answer the pointer as a subtle button does, deepening their surface by a share of the page ink
+                 * on hover and twice that while pressed, so the reader sees the whole target rather than the glyph.
+                 */
+
+                &:enabled:hover {
+                    background-color: color-mix(in oklab, var(--skin--color) 6%, transparent);
+                }
+
+                &:enabled:active {
+                    background-color: color-mix(in oklab, var(--skin--color) 12%, transparent);
+                }
+
+                &:disabled {
+                    opacity: var(--skin--opacity-disabled);
+                    cursor: default;
+                }
+
+            }
+
+        }
+
+        & > div {
+            grid-row: 2;
+            padding-block: var(--clay-tool-body-inset);
+            overflow: auto;
+            scroll-timeline: var(--clay-tool-scroll) block;
+        }
+
+        & > footer {
+
+            grid-row: 3;
+            padding-block: var(--clay-tool-foot-inset);
+            font-size: var(--clay-tool-foot-font-size, var(--skin--font-size-small));
+
+            border-block-start-style: var(--skin--border-style);
+            border-block-start-color: transparent;
+
+            animation: clay-tool-foot-rule linear both;
+            animation-timeline: var(--clay-tool-scroll);
+            animation-range: calc(100% - var(--skin--spacing-100)) 100%;
+
+        }
+
     }
 
     /*
@@ -426,130 +551,17 @@ clay-tool {
                 flex: auto;
             }
 
-        }
-
-    }
-
-
-    /*
-     * Heads and feet are rows stretching to the taller of each pair and centring what they hold vertically, so the two
-     * columns line up. What they hold keeps its own width from the start of the bar, unless it grows to fill the row,
-     * and never breaks onto a second line, so a bar keeps the height of a single row whatever text it carries. Items
-     * too wide for the bar shrink, clipping what overflows them and ending clipped text with an ellipsis.
-     */
-
-    & > * > :is(header, footer) {
-
-        display: flex;
-        align-items: center;
-        white-space: nowrap;
-
-        & > * {
-            min-inline-size: 0;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        /*
-         * A button at either end of a bar, standing in it or in the row filling it, reaches into the gutter by the
-         * padding around what it carries, so its glyph or label stands on the edge the rest of the column starts from
-         * rather than inset by a padding that shows only on hover. The box naming the main column counts as the bar
-         * it stands aside in, so a row it holds is reached through it, and a turning mark is not counted as an end.
-         * The ends are matched without weight, so a control that reaches out by a measure of its own states it plainly.
-         */
-
-        & > :is(button, clay-button):where(:first-child),
-        & > :not(clay-button):where(:first-child) > :is(button, clay-button):where(:first-child),
-        & > div:where(:first-child) > :not(clay-button):where(:first-child) > :is(button, clay-button):where(:first-child) {
-            margin-inline-start: calc(-1 * var(--skin--spacing-025));
-        }
-
-        & > :is(button, clay-button):where(:nth-last-child(1 of :not(.busy))),
-        & > :not(clay-button):where(:nth-last-child(1 of :not(.busy))) > :is(button, clay-button):where(:last-child),
-        & > div:where(:nth-last-child(1 of :not(.busy))) > :not(clay-button):where(:last-child) > :is(button, clay-button):where(:last-child) {
-            margin-inline-end: calc(-1 * var(--skin--spacing-025));
-        }
-
-    }
-
-    /*
-     * A rule parts each bar from the body only while content lies hidden past it, so the reader sees there is more to
-     * scroll to rather than taking the edge of the body for the end of it. The rule under a head draws in over the
-     * first step of scrolling down, and the one over a foot draws out over the last step before the end. A body with
-     * nothing to scroll leaves both rules out, as does a browser unable to follow the scroll position.
-     */
-
-    & > * > header {
-
-        grid-row: 1;
-        padding-block: var(--clay-tool-head-inset);
-        font-size: var(--clay-tool-head-font-size, var(--skin--font-size));
-
-        border-block-end-style: var(--skin--border-style);
-        border-block-end-color: transparent;
-
-        animation: clay-tool-head-rule linear both;
-        animation-timeline: var(--clay-tool-scroll);
-        animation-range: 0 var(--skin--spacing-100);
-
-        /*
-         * The menu and close buttons are bare glyphs standing only where the side column is a drawer, the menu button
-         * leading the main head and the close button ending the side head, clear of what the head holds. Their padding
-         * widens the target past the glyph, and the menu button keeps the same distance from the title beside it.
-         */
-
-        & > button {
-
-            display: none;
-            flex: none;
-            padding: var(--skin--spacing-025);
-            margin-inline-end: var(--skin--spacing-025);
-            border-style: none;
-            background-color: transparent;
-            color: inherit;
-            cursor: pointer;
-
             /*
-             * They answer the pointer as a subtle button does, deepening the surface under them by a share of the page
-             * ink on hover and twice that while pressed, so the reader sees the whole target rather than the glyph.
+             * A head opening the body, where two columns do not fit, keeps the type it takes in the head, and stands
+             * apart from the content below it by a step of spacing, as a heading stands apart from its section.
              */
 
-            &:enabled:hover {
-                background-color: color-mix(in oklab, var(--skin--color) 6%, transparent);
-            }
-
-            &:enabled:active {
-                background-color: color-mix(in oklab, var(--skin--color) 12%, transparent);
-            }
-
-            &:disabled {
-                opacity: var(--skin--opacity-disabled);
-                cursor: default;
+            & > header {
+                padding-block-end: var(--skin--spacing-150);
+                font-size: var(--clay-tool-head-font-size, var(--skin--font-size));
             }
 
         }
-
-    }
-
-    & > * > div {
-        grid-row: 2;
-        padding-block: var(--clay-tool-body-inset);
-        overflow: auto;
-        scroll-timeline: var(--clay-tool-scroll) block;
-    }
-
-    & > * > footer {
-
-        grid-row: 3;
-        padding-block: var(--clay-tool-foot-inset);
-        font-size: var(--clay-tool-foot-font-size, var(--skin--font-size-small));
-
-        border-block-start-style: var(--skin--border-style);
-        border-block-start-color: transparent;
-
-        animation: clay-tool-foot-rule linear both;
-        animation-timeline: var(--clay-tool-scroll);
-        animation-range: calc(100% - var(--skin--spacing-100)) 100%;
 
     }
 

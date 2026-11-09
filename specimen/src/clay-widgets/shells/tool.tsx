@@ -165,7 +165,7 @@ export function ToolScreen() {
 				<tr><td><code>meta</code></td><td>the head of the side column</td><td>the lockup, leading back to the specimen</td></tr>
 				<tr><td><code>tray</code></td><td>the body of the side column</td><td>the outline of this screen</td></tr>
 				<tr><td><code>more</code></td><td>the foot of the side column</td><td>the settings</td></tr>
-				<tr><td><code>head</code></td><td>the head of the main column</td><td>the name of the screen</td></tr>
+				<tr><td><code>head</code></td><td>the head of the main column, or the top of its body where two columns do not fit</td><td>the name of the screen</td></tr>
 				<tr><td><code>menu</code></td><td>the end of the head of the main column</td><td>the switches and the send button</td></tr>
 				<tr><td><code>children</code></td><td>the body of the main column</td><td>this documentation</td></tr>
 				<tr><td><code>copy</code></td><td>the close of the content, scrolling with it</td><td>the copyright</td></tr>

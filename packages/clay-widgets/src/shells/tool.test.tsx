@@ -18,7 +18,7 @@ import { Fetch, useFetch } from "@metreeca/clay/fetch";
 import { type JSX, render } from "preact";
 import { useEffect } from "preact/hooks";
 import { act } from "preact/test-utils";
-import { beforeAll, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 import { Tool } from "./tool.js";
 
 
@@ -50,6 +50,102 @@ describe("Tool", () => {
 	const menu = (tool: HTMLElement) => tool.querySelector<HTMLButtonElement>(":scope > main > header > button");
 	const close = (tool: HTMLElement) => tool.querySelector<HTMLButtonElement>(":scope > aside > header > button");
 	const side = (tool: HTMLElement) => tool.querySelector<HTMLElement>(":scope > aside");
+
+	/*
+	 * The viewport switch Skin turns on from the medium width up, stated on the root element as the design system does,
+	 * and left unset by default, so each test starts from the narrow layout the switch falls back to below that width.
+	 */
+
+	const viewport = (medium: boolean) => medium
+		? document.documentElement.style.setProperty("--skin--viewport-medium", "on")
+		: document.documentElement.style.removeProperty("--skin--viewport-medium");
+
+	afterEach(() => {
+		viewport(false);
+		vi.unstubAllGlobals();
+	});
+
+
+	describe("heading", () => {
+
+		// looked up within the shell, as every rendered root numbers its ids alike
+
+		const heading = (tool: HTMLElement) => tool.querySelector(
+			`[id="${tool.querySelector(":scope > main")?.getAttribute("aria-labelledby")}"]`
+		);
+
+		it("stands in the main head where two columns fit", async () => {
+
+			viewport(true);
+
+			const tool = rendered(<Tool head={<span>Projects</span>} menu={<button>Edit</button>}>content</Tool>);
+
+			expect(heading(tool)?.parentElement).toBe(tool.querySelector(":scope > main > header"));
+
+		});
+
+		it("opens the main body ahead of the content where two columns do not fit", async () => {
+
+			viewport(false);
+
+			const tool = rendered(<Tool head={<span>Projects</span>} menu={<button>Edit</button>}>content</Tool>);
+			const body = tool.querySelector(":scope > main > div")!;
+
+			expect(heading(tool)?.textContent).toBe("Projects");
+			expect(body.firstElementChild).toBe(heading(tool));
+			expect(body.firstElementChild?.nextElementSibling?.textContent).toBe("content");
+
+		});
+
+		it("leaves the menu button and the menu in the main head where two columns do not fit", async () => {
+
+			viewport(false);
+
+			const tool = rendered(<Tool head={<span>Projects</span>} menu={<button>Edit</button>}>content</Tool>);
+			const header = tool.querySelector(":scope > main > header")!;
+
+			expect(header.textContent).not.toContain("Projects");
+			expect(menu(tool)?.parentElement).toBe(header);
+			expect(header.lastElementChild?.textContent).toBe("Edit");
+
+		});
+
+		it("follows the viewport across the threshold", async () => {
+
+			const resized: Array<() => void> = []; // test harness: collects the observer callbacks the shell registers
+
+			vi.stubGlobal("ResizeObserver", class {
+				constructor(callback: () => void) { resized.push(callback); }
+				observe() {}
+				disconnect() {}
+			});
+
+			viewport(false);
+
+			const container = document.createElement("div");
+
+			document.body.append(container);
+
+			await act(async () => { render(<Tool head={<span>Projects</span>}>content</Tool>, container); });
+
+			const tool = container.querySelector<HTMLElement>(":scope > clay-tool")!;
+
+			const resize = (medium: boolean) => act(async () => {
+				viewport(medium);
+				resized.forEach(callback => callback());
+			});
+
+			await resize(true);
+
+			expect(heading(tool)?.parentElement).toBe(tool.querySelector(":scope > main > header"));
+
+			await resize(false);
+
+			expect(heading(tool)?.parentElement).toBe(tool.querySelector(":scope > main > div"));
+
+		});
+
+	});
 
 
 	describe("main column", () => {
@@ -244,6 +340,8 @@ describe("Tool", () => {
 		});
 
 		it("opens the side column from a menu button leading the main head", async () => {
+
+			viewport(true);
 
 			const tool = rendered(<Tool head={<span>title</span>}>content</Tool>);
 			const button = menu(tool);
