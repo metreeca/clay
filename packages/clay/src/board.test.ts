@@ -267,6 +267,34 @@ describe("useBoard()", () => {
 
 	});
 
+	it("should state immutable posts outside any board", async () => {
+
+		unwrapped();
+
+		expect(Object.isFrozen(standing())).toBe(true);
+
+	});
+
+	it("should state immutable posts", async () => {
+
+		mount();
+
+		expect(Object.isFrozen(standing())).toBe(true);
+
+		post(saving, loading);
+
+		expect(Object.isFrozen(standing())).toBe(true);
+
+		post(saved);
+
+		expect(Object.isFrozen(standing())).toBe(true);
+
+		clear(standing()[0]);
+
+		expect(Object.isFrozen(standing())).toBe(true);
+
+	});
+
 	describe("post", () => {
 
 		it("should state the post last", async () => {

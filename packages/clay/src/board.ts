@@ -74,7 +74,7 @@ const BoardContext = createContext<Board>(nowhere);
  *
  * Kept apart from {@link BoardContext}, so a component only posting never renders because posts change.
  */
-const PostsContext = createContext<readonly Post[]>([]);
+const PostsContext = createContext<readonly Post[]>(immutable([]));
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -258,7 +258,7 @@ export function Board({
 
 	const outermost = useContext(BoardContext) === nowhere;
 
-	const [posts, setPosts] = useState<readonly Post[]>([]);
+	const [posts, setPosts] = useState<readonly Post[]>(() => immutable([]));
 
 	const [board] = useState<Board>(() => {
 
@@ -400,9 +400,9 @@ function posted(posts: readonly Post[], post: Post, limit: number): readonly Pos
 
 	const standing = posts.find(({ instance }) => instance === post.instance);
 
-	return standing === undefined ? [...posts, post].slice(limit > 0 ? -limit : 0)
+	return standing === undefined ? immutable([...posts, post].slice(limit > 0 ? -limit : 0))
 		: equals(standing, post) ? posts
-			: posts.map(current => current === standing ? post : current);
+			: immutable(posts.map(current => current === standing ? post : current));
 
 }
 
@@ -420,6 +420,6 @@ function cleared(posts: readonly Post[], targets?: Some<Post>): readonly Post[] 
 
 	const kept = targets === undefined ? [] : posts.filter(({ instance }) => !instances.has(instance));
 
-	return kept.length === posts.length ? posts : kept;
+	return kept.length === posts.length ? posts : immutable(kept);
 
 }

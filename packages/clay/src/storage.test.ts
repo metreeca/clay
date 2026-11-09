@@ -78,6 +78,54 @@ afterEach(async () => {
 
 describe("useStorage()", () => {
 
+	describe("immutability", () => {
+
+		const entries = vi.fn<(entry: readonly [unknown, unknown]) => void>();
+
+		function Holder() {
+
+			entries(useStorage(localStorage, "object", () => ({ initial: { nested: true } })));
+
+			return null;
+
+		}
+
+		function entry(): readonly [unknown, unknown] {
+			return entries.mock.lastCall![0]; // test harness: Holder has rendered at least once
+		}
+
+		afterEach(() => entries.mockClear());
+
+		it("should return an immutable entry", async () => {
+
+			act(() => render(createElement(Holder, {}), document.body));
+
+			expect(Object.isFrozen(entry())).toBe(true);
+
+		});
+
+		it("should show the initial value as immutable", async () => {
+
+			act(() => render(createElement(Holder, {}), document.body));
+
+			expect(entry()[0]).toEqual({ initial: { nested: true } });
+			expect(Object.isFrozen((entry()[0] as { initial: object }).initial)).toBe(true);
+
+		});
+
+		it("should show the stored value as immutable", async () => {
+
+			localStorage.setItem("object", JSON.stringify({ stored: { nested: true } }));
+
+			act(() => render(createElement(Holder, {}), document.body));
+
+			expect(entry()[0]).toEqual({ stored: { nested: true } });
+			expect(Object.isFrozen((entry()[0] as { stored: object }).stored)).toBe(true);
+
+		});
+
+	});
+
 	describe("reading", () => {
 
 		it("should show the initial value of an empty entry", async () => {

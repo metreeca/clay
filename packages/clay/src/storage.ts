@@ -29,6 +29,7 @@
  */
 
 import { eager, type Lazy } from "@metreeca/core";
+import { immutable } from "@metreeca/core/values";
 import { useEffect, useState } from "preact/hooks";
 
 
@@ -49,12 +50,12 @@ import { useEffect, useState } from "preact/hooks";
  * @param key The name of the entry in `storage`
  * @param initial The value shown while the entry holds none, or a factory creating it
  *
- * @returns The value as it stands for this render, and a setter storing a new one; setting `undefined` removes the
- *     entry, so that the view shows `initial` again
+ * @returns The value as it stands for this render, as a deeply frozen copy changing only through the setter, and a
+ *     setter storing a new one; setting `undefined` removes the entry, so that the view shows `initial` again
  *
  * @throws {@link !SyntaxError SyntaxError} If the entry holds a value that is not well-formed JSON
  */
-export function useStorage<T>(storage: Storage, key: string, initial: Lazy<T>): [T, (value: T | undefined) => void] {
+export function useStorage<T>(storage: Storage, key: string, initial: Lazy<T>): readonly [T, (value: undefined | T) => void] {
 
 	const [entry, setEntry] = useState(read);
 
@@ -78,7 +79,7 @@ export function useStorage<T>(storage: Storage, key: string, initial: Lazy<T>): 
 
 	}, [storage, key]);
 
-	return [current.value, value => {
+	return immutable<readonly [T, (value: T | undefined) => void]>([current.value, value => {
 
 		if ( value === undefined ) {
 			storage.removeItem(key);
@@ -88,14 +89,14 @@ export function useStorage<T>(storage: Storage, key: string, initial: Lazy<T>): 
 
 		setEntry(read());
 
-	}];
+	}]);
 
 
 	function read(): { storage: Storage, key: string, value: T } {
 
 		const item = storage.getItem(key);
 
-		return { storage, key, value: item === null ? eager(initial) : JSON.parse(item) };
+		return { storage, key, value: immutable(item === null ? eager(initial) : JSON.parse(item)) };
 
 	}
 
