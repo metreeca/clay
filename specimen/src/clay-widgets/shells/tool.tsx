@@ -110,6 +110,8 @@ export function ToolScreen() {
 
 		</Strip>}
 
+		copy={<small>{app.copy}</small>}
+
 		foot={<code>@metreeca/clay-widgets/tool</code>}
 
 	>
@@ -140,7 +142,7 @@ export function ToolScreen() {
 
 			<div>
 				<header><code>head</code></header>
-				<section><code>children</code></section>
+				<section><code>children</code><code>copy</code></section>
 				<footer><code>foot</code></footer>
 			</div>
 
@@ -165,6 +167,7 @@ export function ToolScreen() {
 				<tr><td><code>more</code></td><td>the foot of the side column</td><td>the settings</td></tr>
 				<tr><td><code>head</code></td><td>the head of the main column</td><td>the name of the screen</td></tr>
 				<tr><td><code>children</code></td><td>the body of the main column</td><td>this documentation</td></tr>
+				<tr><td><code>copy</code></td><td>the close of the content, scrolling with it</td><td>the copyright</td></tr>
 				<tr><td><code>foot</code></td><td>the foot of the main column</td><td>the module</td></tr>
 			</tbody>
 

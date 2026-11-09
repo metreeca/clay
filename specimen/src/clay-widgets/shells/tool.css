@@ -70,8 +70,14 @@ clay-tool {
             background-color: var(--skin--background-color-stripe);
         }
 
+        /* A body rests the closing notice at its bottom, as the shell does with short content. */
+
         & section {
             flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: flex-start;
             padding: var(--skin--spacing-050);
         }
 
