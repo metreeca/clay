@@ -14,20 +14,36 @@
  * limitations under the License.
  */
 
-import { createElement, ReactNode } from "react";
-import "./#grid.css";
+
+import * as React from "react";
+import { createElement } from "react";
+import "./dots.css";
 
 
-export function TileGrid({
+export function TileDots({
 
-	children
+	size="0.5em",
+	color="#999",
+	period="1.5s"
 
 }: {
 
-	children: ReactNode
+	size?: string
+	color?: string
+	period?: string
 
 }) {
 
-	return createElement("clay-grid", {}, children);
+	return createElement("clay-dots", {
+
+		style: {
+
+			"--clay-dots-size": size,
+			"--clay-dots-color": color,
+			"--clay-dots-period": period
+
+		}
+
+	}, <div/>);
 
 }

@@ -60,8 +60,6 @@ export function focus(target: undefined | null | ChildNode) {
  *
  * @constructor
  */
-// !!! the Tile prefix is dropped on migration, but `Form` clashes with the lucide-preact icon: rename by role
-
 export function TileForm<F extends Frame>({
 
 	onValidate,

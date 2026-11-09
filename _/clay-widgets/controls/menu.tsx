@@ -14,51 +14,20 @@
  * limitations under the License.
  */
 
-import { classes } from "@metreeca/view";
-import * as React from "react";
 import { createElement, ReactNode } from "react";
-import "./label.css";
+import "./menu.css";
 
 
-/**
- * Creates a labelled layout panel entry.
- */
-export function TileLabel({
-
-	rule=false,
-	wide=false,
-	side=false,
-
-	name,
-	menu,
+export function TileMenu({
 
 	children
 
 }: {
 
-	rule?: boolean,
-	wide?: boolean,
-	side?: boolean
-
-	name: ReactNode
-	menu?: ReactNode
-
-	children?: ReactNode
+	children: ReactNode
 
 }) {
-	return createElement("clay-label", {
 
-		class: classes({ rule, wide, side })
-
-	}, <>
-
-		<label>
-			<span>{name}</span>
-			<nav>{menu}</nav>
-		</label>
-
-		{children}
-
-	</>);
+	return createElement("clay-menu", {}, children);
 
 }
