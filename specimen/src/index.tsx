@@ -34,8 +34,8 @@ import { ClayMarkdownPath, ClayPath, ClayWidgetsPath, Root, JunkPath, ToolPath }
 import { Clay } from "@metreeca/specimen/clay/index.js";
 import { ClayMarkdown } from "@metreeca/specimen/clay-markdown/index.js";
 import { ClayWidgets } from "@metreeca/specimen/clay-widgets/index.js";
-import { JunkScreen } from "@metreeca/specimen/clay-widgets/junk.js";
-import { ToolScreen } from "@metreeca/specimen/clay-widgets/tool.js";
+import { JunkScreen } from "@metreeca/specimen/clay-widgets/shells/junk.js";
+import { ToolScreen } from "@metreeca/specimen/clay-widgets/shells/tool.js";
 import { render } from "preact";
 import "./index.css";
 

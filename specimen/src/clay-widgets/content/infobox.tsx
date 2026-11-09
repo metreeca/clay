@@ -23,7 +23,7 @@
 import { Infobox } from "@metreeca/clay-widgets/infobox";
 import { Frame } from "@metreeca/specimen/clay-widgets/sample.js";
 import { type ComponentChildren } from "preact";
-import "./index.css";
+import "../index.css";
 
 
 /**

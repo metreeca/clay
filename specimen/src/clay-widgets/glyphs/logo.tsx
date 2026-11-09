@@ -23,7 +23,7 @@
 import { app } from "@metreeca/clay";
 import { Logo } from "@metreeca/clay-widgets/logo";
 import { Style } from "@metreeca/clay-widgets/style";
-import "./index.css";
+import "../index.css";
 
 
 /**

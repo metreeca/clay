@@ -23,7 +23,7 @@
 import { Strip } from "@metreeca/clay-widgets/strip";
 import { Style } from "@metreeca/clay-widgets/style";
 import { Frame, Items } from "@metreeca/specimen/clay-widgets/sample.js";
-import "./index.css";
+import "../index.css";
 
 
 type Options = Parameters<typeof Strip>[0]

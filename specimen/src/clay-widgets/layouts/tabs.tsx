@@ -22,7 +22,7 @@
 
 import { Tabs } from "@metreeca/clay-widgets/tabs";
 import { Frame } from "@metreeca/specimen/clay-widgets/sample.js";
-import "./index.css";
+import "../index.css";
 
 
 type Options = Parameters<typeof Tabs>[0]

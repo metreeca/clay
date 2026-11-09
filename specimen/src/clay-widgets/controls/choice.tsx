@@ -22,7 +22,7 @@
 
 import { Choice } from "@metreeca/clay-widgets/choice";
 import { useState } from "preact/hooks";
-import "./index.css";
+import "../index.css";
 
 
 const densities = { tight: "Tight", normal: "Normal", loose: "Loose" };

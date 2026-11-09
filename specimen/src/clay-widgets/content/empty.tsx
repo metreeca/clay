@@ -22,7 +22,7 @@
 
 import { Empty } from "@metreeca/clay-widgets/empty";
 import { Icon } from "@metreeca/clay-widgets/icon";
-import "./index.css";
+import "../index.css";
 
 
 /**

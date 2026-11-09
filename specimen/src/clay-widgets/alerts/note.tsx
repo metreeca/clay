@@ -21,7 +21,7 @@
  */
 
 import { Note } from "@metreeca/clay-widgets/note";
-import "./index.css";
+import "../index.css";
 
 
 /**

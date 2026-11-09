@@ -23,7 +23,7 @@
 import { Link } from "@metreeca/clay-widgets/link";
 import { Path } from "@metreeca/clay-widgets/path";
 import { Style } from "@metreeca/clay-widgets/style";
-import "./index.css";
+import "../index.css";
 
 
 /**

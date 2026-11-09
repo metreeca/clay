@@ -21,28 +21,28 @@
  */
 
 import { Page, type Sample, JunkPath, ToolPath } from "@metreeca/specimen/index.core.js";
-import { Buttons } from "@metreeca/specimen/clay-widgets/button.js";
-import { Cards } from "@metreeca/specimen/clay-widgets/card.js";
-import { Choices } from "@metreeca/specimen/clay-widgets/choice.js";
-import { Empties } from "@metreeca/specimen/clay-widgets/empty.js";
-import { Guards } from "@metreeca/specimen/clay-widgets/guard.js";
-import { Headings } from "@metreeca/specimen/clay-widgets/heading.js";
-import { Icons } from "@metreeca/specimen/clay-widgets/icon.js";
-import { Images } from "@metreeca/specimen/clay-widgets/image.js";
-import { Infoboxes } from "@metreeca/specimen/clay-widgets/infobox.js";
-import { Labels } from "@metreeca/specimen/clay-widgets/label.js";
-import { Links } from "@metreeca/specimen/clay-widgets/link.js";
-import { Logos } from "@metreeca/specimen/clay-widgets/logo.js";
-import { Triggers } from "@metreeca/specimen/clay-widgets/more.js";
-import { Notes } from "@metreeca/specimen/clay-widgets/note.js";
-import { Paths } from "@metreeca/specimen/clay-widgets/path.js";
-import { Stacks } from "@metreeca/specimen/clay-widgets/stack.js";
-import { Strips } from "@metreeca/specimen/clay-widgets/strip.js";
-import { Styles } from "@metreeca/specimen/clay-widgets/style.js";
-import { Tabbed } from "@metreeca/specimen/clay-widgets/tabs.js";
-import { Texts } from "@metreeca/specimen/clay-widgets/text.js";
-import { Toasted } from "@metreeca/specimen/clay-widgets/toasts.js";
-import { Contents } from "@metreeca/specimen/clay-widgets/toc.js";
+import { Buttons } from "@metreeca/specimen/clay-widgets/controls/button.js";
+import { Cards } from "@metreeca/specimen/clay-widgets/layouts/card.js";
+import { Choices } from "@metreeca/specimen/clay-widgets/controls/choice.js";
+import { Empties } from "@metreeca/specimen/clay-widgets/content/empty.js";
+import { Guards } from "@metreeca/specimen/clay-widgets/scopes/guard.js";
+import { Headings } from "@metreeca/specimen/clay-widgets/content/heading.js";
+import { Icons } from "@metreeca/specimen/clay-widgets/glyphs/icon.js";
+import { Images } from "@metreeca/specimen/clay-widgets/content/image.js";
+import { Infoboxes } from "@metreeca/specimen/clay-widgets/content/infobox.js";
+import { Labels } from "@metreeca/specimen/clay-widgets/content/label.js";
+import { Links } from "@metreeca/specimen/clay-widgets/controls/link.js";
+import { Logos } from "@metreeca/specimen/clay-widgets/glyphs/logo.js";
+import { Triggers } from "@metreeca/specimen/clay-widgets/controls/more.js";
+import { Notes } from "@metreeca/specimen/clay-widgets/alerts/note.js";
+import { Paths } from "@metreeca/specimen/clay-widgets/controls/path.js";
+import { Stacks } from "@metreeca/specimen/clay-widgets/layouts/stack.js";
+import { Strips } from "@metreeca/specimen/clay-widgets/layouts/strip.js";
+import { Styles } from "@metreeca/specimen/clay-widgets/scopes/style.js";
+import { Tabbed } from "@metreeca/specimen/clay-widgets/layouts/tabs.js";
+import { Texts } from "@metreeca/specimen/clay-widgets/content/text.js";
+import { Toasted } from "@metreeca/specimen/clay-widgets/alerts/toasts.js";
+import { Contents } from "@metreeca/specimen/clay-widgets/controls/toc.js";
 
 
 const samples: readonly Sample[] = [

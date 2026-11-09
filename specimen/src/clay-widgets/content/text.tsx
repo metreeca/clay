@@ -22,7 +22,7 @@
 
 import { Style } from "@metreeca/clay-widgets/style";
 import { Text } from "@metreeca/clay-widgets/text";
-import "./index.css";
+import "../index.css";
 
 
 /**

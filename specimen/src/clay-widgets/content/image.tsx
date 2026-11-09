@@ -22,7 +22,7 @@
 
 import { Image } from "@metreeca/clay-widgets/image";
 import { landscape } from "@metreeca/specimen/clay-widgets/sample.js";
-import "./index.css";
+import "../index.css";
 
 
 /**

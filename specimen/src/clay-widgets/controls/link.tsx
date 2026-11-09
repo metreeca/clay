@@ -24,7 +24,7 @@ import { Icon } from "@metreeca/clay-widgets/icon";
 import { Link } from "@metreeca/clay-widgets/link";
 import { Style } from "@metreeca/clay-widgets/style";
 import { skin } from "@metreeca/skin";
-import "./index.css";
+import "../index.css";
 
 
 /**

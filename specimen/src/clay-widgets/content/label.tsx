@@ -21,7 +21,7 @@
  */
 
 import { Label } from "@metreeca/clay-widgets/label";
-import "./index.css";
+import "../index.css";
 
 
 /**

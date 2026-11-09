@@ -26,7 +26,7 @@ import { Empty } from "@metreeca/clay-widgets/empty";
 import { Guard } from "@metreeca/clay-widgets/guard";
 import { Icon } from "@metreeca/clay-widgets/icon";
 import { useState } from "preact/hooks";
-import "./index.css";
+import "../index.css";
 
 
 /**

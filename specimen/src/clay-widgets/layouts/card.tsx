@@ -24,7 +24,7 @@ import { Card } from "@metreeca/clay-widgets/card";
 import { Icon } from "@metreeca/clay-widgets/icon";
 import { Image } from "@metreeca/clay-widgets/image";
 import { Frame, landscape } from "@metreeca/specimen/clay-widgets/sample.js";
-import "./index.css";
+import "../index.css";
 
 
 type Options = Parameters<typeof Card>[0]

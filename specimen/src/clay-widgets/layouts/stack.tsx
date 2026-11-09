@@ -22,7 +22,7 @@
 
 import { Stack } from "@metreeca/clay-widgets/stack";
 import { Frame, Items } from "@metreeca/specimen/clay-widgets/sample.js";
-import "./index.css";
+import "../index.css";
 
 
 type Options = Parameters<typeof Stack>[0]

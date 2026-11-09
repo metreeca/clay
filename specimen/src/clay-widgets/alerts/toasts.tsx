@@ -23,7 +23,7 @@
 import { type Post, usePosts, useBoard, Board } from "@metreeca/clay/board";
 import { Button } from "@metreeca/clay-widgets/button";
 import { Toasts } from "@metreeca/clay-widgets/toasts";
-import "./index.css";
+import "../index.css";
 
 
 const Delay = 2000;

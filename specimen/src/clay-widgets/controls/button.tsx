@@ -25,7 +25,7 @@ import { Icon } from "@metreeca/clay-widgets/icon";
 import { Style } from "@metreeca/clay-widgets/style";
 import { skin } from "@metreeca/skin";
 import { type ComponentChild } from "preact";
-import "./index.css";
+import "../index.css";
 import "./button.css";
 
 
