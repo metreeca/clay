@@ -64,7 +64,7 @@ clay-card {
 
     &[look="strong"] {
         --skin--background-color: var(--skin--background-color-raised);
-        border: var(--skin--border-width) solid var(--skin--border-color);
+        border: var(--skin--border-width) var(--skin--border-style) var(--skin--border-color);
     }
 
     /* The title and the badge share the first row, sitting on a common baseline as an infobox entry does. */

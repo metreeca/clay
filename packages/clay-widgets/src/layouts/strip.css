@@ -44,7 +44,7 @@ clay-strip {
 
     &[look="strong"] {
         --skin--background-color: var(--skin--background-color-raised);
-        border: var(--skin--border-width) solid var(--skin--border-color);
+        border: var(--skin--border-width) var(--skin--border-style) var(--skin--border-color);
     }
 
     &[place="head"] > :first-child {
