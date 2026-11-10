@@ -187,7 +187,7 @@ clay-tool {
         content: "";
         position: absolute;
         inset: 0;
-        background-color: color-mix(in oklab, var(--skin--background-color) 60%, transparent);
+        background-color: color-mix(in oklab, var(--skin--background-color) 50%, transparent);
         backdrop-filter: blur(0.5px); /* A slight blur takes the edge off the text beneath, headings included. */
         pointer-events: none;
     }
