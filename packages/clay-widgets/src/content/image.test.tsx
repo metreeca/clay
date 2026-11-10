@@ -76,6 +76,56 @@ describe("Image", () => {
 
 	});
 
+	describe("float", () => {
+
+		it("carries the given side", async () => {
+
+			expect(rendered(<Image src={src} float="start"/>)?.getAttribute("float")).toBe("start");
+			expect(rendered(<Image src={src} float="end"/>)?.getAttribute("float")).toBe("end");
+
+		});
+
+		it("floats to no side by default", async () => {
+
+			expect(rendered(<Image src={src}/>)?.hasAttribute("float")).toBe(false);
+
+		});
+
+	});
+
+	describe("within", () => {
+
+		const bounds = (element: JSX.Element): readonly string[] => {
+
+			const style = rendered(element)?.style;
+
+			return [
+				style?.getPropertyValue("--clay-image-max-width") ?? "",
+				style?.getPropertyValue("--clay-image-max-height") ?? ""
+			];
+
+		};
+
+		it("bounds both sides by a single length", async () => {
+
+			expect(bounds(<Image src={src} within="20rem"/>)).toEqual([ "20rem", "20rem" ]);
+
+		});
+
+		it("bounds width and height by a pair of lengths", async () => {
+
+			expect(bounds(<Image src={src} within={[ "20rem", "12rem" ]}/>)).toEqual([ "20rem", "12rem" ]);
+
+		});
+
+		it("states no bounds by default", async () => {
+
+			expect(rendered(<Image src={src}/>)?.hasAttribute("style")).toBe(false);
+
+		});
+
+	});
+
 	describe("caption", () => {
 
 		it("shows a bare picture with no caption", async () => {
