@@ -197,7 +197,7 @@
 
     padding: var(--skin--spacing-200);
 
-    border: var(--skin--border-width) dashed var(--skin--border-color-field);
+    border: var(--skin--border-width) dashed var(--skin--border-color);
     border-radius: var(--skin--border-radius);
 
     /*
@@ -206,7 +206,7 @@
 
     &[data-target] {
         background-color: var(--skin--background-color-selected);
-        border: calc(2 * var(--skin--border-width)) solid var(--skin--color-selected);
+        border: calc(2 * var(--skin--border-width)) var(--skin--border-style) var(--skin--color-selected);
         padding: calc(var(--skin--spacing-200) - var(--skin--border-width));
     }
 

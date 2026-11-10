@@ -195,7 +195,7 @@
 
     & > figcaption {
         padding-inline: var(--frame-inset);
-        border-inline: var(--skin--border-width) solid transparent;
+        border-inline: var(--skin--border-width) var(--skin--border-style) transparent;
         color: var(--skin--color-label);
     }
 
