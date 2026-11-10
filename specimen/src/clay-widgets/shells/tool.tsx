@@ -27,7 +27,7 @@ import { Logo } from "@metreeca/clay-widgets/logo";
 import { Strip } from "@metreeca/clay-widgets/strip";
 import { TOC } from "@metreeca/clay-widgets/toc";
 import { Tool } from "@metreeca/clay-widgets/tool";
-import { useFetch } from "@metreeca/clay/fetch";
+import { useFetch, useFetching } from "@metreeca/clay/fetch";
 import { useRouter } from "@metreeca/clay/router";
 import { ClayWidgetsPath } from "@metreeca/specimen/index.core.js";
 import { useState } from "preact/hooks";
@@ -45,16 +45,18 @@ export function ToolScreen() {
 
 	const router = useRouter();
 	const fetch = useFetch();
+	const busy = useFetching();
 
 	const [wide, setWide] = useState(false);
-	const [lock, setLock] = useState(false);
-	const [main, setMain] = useState(false);
+	const [locked, setLocked] = useState(false);
+	const [tucked, setTucked] = useState(false);
 
 	return <Tool
 
 		wide={wide}
-		lock={lock}
-		main={main}
+		busy={busy}
+		locked={locked}
+		tucked={tucked}
 
 		meta={<Button
 			icon={<Logo/>}
@@ -77,19 +79,19 @@ export function ToolScreen() {
 		menu={<Strip align="center">
 
 			<Button
-				icon={main ? <Icon.PanelLeftOpen/> : <Icon.PanelLeftClose/>}
+				icon={tucked ? <Icon.PanelLeftOpen/> : <Icon.PanelLeftClose/>}
 				look="subtle"
-				name={main ? "Show the side column" : "Leave the side column out"}
-				title={main ? "Show the side column" : "Leave the side column out"}
-				onClick={() => setMain(!main)}
+				name={tucked ? "Show the side column" : "Leave the side column out"}
+				title={tucked ? "Show the side column" : "Leave the side column out"}
+				onClick={() => setTucked(!tucked)}
 			/>
 
 			<Button
-				icon={lock ? <Icon.Unlock/> : <Icon.Lock/>}
+				icon={locked ? <Icon.Unlock/> : <Icon.Lock/>}
 				look="subtle"
-				name={lock ? "Unlock the side column" : "Lock the side column"}
-				title={lock ? "Unlock the side column" : "Lock the side column"}
-				onClick={() => setLock(!lock)}
+				name={locked ? "Unlock the side column" : "Lock the side column"}
+				title={locked ? "Unlock the side column" : "Lock the side column"}
+				onClick={() => setLocked(!locked)}
 			/>
 
 			<Button
@@ -182,17 +184,18 @@ export function ToolScreen() {
 		<p>Three switches reshape the frame, each worked from the buttons in the menu at the end of the main head:</p>
 
 		<ul>
-			<li><code>main</code> leaves the side column out of the frame, for a screen meant to be seen through rather
+			<li><code>tucked</code> leaves the side column out of the frame, for a screen meant to be seen through rather
 				than moved around in; the panel button sets it</li>
-			<li><code>lock</code> takes the side column out of reach for pointer and keyboard alike, fading what it
+			<li><code>locked</code> takes the side column out of reach for pointer and keyboard alike, fading what it
 				holds; the padlock sets it</li>
 			<li><code>wide</code> lets the main column take the whole width of the frame, past its width limit; the
 				chevrons set it</li>
 		</ul>
 
-		<p>Waiting is stated by the shell itself: while the shared fetch client has a request in flight, the frame fades
-			and marks itself busy for assistive technology. The send button runs a request against a mock answering
-			after two seconds, so the whole of it can be watched.</p>
+		<p>Waiting is stated by the app through <code>busy</code>, which this screen sets while the shared fetch client
+			has a request in flight: the frame fades and marks itself busy for assistive technology, and the focus held
+			as waiting starts comes back as it ends. The send button runs a request against a mock answering after two
+			seconds, so the whole of it can be watched.</p>
 
 		<hgroup id="knobs">
 			<p>Tool Shell</p>

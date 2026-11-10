@@ -18,7 +18,7 @@ import { Fetch, useFetch } from "@metreeca/clay/fetch";
 import { type JSX, render } from "preact";
 import { useEffect } from "preact/hooks";
 import { act } from "preact/test-utils";
-import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { Tool } from "./tool.js";
 
 
@@ -60,9 +60,12 @@ describe("Tool", () => {
 		? document.documentElement.style.setProperty("--skin--viewport-medium", "on")
 		: document.documentElement.style.removeProperty("--skin--viewport-medium");
 
+	// every rendered root numbers its ids alike, so a shell left over from an earlier test would answer id lookups
+
 	afterEach(() => {
 		viewport(false);
 		vi.unstubAllGlobals();
+		document.body.replaceChildren();
 	});
 
 
@@ -197,78 +200,234 @@ describe("Tool", () => {
 
 	describe("waiting", () => {
 
-		function Request() {
+		beforeEach(() => { vi.useFakeTimers(); });
+		afterEach(() => { vi.useRealTimers(); });
 
-			const fetch = useFetch();
-
-			useEffect(() => { void fetch("https://example.org/"); }, []);
-
-			return null;
-
-		}
-
-		it("marks itself busy while an exchange is in flight", async () => {
-
-			const pending = () => new Promise<Response>(() => {});
+		const container = () => {
 
 			const container = document.createElement("div");
 
-			await act(async () => {
-				render(<Fetch fetch={pending}><Tool><Request/></Tool></Fetch>, container);
-			});
+			document.body.append(container);
 
-			expect(container.querySelector("clay-tool")?.getAttribute("aria-busy")).toBe("true");
+			return container;
 
-		});
+		};
 
-		it("takes both columns out of reach while an exchange is in flight", async () => {
+		const shell = (busy: boolean) => <Tool busy={busy} menu={<button>Edit</button>}><input/></Tool>;
 
-			const pending = () => new Promise<Response>(() => {});
+		const show = (container: HTMLElement, busy: boolean) => act(async () => { render(shell(busy), container); });
+		const elapse = () => act(async () => { vi.runOnlyPendingTimers(); });
 
-			const container = document.createElement("div");
+		const waiting = async (busy: boolean) => {
 
-			await act(async () => {
-				render(<Fetch fetch={pending}><Tool><Request/></Tool></Fetch>, container);
-			});
+			const root = container();
 
-			expect(container.querySelector<HTMLElement>("clay-tool > aside")?.inert).toBe(true);
-			expect(container.querySelector<HTMLElement>("clay-tool > main")?.inert).toBe(true);
+			await show(root, busy);
+			await elapse();
 
-		});
+			return root.querySelector<HTMLElement>("clay-tool")!;
 
-		it("shows a turning mark only while an exchange is in flight", async () => {
+		};
 
-			const pending = () => new Promise<Response>(() => {});
+		it("marks itself busy while the app is busy", async () => {
 
-			const container = document.createElement("div");
-
-			await act(async () => {
-				render(<Fetch fetch={pending}><Tool><Request/></Tool></Fetch>, container);
-			});
-
-			expect(container.querySelector("clay-tool > main > header > .busy svg")).not.toBeNull();
-			expect(rendered(<Tool>content</Tool>).querySelector(".busy")).toBeNull();
+			expect((await waiting(true)).getAttribute("aria-busy")).toBe("true");
 
 		});
 
-		it("keeps the menu in place beside the turning mark while an exchange is in flight", async () => {
+		it("takes both columns out of reach while the app is busy", async () => {
 
-			const pending = () => new Promise<Response>(() => {});
+			const tool = await waiting(true);
 
-			const container = document.createElement("div");
-
-			await act(async () => {
-				render(<Fetch fetch={pending}><Tool menu={<button>Edit</button>}><Request/></Tool></Fetch>, container);
-			});
-
-			expect(container.querySelector("clay-tool > main > header > .menu")?.textContent).toBe("Edit");
-			expect(container.querySelector("clay-tool > main > header > .busy")).not.toBeNull();
+			expect(tool.querySelector<HTMLElement>(":scope > aside")?.inert).toBe(true);
+			expect(tool.querySelector<HTMLElement>(":scope > main")?.inert).toBe(true);
 
 		});
 
-		it("is not busy while no exchange is in flight", async () => {
+		it("shows a turning mark only while the app is busy", async () => {
 
-			expect(rendered(<Tool>content</Tool>).getAttribute("aria-busy")).not.toBe("true");
+			expect((await waiting(true)).querySelector(":scope > main > header > .busy svg")).not.toBeNull();
+			expect((await waiting(false)).querySelector(".busy")).toBeNull();
+
+		});
+
+		it("keeps the menu in place beside the turning mark while the app is busy", async () => {
+
+			const tool = await waiting(true);
+
+			expect(tool.querySelector(":scope > main > header > .menu")?.textContent).toBe("Edit");
+			expect(tool.querySelector(":scope > main > header > .busy")).not.toBeNull();
+
+		});
+
+		it("is not busy while the app is idle", async () => {
+
+			expect((await waiting(false)).getAttribute("aria-busy")).not.toBe("true");
+
+		});
+
+		it("ignores the exchanges of the shared client", async () => {
+
+			function Request() {
+
+				const fetch = useFetch();
+
+				useEffect(() => { void fetch("https://example.org/"); }, []);
+
+				return null;
+
+			}
+
+			const root = container();
+
+			await act(async () => {
+				render(<Fetch fetch={() => new Promise<Response>(() => {})}><Tool><Request/></Tool></Fetch>, root);
+			});
+
+			await elapse();
+
+			expect(root.querySelector("clay-tool")?.getAttribute("aria-busy")).not.toBe("true");
+
+		});
+
+
+		describe("delay", () => {
+
+			it("states waiting only once the delay has elapsed", async () => {
+
+				const root = container();
+
+				await show(root, true);
+
+				expect(root.querySelector("clay-tool")?.getAttribute("aria-busy")).not.toBe("true");
+
+				await elapse();
+
+				expect(root.querySelector("clay-tool")?.getAttribute("aria-busy")).toBe("true");
+
+			});
+
+			it("ends waiting only once the delay has elapsed", async () => {
+
+				const root = container();
+
+				await show(root, true);
+				await elapse();
+				await show(root, false);
+
+				expect(root.querySelector("clay-tool")?.getAttribute("aria-busy")).toBe("true");
+
+				await elapse();
+
+				expect(root.querySelector("clay-tool")?.getAttribute("aria-busy")).not.toBe("true");
+
+			});
+
+			it("takes both columns out of reach at once, ahead of the delay", async () => {
+
+				const root = container();
+
+				await show(root, true);
+
+				expect(root.querySelector<HTMLElement>("clay-tool > aside")?.inert).toBe(true);
+				expect(root.querySelector<HTMLElement>("clay-tool > main")?.inert).toBe(true);
+
+			});
+
+			it("brings both columns back within reach at once, ahead of the delay", async () => {
+
+				const root = container();
+
+				await show(root, true);
+				await elapse();
+				await show(root, false);
+
+				expect(root.querySelector<HTMLElement>("clay-tool > aside")?.inert).toBe(false);
+				expect(root.querySelector<HTMLElement>("clay-tool > main")?.inert).toBe(false);
+
+			});
+
+			it("shows nothing for a stretch shorter than the delay", async () => {
+
+				const root = container();
+
+				await show(root, true);
+				await show(root, false);
+				await elapse();
+
+				expect(root.querySelector("clay-tool")?.getAttribute("aria-busy")).not.toBe("true");
+
+			});
+
+		});
+
+
+		describe("focus", () => {
+
+			/*
+			 * A browser moves the focus out of a column turned inert, which happy-dom leaves where it stands, so the move
+			 * is stated by blurring the control once the columns are out of reach, as a browser leaves it on the page.
+			 */
+
+			const started = async () => {
+
+				const root = container();
+
+				await show(root, false);
+
+				const field = root.querySelector("input")!;
+
+				field.focus();
+
+				await show(root, true);
+
+				field.blur();
+
+				return { root, field };
+
+			};
+
+			const ended = async (root: HTMLElement) => {
+				await show(root, false);
+			};
+
+			it("gives the focus back to the control holding it as waiting started", async () => {
+
+				const { root, field } = await started();
+
+				await ended(root);
+
+				expect(document.activeElement).toBe(field);
+
+			});
+
+			it("moves the focus to the main column once the control holding it is gone", async () => {
+
+				const { root, field } = await started();
+
+				field.remove();
+
+				await ended(root);
+
+				expect(document.activeElement).toBe(root.querySelector("clay-tool > main"));
+
+			});
+
+			it("leaves the focus where it was moved while waiting", async () => {
+
+				const outside = document.createElement("button");
+
+				document.body.append(outside);
+
+				const { root } = await started();
+
+				outside.focus();
+
+				await ended(root);
+
+				expect(document.activeElement).toBe(outside);
+
+			});
 
 		});
 
@@ -443,13 +602,53 @@ describe("Tool", () => {
 
 		it("leaves the side column out of light dismiss while it is locked", async () => {
 
-			expect(side(rendered(<Tool lock>content</Tool>))?.getAttribute("popover")).toBe("manual");
+			expect(side(rendered(<Tool locked>content</Tool>))?.getAttribute("popover")).toBe("manual");
+
+		});
+
+		it("takes the focus off a control in the side column as it is locked", async () => {
+
+			const container = document.createElement("div");
+
+			document.body.append(container);
+
+			const shell = (locked: boolean) => <Tool locked={locked} tray={<button>Section</button>}>content</Tool>;
+
+			await act(async () => { render(shell(false), container); });
+
+			const control = container.querySelector<HTMLElement>("clay-tool > aside button:not([aria-label])")!;
+
+			control.focus();
+
+			await act(async () => { render(shell(true), container); });
+
+			expect(document.activeElement).not.toBe(control);
+
+		});
+
+		it("leaves the focus on the main column as the side column is locked", async () => {
+
+			const container = document.createElement("div");
+
+			document.body.append(container);
+
+			const shell = (locked: boolean) => <Tool locked={locked}><input/></Tool>;
+
+			await act(async () => { render(shell(false), container); });
+
+			const field = container.querySelector("input")!;
+
+			field.focus();
+
+			await act(async () => { render(shell(true), container); });
+
+			expect(document.activeElement).toBe(field);
 
 		});
 
 		it("disables the menu button while the side column is locked", async () => {
 
-			expect(menu(rendered(<Tool lock>content</Tool>))?.disabled).toBe(true);
+			expect(menu(rendered(<Tool locked>content</Tool>))?.disabled).toBe(true);
 			expect(menu(rendered(<Tool>content</Tool>))?.disabled).toBe(false);
 
 		});
@@ -476,9 +675,9 @@ describe("Tool", () => {
 
 		});
 
-		it("offers no menu button when the main column stands alone", async () => {
+		it("offers no menu button while the side column is tucked away", async () => {
 
-			const tool = rendered(<Tool main>content</Tool>);
+			const tool = rendered(<Tool tucked>content</Tool>);
 
 			expect(menu(tool)).toBeNull();
 			expect(side(tool)).toBeNull();

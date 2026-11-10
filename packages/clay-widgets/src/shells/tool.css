@@ -171,16 +171,16 @@ clay-tool {
         --clay-tool-main-track: minmax(0, 1fr);
     }
 
-    /* A frame showing the main column alone takes the side column out of the track list, leaving no room for it. */
+    /* A frame with the side column tucked away takes it out of the track list, leaving no room for it. */
 
-    &[main] {
+    &[tucked] {
         grid-template-columns: var(--clay-tool-main-track);
     }
 
     /*
      * Waiting lays a veil of the page colour over the frame, washing everything toward the page by the same share, bold
      * and large text included, where a fade would leave the heaviest text standing out. The columns beneath are out of
-     * reach meanwhile, so the veil itself takes no gesture: the platform answers none until the exchange settles.
+     * reach meanwhile, so the veil itself takes no gesture: the platform answers none until the app is no longer busy.
      */
 
     &[aria-busy="true"]::after {

@@ -23,15 +23,23 @@
  * @module tool
  */
 
-import { useFetching } from "@metreeca/clay/fetch";
+import type { Optional } from "@metreeca/core";
 import { useModel } from "@metreeca/clay/model";
 import { createState } from "@metreeca/core/state";
 import { skin } from "@metreeca/skin";
 import { type ComponentChildren, createElement, type TargetedEvent, type TargetedMouseEvent } from "preact";
-import { useEffect, useId } from "preact/hooks";
+import { useEffect, useId, useRef } from "preact/hooks";
 import { Icon } from "../glyphs/icon.js";
 import "./tool.css";
 
+
+/**
+ * The delay a change of `busy` waits out before the frame shows it (ms).
+ */
+const BusyDelay = 300;
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /**
  * Creates a tool shell.
@@ -52,10 +60,10 @@ import "./tool.css";
  * after what they tune, such as `--clay-tool-side-width` or `--clay-tool-head-gutter`. Each retunes the shell it is
  * set on, or every shell inside the element it is set on, leaving the other properties of the shell to their defaults.
  *
- * Waiting is stated by the shell itself: while the {@link @metreeca/clay!fetch.Fetch shared client} has exchanges in
- * flight, the frame is veiled, shows a turning mark at the end of the main head in place of the menu, and marks itself
- * busy for assistive technology. Both columns stay out of reach for pointer and keyboard alike until the exchanges
- * settle, so a screen states waiting by running its exchanges through that client, with no flag or call of its own.
+ * Waiting is stated by the app through `busy`, as when it has to let its state settle before the reader acts again:
+ * the frame is veiled, shows a turning mark at the end of the main head in place of the menu, and marks itself busy
+ * for assistive technology, while both columns stay out of reach for pointer and keyboard alike. The control holding
+ * the focus as waiting starts holds it again as waiting ends, so the reader picks up where they left off.
  *
  * The main column is named after `head` and takes the focus as the {@link @metreeca/clay!router.Router router} lands a
  * screen, without adding a tab stop, so a reader hears which screen they are on rather than a control of the last one.
@@ -76,8 +84,10 @@ import "./tool.css";
 export function Tool({
 
 	wide = false,
-	lock = false,
-	main = false,
+	busy = false,
+
+	locked = false,
+	tucked = false,
 
 	meta,
 	tray,
@@ -93,25 +103,35 @@ export function Tool({
 }: {
 
 	/**
-	 * Whether the main column takes the whole width of the frame rather than stopping at its width limit. Set it for
-	 * content that never has too much room, such as a table, a chart or a map, and leave it off for prose, which long
-	 * lines make harder to read. Capped at the width limit if omitted, past which the columns stand centred.
+	 * Whether the shell spans the whole frame rather than standing centred within its width limit. The main column then
+	 * takes all the room the side column leaves. Set it for content that never has too much room, such as a table, a
+	 * chart or a map, and leave it off for prose, which long lines make hard to read. Capped and centred if omitted.
 	 */
 	wide?: boolean
 
 	/**
-	 * Whether the side column is out of reach, as while the main column needs the full attention of the reader. What
-	 * it holds fades while the column keeps its place, and drops out of the tab order and the accessibility tree until
-	 * the lock is lifted. On a narrow viewport the lock closes the drawer and keeps it shut. Reachable if omitted.
+	 * Whether the app is waiting on work the reader has to let settle, such as the exchanges a change of filters
+	 * starts. Both columns are out of reach for as long as it is set. As it is lifted, the focus returns to the control
+	 * that held it, or moves to the main column if that control is gone. The frame starts and stops showing waiting
+	 * only after a short delay, so a brief stretch shows nothing and close stretches show as one. Idle if omitted.
 	 */
-	lock?: boolean
+	busy?: boolean
+
 
 	/**
-	 * Whether the main column stands alone, the side column left out of the frame rather than locked. The main column
-	 * takes the room the side column held, and nothing passed to `meta`, `tray` or `more` is shown. Set it for screens
-	 * seen through rather than moved around in, such as a sign-in or a splash. The side column stands if omitted.
+	 * Whether the side column stays in view but takes no input, as while the main column needs the full attention of
+	 * the reader. What it holds fades while the column keeps its place, and drops out of the tab order and the
+	 * accessibility tree until it is unlocked. A control inside it loses the focus as it is locked. On a narrow
+	 * viewport locking closes the drawer and disables the menu button, so the drawer stays shut. Usable if omitted.
 	 */
-	main?: boolean
+	locked?: boolean
+
+	/**
+	 * Whether the side column is tucked away, left out of the frame rather than locked, until the app brings it back.
+	 * The main column takes the room the side column held, and nothing passed to `meta`, `tray` or `more` is shown.
+	 * Set it for screens seen through rather than moved around in, such as a sign-in or a splash. Shown if omitted.
+	 */
+	tucked?: boolean
 
 
 	/**
@@ -139,8 +159,8 @@ export function Tool({
 
 	/**
 	 * The menu of the screen, such as its actions, at the end of the head of the main column. It keeps its full width
-	 * and is never clipped, while the other items of the head give way to it. While the shell is waiting, a turning
-	 * mark stands in its place until the exchanges settle, and the head keeps its height and layout.
+	 * and is never clipped, while the other items of the head give way to it. While the shell shows waiting, a turning
+	 * mark stands in its place, and the head keeps its height and layout until waiting ends.
 	 */
 	menu?: ComponentChildren
 
@@ -170,7 +190,55 @@ export function Tool({
 
 	const title = head ? `${id}-title` : undefined;
 
-	const fetching = useFetching();
+	const column = `${id}-main`;
+
+	const { waiting, settle } = useModel(() => createState<Waiting>({
+
+		waiting: false,
+
+		settle(waiting: boolean) {
+			return { waiting };
+		}
+
+	}));
+
+	/*
+	 * Only what waiting shows follows `busy` after the delay, while the columns are out of reach as soon as it is set.
+	 */
+
+	useEffect(() => {
+
+		const timer = setTimeout(() => settle(busy), BusyDelay);
+
+		return () => clearTimeout(timer);
+
+	}, [busy]);
+
+	/*
+	 * The control holding the focus as the columns turn inert is handed back as `busy` is lifted. It is tracked as it
+	 * takes the focus, since the browser may already have moved the focus out of the columns by the time an effect
+	 * runs, and kept in a ref, as no render follows the focus and the model holds no live element.
+	 */
+
+	const held = useRef<Optional<HTMLElement>>(undefined);
+
+	useEffect(() => busy
+		? () => restore(held.current, document.getElementById(column))
+		: undefined, [busy]
+	);
+
+	/*
+	 * A locked side column drops the control holding the focus, as browsers do on their own as it turns inert, so the
+	 * focus leaves it at once and alike everywhere rather than whenever the browser gets round to it.
+	 */
+
+	useEffect(() => {
+
+		if ( locked ) {
+			release(document.getElementById(side));
+		}
+
+	}, [locked]);
 
 	const { open, toggle } = useModel(() => createState<Drawer>({
 
@@ -209,11 +277,14 @@ export function Tool({
 
 	return createElement("clay-tool", {
 
-		"aria-busy": fetching,
+		"aria-busy": waiting,
+		onFocusIn: (event: FocusEvent) => {
+			held.current = event.target instanceof HTMLElement ? event.target : undefined;
+		},
 
 		wide,
-		locked: lock,
-		main
+		locked,
+		tucked
 
 	}, <>
 
@@ -228,11 +299,11 @@ export function Tool({
 		 * taken out of light dismiss: the switch closes a drawer left open, and the disabled menu button keeps it shut.
 		 */}
 
-		{!main && <aside
+		{!tucked && <aside
 			id={side}
 			aria-label="Menu"
-			popover={lock ? "manual" : "auto"}
-			inert={lock || fetching}
+			popover={locked ? "manual" : "auto"}
+			inert={locked || busy}
 			onClick={follow}
 			onToggle={event => {
 				reveal(event);
@@ -261,10 +332,10 @@ export function Tool({
 		 * two columns do not fit, the head opens the body instead, as the copy closes it.
 		 */}
 
-		<main aria-labelledby={title} tabIndex={-1} inert={open || fetching}>
+		<main id={column} aria-labelledby={title} tabIndex={-1} inert={open || busy}>
 
 			<header>
-				{!main && <button type="button" popovertarget={side} disabled={lock} aria-label="Open menu">
+				{!tucked && <button type="button" popovertarget={side} disabled={locked} aria-label="Open menu">
 					<Icon.Menu/>
 				</button>}
 				{split && head && <div id={title}>{head}</div>}
@@ -276,7 +347,7 @@ export function Tool({
 				 */}
 
 				{menu && <div class="menu">{menu}</div>}
-				{fetching && <span class="busy" inert><Icon.Reload/></span>}
+				{waiting && <span class="busy" inert><Icon.Reload/></span>}
 
 			</header>
 
@@ -293,6 +364,27 @@ export function Tool({
 
 }
 
+
+/**
+ * Whether the shell states waiting, as it follows `busy` once the delay has elapsed.
+ */
+interface Waiting {
+
+	/**
+	 * Whether the frame is veiled, shows the turning mark and is marked busy for assistive technology.
+	 */
+	readonly waiting: boolean;
+
+	/**
+	 * Records waiting as started or ended.
+	 *
+	 * @param waiting Whether the shell now states waiting
+	 *
+	 * @returns The waiting state as it now stands
+	 */
+	settle(waiting: boolean): Waiting;
+
+}
 
 /**
  * Whether the drawer is open, as the side column shows it.
@@ -368,6 +460,56 @@ function reveal(event: TargetedEvent<HTMLElement>): void {
 	if ( opened(event) ) {
 		event.currentTarget.querySelector<HTMLElement>(":scope > header > button")?.focus();
 	}
+}
+
+
+/**
+ * Retrieves the control holding the focus.
+ *
+ * @returns The focused element, if any element other than the page itself holds the focus
+ */
+function focused(): Optional<HTMLElement> {
+
+	const element = document.activeElement;
+
+	return element instanceof HTMLElement && element !== document.body ? element : undefined;
+
+}
+
+/**
+ * Gives the focus back to the control holding it as waiting started, or to the fallback if the control can no longer
+ * take it; the focus is left alone if anything else took it meanwhile, or if no control held it.
+ *
+ * @param control The control holding the focus as waiting started
+ * @param fallback The element taking the focus in place of a control gone in the meantime
+ */
+function restore(control: Optional<HTMLElement>, fallback: Optional<HTMLElement | null>): void {
+
+	if ( control && !focused() ) {
+
+		control.focus({ preventScroll: true });
+
+		if ( !focused() ) {
+			fallback?.focus({ preventScroll: true });
+		}
+
+	}
+
+}
+
+/**
+ * Takes the focus off the control holding it inside a column.
+ *
+ * @param column The column whose control is to lose the focus
+ */
+function release(column: Optional<HTMLElement | null>): void {
+
+	const control = focused();
+
+	if ( control && column?.contains(control) ) {
+		control.blur();
+	}
+
 }
 
 

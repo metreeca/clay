@@ -33,6 +33,7 @@ import { Link } from "@metreeca/clay-widgets/link";
 import { Strip } from "@metreeca/clay-widgets/strip";
 import { TOC, type TOCEntry } from "@metreeca/clay-widgets/toc";
 import { Tool } from "@metreeca/clay-widgets/tool";
+import { useFetching } from "@metreeca/clay/fetch";
 import { useRouter } from "@metreeca/clay/router";
 import { useStorage } from "@metreeca/clay/storage";
 import { type ComponentChildren, createElement, Fragment } from "preact";
@@ -117,6 +118,8 @@ export function Page({
 	const [scheme, setScheme] = useScheme();
 
 	return <Tool
+
+		busy={useFetching()}
 
 		meta={<Button
 			icon={<span class="brand">@metreeca/<strong>clay</strong></span>}
