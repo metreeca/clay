@@ -147,7 +147,7 @@ clay-tool {
     --clay-tool-side-inset: var(--clay-tool-side-gutter, var(--skin--spacing-100));
     --clay-tool-main-inset: var(--clay-tool-main-gutter, var(--skin--spacing-100));
     --clay-tool-head-inset: var(--clay-tool-head-gutter, var(--skin--spacing-100));
-    --clay-tool-body-inset: var(--clay-tool-body-gutter, var(--skin--spacing-050));
+    --clay-tool-body-inset: var(--clay-tool-body-gutter, var(--skin--spacing-100));
     --clay-tool-foot-inset: var(--clay-tool-foot-gutter, var(--skin--spacing-100));
 
     /* The track of the main column, capped at the width limit unless the frame goes wide. */
