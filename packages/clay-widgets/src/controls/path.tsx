@@ -36,6 +36,9 @@ import "./path.css";
  * reader thus learns where they stand whether or not they see the trail. A trail too long for its row clips its last
  * step with an ellipsis and keeps the levels above it whole, so the page name is best stated in full elsewhere.
  *
+ * On a phone held upright the steps stack one per line instead, outermost on top, each but the first opening on its
+ * separator, and a step too long for the line wraps rather than being clipped, so the whole trail stays legible.
+ *
  * @param options The widget configuration
  *
  * @returns The breadcrumb path

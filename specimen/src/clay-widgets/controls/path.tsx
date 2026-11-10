@@ -29,7 +29,8 @@ import "../index.css";
 /**
  * Creates the paths section.
  *
- * Shows the breadcrumb trail stating where a screen sits in the hierarchy, and how the trail fits a narrow row.
+ * Shows the breadcrumb trail stating where a screen sits in the hierarchy, how the trail fits a narrow row, and how it
+ * stacks its steps one per line on a phone held upright, wrapping a step too long for the line rather than clipping it.
  *
  * @returns The paths section
  */
@@ -56,7 +57,8 @@ export function Paths() {
 		</div>
 
 		<p>A trail too long for its row keeps the levels above the page whole and clips the page name instead, which
-			the heading of the screen states in full anyway.</p>
+			the heading of the screen states in full anyway. On a phone held upright the steps stack one per line
+			instead, and a page name too long for its line wraps onto the next rather than being clipped.</p>
 
 		<div class="paths narrow">
 			<Path name="Breadcrumb">

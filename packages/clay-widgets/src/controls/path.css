@@ -14,7 +14,10 @@
  * limitations under the License.
  */
 
-/* A path lays its steps in a single row, clipping the last one with an ellipsis where the row runs out. */
+/*
+ * A path lays its steps in a single row, clipping the last one with an ellipsis where the row runs out, and stacks them
+ * one per line on a phone held upright, where a row would leave the steps no room at all.
+ */
 
 clay-path {
 
@@ -54,6 +57,8 @@ clay-path {
 
                 margin: 0;
 
+                --clay-path-chevron-height: 0.9ex;
+
                 white-space: nowrap;
 
                 /*
@@ -73,14 +78,11 @@ clay-path {
                  * size. It is painted in the label colour through a mask cropped to the stroke, round caps included.
                  * The stroke is stated in the glyph, a mask having no way to read a custom property, at a width close
                  * to the stem of the light text weight. The chevron keeps the label colour under forced colours, which
-                 * would otherwise paint over the whole of the box it is cut from rather than the stroke alone.
+                 * would otherwise paint over the whole of the box it is cut from rather than the stroke alone. The
+                 * rules below pick which steps draw one, by giving their pseudo-element its content.
                  */
 
-                &:not(:first-child)::before, &:only-child::after {
-
-                    --clay-path-chevron-height: 0.9ex;
-
-                    content: "" / "";
+                &::before, &::after {
 
                     display: inline-block;
 
@@ -101,11 +103,62 @@ clay-path {
 
                 }
 
+                &:not(:first-child)::before, &:only-child::after {
+                    content: "" / "";
+                }
+
                 &:last-child {
                     flex-shrink: 1;
                     min-width: 0;
                     overflow: hidden;
                     text-overflow: ellipsis;
+                }
+
+            }
+
+            /*
+             * Below the small viewport a phone held upright leaves no room for a row, so the steps stack one per line,
+             * outermost on top, each but the first opening on its chevron. A step too long for the line wraps rather
+             * than clipping, as the whole width is its own, and hangs its later lines under its text, not its chevron.
+             */
+
+            @container style(--skin--viewport-small: off) {
+
+                flex-direction: column;
+                align-items: flex-start;
+
+                & > li {
+
+                    /* The room a chevron takes, the margin to the step it opens included. */
+
+                    --clay-path-chevron-advance: calc(
+                            var(--clay-path-chevron-height) * 8 / 14 + (var(--skin--spacing-025) + var(--skin--spacing-050)) / 2
+                    );
+
+                    max-width: 100%;
+
+                    white-space: normal;
+                    overflow-wrap: anywhere;
+
+                    &:not(:first-child) {
+
+                        padding-inline-start: var(--clay-path-chevron-advance);
+                        text-indent: calc(-1 * var(--clay-path-chevron-advance));
+
+                        /* The indent hangs the step itself, never the lines a block inside it lays out. */
+
+                        & > * {
+                            text-indent: 0;
+                        }
+
+                        /* Flush with the edge, so the chevrons line up under the first step as one column. */
+
+                        &::before {
+                            margin-inline-start: 0;
+                        }
+
+                    }
+
                 }
 
             }
