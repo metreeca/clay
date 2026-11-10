@@ -32,7 +32,7 @@ clay-infobox {
 
     display: grid;
     grid-template-columns: minmax(0, min-content) minmax(50%, 1fr);
-    column-gap: var(--skin--spacing-075);
+    column-gap: var(--skin--spacing-100);
 
     /* An infobox leaves the step a plain definition list leaves below it, so it is spaced as one in a page flow. */
 
@@ -112,7 +112,7 @@ clay-infobox {
 
                     padding-left: 0;
 
-                    clip-path: inset(0 0 0 calc(-1 * var(--skin--spacing-075)));
+                    clip-path: inset(0 0 0 calc(-1 * var(--skin--spacing-100)));
 
                     /*
                      * Items are marked by a small grey dot, telling a value made of several items from a single one
@@ -130,6 +130,12 @@ clay-infobox {
                             color-mix(in oklab, var(--skin--color) 36%, var(--skin--background-color)),
                             color-mix(in oklab, var(--skin--color) 47%, var(--skin--background-color))
                         );
+                    }
+
+                    /* A single item reads as a plain value, so it takes no marker. */
+
+                    & > li:only-child {
+                        list-style-type: none;
                     }
 
                     & > li + li {
