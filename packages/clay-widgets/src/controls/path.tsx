@@ -1,5 +1,5 @@
 /*
- * Copyright © 2023-2026 Metreeca srl
+ * Copyright © 2026 Metreeca srl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -59,8 +59,8 @@ export function Path({
 
 	/**
 	 * The steps of the trail, outermost first, one child each: a {@link link.Link Link} for a level the reader may
-	 * return to, coloured as a strong link unless it states a look of its own, plain content for one they may not; empty
-	 * children such as `null`, `undefined` or `false` are dropped rather than shown as empty steps.
+	 * return to, coloured as a strong link unless it states a look of its own, plain content for one they may not;
+	 * empty children such as `null`, `undefined` or `false` are dropped rather than shown as empty steps.
 	 */
 	children?: ComponentChildren
 
@@ -70,7 +70,7 @@ export function Path({
 
 	return createElement("clay-path", {}, <nav aria-label={name}>
 		<ol>{steps.map((step, index) =>
-			<li key={index} aria-current={index === steps.length - 1 ? "page" : undefined}>{step}</li>
+			<li key={index} aria-current={index === steps.length-1 ? "page" : undefined}>{step}</li>
 		)}</ol>
 	</nav>);
 

@@ -54,11 +54,17 @@ describe("Infobox", () => {
 
 	});
 
-	describe("placement", () => {
+	describe("alignment", () => {
 
-		it("places at the start by default", async () => {
+		it("aligns labels to the start by default", async () => {
 
-			expect(rendered(<Infobox>{{ label: "value" }}</Infobox>)?.getAttribute("place")).toBe("start");
+			expect(rendered(<Infobox>{{ label: "value" }}</Infobox>)?.getAttribute("align")).toBe("start");
+
+		});
+
+		it("aligns labels to the end if required", async () => {
+
+			expect(rendered(<Infobox align="end">{{ label: "value" }}</Infobox>)?.getAttribute("align")).toBe("end");
 
 		});
 

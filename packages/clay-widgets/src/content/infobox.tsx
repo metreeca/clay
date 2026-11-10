@@ -46,7 +46,7 @@ import "./infobox.css";
 export function Infobox({
 
 	wrap = false,
-	place = "start",
+	align = "start",
 
 	children
 
@@ -60,12 +60,11 @@ export function Infobox({
 	wrap?: boolean
 
 	/**
-	 * Where labels and values sit across the infobox. At the `start`, the default, labels keep to the left edge of
-	 * their column as values do, so both columns read as aligned text. In the `center`, labels sit flush against the
-	 * values they introduce. With `spread`, labels keep to the left edge and values to the right one, so each pair
-	 * spans the full width of the infobox and reads as a single row from one edge to the other.
+	 * Where labels sit within their column. At the `start`, the default, labels keep to the leading edge as values
+	 * do, so both columns read as aligned text. At the `end`, labels sit flush against the values they introduce, so
+	 * each label reads as the caption of its value rather than as an entry of a column of its own.
 	 */
-	place?: "start" | "center" | "spread"
+	align?: "start" | "end"
 
 
 	/**
@@ -89,7 +88,7 @@ export function Infobox({
 	return entries.length > 0 ? createElement("clay-infobox", {
 
 		wrap,
-		place
+		align
 
 	}, <dl>{entries.map(({ label, value }, index) =>
 		<Fragment key={index}>

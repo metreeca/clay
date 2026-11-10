@@ -16,8 +16,8 @@
 
 /*
  * An infobox lays its definition list out as a two-column grid, labels in the first column and values in the second.
- * At the start, labels keep to the left edge of their column as values do. Centred, labels sit flush against the
- * values they introduce, as fits the body of a page. Spread, labels keep to the left edge and values to the right.
+ * At the start, labels keep to the leading edge of their column as values do, so both columns read as aligned text;
+ * at the end, they sit flush against the values they introduce, so each label reads as the caption of its value.
  */
 
 clay-infobox {
@@ -54,13 +54,15 @@ clay-infobox {
 
         /*
          * Labels take the width they need up to half the infobox, so a long label is clipped rather than crowding out
-         * the values it is there to introduce; values take the rest of the width, never less than half of it.
+         * the values it is there to introduce; values take the rest of the width, never less than half of it. Labels
+         * and values have no edge between them to tell the two columns apart, so they are set a wide step apart to
+         * read as two columns rather than as one run of text, whichever edge of their column the labels keep to.
          */
 
         display: grid;
         grid-template-columns: minmax(0, min-content) minmax(50%, 1fr);
         align-items: baseline;
-        gap: var(--skin--spacing-010) var(--skin--spacing-050);
+        gap: var(--skin--spacing-010) var(--skin--spacing-075);
 
         margin: 0;
 
@@ -85,7 +87,6 @@ clay-infobox {
          */
 
         & > dt {
-            text-align: end;
             text-transform: capitalize;
             font-size: inherit;
             font-weight: inherit;
@@ -161,15 +162,6 @@ clay-infobox {
     }
 
     /*
-     * Centred or at the start, labels and values have no edge between them to tell the two columns apart, so they are
-     * set a wider step apart to read as two columns rather than as one run of text.
-     */
-
-    &:not([place="spread"]) > dl {
-        column-gap: var(--skin--spacing-075);
-    }
-
-    /*
      * Wrapping, a long value wraps within its column rather than being clipped, so a value is shown in full however
      * long it runs, and a word outrunning the column alone, as a long address, breaks wherever needed to fit it.
      */
@@ -179,24 +171,10 @@ clay-infobox {
         overflow-wrap: anywhere;
     }
 
-    /* At the start, labels keep to the left edge of their column as values do. */
+    /* At the end, labels sit flush against the values they introduce. */
 
-    &[place="start"] > dl > dt {
-        text-align: start;
-    }
-
-    /* Spread, labels keep to the left edge and values to the right one. */
-
-    &[place="spread"] > dl {
-
-        & > dt {
-            text-align: start;
-        }
-
-        & > dd {
-            text-align: end;
-        }
-
+    &[align="end"] > dl > dt {
+        text-align: end;
     }
 
 }

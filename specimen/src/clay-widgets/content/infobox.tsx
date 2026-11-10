@@ -29,34 +29,26 @@ import "../index.css";
 /**
  * Creates the infobox section.
  *
- * Shows the same properties laid out for the body of a page and for a sidebar, with the rule that sets consecutive
- * infoboxes apart and the entries an infobox leaves out for want of a value, so the layouts compare side by side.
+ * Shows the same properties with labels at the start and at the end of their column, so the two alignments compare side
+ * by side, with the rule setting consecutive infoboxes apart and the entries an infobox leaves out for want of a value.
  *
  * @returns The infobox section
  */
 export function Infoboxes() {
 	return <>
 
-		<p>An infobox lists the properties of an item, each value beside the label naming it. In the body of a page the
-			labels and the values both keep left or meet in the middle; in a sidebar they spread from edge to edge. A
-			property with no value is left out, and consecutive infoboxes are set apart by a rule.</p>
+		<p>An infobox lists the properties of an item, each value beside the label naming it. Labels keep to the
+			leading edge of their column as values do, or sit flush against the values they introduce. A property with
+			no value is left out, and consecutive infoboxes are set apart by a rule.</p>
 
 		<div class="columns">
 
-			<div>
+			<Frame label="start">
+				<Panels align="start"/>
+			</Frame>
 
-				<Frame label="start">
-					<Panels place="start"/>
-				</Frame>
-
-				<Frame label="center">
-					<Panels place="center"/>
-				</Frame>
-
-			</div>
-
-			<Frame label="spread">
-				<Panels place="spread"/>
+			<Frame label="end">
+				<Panels align="end"/>
 			</Frame>
 
 		</div>
@@ -65,23 +57,23 @@ export function Infoboxes() {
 }
 
 
-function Panels({ place }: {
+function Panels({ align }: {
 
-	place: "start" | "center" | "spread"
+	align: "start" | "end"
 
 }) {
 	return <>
 
-		<Infobox place={place}>{{
+		<Infobox align={align}>{{
 			title: "Annual report",
 			author: "Jane Doe",
 			editor: undefined,
 			published: "2026-03-15"
 		}}</Infobox>
 
-		<Infobox place={place}>{[
+		<Infobox align={align}>{[
 			{
-				label: "Keywords", value: <Items labels={place === "center"
+				label: "Keywords", value: <Items labels={align === "end"
 					? ["Finance", "Governance", "Sustainability"]
 					: ["finance", "governance", "sustainability"]
 				}/>

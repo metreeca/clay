@@ -1,5 +1,5 @@
 /*
- * Copyright © 2023-2026 Metreeca srl
+ * Copyright © 2026 Metreeca srl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -99,7 +99,8 @@ export function Link({
 	href: string
 
 	/**
-	 * The entries the link adds to the query of the route it points at, after any query `href` carries; none if omitted.
+	 * The entries the link adds to the query of the route it points at, after any query `href` carries; none if
+	 * omitted.
 	 *
 	 * The page reached reads them from its location, so a link hands over the criteria it is narrowed by, as a facet
 	 * value linking to the catalogue filtered on it, and a link to the current route narrows the page in place with an
@@ -146,7 +147,8 @@ export function Link({
 	const path = target.replace(/\?.*$/, ""); // the route carries no query, so marking compares the path alone
 
 	const entries = Object.entries(query ?? {})
-		.map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`) // `+` would not read as a space
+		.map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`) // `+` would not read as a
+																						  // space
 		.join("&");
 
 	const marked = active && (section ? route.startsWith(path) : route === path);
