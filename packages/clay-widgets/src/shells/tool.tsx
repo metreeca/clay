@@ -37,11 +37,12 @@ import "./tool.css";
  * Creates a tool shell.
  *
  * Lays a screen out as two columns, the side column beside the main one, each with a head, a body and a foot. The
- * heads of the two columns share one row, so they always match in height, and the feet do the same. The body of each
- * column scrolls on its own, while its head and foot stay in view, so what they hold is always within reach. Heads
- * and feet keep the height of a single line: text too wide for them is clipped and ends with an ellipsis. Content
- * made sticky in a body pins flush against the head or foot of its column, leaving no strip of scrolled content
- * showing between them, while the body keeps its gutter around everything else.
+ * heads of the two columns share one row, so they always match in height, and the feet do the same. A column with
+ * nothing for its foot shows none, its body running down to the bottom of the frame. The body of each column scrolls
+ * on its own, while its head and foot stay in view, so what they hold is always within reach. Heads and feet keep
+ * the height of a single line: text too wide for them is clipped and ends with an ellipsis. Content made sticky in a
+ * body pins flush against the head or foot of its column, leaving no strip of scrolled content showing between them,
+ * while the body keeps its gutter around everything else, so only what is meant to stand pinned meets the bars.
  *
  * The shell fills the height its host gives it and sets none of its own. Without a definite height, the bodies grow
  * with their content instead of scrolling, and the heads and feet scroll out of view with the page.
@@ -94,7 +95,7 @@ export function Tool({
 	/**
 	 * Whether the main column takes the whole width of the frame rather than stopping at its width limit. Set it for
 	 * content that never has too much room, such as a table, a chart or a map, and leave it off for prose, which long
-	 * lines make harder to read. Capped at the width limit if omitted.
+	 * lines make harder to read. Capped at the width limit if omitted, past which the columns stand centred.
 	 */
 	wide?: boolean
 
@@ -106,10 +107,9 @@ export function Tool({
 	lock?: boolean
 
 	/**
-	 * Whether the main column stands alone, with the side column left out of the frame rather than merely locked. The
-	 * main column takes the room the side column held, and nothing passed to `meta`, `tray` or `more` is shown. Set it
-	 * for screens meant to be seen through rather than moved around in, such as a sign-in or a splash. The side column
-	 * stands if omitted.
+	 * Whether the main column stands alone, the side column left out of the frame rather than locked. The main column
+	 * takes the room the side column held, and nothing passed to `meta`, `tray` or `more` is shown. Set it for screens
+	 * seen through rather than moved around in, such as a sign-in or a splash. The side column stands if omitted.
 	 */
 	main?: boolean
 
@@ -132,7 +132,8 @@ export function Tool({
 
 	/**
 	 * The heading of the screen, such as its title, in the head of the main column. On a viewport too narrow for two
-	 * columns it opens the body of the main column instead, scrolling away with the content rather than standing over it.
+	 * columns it opens the body of the main column instead, scrolling away with the content rather than standing over
+	 * it, so the narrow screen gives its whole height to the content once the reader starts scrolling.
 	 */
 	head?: ComponentChildren
 
@@ -168,10 +169,6 @@ export function Tool({
 	// the landmark is named by the head on show, so the reference stands or falls with its target and never dangles
 
 	const title = head ? `${id}-title` : undefined;
-
-	// a foot stands in both columns as soon as either has something for it, so the bodies end level
-
-	const feet = Boolean(foot || (!main && more));
 
 	const fetching = useFetching();
 
@@ -253,7 +250,7 @@ export function Tool({
 			<div tabIndex={0}>
 				<div>{tray}</div>
 			</div>
-			{feet && <footer>{more}</footer>}
+			{more && <footer>{more}</footer>}
 
 		</aside>}
 
@@ -288,7 +285,7 @@ export function Tool({
 				<div>{children}</div>
 				{copy && <footer>{copy}</footer>}
 			</div>
-			{feet && <footer>{foot}</footer>}
+			{foot && <footer>{foot}</footer>}
 
 		</main>
 

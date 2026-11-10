@@ -17,8 +17,8 @@
 /*
  * The frame is a grid of two columns by three rows, the side column beside the main one, each a head over a body over
  * a foot. Each column lays its parts out on the rows of the frame, so the heads of both share one row, and so do the
- * feet, whichever holds more. The frame fills the height its host gives it, each body scrolling within what its bars
- * leave.
+ * feet, whichever holds more. A column with nothing for its foot leaves it out, and its body takes the row instead. The
+ * frame fills the height its host gives it, each body scrolling within what its bars leave.
  */
 
 /*
@@ -326,13 +326,20 @@ clay-tool {
 
         /*
          * The body scrolls with no padding of its own, so content made sticky pins flush with the bars: the inset is
-         * carried by the boxes scrolling inside it, each column setting it on what its body holds.
+         * carried by the boxes scrolling inside it, each column setting it on what its body holds. A column with no foot
+         * runs its body down to the end of the frame, leaving no empty bar beside the foot of the other column.
          */
 
         & > div {
+
             grid-row: 2;
             overflow: auto;
             scroll-timeline: var(--clay-tool-scroll) block;
+
+            &:last-child {
+                grid-row: 2 / -1;
+            }
+
         }
 
         & > footer {
@@ -551,8 +558,10 @@ clay-tool {
         /*
          * The body holds the content in a block of its own, which takes whatever room the body leaves, so the copy
          * after it rests at the bottom of a body the content is too short to fill and follows the content otherwise.
-         * The content keeps the plain flow of a block, its margins meeting as they would anywhere else. The first and
-         * the last of these parts carry the inset of the body, as they are boxes of the column rather than content.
+         * The content keeps the plain flow of a block, its margins meeting as they would anywhere else. The first part
+         * and the content closing the body carry the inset of the body, as they are boxes of the column rather than
+         * content. The copy takes the inset and type of a foot instead, so resting at the bottom of the body it stands
+         * level with the foot of the side column, reading as one bar across the frame.
          */
 
         & > div {
@@ -564,12 +573,19 @@ clay-tool {
                 padding-block-start: var(--clay-tool-body-inset);
             }
 
-            & > :last-child {
-                padding-block-end: var(--clay-tool-body-inset);
+            & > div {
+
+                flex: auto;
+
+                &:last-child {
+                    padding-block-end: var(--clay-tool-body-inset);
+                }
+
             }
 
-            & > div {
-                flex: auto;
+            & > footer {
+                padding-block: var(--clay-tool-foot-inset);
+                font-size: var(--clay-tool-foot-font-size, var(--skin--font-size-small));
             }
 
             /*

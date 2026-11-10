@@ -283,9 +283,21 @@ describe("Tool", () => {
 
 		});
 
-		it("renders both feet when either column has something for them", async () => {
+		it("renders the main foot alone when only the main column has something for it", async () => {
 
-			expect(rendered(<Tool foot={<span>foot</span>}>content</Tool>).querySelectorAll(":scope > * > footer").length).toBe(2);
+			const frame = rendered(<Tool foot={<span>foot</span>}>content</Tool>);
+
+			expect(frame.querySelector(":scope > main > footer")).not.toBeNull();
+			expect(frame.querySelector(":scope > aside > footer")).toBeNull();
+
+		});
+
+		it("renders the side foot alone when only the side column has something for it", async () => {
+
+			const frame = rendered(<Tool more={<span>more</span>}>content</Tool>);
+
+			expect(frame.querySelector(":scope > aside > footer")).not.toBeNull();
+			expect(frame.querySelector(":scope > main > footer")).toBeNull();
 
 		});
 
