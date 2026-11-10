@@ -17,8 +17,9 @@
 /**
  * Page heading.
  *
- * Opens a stretch of a long page with a title ranked in the page outline, so a page reads as a sequence of stretches
- * a reader can scan, follow in an outline and link to, rather than as one unbroken run of text.
+ * Opens a stretch of a long page with a title, so a page reads as a sequence of stretches a reader can scan and link
+ * to, rather than as one unbroken run of text. A ranked title also places its stretch in the page outline for a reader
+ * to follow, while an unranked one titles a minor stretch that takes no place in the outline.
  *
  * @module heading
  */
@@ -31,12 +32,10 @@ import "./heading.css";
 /**
  * Creates a page heading.
  *
- * Sets the title as a heading at its rank in the page outline. The heading holds nothing else: the content it opens
- * follows it on the page as its sibling, so the heading never decides how that content is laid out.
- *
- * A top-level heading following anything else on the page is set apart from it by a rule, so a page of them reads as
- * a sequence without a frame around each stretch. A nested heading opens a stretch of the one above it instead: its
- * title stands a step above the text, and it keeps no rule of its own, so its stretch reads as part of the one above.
+ * Sets the title as a heading at its rank in the page outline, or in heading type outside the outline when given no
+ * rank. The heading holds nothing else: the content it opens follows it on the page as its sibling, so the heading
+ * never decides how that content is laid out. A ranked title is set as the design system sets any heading of its rank,
+ * so a page of headings reads like the rest of the page markup; a heading with no title renders nothing at all.
  *
  * The heading adds no landmark: the rank of its title alone places it in the page outline. A heading given an `id` is
  * a target for links, such as the entries of a {@link @metreeca/clay-widgets!toc.TOC table of contents}, and comes to
@@ -44,13 +43,13 @@ import "./heading.css";
  *
  * @param options The widget configuration
  *
- * @returns The page heading
+ * @returns The page heading, or `null` if given no title
  */
 export function Heading({
 
 	id,
 
-	level = 1,
+	level,
 
 	children
 
@@ -63,17 +62,21 @@ export function Heading({
 
 	/**
 	 * The rank of the title in the outline of the page: `1` for a heading of the page itself, `2` for a heading nested
-	 * under one of them, `3` for one nested a level deeper; `1` if omitted, so a page of headings needs no rank at all.
+	 * under one of them, `3` for one nested a level deeper. If omitted, the title still reads as a heading, but takes no
+	 * place in the outline and keeps the size of the running text, titling a minor stretch within a ranked one.
 	 */
 	level?: 1 | 2 | 3
 
 	/**
-	 * What the stretch the heading opens is called, set as a heading at `level`; none if omitted.
+	 * The title of the stretch opened by the heading, set as a heading at `level`, or in heading type when no `level`
+	 * is given; none if omitted, in which case the heading renders nothing, not even an empty element on the page.
 	 */
 	children?: ComponentChildren
 
 }) {
 
-	return createElement("clay-heading", { id, level }, isContent(children) && createElement(`h${level}`, {}, children));
+	return isContent(children)
+		? createElement(level ? `h${level}` : "clay-heading", { id }, children)
+		: null;
 
 }

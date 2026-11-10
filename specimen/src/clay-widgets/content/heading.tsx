@@ -34,15 +34,18 @@ export function Headings() {
 	return <>
 
 		<p>A heading opens a stretch of a page with a title ranked in the page outline, the content it opens following
-			it as a sibling. A top-level heading is set apart from what precedes it by a rule, and one carrying an id is
-			a target an outline links to.</p>
+			it as a sibling. The title is set as any heading of its rank, and a heading carrying an id is a target an
+			outline links to.</p>
 
 		<Heading level={3}>A Nested Heading</Heading>
-		<p>A nested heading opens a stretch of the one above it, titled a step above the text and keeping no rule of its
-			own.</p>
+		<p>A nested heading opens a stretch of the one above it, its title set at the lower rank it is given.</p>
 
 		<Heading level={3}>Another Nested Heading</Heading>
-		<p>Consecutive nested headings follow one another with no rule between them.</p>
+		<p>Consecutive nested headings follow one another, each opening a stretch of its own.</p>
+
+		<Heading>An Unranked Heading</Heading>
+		<p>A heading given no rank is set in heading type at the size of the text, titling what follows it while holding
+			no place in the page outline.</p>
 
 	</>;
 }

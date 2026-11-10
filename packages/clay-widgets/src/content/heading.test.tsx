@@ -21,44 +21,37 @@ import { Heading } from "./heading.js";
 
 describe("Heading", () => {
 
-	const rendered = (element: JSX.Element): null | HTMLElement => {
+	const markup = (element: JSX.Element): string => {
 
 		const container = document.createElement("div");
 
 		render(element, container);
 
-		return container.querySelector<HTMLElement>(":scope > clay-heading");
+		return container.innerHTML;
 
 	};
-
-	const outline = (element: JSX.Element): readonly string[] =>
-		Array.from(rendered(element)?.children ?? [], ({ localName }) => localName);
 
 
 	describe("title", () => {
 
-		it("sets the title as a first-rank heading by default", async () => {
+		it("sets the title outside the outline by default", async () => {
 
-			expect(outline(<Heading>Colours</Heading>)).toEqual(["h1"]);
-
-		});
-
-		it("sets the title at the level given", async () => {
-
-			expect(outline(<Heading level={2}>Anchors</Heading>)).toEqual(["h2"]);
-			expect(outline(<Heading level={3}>Hues</Heading>)).toEqual(["h3"]);
+			expect(markup(<Heading><em>Colours</em></Heading>)).toBe("<clay-heading><em>Colours</em></clay-heading>");
 
 		});
 
-		it("holds the title given", async () => {
+		it("sets the title as a heading at the level given", async () => {
 
-			expect(rendered(<Heading><em>Colours</em></Heading>)?.innerHTML).toBe("<h1><em>Colours</em></h1>");
+			expect(markup(<Heading level={1}><em>Colours</em></Heading>)).toBe("<h1><em>Colours</em></h1>");
+			expect(markup(<Heading level={2}>Anchors</Heading>)).toBe("<h2>Anchors</h2>");
+			expect(markup(<Heading level={3}>Hues</Heading>)).toBe("<h3>Hues</h3>");
 
 		});
 
-		it("holds nothing when given no title", async () => {
+		it("renders nothing when given no title", async () => {
 
-			expect(outline(<Heading/>)).toEqual([]);
+			expect(markup(<Heading/>)).toBe("");
+			expect(markup(<Heading id="colours" level={1}/>)).toBe("");
 
 		});
 
@@ -68,13 +61,8 @@ describe("Heading", () => {
 
 		it("carries the id given", async () => {
 
-			expect(rendered(<Heading id="colours">Colours</Heading>)?.id).toBe("colours");
-
-		});
-
-		it("carries no id if none is given", async () => {
-
-			expect(rendered(<Heading>Colours</Heading>)?.hasAttribute("id")).toBe(false);
+			expect(markup(<Heading id="colours">Colours</Heading>)).toBe(`<clay-heading id="colours">Colours</clay-heading>`);
+			expect(markup(<Heading id="colours" level={1}>Colours</Heading>)).toBe(`<h1 id="colours">Colours</h1>`);
 
 		});
 

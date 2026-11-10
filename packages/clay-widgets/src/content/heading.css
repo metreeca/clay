@@ -15,38 +15,20 @@
  */
 
 /*
- * A heading opens a stretch of a long page and is set apart from whatever precedes it by a rule, so a page of headings
- * reads as a sequence without a frame drawn around each stretch or a box around the whole page.
+ * A title with no rank reads as a heading through the type the design system gives every heading, while its size stays
+ * that of the running text, since it holds no place in the outline the heading scale tells apart. It stands as close
+ * to the content it opens as the lowest ranked headings do, so it still reads as titling what follows it.
  */
 
 clay-heading {
 
     display: block;
+    margin-bottom: var(--skin--spacing-100);
 
-    padding-top: var(--skin--spacing-150);
-
-    &:not(:first-child) {
-        margin-top: var(--skin--spacing-150);
-        border-top-style: var(--skin--border-style);
-    }
-
-    /* A nested heading opens a stretch of the one above it rather than of the page, so it keeps no rule of its own. */
-
-    &:not([level="1"]) {
-
-        padding-top: var(--skin--spacing-100);
-
-        &:not(:first-child) {
-            margin-top: 0;
-            border-top-style: none;
-        }
-
-    }
-
-    /* A nested heading's title stands a step above the text, never as loud as the title of the page. */
-
-    & > :is(h2, h3) {
-        font-size: var(--skin--font-size-large);
-    }
+    font-size: calc(var(--skin--font-size-heading) * 1.1); /* A ratio on the heading size, which no em step can express. */
+    font-weight: var(--skin--font-weight-strong);
+    font-family: var(--skin--font-family-heading);
+    letter-spacing: var(--skin--letter-spacing-heading);
+    text-transform: var(--skin--text-transform-heading);
 
 }
