@@ -26,6 +26,14 @@ clay-markdown {
     display: block;
 
     /*
+     * A document followed by other content is set apart from it as any other block of the design system is.
+     */
+
+    &:not(:last-child) {
+        margin-bottom: var(--skin--spacing-150);
+    }
+
+    /*
      * The footnotes heading names the section footnote references point to, and reads as noise to a sighted reader
      * who sees the footnotes set apart already, so it is taken out of view while staying in the accessibility tree.
      */
