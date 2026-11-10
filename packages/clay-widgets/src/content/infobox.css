@@ -114,43 +114,37 @@ clay-infobox {
 
                 & > li {
 
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+
                     & + li {
                         margin-top: 0;
                     }
 
-                    /* The room a marked item leaves to its chevron: the glyph and the gap before the item. */
-
-                    --clay-infobox-chevron-width: calc(0.5em + var(--skin--spacing-050));
-
-                    overflow: hidden;
-                    text-overflow: ellipsis;
-
                     /*
-                     * A marked item gives its widget the width the chevron leaves, so a widget too wide for the line,
-                     * as a long link, clips its own wording rather than being dropped whole by the ellipsis of the item.
+                     * A marked item sets its content in from the leading edge by the room of the chevron and its gap,
+                     * so a widget too wide for the line, as a long link, clips its own wording within what is left.
                      */
 
-                    &:not(:only-child) > * {
-                        max-width: calc(100% - var(--clay-infobox-chevron-width));
-                    }
+                    &:not(:only-child) {
 
-                    /*
-                     * The chevron is drawn on the x-height, so it sits low beside an item opening on a capital. It is
-                     * lifted by half the gap between the x-height and the cap height, which centres it on the cap
-                     * height, read off the font in use through the ex and cap units so the lift follows any face;
-                     * relative positioning leaves the line box as it was. It takes a fixed width, so the room it leaves
-                     * is known to the widget beside it.
-                     */
-
-                    &:not(:only-child)::before {
-                        content: "›";
-                        display: inline-block;
-                        box-sizing: border-box;
-                        inline-size: var(--clay-infobox-chevron-width);
                         position: relative;
-                        top: calc((1ex - 1cap) / 2);
-                        padding-right: var(--skin--spacing-050);
-                        color: var(--skin--color-disabled);
+                        padding-inline-start: calc(0.5em + var(--skin--spacing-050));
+
+                        /*
+                         * The chevron is drawn on the x-height, so it sits low beside an item opening on a capital. It
+                         * is lifted by half the gap between the x-height and the cap height, centring it on the cap
+                         * height of the font in use through the ex and cap units, so the lift follows any face.
+                         */
+
+                        &::before {
+                            content: "›";
+                            position: absolute;
+                            inset-inline-start: 0;
+                            top: calc((1ex - 1cap) / 2);
+                            color: var(--skin--color-disabled);
+                        }
+
                     }
 
                 }
