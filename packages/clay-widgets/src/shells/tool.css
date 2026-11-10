@@ -228,8 +228,14 @@ clay-tool {
 
     & > :where(aside, main) {
 
+        /*
+         * The single track of a column is held to the width of the column, so a bar whose unwrapped content is wider
+         * clips it rather than widening the track past the column, which an automatic track sized to that content does.
+         */
+
         display: grid;
         grid-row: 1 / -1;
+        grid-template-columns: minmax(0, 1fr);
         grid-template-rows: subgrid;
         min-inline-size: 0;
         min-block-size: 0;
