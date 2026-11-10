@@ -17,7 +17,7 @@
 /**
  * Styled text run.
  *
- * Sets a run of text in one of the looks the design system offers, leaving it in the line around it.
+ * Sets a run of text in the look of the area it sits in, without breaking the line it belongs to.
  *
  * @module text
  */
@@ -29,8 +29,12 @@ import "./text.css";
 /**
  * Creates a text run.
  *
- * Sets a run of text in one of the looks the design system offers. The run adds no box of its own, so it sits in the
- * line, the row or the column around it exactly as the bare text would, and its look changes only how loud it reads.
+ * Sets a run of text in the look of the area it sits in, as assigned by the `--skin--look` token of the design system.
+ * A `subtle` run recedes in the label colour, a `normal` one reads as the text around it, and a `strong` one carries
+ * emphasis in a heavier weight. Runs read as `normal` where nothing assigns a look.
+ *
+ * The run adds no box of its own, so it sits in the line, the row or the column around it exactly as the bare text
+ * would. Its face and size always follow the text around it, whatever the look.
  *
  * @param options The widget configuration
  *
@@ -38,20 +42,9 @@ import "./text.css";
  */
 export function Text({
 
-	look,
-
 	children
 
 }: {
-
-	/**
-	 * How loud the text appears: `subtle` recedes in the label colour, `normal` reads as the text around it, and
-	 * `strong` carries emphasis in a heavier weight. Face and size always follow the text around it, whatever the look.
-	 *
-	 * A run stating nothing takes the look the area around it is written in, from the `--skin--look` token the
-	 * design system carries, which is `normal` where nothing assigns it. Stating a look here answers to that alone.
-	 */
-	look?: "subtle" | "normal" | "strong"
 
 	/**
 	 * The text to be styled.
@@ -60,6 +53,6 @@ export function Text({
 
 }) {
 
-	return createElement("clay-text", { look }, children);
+	return createElement("clay-text", {}, children);
 
 }

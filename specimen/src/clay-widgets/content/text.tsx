@@ -28,25 +28,24 @@ import "../index.css";
 /**
  * Creates the text section.
  *
- * Shows a run of text at each look the design system offers, inline in the paragraph around it, stated on its own
- * or taken from the area the run sits in.
+ * Shows a run of text inline in each look the design system offers, taking the look from the area it sits in.
  *
  * @returns The text section
  */
 export function Texts() {
 	return <>
 
-		<p>A styled text sets a run of wording at one of the looks the design system offers, without a box of its own,
-			so it reads in the line around it as the bare text would.</p>
-
-		<p>A passage may carry <Text look="subtle">a subtle run</Text> receding as secondary wording, <Text
-			look="normal">a normal run</Text> reading as the text around it, or <Text look="strong">a strong
-			run</Text> carrying emphasis.</p>
-
-		<p>A run stating no look takes the one of the area it sits in, while a run stating its own keeps it:</p>
+		<p>A styled text sets a run of wording in the look of the area it sits in, without a box of its own, so it
+			reads in the line around it as the bare text would.</p>
 
 		<Style css={{ look: "subtle" }}>
-			<p><Text>This run recedes with the area</Text>, while <Text look="strong">this one stands out</Text>.</p>
+			<p>In a subtle area, <Text>a styled run</Text> recedes as secondary wording.</p>
+		</Style>
+
+		<p>In a normal area, <Text>a styled run</Text> reads as the text around it.</p>
+
+		<Style css={{ look: "strong" }}>
+			<p>In a strong area, <Text>a styled run</Text> carries emphasis.</p>
 		</Style>
 
 	</>;

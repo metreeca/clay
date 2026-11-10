@@ -20,32 +20,17 @@ clay-text {
 
     display: inline;
 
-    /* A receding run takes the label colour, which holds its contrast against the page. */
-
-    &[look="subtle"] {
-        color: var(--skin--color-label);
-    }
-
-    &[look="strong"] {
-        font-weight: var(--skin--font-weight-strong);
-    }
-
     /*
-     * A run stating no look of its own takes the one the area around it is written in, read off the `--skin--look`
-     * token through a style query, restating the declarations of the attribute rules above: a style query is a
-     * conditional group taking rules of its own, so the two forms of the same step cannot be written as one selector.
+     * A run takes the look the area around it is written in, read off the `--skin--look` token through a style query;
+     * a receding run takes the label colour, which holds its contrast against the page.
      */
 
     @container style(--skin--look: subtle) {
-        &:not([look]) {
-            color: var(--skin--color-label);
-        }
+        color: var(--skin--color-label);
     }
 
     @container style(--skin--look: strong) {
-        &:not([look]) {
-            font-weight: var(--skin--font-weight-strong);
-        }
+        font-weight: var(--skin--font-weight-strong);
     }
 
 }
