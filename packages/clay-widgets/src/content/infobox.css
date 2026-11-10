@@ -15,56 +15,42 @@
  */
 
 /*
- * An infobox lays its definition list out as a two-column grid, labels in the first column and values in the second.
- * At the start, labels keep to the leading edge of their column as values do, so both columns read as aligned text;
- * at the end, they sit flush against the values they introduce, so each label reads as the caption of its value.
+ * An infobox lays its sections out on a single two-column grid, labels in the first column and values in the second.
+ * Each section, a definition list of its own, spans both columns on a subgrid, so labels and values line up across
+ * sections. At the start, labels keep to the leading edge of their column as values do, so both columns read as
+ * aligned text; at the end, they sit flush against the values they introduce, so each label reads as their caption.
  */
 
 clay-infobox {
 
-    display: block;
-
-    /* Consecutive infoboxes are set apart by a rule, so a screen groups properties by infobox. */
-
-    & + & {
-        margin-top: var(--skin--spacing-075);
-        padding-top: var(--skin--spacing-075);
-        border-top-style: var(--skin--border-style);
-    }
-
     /*
-     * A run of infoboxes is spaced as any other block of the page, in the body as in a sidebar: its last one leaves the
-     * step a paragraph leaves below it. A run opening or closing its container leaves no step on that side, so it lines
-     * up with the edge the container already pads, as a tray or a box pads what it holds.
-     *
-     * Above, the run takes the same step from a widget, which leaves no margin of its own. It takes none from a block
-     * of markup, whose own margin already leaves it, nor from a heading, which then sits over the run it names; flex
-     * layouts, such as the columns of a shell, never collapse the two margins, so taking both would double the step.
+     * Labels take the width they need up to half the infobox, so a long label is clipped rather than crowding out the
+     * values it is there to introduce; values take the rest of the width, never less than half of it. Labels and values
+     * have no edge between them to tell the two columns apart, so they are set a wide step apart to read as two columns
+     * rather than as one run of text, whichever edge of their column the labels keep to.
      */
 
-    &:not(:first-child, & + &, :is(h1, h2, h3, h4, h5, h6, p, ul, ol, dl, blockquote, pre, table, hr) + &) {
-        margin-top: var(--skin--spacing-100);
-    }
-
-    &:not(:has(+ &)):not(:last-child) {
-        margin-bottom: var(--skin--spacing-100);
-    }
+    display: grid;
+    grid-template-columns: minmax(0, min-content) minmax(50%, 1fr);
+    column-gap: var(--skin--spacing-075);
 
     & > dl {
 
-        /*
-         * Labels take the width they need up to half the infobox, so a long label is clipped rather than crowding out
-         * the values it is there to introduce; values take the rest of the width, never less than half of it. Labels
-         * and values have no edge between them to tell the two columns apart, so they are set a wide step apart to
-         * read as two columns rather than as one run of text, whichever edge of their column the labels keep to.
-         */
-
         display: grid;
-        grid-template-columns: minmax(0, min-content) minmax(50%, 1fr);
+        grid-column: 1 / -1;
+        grid-template-columns: subgrid;
         align-items: baseline;
-        gap: var(--skin--spacing-010) var(--skin--spacing-075);
+        row-gap: var(--skin--spacing-010);
 
         margin: 0;
+
+        /* Sections are set apart by a rule, so a screen groups related properties by section. */
+
+        & + dl {
+            margin-top: var(--skin--spacing-075);
+            padding-top: var(--skin--spacing-075);
+            border-top-style: var(--skin--border-style);
+        }
 
         /*
          * Spacing between entries comes from the grid gap, replacing the margins the base list rules set. Labels and

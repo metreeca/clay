@@ -30,7 +30,7 @@ import "../index.css";
  * Creates the infobox section.
  *
  * Shows the same properties with labels at the start and at the end of their column, so the two alignments compare side
- * by side, with the rule setting consecutive infoboxes apart and the entries an infobox leaves out for want of a value.
+ * by side, with the rule setting sections apart on shared columns and the entries left out for want of a value.
  *
  * @returns The infobox section
  */
@@ -39,7 +39,7 @@ export function Infoboxes() {
 
 		<p>An infobox lists the properties of an item, each value beside the label naming it. Labels keep to the
 			leading edge of their column as values do, or sit flush against the values they introduce. A property with
-			no value is left out, and consecutive infoboxes are set apart by a rule.</p>
+			no value is left out, and sections are set apart by a rule, sharing the label and value columns.</p>
 
 		<div class="columns">
 
@@ -62,16 +62,16 @@ function Panels({ align }: {
 	align: "start" | "end"
 
 }) {
-	return <>
+	return <Infobox align={align}>{[
 
-		<Infobox align={align}>{{
+		{
 			title: "Annual report",
 			author: "Jane Doe",
 			editor: undefined,
 			published: "2026-03-15"
-		}}</Infobox>
+		},
 
-		<Infobox align={align}>{[
+		[
 			{
 				label: "Keywords", value: <Items labels={align === "end"
 					? ["Finance", "Governance", "Sustainability"]
@@ -79,9 +79,9 @@ function Panels({ align }: {
 				}/>
 			},
 			{ label: "Status", value: "Published" }
-		]}</Infobox>
+		]
 
-	</>;
+	]}</Infobox>;
 }
 
 function Items({ labels }: {

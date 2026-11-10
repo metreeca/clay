@@ -71,6 +71,76 @@ describe("Infobox", () => {
 	});
 
 
+	describe("sections", () => {
+
+		const sections = (element: JSX.Element): readonly (readonly (null | string)[])[] =>
+			Array.from(rendered(element)?.querySelectorAll(":scope > dl") ?? [], section =>
+				Array.from(section.querySelectorAll(":scope > dt"), ({ textContent }) => textContent)
+			);
+
+		it("renders a record as a single section", async () => {
+
+			expect(sections(<Infobox>{{ first: "value", second: "value" }}</Infobox>))
+				.toEqual([ [ "first", "second" ] ]);
+
+		});
+
+		it("renders a plain array of entries as a single section in the given order", async () => {
+
+			expect(sections(<Infobox>{[
+				{ label: "second", value: "value" },
+				{ label: "first", value: "value" }
+			]}</Infobox>)).toEqual([ [ "second", "first" ] ]);
+
+		});
+
+		it("renders an array of entry arrays as a section for each", async () => {
+
+			expect(sections(<Infobox>{[
+				[ { label: "first", value: "value" } ],
+				[ { label: "second", value: "value" } ]
+			]}</Infobox>)).toEqual([ [ "first" ], [ "second" ] ]);
+
+		});
+
+		it("renders an array of records as a section for each", async () => {
+
+			expect(sections(<Infobox>{[
+				{ first: "value" },
+				{ second: "value", third: "value" }
+			]}</Infobox>)).toEqual([ [ "first" ], [ "second", "third" ] ]);
+
+		});
+
+		it("renders records and entry arrays as a section for each", async () => {
+
+			expect(sections(<Infobox>{[
+				{ first: "value" },
+				[ { label: "second", value: "value" } ]
+			]}</Infobox>)).toEqual([ [ "first" ], [ "second" ] ]);
+
+		});
+
+		it("leaves out sections with no values", async () => {
+
+			expect(sections(<Infobox>{[
+				{ empty: undefined },
+				[ { label: "shown", value: "value" } ]
+			]}</Infobox>)).toEqual([ [ "shown" ] ]);
+
+		});
+
+		it("renders nothing if every section is empty", async () => {
+
+			expect(rendered(<Infobox>{[
+				{ empty: undefined },
+				[ { label: "empty", value: null } ]
+			]}</Infobox>)).toBeNull();
+
+		});
+
+	});
+
 	describe("empty values", () => {
 
 		it("leaves out undefined, null and empty string values", async () => {

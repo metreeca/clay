@@ -17,27 +17,67 @@
 /**
  * Infobox.
  *
- * Lists the properties of an item, each value beside the label naming it. A sidebar or the body of a page then shows
- * what is known about an item, without a table laid out for the purpose or a layout written for each property.
+ * Lists the properties of an item in sections of related properties, each value beside the label naming it. A sidebar
+ * or the body of a page then shows what is known about an item, without a layout written for the purpose.
  *
  * @module infobox
  */
 
-import { isBoolean } from "@metreeca/core";
+import { isBoolean, isObject } from "@metreeca/core";
+import { type Some, some } from "@metreeca/core/arrays";
 import { type ComponentChildren, createElement, Fragment } from "preact";
 import "./infobox.css";
 
 
 /**
+ * Infobox section keyed by labels.
+ *
+ * Maps each plain string label to the value it names, so a section is written as a single object literal. Properties
+ * are shown in the order their labels appear in the object, but labels reading as non-negative integers, such as
+ * `2026`, always come first in ascending order, so a section needing them elsewhere takes {@link Property} entries.
+ */
+export type Properties = {
+
+	readonly [label: string]: ComponentChildren
+
+}
+
+/**
+ * Infobox entry.
+ *
+ * Pairs a value with the label naming it. Entries serve labels that are not plain strings, such as links or emphasised
+ * text, and sections whose properties have to be shown in a given order, numeric labels included.
+ */
+export type Property = {
+
+	/**
+	 * The label naming the value.
+	 */
+	readonly label: ComponentChildren
+
+	/**
+	 * The value shown beside the label; an empty value leaves the whole entry out, as {@link Infobox} defines it.
+	 */
+	readonly value: ComponentChildren
+
+}
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/**
  * Creates an infobox.
  *
- * Lists properties as label and value pairs, read by assistive technology as the terms and definitions of a single
- * list. Properties with an empty value are left out, and an infobox left with none renders nothing, so a screen
- * hands over whatever it knows about an item without first checking what is missing. A value is empty when it is
- * `undefined`, `null` or an empty string; any other value is shown, `0` included, and a boolean reads as its name.
+ * Lists properties as label and value pairs, grouped into sections. Assistive technology reads each section as the
+ * terms and definitions of a list of its own, so each group of related properties is announced apart from the next.
  *
- * Consecutive infoboxes are set apart by a rule, so a screen groups related properties by giving each group its own
- * infobox, without drawing a separator of its own between one group and the next.
+ * Properties with an empty value are left out, and so are sections left with none. An infobox left with no section
+ * renders nothing, so a screen hands over whatever it knows about an item without checking what is missing. A value
+ * is empty when it is `undefined`, `null` or an empty string. Any other value is shown, `0` included, and a boolean
+ * reads as its name, `true` or `false`, rather than vanishing as it would in plain markup.
+ *
+ * Sections are set apart by a rule and share the label and value columns, so a screen groups related properties by
+ * giving each group its own section, without drawing a separator of its own or aligning one group with the next.
  *
  * @param options The widget configuration
  *
@@ -68,35 +108,46 @@ export function Infobox({
 
 
 	/**
-	 * The properties to show, either as values keyed by their labels, or as an array of entries where labels are not
-	 * plain strings or have to be shown in a given order; nothing is rendered if omitted.
+	 * The properties to show, as one section or as an array of sections. A section holds either values keyed by their
+	 * labels, or an array of entries where labels are not plain strings or have to be shown in a given order. An array
+	 * whose elements hold no keys but `label` and `value` is read as a single section of entries, so a section keyed by
+	 * those two labels alone is given as an array of entries instead. Nothing is rendered if omitted.
 	 */
-	children?:
-		| { readonly [label: string]: ComponentChildren }
-		| readonly { readonly label: ComponentChildren, readonly value: ComponentChildren }[]
+	children?: Some<Properties | readonly Property[]>
 
 }) {
 
-	const pairs = Array.isArray(children)
-		? children
-		: Object.entries(children ?? {}).map(([label, value]) => ({ label, value }));
+	const sections = (isEntries(children) ? [children] : some(children))
+		.map(section => entries(section).filter(({ value }) =>
+			value !== undefined && value !== null && value !== ""
+		))
+		.filter(section => section.length > 0);
 
-	const entries = pairs.filter(({ value }) =>
-		value !== undefined && value !== null && value !== ""
-	);
-
-	return entries.length > 0 ? createElement("clay-infobox", {
+	return sections.length > 0 ? createElement("clay-infobox", {
 
 		wrap,
 		align
 
-	}, <dl>{entries.map(({ label, value }, index) =>
+	}, sections.map((section, index) => <dl key={index}>{section.map(({ label, value }, index) =>
 		<Fragment key={index}>
 
 			<dt>{label}</dt>
 			<dd>{isBoolean(value) ? String(value) : value}</dd>
 
 		</Fragment>
-	)}</dl>) : null;
+	)}</dl>)) : null;
+
+
+	function isEntries(children: Some<Properties | readonly Property[]>): children is readonly Property[] {
+		return Array.isArray(children) && children.every(child =>
+			isObject(child, { label: () => true, value: () => true })
+		);
+	}
+
+	function entries(section: Properties | readonly Property[]): readonly Property[] {
+		return Array.isArray(section) ? section : Object.entries(section).map(
+			([label, value]) => ({ label, value })
+		);
+	}
 
 }
