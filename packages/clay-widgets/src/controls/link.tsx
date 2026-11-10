@@ -61,7 +61,7 @@ export function Link({
 
 	active,
 
-	look, // deliberately left undefaulted, so an unstated look falls through to the ambient `--skin--look`
+	look, // deliberately left undefaulted, so an unstated look falls through to the one the area assigns
 
 	href,
 	query,
@@ -86,8 +86,8 @@ export function Link({
 	 * and holds it through the press. However loud, a marked link is underlined in the accent colour, thick except for
 	 * `subtle`, where the mark is thinner and drawn closer to the text it sits under.
 	 *
-	 * A link stating nothing takes the look the area around it is written in, from the `--skin--look` token the
-	 * design system carries, which is `normal` where nothing assigns it. Stating a look here answers to that alone.
+	 * A link stating nothing takes the look the {@link style!Style styled area} around it assigns as `linkLook`,
+	 * which is `normal` where nothing assigns it. Stating a look here answers to that alone, whatever the area says.
 	 */
 	look?: "subtle" | "normal" | "strong"
 

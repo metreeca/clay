@@ -23,7 +23,6 @@
 import { Button } from "@metreeca/clay-widgets/button";
 import { Icon } from "@metreeca/clay-widgets/icon";
 import { Style } from "@metreeca/clay-widgets/style";
-import { skin } from "@metreeca/skin";
 import { type ComponentChild } from "preact";
 import "../index.css";
 import "./button.css";
@@ -119,12 +118,12 @@ export function Buttons() {
 		<p>A disabled button leaves its mode behind and takes the greyed colour every inactive control shares, since
 			a control that answers nothing has nothing to say about what it would do.</p>
 
-		<p>A button stating no look takes the one the area around it is written in, from <code>{skin.look}</code>.
-			The row below wraps its controls in a <code>Style</code> area assigning it once, and holds three buttons
-			that ask for nothing, plus one that asks to be loud and stays loud.</p>
+		<p>A button stating no look takes the one the area around it assigns as <code>buttonLook</code>. The row
+			below wraps its controls in a <code>Style</code> area assigning it once, and holds three buttons that ask
+			for nothing, plus one that asks to be loud and stays loud.</p>
 
 		<div class="controls">
-			<Style css={{ look: "subtle" }}>
+			<Style css={{ buttonLook: "subtle" }}>
 				<Button icon={<Icon.Create/>} label="New Item"/>
 				<Button label="Plain"/>
 				<Button mode="danger" icon={<Icon.Delete/>} label="Delete"/>

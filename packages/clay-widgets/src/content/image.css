@@ -19,6 +19,14 @@
  * so it sits in a card, a stack or a column exactly as the bare picture would, with its caption held beneath it.
  */
 
+/* The look of an image stating none, which an area assigns to every image it holds. */
+
+@property --clay-image-look {
+    syntax: "subtle | normal | strong";
+    inherits: true;
+    initial-value: normal;
+}
+
 clay-image {
 
     display: block;
@@ -91,12 +99,12 @@ clay-image {
     }
 
     /*
-     * An image stating no look of its own takes the one the area around it is written in, read off the `--skin--look`
-     * token through a style query, as buttons and links do: the attribute has to be absent for the container to have
+     * An image stating no look of its own takes the one the area around it sets, read off the `--clay-image-look`
+     * knob through a style query, as buttons and links do: the attribute has to be absent for the container to have
      * a say, so each rule here holds itself to an image carrying none, restating the declarations of the rules above.
      */
 
-    @container style(--skin--look: normal) {
+    @container style(--clay-image-look: normal) {
 
         &:not([look]) {
 
@@ -112,7 +120,7 @@ clay-image {
 
     }
 
-    @container style(--skin--look: strong) {
+    @container style(--clay-image-look: strong) {
 
         &:not([look]) {
 

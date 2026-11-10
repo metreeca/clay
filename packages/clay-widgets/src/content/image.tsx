@@ -47,7 +47,7 @@ import "./image.css";
  */
 export function Image({
 
-	look, // deliberately left undefaulted, so an unstated look falls through to the ambient `--skin--look`
+	look, // deliberately left undefaulted, so an unstated look falls through to the one the area assigns
 
 	src,
 	alt = "",
@@ -60,8 +60,8 @@ export function Image({
 	 * How loud the image appears: `subtle` sets the picture bare, `normal` outlines it with a quiet border, and
 	 * `strong` holds picture and caption in a rounded box, the picture rounded to match.
 	 *
-	 * An image stating nothing takes the look the area around it is written in, from the `--skin--look` token the
-	 * design system carries, which is `normal` where nothing assigns it. Stating a look here answers to that alone.
+	 * An image stating nothing takes the look the {@link style!Style styled area} around it assigns as `imageLook`,
+	 * which is `normal` where nothing assigns it. Stating a look here answers to that alone, whatever the area says.
 	 */
 	look?: "subtle" | "normal" | "strong"
 

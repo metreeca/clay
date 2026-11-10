@@ -53,7 +53,7 @@ export function Button({
 	disabled,
 	expanded,
 
-	look, // deliberately left undefaulted, so an unstated look falls through to the ambient `--skin--look`
+	look, // deliberately left undefaulted, so an unstated look falls through to the one the area assigns
 	mode = "normal",
 	type = "button",
 
@@ -94,9 +94,9 @@ export function Button({
 	 * colour does not reach: `subtle` keeps no rule and reads as part of the text around it, `strong` is bounded and
 	 * set in the strong weight, and `normal` sits between the two. What the button means is stated apart, by `mode`.
 	 *
-	 * A button stating nothing takes the look the area around it is written in, from the `--skin--look` token the
-	 * design system carries, which is `normal` where nothing assigns it. Stating a look here answers to that alone,
-	 * so one loud control in a quietened toolbar stays loud.
+	 * A button stating nothing takes the look the {@link style!Style styled area} around it assigns as `buttonLook`,
+	 * which is `normal` where nothing assigns it. Stating a look here answers to that alone, so one loud control in a
+	 * quietened toolbar stays loud, while every other control in it recedes as the area asks.
 	 */
 	look?: "subtle" | "normal" | "strong"
 
@@ -168,7 +168,7 @@ export function Button({
 	 * without competing with the states the platform sets on the button itself.
 	 *
 	 * A look the consumer leaves out leaves the attribute off the element as well, which is what lets the stylesheet
-	 * tell a button asking for the ordinary step from one taking whatever the area around it is written in.
+	 * tell a button asking for the ordinary step from one taking whatever look the area around it assigns.
 	 */
 
 	return createElement("clay-button", {

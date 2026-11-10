@@ -51,7 +51,7 @@ export function Choice<V extends string>({
 
 	name,
 
-	look, // deliberately left undefaulted, so an unstated look falls through to the ambient `--skin--look`
+	look, // deliberately left undefaulted, so an unstated look falls through to the one the area assigns
 
 	options,
 	value,
@@ -70,8 +70,8 @@ export function Choice<V extends string>({
 	 * chosen one inked in the selection accent; `normal` boxes the options as a select is boxed, the chosen one sunk
 	 * into the page; `strong` also sets the options in the strong weight and inks the chosen one in the accent.
 	 *
-	 * A choice stating nothing takes the look the area around it is written in, from the `--skin--look` token the
-	 * design system carries, which is `normal` where nothing assigns it. Stating a look here answers to that alone.
+	 * A choice stating nothing takes the look the {@link style!Style styled area} around it assigns as `choiceLook`,
+	 * which is `normal` where nothing assigns it. Stating a look here answers to that alone, whatever the area says.
 	 */
 	look?: "subtle" | "normal" | "strong"
 

@@ -29,7 +29,7 @@ import "./text.css";
 /**
  * Creates a text run.
  *
- * Sets a run of text in the look of the area it sits in, as assigned by the `--skin--look` token of the design system.
+ * Sets a run of text in the look the {@link style!Style styled area} around it assigns as `textLook`.
  * A `subtle` run recedes in the label colour, a `normal` one reads as the text around it, and a `strong` one carries
  * emphasis in a heavier weight. Runs read as `normal` where nothing assigns a look.
  *

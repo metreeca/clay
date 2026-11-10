@@ -38,13 +38,13 @@ export function Texts() {
 		<p>A styled text sets a run of wording in the look of the area it sits in, without a box of its own, so it
 			reads in the line around it as the bare text would.</p>
 
-		<Style css={{ look: "subtle" }}>
+		<Style css={{ textLook: "subtle" }}>
 			<p>In a subtle area, <Text>a styled run</Text> recedes as secondary wording.</p>
 		</Style>
 
 		<p>In a normal area, <Text>a styled run</Text> reads as the text around it.</p>
 
-		<Style css={{ look: "strong" }}>
+		<Style css={{ textLook: "strong" }}>
 			<p>In a strong area, <Text>a styled run</Text> carries emphasis.</p>
 		</Style>
 

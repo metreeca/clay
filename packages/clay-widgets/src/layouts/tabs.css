@@ -16,6 +16,14 @@
 
 /* The strip is a row of tabs closed by a rule, with the section on show underneath. */
 
+/* The look of tabs stating none, which an area assigns to all the tabs it holds; there is no loud step. */
+
+@property --clay-tabs-look {
+    syntax: "subtle | normal";
+    inherits: true;
+    initial-value: normal;
+}
+
 clay-tabs {
 
     display: block;
@@ -230,21 +238,21 @@ clay-tabs {
     }
 
     /*
-     * Tabs stating no look of their own take the one the area around them is written in, read off the `--skin--look`
-     * token through a style query: a rule has no other way to branch on a value, and the token inherits, so every
+     * Tabs stating no look of their own take the one the area around them sets, read off the `--clay-tabs-look`
+     * knob through a style query: a rule has no other way to branch on a value, and the knob inherits, so every
      * widget sits inside a container answering for it without a rule declaring one. The attribute has to be absent
      * for the container to have a say, which is why the widget renders it only where the consumer asked for a look,
      * and why the rules here hold themselves to tabs carrying none, leaving a stated look to the rules above.
      *
-     * Only the quiet step is restated, the ordinary one being what the rules above already draw; an area written loud
-     * lands there too, there being no step above it here. The declarations are the ones the attribute rules carry,
+     * Only the quiet step is restated, the ordinary one being what the rules above already draw; an area assigning the
+     * loud one lands there too, there being no step above it here. The declarations are the ones the attribute rules carry,
      * restated rather than shared: a style query is a conditional group and takes rules of its own, so the two forms
      * of the same step cannot be written as one selector, nor as one rule nested under the other.
      */
 
     &:not([look]) {
 
-        @container style(--skin--look: subtle) {
+        @container style(--clay-tabs-look: subtle) {
 
             & > nav,
             & > span {

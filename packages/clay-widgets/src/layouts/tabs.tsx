@@ -82,10 +82,9 @@ export function Tabs({
 	 * mark the chosen tab wears stays either way, so the choice is as plain under one step as under the other. No
 	 * loud step is offered, a rule being as far as a strip goes.
 	 *
-	 * Tabs stating nothing take the look the area around them is written in, from the `--skin--look` token the design
-	 * system carries, which is `normal` where nothing assigns it; an area written loud lands on `normal` as well,
-	 * there being no step above it here. A look stated here answers to that alone, so a strip asking for the rule
-	 * keeps it inside a quietened panel.
+	 * Tabs stating nothing take the look the {@link style!Style styled area} around them assigns as `tabsLook`, which
+	 * is `normal` where nothing assigns it. A look stated here answers to that alone, so a strip asking for the rule
+	 * keeps it inside a quietened panel, while every other strip in the panel recedes as the area asks.
 	 */
 	look?: "subtle" | "normal"
 
@@ -142,7 +141,7 @@ export function Tabs({
 
 	/*
 	 * A look the consumer leaves out leaves the attribute off the element, which is what lets the stylesheet tell
-	 * tabs asking for the ordinary step from ones taking whatever the area around them is written in.
+	 * tabs asking for the ordinary step from ones taking whatever look the area around them assigns.
 	 */
 
 	return createElement("clay-tabs", { collapsed, look },

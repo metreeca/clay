@@ -51,12 +51,13 @@ export function Styles() {
 			and everything else is left alone. It takes no box of its own, so what it holds sits in the flow exactly as
 			it would without it.</p>
 
-		<p>How loud the widgets in an area appear is a token like any other. The same toolbar is set as it stands, then
-			in an area written quietly: the controls drop their rules, except the one stating a look of its own.</p>
+		<p>An area also sets how loud each kind of widget in it appears, keyed by its name, as <code>buttonLook</code>.
+			The same toolbar is set as it stands, then in an area quietening its buttons: they drop their rules, except
+			the one stating a look of its own.</p>
 
 		<Toolbar/>
 
-		<Style css={{ look: "subtle" }}><Toolbar/></Style>
+		<Style css={{ buttonLook: "subtle" }}><Toolbar/></Style>
 
 		<p>An accent assigned to an area repaints whatever the area draws with it, here the mark on the chosen tab, while
 			an area nested inside another settles what the wider one left.</p>

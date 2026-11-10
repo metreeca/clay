@@ -23,6 +23,14 @@
     inherits: true;
 }
 
+/* The look of an empty state stating none, which an area assigns to every empty state it holds. */
+
+@property --clay-empty-look {
+    syntax: "subtle | normal | strong";
+    inherits: true;
+    initial-value: normal;
+}
+
 clay-empty {
 
     display: flex;
@@ -79,12 +87,12 @@ clay-empty {
     }
 
     /*
-     * An area stating no look of its own takes the one the area around it is written in, read off the `--skin--look`
-     * token through a style query, as buttons and links do: the attribute has to be absent for the container to have
+     * An area stating no look of its own takes the one the area around it sets, read off the `--clay-empty-look`
+     * knob through a style query, as buttons and links do: the attribute has to be absent for the container to have
      * a say, so each rule here holds itself to an area carrying none, restating the declarations of the rules above.
      */
 
-    @container style(--skin--look: normal) {
+    @container style(--clay-empty-look: normal) {
         &:not([look]) {
             padding: var(--skin--spacing-100);
             border: var(--skin--border-width) dotted var(--skin--border-color);
@@ -92,7 +100,7 @@ clay-empty {
         }
     }
 
-    @container style(--skin--look: strong) {
+    @container style(--clay-empty-look: strong) {
         &:not([look]) {
             padding: var(--skin--spacing-100);
             border: var(--skin--border-width) dotted var(--skin--border-color);

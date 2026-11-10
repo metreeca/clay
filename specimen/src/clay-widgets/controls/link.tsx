@@ -23,7 +23,6 @@
 import { Icon } from "@metreeca/clay-widgets/icon";
 import { Link } from "@metreeca/clay-widgets/link";
 import { Style } from "@metreeca/clay-widgets/style";
-import { skin } from "@metreeca/skin";
 import "../index.css";
 
 
@@ -70,12 +69,12 @@ export function Links() {
 
 		</div>)}</div>
 
-		<p>A link stating no look takes the one the area around it is written in, from <code>{skin.look}</code>. The
-			row below wraps its links in a <code>Style</code> area assigning it once, and holds two links that ask for
-			nothing, plus one that asks to be loud and stays loud.</p>
+		<p>A link stating no look takes the one the area around it assigns as <code>linkLook</code>. The row below
+			wraps its links in a <code>Style</code> area assigning it once, and holds two links that ask for nothing,
+			plus one that asks to be loud and stays loud.</p>
 
 		<div class="controls">
-			<Style css={{ look: "subtle" }}>
+			<Style css={{ linkLook: "subtle" }}>
 				<Link href="/">Specimen</Link>
 				<Link active href={here}>Widgets</Link>
 				<Link look="strong" href="/">Home</Link>

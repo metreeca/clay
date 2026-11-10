@@ -21,6 +21,14 @@
  * the document, out of view, so the platform keeps their keys and focus.
  */
 
+/* The look of a choice stating none, which an area assigns to every choice it holds. */
+
+@property --clay-choice-look {
+    syntax: "subtle | normal | strong";
+    inherits: true;
+    initial-value: normal;
+}
+
 clay-choice {
 
     /*
@@ -169,12 +177,12 @@ clay-choice {
     }
 
     /*
-     * A choice stating no look of its own takes the one the area around it is written in, read off the `--skin--look`
-     * token through a style query, restating the declarations of the attribute rules above: a style query is a
+     * A choice stating no look of its own takes the one the area around it sets, read off the `--clay-choice-look`
+     * knob through a style query, restating the declarations of the attribute rules above: a style query is a
      * conditional group taking rules of its own, so the two forms of the same step cannot be written as one selector.
      */
 
-    @container style(--skin--look: subtle) {
+    @container style(--clay-choice-look: subtle) {
         &:not([look]) > fieldset {
 
             padding: 0;
@@ -194,7 +202,7 @@ clay-choice {
         }
     }
 
-    @container style(--skin--look: strong) {
+    @container style(--clay-choice-look: strong) {
         &:not([look]) > fieldset > label {
 
             font-weight: var(--skin--font-weight-strong);

@@ -23,11 +23,11 @@ clay-path {
     min-width: 0;
 
     /*
-     * The trail is written in the loud look, so a step linking back up takes the colour of a strong link whatever area
+     * The trail assigns its links the loud look, so a step linking back up takes the colour of a strong link whatever area
      * the trail stands in, while a link stating a look of its own keeps that one instead of the look the trail sets.
      */
 
-    --skin--look: strong;
+    --clay-link-look: strong;
 
     & > nav {
 

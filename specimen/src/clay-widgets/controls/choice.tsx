@@ -23,7 +23,6 @@
 import { Choice } from "@metreeca/clay-widgets/choice";
 import { Icon } from "@metreeca/clay-widgets/icon";
 import { Style } from "@metreeca/clay-widgets/style";
-import { skin } from "@metreeca/skin";
 import { useState } from "preact/hooks";
 import "../index.css";
 
@@ -73,12 +72,12 @@ export function Choices() {
 			<code>look="{look}"</code>
 		</div>)}
 
-		<p>A choice stating no look takes the one the area around it is written in, from <code>{skin.look}</code>.
-			The row below wraps its choices in a <code>Style</code> area assigning the quiet one, and holds a choice
-			that asks for nothing, plus one that asks to be loud and stays loud.</p>
+		<p>A choice stating no look takes the one the area around it assigns as <code>choiceLook</code>. The row
+			below wraps its choices in a <code>Style</code> area assigning the quiet one, and holds a choice that asks
+			for nothing, plus one that asks to be loud and stays loud.</p>
 
 		<div class="controls">
-			<Style css={{ look: "subtle" }}>
+			<Style css={{ choiceLook: "subtle" }}>
 				<Choice name="Density" options={densities} value={density} onChange={setDensity}/>
 				<Choice name="Density" look="strong" options={densities} value={density} onChange={setDensity}/>
 			</Style>

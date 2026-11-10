@@ -40,7 +40,7 @@ import "./empty.css";
  */
 export function Empty({
 
-	look, // deliberately left undefaulted, so an unstated look falls through to the ambient `--skin--look`
+	look, // deliberately left undefaulted, so an unstated look falls through to the one the area assigns
 
 	children
 
@@ -50,8 +50,8 @@ export function Empty({
 	 * How loud the area appears: `subtle` stays flush with the surface around it, `normal` is outlined as room left
 	 * for the missing content, and `strong` is outlined and recessed as well, standing apart from what surrounds it.
 	 *
-	 * An area stating nothing takes the look the area around it is written in, from the `--skin--look` token the
-	 * design system carries, which is `normal` where nothing assigns it. Stating a look here answers to that alone.
+	 * An area stating nothing takes the look the {@link style!Style styled area} around it assigns as `emptyLook`,
+	 * which is `normal` where nothing assigns it. Stating a look here answers to that alone, whatever the area says.
 	 */
 	look?: "subtle" | "normal" | "strong"
 
