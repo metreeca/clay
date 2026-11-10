@@ -178,6 +178,13 @@ A widget renders a `<clay-*>` custom element through `createElement`, with its r
 imports. The prefix is carried by the element, which the DOM requires to be hyphenated, and **NEVER** by the exported
 component, which the module path already places: `Tabs` in `tabs.tsx`, rendering `<clay-tabs>` styled by `tabs.css`.
 
+> [!CAUTION]
+> **STICK** to the `@metreeca/skin` design system tokens. A stylesheet reads every value from the token the design
+> system assigns to its role, keywords included, **NEVER** from a literal (`solid`, `1px`) or from a token borrowed
+> from another role to tune a look: a border is `var(--skin--border-width) var(--skin--border-style)
+> var(--skin--border-color)`, the field variant staying with fields. Where a look seems off, the fix belongs in Skin,
+> not in a Clay sheet working around it.
+
 # Shared Utilities
 
 Reach for `@metreeca/core` before writing a helper: its `state`, `strings`, `arrays` and `structures` entry points
