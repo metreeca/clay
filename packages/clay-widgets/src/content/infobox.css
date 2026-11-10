@@ -92,49 +92,48 @@ clay-infobox {
             }
 
             /*
-             * A value listing several items sets them one per line, each marked unless it stands alone, with no step
-             * between items, so the list reads as a single value rather than as a run of separate entries.
+             * A value listing several items sets them one per line, marked as any list, with no step between items, so
+             * the list reads as a single value rather than as a run of separate entries. Markers hang in the gap before
+             * the column, so items keep to the edge the values of other properties start from.
              */
 
-            & > ul {
+            &:has(> ul) {
 
-                padding: 0;
+                /*
+                 * A value holding a list stops clipping, which would hide the hanging markers; the list clips instead,
+                 * on every side but the leading one, where it leaves the width of the column gap to the markers.
+                 */
 
-                list-style-type: none;
+                overflow: visible;
 
-                & > li {
+                & > ul {
 
-                    overflow: hidden;
-                    text-overflow: ellipsis;
+                    /* Physical, as the base list rule this undoes sets the leading room on the left. */
 
-                    & + li {
-                        margin-top: 0;
-                    }
+                    padding-left: 0;
+
+                    clip-path: inset(0 0 0 calc(-1 * var(--skin--spacing-075)));
 
                     /*
-                     * A marked item sets its content in from the leading edge by the room of the chevron and its gap,
-                     * so a widget too wide for the line, as a long link, clips its own wording within what is left.
+                     * Items are marked by a small grey dot, telling a value made of several items from a single one
+                     * without competing with the items themselves. Markers carry no meaning a colour role would name,
+                     * so the grey is mixed from text and page as the grey scale is, at the lightest shares holding the
+                     * 3:1 a graphic conveying content owes on the page, the stripe and the raised, overlay and sunken
+                     * surfaces. The tightest is the sunken one in the light scheme, at 3.08:1, and the overlay in the
+                     * dark one, at 3.09:1; half a point less brings either to the very threshold.
                      */
 
-                    &:not(:only-child) {
+                    list-style-type: "• ";
 
-                        position: relative;
-                        padding-inline-start: calc(0.5em + var(--skin--spacing-050));
+                    & > li::marker {
+                        color: light-dark(
+                            color-mix(in oklab, var(--skin--color) 36%, var(--skin--background-color)),
+                            color-mix(in oklab, var(--skin--color) 47%, var(--skin--background-color))
+                        );
+                    }
 
-                        /*
-                         * The chevron is drawn on the x-height, so it sits low beside an item opening on a capital. It
-                         * is lifted by half the gap between the x-height and the cap height, centring it on the cap
-                         * height of the font in use through the ex and cap units, so the lift follows any face.
-                         */
-
-                        &::before {
-                            content: "›";
-                            position: absolute;
-                            inset-inline-start: 0;
-                            top: calc((1ex - 1cap) / 2);
-                            color: var(--skin--color-disabled);
-                        }
-
+                    & > li + li {
+                        margin-top: 0;
                     }
 
                 }
