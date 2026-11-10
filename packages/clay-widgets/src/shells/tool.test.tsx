@@ -213,7 +213,14 @@ describe("Tool", () => {
 
 		};
 
-		const shell = (busy: boolean) => <Tool busy={busy} menu={<button>Edit</button>}><input/></Tool>;
+		const pressed = vi.fn();
+
+		beforeEach(() => { pressed.mockClear(); });
+
+		const shell = (busy: boolean) => <Tool busy={busy}
+			tray={<button onClick={pressed}>Section</button>}
+			menu={<button onClick={pressed}>Edit</button>}
+		><input/></Tool>;
 
 		const show = (container: HTMLElement, busy: boolean) => act(async () => { render(shell(busy), container); });
 		const elapse = () => act(async () => { vi.runOnlyPendingTimers(); });
@@ -229,18 +236,117 @@ describe("Tool", () => {
 
 		};
 
+		const status = (tool: HTMLElement) => tool.querySelector(":scope > [role='status']");
+
+		const click = (target: Element) => {
+
+			const event = new MouseEvent("click", { bubbles: true, cancelable: true });
+
+			act(() => { target.dispatchEvent(event); });
+
+			return event;
+
+		};
+
+		const press = (target: Element) => {
+
+			const event = new KeyboardEvent("keydown", { key: "a", bubbles: true, cancelable: true });
+
+			act(() => { target.dispatchEvent(event); });
+
+			return event;
+
+		};
+
 		it("marks itself busy while the app is busy", async () => {
 
 			expect((await waiting(true)).getAttribute("aria-busy")).toBe("true");
 
 		});
 
-		it("takes both columns out of reach while the app is busy", async () => {
+		it("leaves both columns in the accessibility tree while the app is busy", async () => {
 
 			const tool = await waiting(true);
 
-			expect(tool.querySelector<HTMLElement>(":scope > aside")?.inert).toBe(true);
-			expect(tool.querySelector<HTMLElement>(":scope > main")?.inert).toBe(true);
+			expect(tool.querySelector<HTMLElement>(":scope > aside")?.inert).toBe(false);
+			expect(tool.querySelector<HTMLElement>(":scope > main")?.inert).toBe(false);
+
+		});
+
+		it("leaves the focus on the control holding it while the app is busy", async () => {
+
+			const root = container();
+
+			await show(root, false);
+
+			const field = root.querySelector("input")!;
+
+			field.focus();
+
+			await show(root, true);
+			await elapse();
+			await show(root, false);
+
+			expect(document.activeElement).toBe(field);
+
+		});
+
+		it("ignores pointer presses in either column while the app is busy", async () => {
+
+			const tool = await waiting(true);
+
+			const section = tool.querySelector(":scope > aside button:not([aria-label])")!;
+			const edit = tool.querySelector(":scope > main > header > .menu > button")!;
+
+			expect(click(section).defaultPrevented).toBe(true);
+			expect(click(edit).defaultPrevented).toBe(true);
+			expect(pressed).not.toHaveBeenCalled();
+
+		});
+
+		it("ignores keys in either column while the app is busy", async () => {
+
+			const tool = await waiting(true);
+			const typed = vi.fn();
+			const field = tool.querySelector("input")!;
+
+			field.addEventListener("keydown", typed);
+
+			expect(press(field).defaultPrevented).toBe(true);
+			expect(press(tool.querySelector(":scope > aside button:not([aria-label])")!).defaultPrevented).toBe(true);
+			expect(typed).not.toHaveBeenCalled();
+
+		});
+
+		it("leaves input aimed outside the shell alone while the app is busy", async () => {
+
+			await waiting(true);
+
+			const outside = document.createElement("button");
+
+			outside.addEventListener("click", pressed);
+
+			document.body.append(outside);
+
+			expect(click(outside).defaultPrevented).toBe(false);
+			expect(pressed).toHaveBeenCalled();
+
+		});
+
+		it("answers input while the app is idle", async () => {
+
+			const tool = await waiting(false);
+
+			expect(click(tool.querySelector(":scope > main > header > .menu > button")!).defaultPrevented).toBe(false);
+			expect(press(tool.querySelector("input")!).defaultPrevented).toBe(false);
+			expect(pressed).toHaveBeenCalled();
+
+		});
+
+		it("announces waiting through a status region only while the app is busy", async () => {
+
+			expect(status(await waiting(true))?.textContent).not.toBe("");
+			expect(status(await waiting(false))?.textContent).toBe("");
 
 		});
 
@@ -293,21 +399,26 @@ describe("Tool", () => {
 
 		describe("delay", () => {
 
-			it("states waiting only once the delay has elapsed", async () => {
+			const tool = (root: HTMLElement) => root.querySelector<HTMLElement>("clay-tool")!;
+			const mark = (root: HTMLElement) => root.querySelector("clay-tool > main > header > .busy");
+
+			it("shows waiting only once the delay has elapsed", async () => {
 
 				const root = container();
 
 				await show(root, true);
 
-				expect(root.querySelector("clay-tool")?.getAttribute("aria-busy")).not.toBe("true");
+				expect(mark(root)).toBeNull();
+				expect(status(tool(root))?.textContent).toBe("");
 
 				await elapse();
 
-				expect(root.querySelector("clay-tool")?.getAttribute("aria-busy")).toBe("true");
+				expect(mark(root)).not.toBeNull();
+				expect(status(tool(root))?.textContent).not.toBe("");
 
 			});
 
-			it("ends waiting only once the delay has elapsed", async () => {
+			it("stops showing waiting only once the delay has elapsed", async () => {
 
 				const root = container();
 
@@ -315,26 +426,27 @@ describe("Tool", () => {
 				await elapse();
 				await show(root, false);
 
-				expect(root.querySelector("clay-tool")?.getAttribute("aria-busy")).toBe("true");
+				expect(mark(root)).not.toBeNull();
 
 				await elapse();
 
-				expect(root.querySelector("clay-tool")?.getAttribute("aria-busy")).not.toBe("true");
+				expect(mark(root)).toBeNull();
+				expect(status(tool(root))?.textContent).toBe("");
 
 			});
 
-			it("takes both columns out of reach at once, ahead of the delay", async () => {
+			it("marks itself busy and ignores input at once, ahead of the delay", async () => {
 
 				const root = container();
 
 				await show(root, true);
 
-				expect(root.querySelector<HTMLElement>("clay-tool > aside")?.inert).toBe(true);
-				expect(root.querySelector<HTMLElement>("clay-tool > main")?.inert).toBe(true);
+				expect(tool(root).getAttribute("aria-busy")).toBe("true");
+				expect(click(root.querySelector("clay-tool > main > header > .menu > button")!).defaultPrevented).toBe(true);
 
 			});
 
-			it("brings both columns back within reach at once, ahead of the delay", async () => {
+			it("stops being busy and answers input at once, ahead of the delay", async () => {
 
 				const root = container();
 
@@ -342,8 +454,8 @@ describe("Tool", () => {
 				await elapse();
 				await show(root, false);
 
-				expect(root.querySelector<HTMLElement>("clay-tool > aside")?.inert).toBe(false);
-				expect(root.querySelector<HTMLElement>("clay-tool > main")?.inert).toBe(false);
+				expect(tool(root).getAttribute("aria-busy")).not.toBe("true");
+				expect(click(root.querySelector("clay-tool > main > header > .menu > button")!).defaultPrevented).toBe(false);
 
 			});
 
@@ -355,77 +467,8 @@ describe("Tool", () => {
 				await show(root, false);
 				await elapse();
 
-				expect(root.querySelector("clay-tool")?.getAttribute("aria-busy")).not.toBe("true");
-
-			});
-
-		});
-
-
-		describe("focus", () => {
-
-			/*
-			 * A browser moves the focus out of a column turned inert, which happy-dom leaves where it stands, so the move
-			 * is stated by blurring the control once the columns are out of reach, as a browser leaves it on the page.
-			 */
-
-			const started = async () => {
-
-				const root = container();
-
-				await show(root, false);
-
-				const field = root.querySelector("input")!;
-
-				field.focus();
-
-				await show(root, true);
-
-				field.blur();
-
-				return { root, field };
-
-			};
-
-			const ended = async (root: HTMLElement) => {
-				await show(root, false);
-			};
-
-			it("gives the focus back to the control holding it as waiting started", async () => {
-
-				const { root, field } = await started();
-
-				await ended(root);
-
-				expect(document.activeElement).toBe(field);
-
-			});
-
-			it("moves the focus to the main column once the control holding it is gone", async () => {
-
-				const { root, field } = await started();
-
-				field.remove();
-
-				await ended(root);
-
-				expect(document.activeElement).toBe(root.querySelector("clay-tool > main"));
-
-			});
-
-			it("leaves the focus where it was moved while waiting", async () => {
-
-				const outside = document.createElement("button");
-
-				document.body.append(outside);
-
-				const { root } = await started();
-
-				outside.focus();
-
-				await ended(root);
-
-				expect(document.activeElement).toBe(outside);
+				expect(mark(root)).toBeNull();
+				expect(status(tool(root))?.textContent).toBe("");
 
 			});
 

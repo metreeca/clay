@@ -179,17 +179,27 @@ clay-tool {
 
     /*
      * Waiting lays a veil of the page colour over the frame, washing everything toward the page by the same share, bold
-     * and large text included, where a fade would leave the heaviest text standing out. The columns beneath are out of
-     * reach meanwhile, so the veil itself takes no gesture: the platform answers none until the app is no longer busy.
+     * and large text included, where a fade would leave the heaviest text standing out. The frame ignores the input
+     * aimed inside it meanwhile, so the veil itself takes no gesture, leaving the bodies free to scroll beneath it.
      */
 
-    &[aria-busy="true"]::after {
+    &[waiting]::after {
         content: "";
         position: absolute;
         inset: 0;
         background-color: color-mix(in oklab, var(--skin--background-color) 50%, transparent);
         backdrop-filter: blur(0.5px); /* A slight blur takes the edge off the text beneath, headings included. */
         pointer-events: none;
+    }
+
+    /*
+     * Typing is ignored while the app is busy, so the caret is hidden at once, ahead of the veil, rather than blinking
+     * in a field that takes nothing; the focus stays put, so the field keeps its editing state. Skin defines no caret
+     * token, and a hidden caret has no colour to read from one, hence the keyword.
+     */
+
+    &[aria-busy="true"] * {
+        caret-color: transparent;
     }
 
     /* A locked side column fades what it holds, while the column itself keeps its place. */

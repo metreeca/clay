@@ -28,7 +28,7 @@ import { useModel } from "@metreeca/clay/model";
 import { createState } from "@metreeca/core/state";
 import { skin } from "@metreeca/skin";
 import { type ComponentChildren, createElement, type TargetedEvent, type TargetedMouseEvent } from "preact";
-import { useEffect, useId, useRef } from "preact/hooks";
+import { useEffect, useId } from "preact/hooks";
 import { Icon } from "../glyphs/icon.js";
 import "./tool.css";
 
@@ -37,6 +37,24 @@ import "./tool.css";
  * The delay a change of `busy` waits out before the frame shows it (ms).
  */
 const BusyDelay = 300;
+
+/**
+ * The handlers a busy shell takes on. They cancel every gesture that would act on a control inside the shell, from
+ * typing and editing to dragging and pressing, and leave the focus where it stands and the content open to a reader.
+ */
+const Ignored = Object.fromEntries([
+	"onKeyDownCapture",
+	"onBeforeInputCapture",
+	"onPasteCapture",
+	"onCutCapture",
+	"onDropCapture",
+	"onDragStartCapture",
+	"onMouseDownCapture",
+	"onClickCapture",
+	"onAuxClickCapture",
+	"onDblClickCapture",
+	"onContextMenuCapture"
+].map(handler => [handler, ignore]));
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -61,9 +79,9 @@ const BusyDelay = 300;
  * set on, or every shell inside the element it is set on, leaving the other properties of the shell to their defaults.
  *
  * Waiting is stated by the app through `busy`, as when it has to let its state settle before the reader acts again:
- * the frame is veiled, shows a turning mark at the end of the main head in place of the menu, and marks itself busy
- * for assistive technology, while both columns stay out of reach for pointer and keyboard alike. The control holding
- * the focus as waiting starts holds it again as waiting ends, so the reader picks up where they left off.
+ * the frame marks itself busy for assistive technology and ignores pointer and keyboard input aimed inside it, while
+ * the focus stays where it stands and the content stays readable. After a short delay, the frame is also veiled, shows
+ * a turning mark at the end of the main head in place of the menu, and announces waiting to screen readers.
  *
  * The main column is named after `head` and takes the focus as the {@link @metreeca/clay!router.Router router} lands a
  * screen, without adding a tab stop, so a reader hears which screen they are on rather than a control of the last one.
@@ -111,9 +129,10 @@ export function Tool({
 
 	/**
 	 * Whether the app is waiting on work the reader has to let settle, such as the exchanges a change of filters
-	 * starts. Both columns are out of reach for as long as it is set. As it is lifted, the focus returns to the control
-	 * that held it, or moves to the main column if that control is gone. The frame starts and stops showing waiting
-	 * only after a short delay, so a brief stretch shows nothing and close stretches show as one. Idle if omitted.
+	 * starts. While it is set, the shell ignores input aimed inside it, and content rendered outside it, such as a
+	 * dialog, answers as usual. The focus never moves, so a field keeps its editing state, though its caret is hidden
+	 * until the shell is idle again. Waiting shows and clears after a short delay, so a brief stretch shows nothing and
+	 * close stretches show as one. Idle if omitted, so the shell answers input as usual.
 	 */
 	busy?: boolean
 
@@ -203,7 +222,7 @@ export function Tool({
 	}));
 
 	/*
-	 * Only what waiting shows follows `busy` after the delay, while the columns are out of reach as soon as it is set.
+	 * Only what waiting shows follows `busy` after the delay, while input is ignored as soon as it is set.
 	 */
 
 	useEffect(() => {
@@ -213,19 +232,6 @@ export function Tool({
 		return () => clearTimeout(timer);
 
 	}, [busy]);
-
-	/*
-	 * The control holding the focus as the columns turn inert is handed back as `busy` is lifted. It is tracked as it
-	 * takes the focus, since the browser may already have moved the focus out of the columns by the time an effect
-	 * runs, and kept in a ref, as no render follows the focus and the model holds no live element.
-	 */
-
-	const held = useRef<Optional<HTMLElement>>(undefined);
-
-	useEffect(() => busy
-		? () => restore(held.current, document.getElementById(column))
-		: undefined, [busy]
-	);
 
 	/*
 	 * A locked side column drops the control holding the focus, as browsers do on their own as it turns inert, so the
@@ -275,14 +281,19 @@ export function Tool({
 
 	}, [sync]);
 
+	/*
+	 * Input is ignored rather than the columns turned inert, as an inert column drops the focus: a field switching
+	 * between reading and editing as it loses and takes the focus would flicker across every stretch of waiting.
+	 * The handlers sit on the frame, so they see only input aimed inside it, the drawer included.
+	 */
+
 	return createElement("clay-tool", {
 
-		"aria-busy": waiting,
-		onFocusIn: (event: FocusEvent) => {
-			held.current = event.target instanceof HTMLElement ? event.target : undefined;
-		},
+		"aria-busy": busy,
+		...(busy ? Ignored : undefined),
 
 		wide,
+		waiting,
 		locked,
 		tucked
 
@@ -303,7 +314,7 @@ export function Tool({
 			id={side}
 			aria-label="Menu"
 			popover={locked ? "manual" : "auto"}
-			inert={locked || busy}
+			inert={locked}
 			onClick={follow}
 			onToggle={event => {
 				reveal(event);
@@ -332,7 +343,7 @@ export function Tool({
 		 * two columns do not fit, the head opens the body instead, as the copy closes it.
 		 */}
 
-		<main id={column} aria-labelledby={title} tabIndex={-1} inert={open || busy}>
+		<main id={column} aria-labelledby={title} tabIndex={-1} inert={open}>
 
 			<header>
 				{!tucked && <button type="button" popovertarget={side} disabled={locked} aria-label="Open menu">
@@ -343,7 +354,7 @@ export function Tool({
 				{/*
 				 * The turning mark stands over the menu, which keeps its place hidden beneath, so the head holds its
 				 * height. It is a bare glyph rather than a control: it offers nothing to press, and waiting is told by
-				 * `aria-busy` on the frame, so the mark is inert and a reader meets nothing where it stands.
+				 * the status message, so the mark is inert and a reader meets nothing where it stands.
 				 */}
 
 				{menu && <div class="menu">{menu}</div>}
@@ -360,6 +371,14 @@ export function Tool({
 
 		</main>
 
+		{/*
+		 * Waiting is announced through a status message kept out of sight, as `aria-busy` goes unspoken by most screen
+		 * readers. The region stays rendered while it is empty, since one inserted along with its text is often missed,
+		 * and it stands outside the columns, so a drawer turning the main column inert never silences it.
+		 */}
+
+		<span role="status" data-offscreen>{waiting ? "Busy" : ""}</span>
+
 	</>);
 
 }
@@ -371,7 +390,7 @@ export function Tool({
 interface Waiting {
 
 	/**
-	 * Whether the frame is veiled, shows the turning mark and is marked busy for assistive technology.
+	 * Whether the frame is veiled, shows the turning mark and announces waiting to screen readers.
 	 */
 	readonly waiting: boolean;
 
@@ -477,27 +496,6 @@ function focused(): Optional<HTMLElement> {
 }
 
 /**
- * Gives the focus back to the control holding it as waiting started, or to the fallback if the control can no longer
- * take it; the focus is left alone if anything else took it meanwhile, or if no control held it.
- *
- * @param control The control holding the focus as waiting started
- * @param fallback The element taking the focus in place of a control gone in the meantime
- */
-function restore(control: Optional<HTMLElement>, fallback: Optional<HTMLElement | null>): void {
-
-	if ( control && !focused() ) {
-
-		control.focus({ preventScroll: true });
-
-		if ( !focused() ) {
-			fallback?.focus({ preventScroll: true });
-		}
-
-	}
-
-}
-
-/**
  * Takes the focus off the control holding it inside a column.
  *
  * @param column The column whose control is to lose the focus
@@ -510,6 +508,17 @@ function release(column: Optional<HTMLElement | null>): void {
 		control.blur();
 	}
 
+}
+
+
+/**
+ * Cancels a gesture aimed inside a busy shell, stopping its default action and the handlers of the control it targets.
+ *
+ * @param event The gesture to cancel
+ */
+function ignore(event: Event): void {
+	event.preventDefault();
+	event.stopPropagation();
 }
 
 

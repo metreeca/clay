@@ -193,8 +193,8 @@ export function ToolScreen() {
 		</ul>
 
 		<p>Waiting is stated by the app through <code>busy</code>, which this screen sets while the shared fetch client
-			has a request in flight: the frame fades and marks itself busy for assistive technology, and the focus held
-			as waiting starts comes back as it ends. The send button runs a request against a mock answering after two
+			has a request in flight: the frame ignores input aimed inside it, leaving the focus where it stands, then fades
+			and announces waiting to screen readers. The send button runs a request against a mock answering after two
 			seconds, so the whole of it can be watched.</p>
 
 		<hgroup id="knobs">
