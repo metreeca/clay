@@ -57,13 +57,7 @@ clay-toasts {
     padding: var(--skin--spacing-100);
 
     background-color: var(--skin--background-color-glass);
-
-    /*
-     * A faint blur below the scale, just enough to soften what shows through so it does not compete with the toasts
-     * while staying recognisable, which is what tells the tray as glass; any step of the spacing ladder flattens it.
-     */
-
-    backdrop-filter: blur(0.5px);
+    backdrop-filter: var(--skin--backdrop-filter-glass);
 
     border-radius: var(--skin--border-radius-100);
 
@@ -240,6 +234,14 @@ clay-toasts {
                 border-radius: var(--skin--border-radius-050);
 
                 /*
+                 * The neutral covers lose the label and the focus ring on an overlay, so the controls on the card
+                 * answer the pointer with the accent states, which the design system holds legible on the overlay too.
+                 */
+
+                --skin--background-color-hover-neutral: var(--skin--background-color-hover);
+                --skin--background-color-pressed-neutral: var(--skin--background-color-pressed);
+
+                /*
                  * The mark is centred on the first line, the space a line takes beyond the glyph split above and below
                  * it, and held a step further off the message than the gap alone, so it reads as a marker set apart.
                  */
@@ -276,7 +278,7 @@ clay-toasts {
                         text-decoration-color: var(--skin--border-color);
                         text-decoration-thickness: var(--skin--border-width);
                         text-underline-position: under; /* Hung below the descenders, as links are. */
-                        text-underline-offset: 0.1em;
+                        text-underline-offset: 0.15em;
 
                         &:hover {
                             color: var(--skin--color-hover);
@@ -329,14 +331,11 @@ clay-toasts {
 
             --clay-toasts-tint: var(--skin--background-color-note);
 
-            /*
-             * The mark turns once a second whatever motion the reader asked for: the turn is what tells waiting, and a
-             * small glyph turning in place carries none of the travel reduced motion guards against.
-             */
+            /* The mark turns at the spin period whatever motion the reader asked for. */
 
             & > svg {
                 color: var(--skin--color-note);
-                animation: clay-toasts-turn 1s linear infinite;
+                animation: clay-toasts-turn var(--skin--duration-spin) linear infinite;
             }
 
         }

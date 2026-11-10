@@ -135,14 +135,8 @@ clay-button {
 
             font-weight: var(--skin--font-weight-strong);
 
-            /*
-             * A glyph carries no weight of its own, so the strong setting would leave the mark reading lighter than
-             * the label beside it. The stroke is drawn half again as thick, which is the nudge that puts the two back
-             * on the same footing rather than a measure the design system ladder carries.
-             */
-
             & .lucide {
-                stroke-width: calc(1.5 * var(--skin--stroke-width));
+                stroke-width: var(--skin--stroke-width-strong);
             }
 
         }
@@ -174,13 +168,13 @@ clay-button {
         }
 
         /*
-         * A mark beside a label is read at the size of the text it sits in, where the full nudge closes the counters
-         * of the glyph and leaves it heavier than the word it leads. It takes half the nudge, the mark standing alone
-         * keeping the whole of it.
+         * A mark beside a label is read at the size of the text it sits in, where the strong stroke closes the
+         * counters of the glyph and leaves it heavier than the word it leads. It takes the width halfway between the
+         * plain stroke and the strong one, while the mark standing alone keeps the strong stroke whole.
          */
 
         &[labelled] > button .lucide {
-            stroke-width: calc(1.25 * var(--skin--stroke-width));
+            stroke-width: calc((var(--skin--stroke-width) + var(--skin--stroke-width-strong)) / 2);
         }
 
     }
@@ -202,32 +196,23 @@ clay-button {
      *
      * Under the pointer the fill deepens by a share of what the control already carries, and under the press by
      * twice that, so the two states are told apart by how far the same colour has travelled rather than by a second
-     * colour. A control carrying no step travels along the neutral the page itself is shaded with, and one carrying
-     * a step along the step, which is what keeps the colour the reader is following from giving way to the accent an
-     * ordinary button answers to. The shares are read off the tints the design system already mixes, so the five
-     * move together whichever scheme is in force.
+     * colour. A control carrying no step travels along a neutral, and one carrying a step along the step, which is
+     * what keeps the colour the reader is following from giving way to the accent an ordinary button answers to. The
+     * shares are read off the tints the design system already mixes, so the five move together in either scheme.
      *
-     * The neutral pair is laid over the surface the control stands on rather than mixed into the page. A step states
-     * itself in hue and is seen on any surface, while a control carrying no step is told apart by lightness alone, so
-     * a tint computed from the page reads on the page and nowhere else: on the sunken tray, which stands a step from
-     * the page in the very direction the tint travels, the two all but meet. Carried as the page ink at a share of
-     * cover, it deepens whatever it is laid over by as much, and the same gesture reads the same wherever the control
-     * stands.
-     *
-     * The share is half the one a step travels, rather than the share the striped row is mixed at: cover is spent in
-     * the space the screen composites in, where a mix is spent in oklab, so the same figure buys less. At these
-     * shares the pointer stands at 1.14:1 on the page and 1.14:1 on the tray in the light scheme, 1.13:1 and 1.11:1
-     * in the dark one, where the mixed tint gave 1.12:1 on the page and 1.03:1 on the tray.
+     * The neutral pair is the one the design system lays over whatever surface a control stands on, so the gesture
+     * reads alike on the page and on the sunken tray. It keeps the label and the focus ring legible everywhere but on
+     * an overlay, where a control carrying no step would take the accent states instead.
      */
 
     &[mode="normal"] > button:enabled {
 
         &:hover {
-            background-color: color-mix(in oklab, var(--skin--color) 6%, transparent);
+            background-color: var(--skin--background-color-hover-neutral);
         }
 
         &:active {
-            background-color: color-mix(in oklab, var(--skin--color) 12%, transparent);
+            background-color: var(--skin--background-color-pressed-neutral);
         }
 
     }
@@ -369,7 +354,7 @@ clay-button {
                 font-weight: var(--skin--font-weight-strong);
 
                 & .lucide {
-                    stroke-width: calc(1.5 * var(--skin--stroke-width));
+                    stroke-width: var(--skin--stroke-width-strong);
                 }
 
             }
@@ -383,7 +368,7 @@ clay-button {
             }
 
             &[labelled] > button .lucide {
-                stroke-width: calc(1.25 * var(--skin--stroke-width));
+                stroke-width: calc((var(--skin--stroke-width) + var(--skin--stroke-width-strong)) / 2);
             }
 
         }

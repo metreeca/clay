@@ -303,16 +303,16 @@ clay-tool {
                 cursor: pointer;
 
                 /*
-                 * They answer the pointer as a subtle button does, deepening their surface by a share of the page ink
-                 * on hover and twice that while pressed, so the reader sees the whole target rather than the glyph.
+                 * They answer the pointer as a subtle button does, taking the neutral hover and pressed covers over
+                 * their surface, so the reader sees the whole target rather than the glyph alone.
                  */
 
                 &:enabled:hover {
-                    background-color: color-mix(in oklab, var(--skin--color) 6%, transparent);
+                    background-color: var(--skin--background-color-hover-neutral);
                 }
 
                 &:enabled:active {
-                    background-color: color-mix(in oklab, var(--skin--color) 12%, transparent);
+                    background-color: var(--skin--background-color-pressed-neutral);
                 }
 
                 &:disabled {
@@ -414,6 +414,14 @@ clay-tool {
 
             color: inherit;
             background-color: var(--skin--background-color-overlay);
+
+            /*
+             * The neutral covers lose the glyph and the focus ring on an overlay, so the controls in the drawer answer
+             * the pointer with the accent states, which the design system holds legible on the overlay too.
+             */
+
+            --skin--background-color-hover-neutral: var(--skin--background-color-hover);
+            --skin--background-color-pressed-neutral: var(--skin--background-color-pressed);
 
             translate: 0;
             transition: translate var(--skin--duration-fast) ease-out;
@@ -528,9 +536,7 @@ clay-tool {
             /*
              * The turning mark stands over the end of the head, above the veil and out of the flow, so the head keeps
              * its height and layout; it takes the box an edge button takes, glyph and padding reaching into the gutter
-             * alike. It turns once a second whatever motion the reader asked for: the turn is what tells waiting, a
-             * still mark saying nothing, and a glyph turning in place carries none of the travel reduced motion guards
-             * against, so its duration is stated outright rather than read from a motion token of the design system.
+             * alike. It turns at the spin period of the design system whatever motion the reader asked for.
              */
 
             & > .busy {
@@ -548,7 +554,7 @@ clay-tool {
                 color: var(--skin--color-label);
 
                 & svg {
-                    animation: clay-tool-turn 1s linear infinite;
+                    animation: clay-tool-turn var(--skin--duration-spin) linear infinite;
                 }
 
             }

@@ -25,14 +25,10 @@ clay-more {
 
     color: var(--skin--color-disabled);
 
-    /*
-     * The mark turns once a second whatever motion the reader asked for, as the busy mark of a tool shell does: the
-     * turn is what tells waiting, a still mark saying nothing, and a small glyph turning in place carries none of the
-     * travel reduced motion guards against, so its duration is stated outright rather than read from the steps.
-     */
+    /* The mark turns at the spin period whatever motion the reader asked for, as the busy mark of a tool shell does. */
 
     & > svg {
-        animation: clay-more-turn 1s linear infinite;
+        animation: clay-more-turn var(--skin--duration-spin) linear infinite;
     }
 
 }
