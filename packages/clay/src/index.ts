@@ -168,10 +168,10 @@ export function isReserved(event: Event): boolean {
  * Hands out a stable root for a rendering call: the same element answers every call naming it, so that repeated
  * calls, as issued on hot reload, replace the page rather than adding another copy of it.
  *
- * An element created here takes the height of whatever holds it, so a frame rendered into it fills the page rather
- * than standing as tall as its content: an app states once, in its own document, that the body is as tall as the
- * window, and gets the root it asks for already fitted to it. An element the document already carries is handed back
- * as it stands, leaving an app that placed its own root in charge of how that root is laid out.
+ * An element created here takes the height of whatever holds it and stretches the frame rendered into it across its
+ * whole box, so the frame fills the page rather than standing as tall as its content: an app states once, in its own
+ * document, that the body is as tall as the window, and gets a root already fitted to it. An element the document
+ * already carries is handed back as it stands, leaving its layout to the app that placed it.
  *
  * @param name The name of the hosting custom element, hyphenated as the DOM requires
  *
@@ -186,7 +186,7 @@ export function host(name: string): Element {
 
 	function fitted(element: Element): Element {
 
-		element.setAttribute("style", "display: block; height: 100%");
+		element.setAttribute("style", "display: grid; grid-template: minmax(0, 1fr) / minmax(0, 1fr); height: 100%");
 
 		return element;
 

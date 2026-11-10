@@ -122,9 +122,11 @@ describe("host", () => {
 
 	});
 
-	it("hands the element it creates the height to fill", () => {
+	it("hands the element it creates the height to fill and stretches what it holds in both axes", () => {
 
-		expect(host("clay-filled").getAttribute("style")).toBe("display: block; height: 100%");
+		expect(host("clay-filled").getAttribute("style")).toBe(
+			"display: grid; grid-template: minmax(0, 1fr) / minmax(0, 1fr); height: 100%"
+		);
 
 	});
 
