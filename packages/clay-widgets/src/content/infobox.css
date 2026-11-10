@@ -34,6 +34,10 @@ clay-infobox {
     grid-template-columns: minmax(0, min-content) minmax(50%, 1fr);
     column-gap: var(--skin--spacing-075);
 
+    /* An infobox leaves the step a plain definition list leaves below it, so it is spaced as one in a page flow. */
+
+    margin-bottom: var(--skin--spacing-100);
+
     & > dl {
 
         display: grid;
@@ -149,6 +153,16 @@ clay-infobox {
     &[wrap] > dl > dd {
         white-space: normal;
         overflow-wrap: anywhere;
+    }
+
+    /*
+     * Wrapping values may run over several lines, so labels are set strong in the label colour, standing out from
+     * the values beside them as headings of their rows rather than by colour alone.
+     */
+
+    &[wrap] > dl > dt {
+        font-weight: var(--skin--font-weight-strong);
+        color: var(--skin--color-label);
     }
 
     /* At the end, labels sit flush against the values they introduce. */
