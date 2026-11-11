@@ -60,11 +60,15 @@ clay-infobox {
          * Spacing between entries comes from the grid gap, replacing the margins the base list rules set. Labels and
          * values are kept to one line each, clipped with an ellipsis where they outrun their column, so one long value
          * neither wraps the row nor widens the infobox; wrapping infoboxes release values from this rule, as set below.
+         *
+         * The clip reaches half a step past the box, clear of the focus mark of any link the cell holds, so the mark
+         * shows whole while the ellipsis still cuts text at the edge of the box, where the column ends for the reader.
          */
 
         & > dt,
         & > dd {
-            overflow: hidden;
+            overflow: clip;
+            overflow-clip-margin: var(--skin--spacing-050);
             text-overflow: ellipsis;
             white-space: nowrap;
             margin: 0;
@@ -101,7 +105,8 @@ clay-infobox {
 
                 /*
                  * A value holding a list stops clipping, which would hide the hanging markers; the list clips instead,
-                 * on every side but the leading one, where it leaves the width of the column gap to the markers.
+                 * at the trailing edge, leaving the width of the column gap to the markers at the leading one, and room
+                 * for the focus mark of a link above and below, as the value would.
                  */
 
                 overflow: visible;
@@ -112,7 +117,12 @@ clay-infobox {
 
                     padding-left: 0;
 
-                    clip-path: inset(0 0 0 calc(-1 * var(--skin--spacing-100)));
+                    clip-path: inset(
+                        calc(-1 * var(--skin--spacing-050))
+                        0
+                        calc(-1 * var(--skin--spacing-050))
+                        calc(-1 * var(--skin--spacing-100))
+                    );
 
                     /*
                      * Items are marked by a small grey dot, telling a value made of several items from a single one
