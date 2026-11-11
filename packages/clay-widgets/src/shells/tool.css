@@ -362,7 +362,7 @@ clay-tool {
 
             grid-row: 3;
             padding-block: var(--clay-tool-foot-inset);
-            font-size: var(--clay-tool-foot-font-size, var(--skin--font-size-small));
+            font-size: var(--clay-tool-foot-font-size, var(--skin--font-size));
 
             border-block-start-style: var(--skin--border-style);
             border-block-start-color: transparent;
@@ -624,7 +624,7 @@ clay-tool {
 
             & > footer {
                 padding-block: var(--clay-tool-foot-inset);
-                font-size: var(--clay-tool-foot-font-size, var(--skin--font-size-small));
+                font-size: var(--clay-tool-foot-font-size, var(--skin--font-size));
             }
 
             /*
