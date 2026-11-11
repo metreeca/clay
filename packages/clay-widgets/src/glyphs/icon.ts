@@ -75,9 +75,11 @@
  * | `Link`           | marks an address, whether it leads inside the app or out     |
  * | `Open`           | steps into an item                                           |
  * | `Back`           | returns to the step before                                   |
- * | **Disclosure**   | how much of a section is on show                             |
- * | `Expand`         | reveals a section folded away                                |
- * | `Collapse`       | folds it back                                                |
+ * | **Disclosure**   | how much of a tree or a section is on show                   |
+ * | `Expand`         | reveals the entries nested under an item, as in a tree       |
+ * | `Collapse`       | hides them again                                             |
+ * | `Unfold`         | reveals the content folded away below a control, in place    |
+ * | `Fold`           | folds it back                                                |
  * | **Search**       | narrowing what is on show                                    |
  * | `Search`         | submits a query, or opens the field it is typed in           |
  * | `Clear`          | empties that field                                           |
