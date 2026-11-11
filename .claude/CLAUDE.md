@@ -179,12 +179,8 @@ imports. The prefix is carried by the element, which the DOM requires to be hyph
 component, which the module path already places: `Tabs` in `tabs.tsx`, rendering `<clay-tabs>` styled by `tabs.css`.
 
 > [!CAUTION]
-> **STICK** to the `@metreeca/skin` design system. Wherever Skin defines a token that sensibly fits a role, a sheet
-> **MUST** read it, keywords included, **NEVER** a literal (`solid`, `1px`) or a token borrowed from another role to
-> tune a look: a border is `var(--skin--border-width) var(--skin--border-style) var(--skin--border-color)`, the field
-> variant staying with fields. Where a look seems off, the fix belongs in Skin, not in a Clay sheet working around it.
-> A deviation is accepted **ONLY** with a solid rationale, stated in a comment beside the declaration it affects: a
-> value with no comment is a defect.
+> Every sheet here is built on `@metreeca/skin`: activate `css-developer` before touching one. Its `skin`, `meaning`,
+> `palettes` and `viewports` task skills carry the design system discipline and vocabularies a Clay widget follows.
 
 # Shared Utilities
 
