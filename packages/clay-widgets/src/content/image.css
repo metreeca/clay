@@ -83,19 +83,20 @@ clay-image {
 
     /*
      * Floated, the image is the one place it takes spacing of its own: the text wrapping around it keeps off the
-     * picture on the side it faces, and off its bottom edge, by the spacing the design system sets a figure apart by.
+     * picture on the side it faces, and off its bottom edge, by a double spacing step, so a column of wrapped lines,
+     * ragged against the picture, still reads as standing clear of it.
      */
 
     &[float="start"] {
         float: inline-start;
-        margin-inline-end: var(--skin--spacing-100);
-        margin-bottom: var(--skin--spacing-100);
+        margin-inline-end: var(--skin--spacing-200);
+        margin-bottom: var(--skin--spacing-200);
     }
 
     &[float="end"] {
         float: inline-end;
-        margin-inline-start: var(--skin--spacing-100);
-        margin-bottom: var(--skin--spacing-100);
+        margin-inline-start: var(--skin--spacing-200);
+        margin-bottom: var(--skin--spacing-200);
     }
 
     /*
