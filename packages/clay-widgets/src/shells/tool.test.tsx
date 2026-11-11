@@ -506,28 +506,6 @@ describe("Tool", () => {
 	});
 
 
-	describe("copy", () => {
-
-		it("closes the main body with the copy, after the content", async () => {
-
-			const body = rendered(<Tool copy={<span>© Metreeca</span>}><p>content</p></Tool>)
-				.querySelector(":scope > main > div")!;
-
-			expect(body.lastElementChild?.tagName).toBe("FOOTER");
-			expect(body.lastElementChild?.textContent).toBe("© Metreeca");
-			expect(body.firstElementChild?.textContent).toBe("content");
-
-		});
-
-		it("adds nothing to the main body without a copy", async () => {
-
-			expect(rendered(<Tool>content</Tool>).querySelector(":scope > main > div > footer")).toBeNull();
-
-		});
-
-	});
-
-
 	describe("bodies", () => {
 
 		it("lets the keyboard reach and scroll each body", async () => {

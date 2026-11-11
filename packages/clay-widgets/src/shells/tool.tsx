@@ -64,7 +64,8 @@ const Ignored = Object.fromEntries([
  *
  * Lays a screen out as two columns, the side column beside the main one, each with a head, a body and a foot. The
  * heads of the two columns share one row, so they always match in height, and the feet do the same. A column with
- * nothing for its foot shows none, its body running down to the bottom of the frame. The body of each column scrolls
+ * nothing for its foot shows none, its body running down to the bottom of the frame and ending its content on the
+ * gutter of a foot, so the last line stands level with the end of the foot beside it. The body of each column scrolls
  * on its own, while its head and foot stay in view, so what they hold is always within reach. Heads and feet keep
  * the height of a single line: text too wide for them is clipped and ends with an ellipsis. Content made sticky in a
  * body pins flush against the head or foot of its column, leaving no strip of scrolled content showing between them,
@@ -113,7 +114,6 @@ export function Tool({
 
 	head,
 	menu,
-	copy,
 	foot,
 
 	children
@@ -187,22 +187,16 @@ export function Tool({
 	menu?: ComponentChildren
 
 	/**
-	 * The closing notice of the content, such as a copyright, in the body of the main column. It scrolls with the
-	 * content rather than standing in a foot, and rests at the bottom of a body the content is too short to fill.
-	 */
-	copy?: ComponentChildren
-
-	/**
 	 * The standing notes of the screen, such as a status line or the terms, in the foot of the main column.
 	 */
 	foot?: ComponentChildren
 
 
 	/**
-	 * The content of the moment, scrolling in the body of the main column. Its items stand in a column filling the
-	 * body, so each can grow, shrink or align through its own flex properties. Their margins add up rather than
-	 * collapsing, so blocks spaced by margins, such as a heading after a paragraph, stand further apart than in the
-	 * plain flow of a page; content wrapped in a single element, such as an `article`, keeps its usual spacing.
+	 * The content of the moment, scrolling in the body of the main column. It is laid out in the plain flow of a page,
+	 * so floated images wrap text and the margins of adjacent blocks collapse. Content that has to fill the room the
+	 * body leaves, such as a map or an empty state centred on the screen, passes a lone element stating
+	 * `block-size: 100%`, which fills the body less its inset; one that may grow taller states `min-block-size: 100%`.
 	 */
 	children?: ComponentChildren
 
@@ -346,7 +340,7 @@ export function Tool({
 		 * The main column takes the focus from code alone, so a navigation can land the focus on it and a reader hears
 		 * its name, taken from the head, without a tab stop being added. The head is held in a box of its own only to
 		 * be referenced as that name, standing aside from the layout so the head lays out what it holds directly. Where
-		 * two columns do not fit, the head opens the body instead, as the copy closes it.
+		 * two columns do not fit, the head opens the body instead, scrolling away with the content below it.
 		 */}
 
 		<main id={column} aria-labelledby={title} tabIndex={-1} inert={open}>
@@ -371,7 +365,6 @@ export function Tool({
 			<div tabIndex={0}>
 				{!split && head && <header id={title}>{head}</header>}
 				<div>{children}</div>
-				{copy && <footer>{copy}</footer>}
 			</div>
 			{foot && <footer>{foot}</footer>}
 

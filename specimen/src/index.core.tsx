@@ -24,7 +24,6 @@
  * @module
  */
 
-import { app } from "@metreeca/clay";
 import { isContent } from "@metreeca/clay-widgets";
 import { Button } from "@metreeca/clay-widgets/button";
 import { Choice } from "@metreeca/clay-widgets/choice";
@@ -143,8 +142,6 @@ export function Page({
 		</Strip>}
 
 		tray={<TOC name="Sections" compact entries={outline(samples)}/>}
-
-		copy={<small>{app.copy}</small>}
 
 	>
 

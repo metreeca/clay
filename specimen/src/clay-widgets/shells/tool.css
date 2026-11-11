@@ -76,14 +76,10 @@ clay-tool {
             justify-content: space-between;
         }
 
-        /* A body rests the closing notice at its bottom, as the shell does with short content. */
+        /* A body takes the room its head and foot leave. */
 
         & section {
             flex: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            align-items: flex-start;
             padding: var(--skin--spacing-050);
         }
 

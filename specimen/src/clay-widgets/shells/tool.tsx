@@ -112,8 +112,6 @@ export function ToolScreen() {
 
 		</Strip>}
 
-		copy={<small>{app.copy}</small>}
-
 		foot={<code>@metreeca/clay-widgets/tool</code>}
 
 	>
@@ -144,7 +142,7 @@ export function ToolScreen() {
 
 			<div>
 				<header><code>head</code><code>menu</code></header>
-				<section><code>children</code><code>copy</code></section>
+				<section><code>children</code></section>
 				<footer><code>foot</code></footer>
 			</div>
 
@@ -170,7 +168,6 @@ export function ToolScreen() {
 				<tr><td><code>head</code></td><td>the head of the main column, or the top of its body where two columns do not fit</td><td>the name of the screen</td></tr>
 				<tr><td><code>menu</code></td><td>the end of the head of the main column</td><td>the switches and the send button</td></tr>
 				<tr><td><code>children</code></td><td>the body of the main column</td><td>this documentation</td></tr>
-				<tr><td><code>copy</code></td><td>the close of the content, scrolling with it</td><td>the copyright</td></tr>
 				<tr><td><code>foot</code></td><td>the foot of the main column</td><td>the module</td></tr>
 			</tbody>
 
@@ -224,7 +221,7 @@ export function ToolScreen() {
 				<tr><td><code>--clay-tool-body-gutter</code></td><td>the block gutter of the bodies</td></tr>
 				<tr><td><code>--clay-tool-foot-gutter</code></td><td>the block gutter of the feet</td></tr>
 				<tr><td><code>--clay-tool-head-font-size</code></td><td>the font size of the heads, the text size unless set</td></tr>
-				<tr><td><code>--clay-tool-foot-font-size</code></td><td>the font size of the feet and the copy, the text size unless set</td></tr>
+				<tr><td><code>--clay-tool-foot-font-size</code></td><td>the font size of the feet, the text size unless set</td></tr>
 			</tbody>
 
 		</table>

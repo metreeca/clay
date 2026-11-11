@@ -352,7 +352,9 @@ clay-tool {
         /*
          * The body scrolls with no padding of its own, so content made sticky pins flush with the bars: the inset is
          * carried by the boxes scrolling inside it, each column setting it on what its body holds. A column with no foot
-         * runs its body down to the end of the frame, leaving no empty bar beside the foot of the other column.
+         * runs its body down to the end of the frame, leaving no empty bar beside the foot of the other column, and ends
+         * what the body holds on the inset of a foot, overriding the inset the column sets, so the end of its content
+         * stands level with the end of the foot beside it, whatever gutters the bodies and the feet are given.
          */
 
         & > div {
@@ -362,7 +364,13 @@ clay-tool {
             scroll-timeline: var(--clay-tool-scroll) block;
 
             &:last-child {
+
                 grid-row: 2 / -1;
+
+                & > div:last-child {
+                    padding-block-end: var(--clay-tool-foot-inset);
+                }
+
             }
 
         }
@@ -607,13 +615,10 @@ clay-tool {
         }
 
         /*
-         * The body holds the content in a block of its own, which takes whatever room the body leaves, so the copy
-         * after it rests at the bottom of a body the content is too short to fill and follows the content otherwise.
-         * The block lays the content out as a column, so an item can grow, shrink or align with the flex properties it
-         * states, as a map filling the room the body leaves; the margins of its items add up rather than collapsing as
-         * in the plain flow of a block. The first part and the content closing the body carry the inset of the body, as
-         * they are boxes of the column rather than content. The copy takes the inset and type of a foot instead, so
-         * resting at the bottom it stands level with the foot of the side column, reading as one bar across the frame.
+         * The body holds the content in a block of its own, laid out in the plain flow of a page, so floats wrap text
+         * and margins collapse. The block grows to the room the body leaves, so its height is definite, and a lone item
+         * stating `block-size: 100%` fills it whole, as a map does. The first part of the body carries its inset, as a
+         * box of the column rather than content, and the content ends on that inset too, unless the column has no foot.
          */
 
         & > div {
@@ -626,20 +631,8 @@ clay-tool {
             }
 
             & > div {
-
-                display: flex;
-                flex-direction: column;
                 flex: auto;
-
-                &:last-child {
-                    padding-block-end: var(--clay-tool-body-inset);
-                }
-
-            }
-
-            & > footer {
-                padding-block: var(--clay-tool-foot-inset);
-                font-size: var(--clay-tool-foot-font-size, var(--skin--font-size));
+                padding-block-end: var(--clay-tool-body-inset);
             }
 
             /*
