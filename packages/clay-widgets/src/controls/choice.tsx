@@ -66,9 +66,10 @@ export function Choice<V extends string>({
 	name: string
 
 	/**
-	 * How loud the choice appears: `subtle` drops the box so the options read as part of the text around them, the
-	 * chosen one inked in the selection accent; `normal` boxes the options as a select is boxed, the chosen one sunk
-	 * into the page; `strong` also sets the options in the strong weight and inks the chosen one in the accent.
+	 * How loud the choice appears: `subtle` drops the box and keeps the options one line tall, so they read as part of
+	 * the text around them and fit inside a line of it, the chosen one inked in the selection accent; `normal` boxes the
+	 * options as a select is boxed, the chosen one sunk into the page; `strong` also sets the options in the strong
+	 * weight and inks the chosen one in the accent, so the choice stands out from the controls around it.
 	 *
 	 * A choice stating nothing takes the look the {@link style!Style styled area} around it assigns as `choiceLook`,
 	 * which is `normal` where nothing assigns it. Stating a look here answers to that alone, whatever the area says.
