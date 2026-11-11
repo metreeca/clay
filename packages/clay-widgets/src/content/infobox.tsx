@@ -34,9 +34,9 @@ import "./infobox.css";
  *
  * Maps each plain string label to the value it names, so a section is written as a single object literal. Properties
  * are shown in the order their labels appear in the object, but labels reading as non-negative integers, such as
- * `2026`, always come first in ascending order, so a section needing them elsewhere takes {@link Property} entries.
+ * `2026`, always come first in ascending order: a section needing them elsewhere takes {@link InfoboxProperty} entries.
  */
-export type Properties = {
+export type InfoboxProperties = {
 
 	readonly [label: string]: ComponentChildren
 
@@ -48,7 +48,7 @@ export type Properties = {
  * Pairs a value with the label naming it. Entries serve labels that are not plain strings, such as links or emphasised
  * text, and sections whose properties have to be shown in a given order, numeric labels included.
  */
-export type Property = {
+export type InfoboxProperty = {
 
 	/**
 	 * The label naming the value.
@@ -113,7 +113,7 @@ export function Infobox({
 	 * whose elements hold no keys but `label` and `value` is read as a single section of entries, so a section keyed by
 	 * those two labels alone is given as an array of entries instead. Nothing is rendered if omitted.
 	 */
-	children?: Some<Properties | readonly Property[]>
+	children?: Some<InfoboxProperties | readonly InfoboxProperty[]>
 
 }) {
 
@@ -138,13 +138,13 @@ export function Infobox({
 	)}</dl>)) : null;
 
 
-	function isEntries(children: Some<Properties | readonly Property[]>): children is readonly Property[] {
+	function isEntries(children: Some<InfoboxProperties | readonly InfoboxProperty[]>): children is readonly InfoboxProperty[] {
 		return Array.isArray(children) && children.every(child =>
 			isObject(child, { label: () => true, value: () => true })
 		);
 	}
 
-	function entries(section: Properties | readonly Property[]): readonly Property[] {
+	function entries(section: InfoboxProperties | readonly InfoboxProperty[]): readonly InfoboxProperty[] {
 		return Array.isArray(section) ? section : Object.entries(section).map(
 			([label, value]) => ({ label, value })
 		);
