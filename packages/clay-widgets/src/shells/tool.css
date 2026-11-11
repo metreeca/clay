@@ -141,6 +141,24 @@
     initial-value: 0px;
 }
 
+/*
+ * The scroll state the rule under a head is drawn from, internal as well: how far the rule has drawn in, and whether
+ * the body has anything to scroll. They are registered as numbers so the scroll position can animate them, and stand
+ * at zero wherever no animation sets them, so a head shows no rule until its body scrolls.
+ */
+
+@property --clay-tool-head-rule {
+    syntax: "<number>";
+    inherits: false;
+    initial-value: 0;
+}
+
+@property --clay-tool-scrollable {
+    syntax: "<number>";
+    inherits: false;
+    initial-value: 0;
+}
+
 
 clay-tool {
 
@@ -303,12 +321,24 @@ clay-tool {
             padding-block: var(--clay-tool-head-inset);
             font-size: var(--clay-tool-head-font-size, var(--skin--font-size));
 
-            border-block-end-style: var(--skin--border-style);
-            border-block-end-color: transparent;
+            /*
+             * The rule under a head is gated on the body having anything to scroll, a state animated over a range
+             * ending past the scroll range, so the animation never finishes. Chrome (seen in 157) keeps applying a
+             * scroll-driven animation that finished past the end of its range after its timeline turns inactive, so a
+             * rule drawn in alone stays drawn once the body stops overflowing, as a section collapses in it after the
+             * reader scrolled down. The gate drops it, as its own animation is never left finished. The foot needs no
+             * gate: past the end of its range its rule is already out, and the stale state shows nothing.
+             */
 
-            animation: clay-tool-head-rule linear both;
-            animation-timeline: var(--clay-tool-scroll);
-            animation-range: 0 var(--skin--spacing-100);
+            border-block-end-style: var(--skin--border-style);
+            border-block-end-color: color-mix(in oklab,
+                var(--skin--border-color) calc(min(var(--clay-tool-head-rule), var(--clay-tool-scrollable)) * 100%),
+                transparent
+            );
+
+            animation: clay-tool-head-rule linear both, clay-tool-scrollable linear both;
+            animation-timeline: var(--clay-tool-scroll), var(--clay-tool-scroll);
+            animation-range: 0 var(--skin--spacing-100), 0% calc(100% + 1px);
 
             /*
              * The menu and close buttons are bare glyphs shown only where the side column is a drawer, the menu button
@@ -655,11 +685,19 @@ clay-tool {
 @keyframes clay-tool-head-rule {
 
     from {
-        border-block-end-color: transparent;
+        --clay-tool-head-rule: 0;
     }
 
     to {
-        border-block-end-color: var(--skin--border-color);
+        --clay-tool-head-rule: 1;
+    }
+
+}
+
+@keyframes clay-tool-scrollable {
+
+    from, to {
+        --clay-tool-scrollable: 1;
     }
 
 }
