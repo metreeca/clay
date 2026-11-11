@@ -138,10 +138,11 @@ clay-choice {
     }
 
     /*
-     * The quiet step drops the box and the inset, draws the segments in closer and marks the chosen one by the
-     * selection accent alone, leaving them to read as part of the text around them, while the strong one sets the
-     * labels in the strong weight and inks the chosen one in the accent on top of its tint. A glyph carries no weight
-     * of its own, so its stroke is drawn at the strong width to keep it on the footing of a bold label.
+     * The quiet step drops the box and the inset, draws the segments in closer and one line tall rather than as tall
+     * as a button, and marks the chosen one by the selection accent alone, leaving them to read as part of the text
+     * around them and never to stand taller than the line they sit in. The strong step sets the labels in the strong
+     * weight and inks the chosen one in the accent on top of its tint. A glyph carries no weight of its own, so its
+     * stroke is drawn at the strong width to keep it on the footing of a bold label.
      */
 
     &[look="subtle"] > fieldset {
@@ -150,7 +151,9 @@ clay-choice {
         border-style: none;
 
         & > label > span {
+            min-height: 1lh;
             margin: 0;
+            padding-block: 0;
             padding-inline: var(--skin--spacing-025);
         }
 
@@ -189,7 +192,9 @@ clay-choice {
             border-style: none;
 
             & > label > span {
+                min-height: 1lh;
                 margin: 0;
+                padding-block: 0;
                 padding-inline: var(--skin--spacing-025);
             }
 
