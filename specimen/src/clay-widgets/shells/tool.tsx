@@ -223,8 +223,8 @@ export function ToolScreen() {
 				<tr><td><code>--clay-tool-head-gutter</code></td><td>the block gutter of the heads</td></tr>
 				<tr><td><code>--clay-tool-body-gutter</code></td><td>the block gutter of the bodies</td></tr>
 				<tr><td><code>--clay-tool-foot-gutter</code></td><td>the block gutter of the feet</td></tr>
-				<tr><td><code>--clay-tool-head-font-size</code></td><td>the font size of the heads</td></tr>
-				<tr><td><code>--clay-tool-foot-font-size</code></td><td>the font size of the feet</td></tr>
+				<tr><td><code>--clay-tool-head-font-size</code></td><td>the font size of the heads, the text size unless set</td></tr>
+				<tr><td><code>--clay-tool-foot-font-size</code></td><td>the font size of the feet and the copy, the text size unless set</td></tr>
 			</tbody>
 
 		</table>
