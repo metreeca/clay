@@ -66,11 +66,11 @@ export function ToolScreen() {
 			onClick={() => router(`${ClayWidgetsPath}#tool`)}
 		/>}
 
-		tray={<TOC name="Sections" compact entries={[
-			{ label: "Slots", href: "#slots" },
-			{ label: "Switches", href: "#switches" },
-			{ label: "Knobs", href: "#knobs" }
-		]}/>}
+		tray={<TOC name="Sections" compact entries={{
+			Slots: "#slots",
+			Switches: "#switches",
+			Knobs: "#knobs"
+		}}/>}
 
 		more={<Button icon={<Icon.Settings/>} look="subtle" name="Settings" title="Settings"/>}
 

@@ -24,7 +24,7 @@
  */
 
 import { useModel } from "@metreeca/clay/model";
-import { opt, type Optional } from "@metreeca/core";
+import { isArray, isString, opt, type Optional } from "@metreeca/core";
 import { type ComponentChildren, createElement } from "preact";
 import { useEffect, useId } from "preact/hooks";
 import { createTOC, type TOC as Outline, type TOCMetrics } from "./toc.core.js";
@@ -56,9 +56,24 @@ export interface TOCEntry {
 	readonly target?: string;
 
 	/**
-	 * The entries nested under this one, in page order; none if omitted.
+	 * The entries nested under this one, in page order, as an array of entries or keyed by labels; none if omitted.
 	 */
-	readonly entries?: readonly TOCEntry[];
+	readonly entries?: readonly TOCEntry[] | TOCEntries;
+
+}
+
+/**
+ * Table of contents entries keyed by labels.
+ *
+ * Maps each plain string label to the location it links to, or to the entries gathered under it for a group label
+ * leading nowhere, so an outline is written as a single object literal. Entries are listed in the order their labels
+ * appear in the object, but labels reading as non-negative integers, such as `2026`, always come first in ascending
+ * order. An outline needing them elsewhere, labels that are not plain strings, or links opening in another browsing
+ * context take {@link TOCEntry} values instead, which mix freely with keyed entries at any depth.
+ */
+export type TOCEntries = {
+
+	readonly [label: string]: string | TOCEntries
 
 }
 
@@ -125,13 +140,15 @@ export function TOC({
 	name?: string
 
 	/**
-	 * The entries of the outline, in page order.
+	 * The entries of the outline, in page order, either as an array of entries or as entries keyed by their labels.
 	 */
-	entries: readonly TOCEntry[]
+	entries: readonly TOCEntry[] | TOCEntries
 
 }) {
 
-	const sections = targets(entries);
+	const $entries = normalise(entries);
+
+	const sections = targets($entries);
 
 	const key = sections.join(" ");
 
@@ -212,9 +229,9 @@ export function TOC({
 	}, [key]); // the outline the subscription starts from is the one created for these sections
 
 
-	return entries.length === 0 ? null : createElement("clay-toc", {}, <details>
-		<summary>{opt(outline.current, id => caption(entries, id)) ?? name}</summary>
-		<nav aria-label={name}>{list(entries, outline.current, compact ? group : undefined)}</nav>
+	return $entries.length === 0 ? null : createElement("clay-toc", {}, <details>
+		<summary>{opt(outline.current, id => caption($entries, id)) ?? name}</summary>
+		<nav aria-label={name}>{list($entries, outline.current, compact ? group : undefined)}</nav>
 	</details>);
 
 }
@@ -338,13 +355,31 @@ function sync({ current, pinned }: Outline): void {
 }
 
 /**
+ * An entry of a table of contents with its nested entries settled as an array, whichever form they were given in.
+ */
+type Entry = Omit<TOCEntry, "entries"> & {
+
+	readonly entries: readonly Entry[]
+
+}
+
+/**
+ * Settles entries given either as an array of entries or keyed by their labels into an array of entries, at any depth.
+ */
+function normalise(entries: readonly TOCEntry[] | TOCEntries): readonly Entry[] {
+	return isArray<TOCEntry>(entries)
+		? entries.map(({ entries = [], ...entry }) => ({ ...entry, entries: normalise(entries) }))
+		: Object.entries(entries).map(([label, value]) => isString(value)
+			? { label, href: value, entries: [] }
+			: { label, entries: normalise(value) }
+		);
+}
+
+/**
  * Collects the ids of the sections an outline links to by fragment, in page order.
  */
-function targets(entries: readonly TOCEntry[]): readonly string[] {
-	return entries.flatMap(({
-		href,
-		entries = []
-	}) => [fragment(href), ...targets(entries)]).filter(id => id !== undefined);
+function targets(entries: readonly Entry[]): readonly string[] {
+	return entries.flatMap(({ href, entries }) => [fragment(href), ...targets(entries)]).filter(id => id !== undefined);
 }
 
 /**
@@ -365,8 +400,8 @@ function fragment(href: Optional<string>): Optional<string> {
  * Given an accordion name, each entry with nested entries and no link of its own folds behind its label instead. The
  * folds share that name, so only one is open at a time, and a fold opens while it holds the section the reader is in.
  */
-function list(entries: readonly TOCEntry[], current: Optional<string>, accordion?: string): ComponentChildren {
-	return <ul>{entries.map(({ label, href, target, entries = [] }, index) => <li key={href ?? index}>
+function list(entries: readonly Entry[], current: Optional<string>, accordion?: string): ComponentChildren {
+	return <ul>{entries.map(({ label, href, target, entries }, index) => <li key={href ?? index}>
 
 		{accordion !== undefined && href === undefined && entries.length > 0
 
@@ -396,15 +431,15 @@ function list(entries: readonly TOCEntry[], current: Optional<string>, accordion
 /**
  * Checks whether entries link to a section, at any depth.
  */
-function holds(entries: readonly TOCEntry[], id: string): boolean {
-	return entries.some(entry => fragment(entry.href) === id || holds(entry.entries ?? [], id));
+function holds(entries: readonly Entry[], id: string): boolean {
+	return entries.some(entry => fragment(entry.href) === id || holds(entry.entries, id));
 }
 
 /**
  * Finds the label of the entry linking to a section, searching the entries in page order.
  */
-function caption(entries: readonly TOCEntry[], id: string): ComponentChildren {
+function caption(entries: readonly Entry[], id: string): ComponentChildren {
 	return entries.reduce<ComponentChildren>((found, entry) =>
-		found ?? (fragment(entry.href) === id ? entry.label : caption(entry.entries ?? [], id)), undefined
+		found ?? (fragment(entry.href) === id ? entry.label : caption(entry.entries, id)), undefined
 	);
 }

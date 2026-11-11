@@ -19,7 +19,7 @@ import { render } from "preact";
 import { act } from "preact/test-utils";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { createTOC, type TOCMetrics } from "./toc.core.js";
-import { TOC, type TOCEntry } from "./toc.js";
+import { TOC, type TOCEntries, type TOCEntry } from "./toc.js";
 
 
 describe("createTOC", () => {
@@ -211,7 +211,7 @@ describe("TOC", () => {
 	 * for it; the reading line stands a third of the way down the 900 pixel viewport, at 300.
 	 */
 	async function mount(
-		tops: Readonly<Record<string, number>> = {}, outline: readonly TOCEntry[] = entries, compact?: boolean
+		tops: Readonly<Record<string, number>> = {}, outline: readonly TOCEntry[] | TOCEntries = entries, compact?: boolean
 	): Promise<void> {
 
 		vi.spyOn(window, "innerHeight", "get").mockReturnValue(900);
@@ -342,6 +342,50 @@ describe("TOC", () => {
 		it("renders nothing for an empty outline", async () => {
 
 			await mount({}, []);
+
+			expect(document.querySelector("clay-toc")).toBeNull();
+
+		});
+
+	});
+
+	describe("keyed entries", () => {
+
+		const keyed: TOCEntries = {
+			Foundations: { Colours: "#colours", Spacing: "#spacing" },
+			Guide: "/guide"
+		};
+
+		function markup(outline: readonly TOCEntry[] | TOCEntries): string {
+
+			act(() => render(<TOC name="Contents" entries={outline}/>, document.body));
+
+			return document.body.innerHTML;
+
+		}
+
+		it("lists entries keyed by their labels as the entries they stand for", async () => {
+			expect(markup(keyed)).toBe(markup(entries));
+		});
+
+		it("lists entries keyed by their labels nested under an entry", async () => {
+			expect(markup([{ label: "Foundations", entries: { Colours: "#colours", Spacing: "#spacing" } }, {
+				label: "Guide",
+				href: "/guide"
+			}])).toBe(markup(entries));
+		});
+
+		it("marks the link of the section the reader is in", async () => {
+
+			await mount({ colours: 100, spacing: 500 }, keyed);
+
+			expect(marked()).toEqual(["Colours"]);
+
+		});
+
+		it("renders nothing for an empty outline", async () => {
+
+			await mount({}, {});
 
 			expect(document.querySelector("clay-toc")).toBeNull();
 
