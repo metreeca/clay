@@ -2,9 +2,12 @@
 
 Minimalist UI toolkit for Preact.
 
-Interfaces are composed in JSX from general-purpose widgets, layouts and movable items, wired to app-wide services
-such as routing and a shared fetch client. Components carry no commitment to a data model: an app feeds them whatever
-data it handles, and keeps the behaviour it owns in framework-agnostic `@metreeca/core` state objects.
+Interfaces are composed in JSX from general-purpose widgets, layouts and movable items, wired to app-wide services:
+
+- **Accessible Widgets**: keyboard paths, focus handling and screen reader announcements designed to WCAG 2.2 AA
+- **Model-Agnostic Components**: no commitment to a data model, so an app feeds them whatever data it handles
+- **Testable Behaviour**: app behaviour kept in framework-agnostic `@metreeca/core` state objects, tested without a DOM
+- **Shared Services**: routing, a fetch client, a status board and storage, provided once and reached through hooks
 
 Components read their colours, faces and spacing from the [@metreeca/skin] token contract. Its stylesheet is optional:
 components work without it, and follow the platform colour scheme and the app branding with it.
