@@ -72,7 +72,9 @@ const areas: ReadonlyArray<Area> = [
 		[ "Expand", Icon.Expand ],
 		[ "Collapse", Icon.Collapse ],
 		[ "Unfold", Icon.Unfold ],
-		[ "Fold", Icon.Fold ]
+		[ "Fold", Icon.Fold ],
+		[ "UnfoldAll", Icon.UnfoldAll ],
+		[ "FoldAll", Icon.FoldAll ]
 	] ],
 
 	[ "Search", [

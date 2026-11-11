@@ -35,6 +35,8 @@ export { ChevronRight as Expand } from "lucide-preact";
 export { ChevronDown as Collapse } from "lucide-preact";
 export { ChevronDown as Unfold } from "lucide-preact";
 export { ChevronUp as Fold } from "lucide-preact";
+export { ChevronsUpDown as UnfoldAll } from "lucide-preact";
+export { ChevronsDownUp as FoldAll } from "lucide-preact";
 
 export { Search } from "lucide-preact";
 export { X as Clear } from "lucide-preact";

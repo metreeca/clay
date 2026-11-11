@@ -80,6 +80,8 @@
  * | `Collapse`       | hides them again                                             |
  * | `Unfold`         | reveals the content folded away below a control, in place    |
  * | `Fold`           | folds it back                                                |
+ * | `UnfoldAll`      | reveals all the content folded away in a list or table       |
+ * | `FoldAll`        | folds it all back                                            |
  * | **Search**       | narrowing what is on show                                    |
  * | `Search`         | submits a query, or opens the field it is typed in           |
  * | `Clear`          | empties that field                                           |
