@@ -49,6 +49,15 @@
 }
 
 
+/**** Outlines ********************************************************************************************************/
+
+/* Outlines are held to two narrow sidebars side by side, so labels too long for one have to clip or wrap. */
+
+.outlines {
+    max-width: calc(28 * var(--skin--spacing-100));
+}
+
+
 /**** Notices *********************************************************************************************************/
 
 /*

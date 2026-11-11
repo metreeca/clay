@@ -346,7 +346,7 @@ describe("Markdown", () => {
 
 			mount("# The `Toc` widget", "toc");
 
-			expect(texts("clay-toc a > code")).toEqual(["Toc"]);
+			expect(texts("clay-toc a code")).toEqual(["Toc"]);
 
 		});
 

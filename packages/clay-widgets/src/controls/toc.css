@@ -23,6 +23,33 @@ clay-toc {
 
     display: block;
 
+    /*
+     * Labels are kept to one line each, clipped with an ellipsis where they outrun the column, so a long identifier
+     * neither breaks midway nor widens the outline. Each label is a block of its own, standing beside the chevron
+     * floated at the end of a summary, so the ellipsis falls before the chevron rather than running under it.
+     *
+     * The clip reaches half a step past the label, clear of the focus mark of any link the label holds, so the mark
+     * shows whole while the ellipsis still cuts text at the edge of the column, where the outline ends for the reader.
+     */
+
+    & :is(li, a, summary) > span {
+        display: flow-root;
+        overflow: clip;
+        overflow-clip-margin: var(--skin--spacing-050);
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    /*
+     * Wrapping, a long label wraps within the column rather than being clipped, so it is shown in full however long it
+     * runs, and a word outrunning the column alone, as a long identifier, breaks wherever needed to fit it.
+     */
+
+    &[wrap] :is(li, a, summary) > span {
+        white-space: normal;
+        overflow-wrap: anywhere;
+    }
+
     /* From the large viewport up the whole column fits, so the summary steps out of view and the entries always show. */
 
     @container style(--skin--viewport-large: on) {

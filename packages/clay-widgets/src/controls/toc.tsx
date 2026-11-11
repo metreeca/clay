@@ -39,7 +39,8 @@ import "./toc.css";
 export interface TOCEntry {
 
 	/**
-	 * What the entry reads as.
+	 * What the entry reads as. A plain string label offers its full wording as a tooltip, for a reader of an outline
+	 * whose labels are clipped, while a label given as markup has to carry a tooltip of its own where one is needed.
 	 */
 	readonly label: ComponentChildren;
 
@@ -87,6 +88,10 @@ export type TOCEntries = {
  * rules of the design system alone, so it reads as every other outline an app built on it shows. Nothing at all is
  * rendered for an empty outline, leaving no empty landmark behind for assistive technology.
  *
+ * Unless told to wrap, every label, folded group and summary line included, stays on a single line, so a long
+ * identifier never breaks midway or widens the column: a label running past the column is cut short with an ellipsis.
+ * Its full wording is still read out by assistive technology, and a plain string label shows it as a tooltip too.
+ *
  * While the page scrolls, the link whose section the reader is in is marked as the current location, which the design
  * system sets in the strong accent and weight and assistive technology reads as such: the section is the last one, in
  * page order, whose start has been scrolled up to a reading line standing a third of the way down the view, and
@@ -100,6 +105,7 @@ export type TOCEntries = {
  * the page renders its sections after loading or scrolls them in a box of its own. The location fragment follows the
  * section marked in turn, replaced rather than pushed so that scrolling adds no entries to the history, and cleared
  * above the first section, so a reload or a shared address lands where the reader stood when the address was taken.
+ * An outline linking to no section by fragment leaves the location alone, so it may stand beside the page outline.
  *
  * From the large viewport up, the outline stands as a column of entries; below it, the outline folds behind a single
  * line naming the section the reader is in, or the outline itself above the first section, and unfolds into the same
@@ -117,6 +123,7 @@ export type TOCEntries = {
 export function TOC({
 
 	compact = false,
+	wrap = false,
 
 	name,
 
@@ -132,6 +139,13 @@ export function TOC({
 	 * link stays listed in full, since its label already leads somewhere. Every group is listed in full if omitted.
 	 */
 	compact?: boolean
+
+	/**
+	 * Whether long labels wrap across lines, so each is shown in full, as fits an outline of prose headings. A word too
+	 * long for the column breaks wherever needed. By default each label is clipped to a single line with an ellipsis,
+	 * so a long identifier never breaks midway or widens the column, as fits a narrow sidebar of reference links.
+	 */
+	wrap?: boolean
 
 	/**
 	 * The accessible name of the outline, such as `Contents`, telling it apart from other navigation landmarks and
@@ -229,8 +243,8 @@ export function TOC({
 	}, [key]); // the outline the subscription starts from is the one created for these sections
 
 
-	return $entries.length === 0 ? null : createElement("clay-toc", {}, <details>
-		<summary>{opt(outline.current, id => caption($entries, id)) ?? name}</summary>
+	return $entries.length === 0 ? null : createElement("clay-toc", { wrap }, <details>
+		<summary>{wording(opt(outline.current, id => caption($entries, id)) ?? name)}</summary>
 		<nav aria-label={name}>{list($entries, outline.current, compact ? group : undefined)}</nav>
 	</details>);
 
@@ -342,13 +356,14 @@ function reveal({ current, pinned }: Outline): void {
 
 /**
  * Brings the location fragment in step with the section the page puts the reader in, replacing the entry on show so
- * that scrolling leaves the history alone, and handing the router the state it keeps there unchanged.
+ * that scrolling leaves the history alone, and handing the router the state it keeps there unchanged. An outline
+ * linking to no section leaves the fragment to whatever else on the page keeps it.
  */
-function sync({ current, pinned }: Outline): void {
+function sync({ sections, current, pinned }: Outline): void {
 
 	const hash = current === undefined ? "" : `#${encodeURIComponent(current)}`;
 
-	if ( !pinned && location.hash !== hash ) {
+	if ( sections.length > 0 && !pinned && location.hash !== hash ) {
 		history.replaceState(history.state, "", `${location.pathname}${location.search}${hash}`);
 	}
 
@@ -406,18 +421,18 @@ function list(entries: readonly Entry[], current: Optional<string>, accordion?: 
 		{accordion !== undefined && href === undefined && entries.length > 0
 
 			? <details name={accordion} open={current !== undefined && holds(entries, current)}>
-				<summary>{label}</summary>
+				<summary>{wording(label)}</summary>
 				{list(entries, current)}
 			</details>
 
 			: <>
 
 				{href === undefined
-					? <span>{label}</span>
+					? wording(label)
 					:
 					<a href={href} target={target} aria-current={current !== undefined && fragment(href) === current ? "location" : undefined}
 						onClick={({ currentTarget }) => currentTarget.closest("clay-toc > details")?.removeAttribute("open")}
-					>{label}</a>
+					>{wording(label)}</a>
 				}
 
 				{entries.length > 0 && list(entries, current)}
@@ -426,6 +441,14 @@ function list(entries: readonly Entry[], current: Optional<string>, accordion?: 
 		}
 
 	</li>)}</ul>;
+}
+
+/**
+ * Renders the wording of a label as the line the outline clips, offering a plain string as a tooltip. The tooltip sits
+ * on the line rather than on the link around it, where it would be announced again as a description of the link.
+ */
+function wording(label: ComponentChildren): ComponentChildren {
+	return <span title={isString(label) ? label : undefined}>{label}</span>;
 }
 
 /**

@@ -118,7 +118,8 @@ export interface Meta {
  *   navigation beside the document; nothing at all for a text without headings. While the document is on the page,
  *   the entry of the last heading scrolled into the top third of the viewport is marked as the current location, and
  *   followed as the reader scrolls, so the outline shows where they stand; no entry is marked above the first heading.
- *   Below the large viewport the outline folds behind a single line naming the section the reader is in
+ *   Below the large viewport the outline folds behind a single line naming the section the reader is in. Each entry
+ *   keeps its heading to one line, cut short with an ellipsis where the heading outruns the column
  * - **front matter**: the values the YAML front matter declares, the text itself left unrendered
  *
  * Links to Markdown files are rewritten to the route serving them, `guide.md` to `guide` and `index.md` to the folder

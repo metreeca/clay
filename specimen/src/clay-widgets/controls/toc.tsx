@@ -20,11 +20,17 @@
  * @module
  */
 
+import { TOC, type TOCEntries } from "@metreeca/clay-widgets/toc";
+import { Frame } from "@metreeca/specimen/clay-widgets/sample.js";
+import "../index.css";
+
 
 /**
  * Creates the table of contents section.
  *
- * Points at the outline standing in the tray of this very page, rather than nesting a second one beside it.
+ * Points at the outline standing in the tray of this very page, rather than nesting a second one beside it, then sets
+ * a reference sidebar of long identifiers in two narrow columns, clipping its labels in one and wrapping them in the
+ * other, so the two ways an outline fits a label too long for its column compare side by side.
  *
  * @returns The table of contents section
  */
@@ -44,7 +50,42 @@ export function Contents() {
 		<p>The outline here is <code>compact</code>, so each group folds behind its label and only one is open at a
 			time. The group holding the section the reader is in opens as they reach it, and any other opens on demand.</p>
 
+		<p>An outline also serves as a sidebar of reference links, such as the shapes a data model relates to one
+			another. Labels are kept to one line by default, clipped with an ellipsis where they outrun the column and
+			shown in full as a tooltip, so a long identifier never breaks midway. A <code>wrap</code> outline shows each
+			label in full instead, breaking a word too long for the column wherever needed.</p>
+
+		<div class="frames across outlines">
+
+			<Frame label="clip">
+				<TOC name="Credential" entries={reference}/>
+			</Frame>
+
+			<Frame label="wrap">
+				<TOC name="Credential" wrap entries={reference}/>
+			</Frame>
+
+		</div>
+
 		<p>The Markdown page renders the outline of a document through the same widget.</p>
 
 	</>;
 }
+
+
+const reference: TOCEntries = {
+
+	"Class": {
+		"schema:EducationalOccupationalCredential": "https://schema.org/EducationalOccupationalCredential"
+	},
+
+	"Parents": {
+		"schema:CreativeWork": "https://schema.org/CreativeWork"
+	},
+
+	"Referrers": {
+		"schema:EducationalOccupationalProgram": "https://schema.org/EducationalOccupationalProgram",
+		"schema:OccupationalExperienceRequirements": "https://schema.org/OccupationalExperienceRequirements"
+	}
+
+};

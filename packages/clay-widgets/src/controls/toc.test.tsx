@@ -591,6 +591,90 @@ describe("TOC", () => {
 
 	});
 
+	describe("clipping", () => {
+
+		const groups: readonly TOCEntry[] = [
+			{
+				label: "Foundations", entries: [
+					{ label: "Colours", href: "#colours" },
+					{ label: <code>schema:EducationalOccupationalCredential</code>, href: "#credential" }
+				]
+			}
+		];
+
+		function tooltips(selector: string): readonly (null | string)[] {
+			return Array.from(document.querySelectorAll(`${selector} > span`), label => label.getAttribute("title"));
+		}
+
+
+		it("clips labels by default", async () => {
+
+			await mount({}, groups);
+
+			expect(document.querySelector("clay-toc")?.hasAttribute("wrap")).toBe(false);
+
+		});
+
+		it("wraps labels if required", async () => {
+
+			act(() => render(<TOC wrap entries={groups}/>, document.body));
+
+			expect(document.querySelector("clay-toc")?.hasAttribute("wrap")).toBe(true);
+
+		});
+
+		it("offers the full wording of a link label as a tooltip", async () => {
+
+			await mount({}, groups);
+
+			expect(tooltips("clay-toc a")).toEqual(["Colours", null]);
+
+		});
+
+		it("offers the full wording of a label leading nowhere as a tooltip", async () => {
+
+			await mount({}, groups);
+
+			expect(Array.from(document.querySelectorAll("clay-toc li > span"), label => label.getAttribute("title")))
+				.toEqual(["Foundations"]);
+
+		});
+
+		it("offers the full wording of a folded group label as a tooltip", async () => {
+
+			await mount({}, groups, true);
+
+			expect(tooltips("clay-toc li > details > summary")).toEqual(["Foundations"]);
+
+		});
+
+		it("offers the full wording of the folded outline caption as a tooltip", async () => {
+
+			await mount({ colours: 100, credential: 800 }, groups);
+
+			expect(tooltips("clay-toc > details > summary")).toEqual(["Colours"]);
+
+		});
+
+		it("offers the name of the folded outline as a tooltip above the first section", async () => {
+
+			await mount({ colours: 400, credential: 800 }, groups);
+
+			expect(tooltips("clay-toc > details > summary")).toEqual(["Contents"]);
+
+		});
+
+		it("leaves links without a tooltip of their own, named by their label alone", async () => {
+
+			await mount({}, groups);
+
+			expect(Array.from(document.querySelectorAll("clay-toc a"), link => link.getAttribute("title")))
+				.toEqual([null, null]);
+
+		});
+
+	});
+
 	describe("location", () => {
 
 		it("marks the link of the section the reader is in", async () => {
@@ -819,6 +903,17 @@ describe("TOC", () => {
 			await scroll({ colours: 400, spacing: 1100 });
 
 			expect(location.hash).toBe("");
+
+		});
+
+		it("is left alone by an outline linking to no section on the page", async () => {
+
+			history.replaceState(history.state, "", "#colours");
+
+			await mount({}, [{ label: "Guide", href: "/guide" }]);
+			await scroll({});
+
+			expect(location.hash).toBe("#colours");
 
 		});
 
