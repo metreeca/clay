@@ -160,6 +160,9 @@ export function Tool({
 
 	/**
 	 * The standing controls of the app, such as its sections and the filters in force, in the body of the side column.
+	 * They stand in a column filling the body, so each can grow, shrink or align through its own flex properties. Their
+	 * margins add up rather than collapsing, so controls spaced by margins stand further apart than in the plain flow
+	 * of a page; controls wrapped in a single element keep their usual spacing.
 	 */
 	tray?: ComponentChildren
 
@@ -196,7 +199,10 @@ export function Tool({
 
 
 	/**
-	 * The content of the moment, scrolling in the body of the main column.
+	 * The content of the moment, scrolling in the body of the main column. Its items stand in a column filling the
+	 * body, so each can grow, shrink or align through its own flex properties. Their margins add up rather than
+	 * collapsing, so blocks spaced by margins, such as a heading after a paragraph, stand further apart than in the
+	 * plain flow of a page; content wrapped in a single element, such as an `article`, keeps its usual spacing.
 	 */
 	children?: ComponentChildren
 

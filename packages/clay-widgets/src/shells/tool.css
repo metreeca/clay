@@ -396,10 +396,24 @@ clay-tool {
             padding-inline: var(--clay-tool-side-inset);
         }
 
-        /* The tray stands in a box of its own, carrying the inset without touching the margins of what it holds. */
+        /*
+         * The tray stands in a box of its own, carrying the inset without touching the margins of what it holds. The
+         * box fills the body and lays what it holds out as a column, so an item can grow, shrink or align with the flex
+         * properties it states, as a filter list pushing the controls after it to the bottom of the column.
+         */
 
-        & > div > div {
-            padding-block: var(--clay-tool-body-inset);
+        & > div {
+
+            display: flex;
+            flex-direction: column;
+
+            & > div {
+                display: flex;
+                flex-direction: column;
+                flex: auto;
+                padding-block: var(--clay-tool-body-inset);
+            }
+
         }
 
         @container style(--skin--viewport-medium: off) {
@@ -580,10 +594,11 @@ clay-tool {
         /*
          * The body holds the content in a block of its own, which takes whatever room the body leaves, so the copy
          * after it rests at the bottom of a body the content is too short to fill and follows the content otherwise.
-         * The content keeps the plain flow of a block, its margins meeting as they would anywhere else. The first part
-         * and the content closing the body carry the inset of the body, as they are boxes of the column rather than
-         * content. The copy takes the inset and type of a foot instead, so resting at the bottom of the body it stands
-         * level with the foot of the side column, reading as one bar across the frame.
+         * The block lays the content out as a column, so an item can grow, shrink or align with the flex properties it
+         * states, as a map filling the room the body leaves; the margins of its items add up rather than collapsing as
+         * in the plain flow of a block. The first part and the content closing the body carry the inset of the body, as
+         * they are boxes of the column rather than content. The copy takes the inset and type of a foot instead, so
+         * resting at the bottom it stands level with the foot of the side column, reading as one bar across the frame.
          */
 
         & > div {
@@ -597,6 +612,8 @@ clay-tool {
 
             & > div {
 
+                display: flex;
+                flex-direction: column;
                 flex: auto;
 
                 &:last-child {
