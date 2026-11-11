@@ -133,7 +133,9 @@ export function Link({
 	/**
 	 * The content the link shows, naming it; a glyph standing alone carries a label of its own to be announced by.
 	 *
-	 * Wording running out of room is cut short with an ellipsis wherever the area around it keeps it to one line.
+	 * Wording running out of room is cut short with an ellipsis wherever the area around it keeps it to one line. A
+	 * glyph shown without wording has no text to underline, so under the pointer it is laid on the hover fill of a
+	 * control instead, without moving the content around it, and the focus ring encloses both the glyph and the fill.
 	 */
 	children?: ComponentChildren
 

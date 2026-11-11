@@ -65,6 +65,46 @@ clay-link {
             text-overflow: ellipsis;
         }
 
+        /*
+         * A glyph standing alone carries no text for the underline to be drawn under, and its strokes are too thin for
+         * the hover colour alone to be seen, so the pointer lays the neutral hover fill of a control across it instead,
+         * rounded as the focus mark is. Wording always sits in a span of its own, so a link lacking one holds a glyph.
+         */
+
+        &:not(:has(> span)) {
+
+            border-radius: var(--skin--border-radius-025);
+
+            /*
+             * The reset hands every box the colour of the one around it, which the translucent fill would turn into a
+             * second coat on the glyph, so what the link carries is left unpainted and the fill is laid once.
+             */
+
+            & > * {
+                background-color: transparent;
+            }
+
+            /*
+             * The fill reaches a quarter step past the glyph as a spread shadow, which paints only outside the box and
+             * takes no room, so the lines and rows around the link never move as the pointer crosses it.
+             */
+
+            &:hover {
+                background-color: var(--skin--background-color-hover-neutral);
+                box-shadow: 0 0 0 var(--skin--spacing-025) var(--skin--background-color-hover-neutral);
+            }
+
+            /*
+             * The focus mark the design system draws a hair off the text would close on the glyph and cut across the
+             * fill, so it is set off by the reach of the fill instead, wrapping the glyph and the fill around it alike.
+             */
+
+            &:focus-visible {
+                outline-offset: var(--skin--spacing-025);
+            }
+
+        }
+
     }
 
     /* The quiet step reads as the text around it until the pointer adds the hover colour and the underline. */

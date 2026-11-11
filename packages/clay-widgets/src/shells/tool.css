@@ -244,7 +244,8 @@ clay-tool {
          * Heads and feet are rows stretching to the taller of each pair and centring what they hold vertically, so the
          * two columns line up. What they hold keeps its own width from the start of the bar, unless it grows to fill
          * the row, and never wraps, so a bar keeps the height of a single row whatever text it carries. Items too wide
-         * for the bar shrink, clipping what overflows them and ending clipped text with an ellipsis.
+         * for the bar shrink, clipping what overflows them and ending clipped text with an ellipsis. A link is left
+         * unclipped, cutting its own wording short, so the fill its glyph takes under the pointer shows whole.
          */
 
         & > :is(header, footer) {
@@ -254,9 +255,14 @@ clay-tool {
             white-space: nowrap;
 
             & > * {
+
                 min-inline-size: 0;
-                overflow: hidden;
-                text-overflow: ellipsis;
+
+                &:not(clay-link) {
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                }
+
             }
 
             /*
@@ -523,9 +529,14 @@ clay-tool {
                 display: contents;
 
                 & > * {
+
                     min-inline-size: 0;
-                    overflow: hidden;
-                    text-overflow: ellipsis;
+
+                    &:not(clay-link) {
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                    }
+
                 }
 
             }
