@@ -28,6 +28,16 @@
     initial-value: normal;
 }
 
+/*
+ * How far the hover fill of a glyph standing alone reaches past it, and the focus mark with it, falling back to a
+ * quarter step when unset. Registered without a type, so a value stated in `em` resolves on the link it reaches.
+ */
+
+@property --clay-link-inset {
+    syntax: "*";
+    inherits: true;
+}
+
 clay-link {
 
     display: inline-flex;
@@ -85,13 +95,14 @@ clay-link {
             }
 
             /*
-             * The fill reaches a quarter step past the glyph as a spread shadow, which paints only outside the box and
+             * The fill reaches past the glyph by the inset as a spread shadow, which paints only outside the box and
              * takes no room, so the lines and rows around the link never move as the pointer crosses it.
              */
 
             &:hover {
                 background-color: var(--skin--background-color-hover-neutral);
-                box-shadow: 0 0 0 var(--skin--spacing-025) var(--skin--background-color-hover-neutral);
+                box-shadow:
+                    0 0 0 var(--clay-link-inset, var(--skin--spacing-025)) var(--skin--background-color-hover-neutral);
             }
 
             /*
@@ -100,7 +111,7 @@ clay-link {
              */
 
             &:focus-visible {
-                outline-offset: var(--skin--spacing-025);
+                outline-offset: var(--clay-link-inset, var(--skin--spacing-025));
             }
 
         }
