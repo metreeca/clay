@@ -69,7 +69,7 @@
     inherits: true;
 }
 
-/* The block gutter of the head row. */
+/* The block gutter of the head row, kept only below the heads where two columns do not fit. */
 
 @property --clay-tool-head-gutter {
     syntax: "*";
@@ -105,10 +105,10 @@
 }
 
 /*
- * The gutters every part reads, settled once on the frame. They are registered as lengths so a gutter stated in `em`
- * resolves against the type of the frame and is handed down as a fixed length, rather than resolving against each
- * part: a head or a foot set in a size of its own keeps the gutters of the parts beside and below it, and what the
- * columns hold stays on one line from head to foot. They are internal, offering no consumer anything beyond the knobs.
+ * The gutters every part reads, and the edge inset of the heads, settled once on the frame. They are registered as
+ * lengths so a gutter stated in `em` resolves against the type of the frame and is handed down as a fixed length, not
+ * against each part: a head or a foot set in a size of its own keeps the gutters of the parts beside and below it, and
+ * what the columns hold stays on one line from head to foot. They are internal, offering nothing beyond the knobs.
  */
 
 @property --clay-tool-side-inset {
@@ -141,6 +141,12 @@
     initial-value: 0px;
 }
 
+@property --clay-tool-edge-inset {
+    syntax: "<length>";
+    inherits: true;
+    initial-value: 0px;
+}
+
 /*
  * The scroll state the rule under a head is drawn from, internal as well: how far the rule has drawn in, and whether
  * the body has anything to scroll. They are registered as numbers so the scroll position can animate them, and stand
@@ -167,6 +173,7 @@ clay-tool {
     --clay-tool-head-inset: var(--clay-tool-head-gutter, var(--skin--spacing-100));
     --clay-tool-body-inset: var(--clay-tool-body-gutter, var(--skin--spacing-100));
     --clay-tool-foot-inset: var(--clay-tool-foot-gutter, var(--skin--spacing-100));
+    --clay-tool-edge-inset: var(--skin--spacing-100);
 
     /* The track of the main column, capped at the width limit unless the frame goes wide. */
 
@@ -339,6 +346,17 @@ clay-tool {
             animation: clay-tool-head-rule linear both, clay-tool-scrollable linear both;
             animation-timeline: var(--clay-tool-scroll), var(--clay-tool-scroll);
             animation-range: 0 var(--skin--spacing-100), 0% calc(100% + 1px);
+
+            /*
+             * Where two columns do not fit, the heads hold only the buttons of the drawer and the menu. They take the
+             * edge inset from the top of the window rather than the head gutter, which is sized for a heading and
+             * still parts them from the body below. The menu button reaches up by its padding, so its glyph stands
+             * at the edge inset, a little below the diagonal of the corner, where the eye reads it as level.
+             */
+
+            @container style(--skin--viewport-medium: off) {
+                padding-block-start: calc(var(--clay-tool-edge-inset) - var(--skin--spacing-025));
+            }
 
             /*
              * The menu and close buttons are bare glyphs shown only where the side column is a drawer, the menu button

@@ -268,7 +268,7 @@ export function ToolScreen() {
 				</tr>
 				<tr>
 					<td><code>--clay-tool-head-gutter</code></td>
-					<td>the block gutter of the heads</td>
+					<td>the block gutter of the heads, only below them where two columns do not fit</td>
 				</tr>
 				<tr>
 					<td><code>--clay-tool-body-gutter</code></td>

@@ -97,6 +97,7 @@ const Ignored = Object.fromEntries([
  *
  * On such a viewport the heading of the screen also moves from the main head to the top of the main body, and scrolls
  * away with the content it names. The main head keeps only the menu button and the menu, leaving the room to content.
+ * Both heads stand close to the top of the window, keeping the head gutter only between them and the bodies below.
  *
  * @param options The widget configuration
  *
