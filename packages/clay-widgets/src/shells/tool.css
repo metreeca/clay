@@ -384,13 +384,16 @@ clay-tool {
          * carried by the boxes scrolling inside it, each column setting it on what its body holds. A column with no foot
          * runs its body down to the end of the frame, leaving no empty bar beside the foot of the other column, and ends
          * what the body holds on the inset of a foot, overriding the inset the column sets, so the end of its content
-         * stands level with the end of the foot beside it, whatever gutters the bodies and the feet are given.
+         * stands level with the end of the foot beside it, whatever gutters the bodies and the feet are given. Content
+         * scrolled into view, as the target of a link is, stops on the inset rather than flush with the head, so the
+         * first heading of the body lands where it stands before any scrolling.
          */
 
         & > div {
 
             grid-row: 2;
             overflow: auto;
+            scroll-padding-block-start: var(--clay-tool-body-inset);
             scroll-timeline: var(--clay-tool-scroll) block;
 
             &:last-child {

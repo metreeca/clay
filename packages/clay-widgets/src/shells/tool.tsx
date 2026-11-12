@@ -86,6 +86,8 @@ const Ignored = Object.fromEntries([
  *
  * The main column is named after `head` and takes the focus as the {@link @metreeca/clay!router.Router router} lands a
  * screen, without adding a tab stop, so a reader hears which screen they are on rather than a control of the last one.
+ * The main body then opens at its top, or on the element a link targets, set below the head at the gutter of the
+ * body, as it stands before any scrolling. The side body keeps its place, so a reader never loses their position in it.
  *
  * On a viewport too narrow for two columns, the main column takes the whole frame and the side column becomes a drawer
  * opened from a menu button leading the main head. The drawer covers the main column, across the whole width of a
