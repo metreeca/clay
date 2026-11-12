@@ -61,15 +61,15 @@ export function Choices() {
 			keys move the choice. The caller holds the value: the colour scheme switch in the bar keeps it in storage,
 			the ones below share one in component state.</p>
 
-		<p>How loud a choice appears is set by <code>look</code>: <code>subtle</code> drops the box and inks the
-			chosen option in the selection accent, <code>normal</code> boxes the options as a select is boxed, the
-			chosen one tinted inside the box, and <code>strong</code> sets the options bold and inks the chosen one in
-			the accent on top, whether they carry labels or glyphs.</p>
+		<p>How loud a choice appears is set by <code>look</code>: <code>subtle</code> drops the box and inks and
+			underlines the chosen option in the selection accent, <code>normal</code> sinks the options into a track boxed
+			as a select is, the chosen one raised out of it as a card, and <code>strong</code> also sets the options
+			bold and inks the chosen one in the accent, whether they carry labels or glyphs.</p>
 
 		{looks.map(look => <div key={look} class="controls">
+			<code>look="{look}"</code>
 			<Choice name="Density" look={look} options={densities} value={density} onChange={setDensity}/>
 			<Choice name="Density" look={look} options={glyphs} value={density} onChange={setDensity}/>
-			<code>look="{look}"</code>
 		</div>)}
 
 		<p>A choice stating no look takes the one the area around it assigns as <code>choiceLook</code>. The row

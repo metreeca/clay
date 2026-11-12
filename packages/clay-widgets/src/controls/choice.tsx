@@ -66,10 +66,11 @@ export function Choice<V extends string>({
 	name: string
 
 	/**
-	 * How loud the choice appears: `subtle` drops the box and keeps the options one line tall, so they read as part of
-	 * the text around them and fit inside a line of it, the chosen one inked in the selection accent; `normal` boxes the
-	 * options as a select is boxed, the chosen one sunk into the page; `strong` also sets the options in the strong
-	 * weight and inks the chosen one in the accent, so the choice stands out from the controls around it.
+	 * How loud the choice appears. `subtle` drops the box and keeps the options one line tall, so they fit inside a line
+	 * of text and read as part of it; the chosen one is inked and underlined in the selection accent. `normal` sinks the
+	 * options into a track boxed and sized as a select is, each as wide as the widest, and raises the chosen one out of
+	 * the track as a card. `strong` also sets the options in the strong weight and inks the chosen one in the accent, so
+	 * the choice stands out from the fields and selects around it while matching their height, borders and corners.
 	 *
 	 * A choice stating nothing takes the look the {@link style!Style styled area} around it assigns as `choiceLook`,
 	 * which is `normal` where nothing assigns it. Stating a look here answers to that alone, whatever the area says.
@@ -97,30 +98,25 @@ export function Choice<V extends string>({
 
 	const group = useId();
 
-	return createElement("clay-choice", { look }, <fieldset aria-label={name}>{entries(options).map(([option, label]) =>
+	return createElement("clay-choice", { look }, <fieldset aria-label={name}>{
 
-		<label key={option}>
+		(Object.keys(options) as V[]).map(option => // ;(cast) options is assumed to carry no keys beyond V
 
-			<input
-				type="radio"
-				name={group}
-				value={option}
-				checked={option === value}
-				onChange={() => onChange?.(option)}
-			/>
+			<label key={option}>
 
-			<span>{label}</span>
+				<input
+					type="radio"
+					name={group}
+					value={option}
+					checked={option === value}
+					onChange={() => onChange?.(option)}
+				/>
 
-		</label>
-	)}</fieldset>);
+				<span>{options[option]}</span>
 
-}
+			</label>
+		)
 
+	}</fieldset>);
 
-/**
- * Lists the options of a record with their keys typed as the values they stand for, which `Object.entries` would widen
- * to plain strings, leaving `onChange` unable to receive them as the values it is declared over.
- */
-function entries<V extends string>(options: Readonly<Record<V, ComponentChildren>>): readonly (readonly [V, ComponentChildren])[] {
-	return (Object.keys(options) as V[]).map(option => [option, options[option]]); // ;(cast) the keys of a Record<V, …> are V
 }
