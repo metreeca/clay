@@ -44,8 +44,7 @@ export function Contents() {
 			link names stays marked for as long as its heading is in view.</p>
 
 		<p>Following one of its links marks that section at once and holds it while the page scrolls there, until the
-			reader scrolls on their own, leaving the location as it stands. Below the large viewport the outline folds
-			behind a single line naming the section the reader is in, and unfolds on demand.</p>
+			reader scrolls on their own, leaving the location as it stands.</p>
 
 		<p>The outline here is <code>compact</code>, so each group folds behind its label and only one is open at a
 			time. The group holding the section the reader is in opens as they reach it, and any other opens on demand.

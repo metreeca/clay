@@ -88,9 +88,9 @@ export type TOCEntries = {
  * rules of the design system alone, so it reads as every other outline an app built on it shows. Nothing at all is
  * rendered for an empty outline, leaving no empty landmark behind for assistive technology.
  *
- * Unless told to wrap, every label, folded group and summary line included, stays on a single line, so a long
- * identifier never breaks midway or widens the column: a label running past the column is cut short with an ellipsis.
- * Its full wording is still read out by assistive technology, and a plain string label shows it as a tooltip too.
+ * Unless told to wrap, every label, folded groups included, stays on a single line, so a long identifier never breaks
+ * midway or widens the column: a label running past the column is cut short with an ellipsis. Its full wording is
+ * still read out by assistive technology, and a plain string label shows it as a tooltip too.
  *
  * While the page scrolls, the link whose section the reader is in is marked as the current location, which the design
  * system sets in the strong accent and weight and assistive technology reads as such. The section marked is the one
@@ -111,10 +111,6 @@ export type TOCEntries = {
  * arrival is scrolled into view by the outline, even where the page renders its sections after loading or scrolls them
  * in a box of its own. The outline never changes the location: the fragment stays whatever the reader followed or
  * arrived with, however far the page is scrolled, so a shared or bookmarked address names the section the reader chose.
- *
- * From the large viewport up, the outline stands as a column of entries; below it, the outline folds behind a single
- * line naming the section the reader is in, or the outline itself while none is marked, and unfolds into the same
- * column on demand, folding again as soon as one of its links is followed, so it takes one line above the content.
  *
  * The outline follows the box its sections scroll in, whatever lays the page out: the nearest scrolling ancestor of
  * the first section on the page, such as the main column of a {@link @metreeca/clay-widgets!tool.Tool tool}, or
@@ -153,8 +149,8 @@ export function TOC({
 	wrap?: boolean
 
 	/**
-	 * The accessible name of the outline, such as `Contents`, telling it apart from other navigation landmarks and
-	 * naming the folded outline while no section is marked; unnamed if omitted, for a page with no other such landmark.
+	 * The accessible name of the outline, such as `Contents`, telling it apart from other navigation landmarks on the
+	 * page, as in a sidebar holding several outlines; unnamed if omitted, for a page with no other such landmark.
 	 */
 	name?: string
 
@@ -260,10 +256,9 @@ export function TOC({
 	}, [key]); // the outline the subscription starts from is the one created for these sections
 
 
-	return $entries.length === 0 ? null : createElement("clay-toc", { wrap }, <details>
-		<summary>{wording(opt(outline.current, id => caption($entries, id)) ?? name)}</summary>
+	return $entries.length === 0 ? null : createElement("clay-toc", { wrap },
 		<nav aria-label={name}>{list($entries, outline.current, compact ? group : undefined)}</nav>
-	</details>);
+	);
 
 }
 
@@ -433,8 +428,7 @@ function fragment(href: Optional<string>): Optional<string> {
 
 /**
  * Renders entries as a nested list of links, and an entry with no link as plain text. The link to the section the
- * reader is in is marked as the current location. Following a link folds the outline on smaller viewports, so the
- * reader lands on the section it leads to with the outline already out of the way.
+ * reader is in is marked as the current location.
  *
  * Given an accordion name, each entry with nested entries and no link of its own folds behind its label instead. The
  * folds share that name, so only one is open at a time, and a fold opens while it holds the section the reader is in.
@@ -455,7 +449,6 @@ function list(entries: readonly Entry[], current: Optional<string>, accordion?: 
 					? wording(label)
 					:
 					<a href={href} target={target} aria-current={current !== undefined && fragment(href) === current ? "location" : undefined}
-						onClick={({ currentTarget }) => currentTarget.closest("clay-toc > details")?.removeAttribute("open")}
 					>{wording(label)}</a>
 				}
 
@@ -480,13 +473,4 @@ function wording(label: ComponentChildren): ComponentChildren {
  */
 function holds(entries: readonly Entry[], id: string): boolean {
 	return entries.some(entry => fragment(entry.href) === id || holds(entry.entries, id));
-}
-
-/**
- * Finds the label of the entry linking to a section, searching the entries in page order.
- */
-function caption(entries: readonly Entry[], id: string): ComponentChildren {
-	return entries.reduce<ComponentChildren>((found, entry) =>
-		found ?? (fragment(entry.href) === id ? entry.label : caption(entry.entries, id)), undefined
-	);
 }

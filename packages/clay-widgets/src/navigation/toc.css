@@ -16,7 +16,7 @@
 
 /*
  * The outline is a navigation landmark of nested lists, which the design system sets as an outline like any other on
- * the page, current entry included, inside a disclosure folding it behind a single line on smaller viewports.
+ * the page, current entry included, standing as a column of entries at every width.
  */
 
 clay-toc {
@@ -48,25 +48,6 @@ clay-toc {
     &[wrap] :is(li, a, summary) > span {
         white-space: normal;
         overflow-wrap: anywhere;
-    }
-
-    /* From the large viewport up the whole column fits, so the summary steps out of view and the entries always show. */
-
-    @container style(--skin--viewport-large: on) {
-
-        & > details {
-
-            & > summary {
-                display: none;
-            }
-
-            &::details-content {
-                content-visibility: visible;
-                display: contents;
-            }
-
-        }
-
     }
 
 }

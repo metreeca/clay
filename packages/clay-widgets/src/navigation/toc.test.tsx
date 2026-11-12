@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import { type Optional } from "@metreeca/core";
 import { render } from "preact";
 import { act } from "preact/test-utils";
 import { afterEach, describe, expect, it, vi } from "vitest";
@@ -397,6 +396,14 @@ describe("TOC", () => {
 
 		});
 
+		it("stands as the navigation landmark alone, folding behind no disclosure", async () => {
+
+			await mount({ colours: 100, spacing: 400 });
+
+			expect(Array.from(document.querySelector("clay-toc")?.children ?? [], child => child.localName)).toEqual(["nav"]);
+
+		});
+
 		it("lists the entries as nested lists, in order", async () => {
 
 			await mount();
@@ -489,84 +496,6 @@ describe("TOC", () => {
 			await mount({}, {});
 
 			expect(document.querySelector("clay-toc")).toBeNull();
-
-		});
-
-	});
-
-	describe("folding", () => {
-
-		function details(): Optional<HTMLDetailsElement> {
-			return document.querySelector<HTMLDetailsElement>("clay-toc > details") ?? undefined;
-		}
-
-		function summary(): Optional<string> {
-			return document.querySelector("clay-toc > details > summary")?.textContent ?? undefined;
-		}
-
-		async function toggle(open: boolean): Promise<void> {
-			await act(async () => {
-				const element = details();
-				if ( element ) {
-					element.open = open;
-					element.dispatchEvent(new Event("toggle"));
-				}
-			});
-		}
-
-
-		it("wraps the navigation landmark in a disclosure", async () => {
-
-			await mount();
-
-			expect(document.querySelector("clay-toc > details > summary + nav")).not.toBeNull();
-
-		});
-
-		it("starts folded", async () => {
-
-			await mount();
-
-			expect(details()?.open).toBe(false);
-
-		});
-
-		it("sums up the folded outline with the section the reader is in", async () => {
-
-			await mount({ colours: 100, spacing: 400 });
-
-			expect(summary()).toBe("Colours");
-
-		});
-
-		it("sums up the folded outline with its name while the first section starts below the view", async () => {
-
-			await mount({ colours: 1000, spacing: 1400 });
-
-			expect(summary()).toBe("Contents");
-
-		});
-
-		it("stays unfolded as the page scrolls", async () => {
-
-			await mount({ colours: 100, spacing: 800 });
-			await toggle(true);
-			await scroll({ colours: -500, spacing: 200 });
-
-			expect(details()?.open).toBe(true);
-
-		});
-
-		it("folds once the reader follows one of its links", async () => {
-
-			await mount({ colours: 100, spacing: 800 });
-			await toggle(true);
-
-			await act(async () => {
-				document.querySelector<HTMLAnchorElement>("clay-toc a[href='#spacing']")?.click();
-			});
-
-			expect(details()?.open).toBe(false);
 
 		});
 
@@ -675,21 +604,6 @@ describe("TOC", () => {
 
 		});
 
-		it("folds the outline rather than the group once the reader follows one of its links", async () => {
-
-			await mount({ colours: 100, spacing: 800, buttons: 1200 }, groups, true);
-
-			await act(async () => {
-				const outline = document.querySelector<HTMLDetailsElement>("clay-toc > details");
-				if ( outline ) { outline.open = true; }
-				document.querySelector<HTMLAnchorElement>("clay-toc a[href='#spacing']")?.click();
-			});
-
-			expect(document.querySelector<HTMLDetailsElement>("clay-toc > details")?.open).toBe(false);
-			expect(open()).toEqual(["Foundations"]);
-
-		});
-
 	});
 
 	describe("clipping", () => {
@@ -746,22 +660,6 @@ describe("TOC", () => {
 			await mount({}, groups, true);
 
 			expect(tooltips("clay-toc li > details > summary")).toEqual(["Foundations"]);
-
-		});
-
-		it("offers the full wording of the folded outline caption as a tooltip", async () => {
-
-			await mount({ colours: 100, credential: 800 }, groups);
-
-			expect(tooltips("clay-toc > details > summary")).toEqual(["Colours"]);
-
-		});
-
-		it("offers the name of the folded outline as a tooltip while the first section starts below the view", async () => {
-
-			await mount({ colours: 1000, credential: 1400 }, groups);
-
-			expect(tooltips("clay-toc > details > summary")).toEqual(["Contents"]);
 
 		});
 
