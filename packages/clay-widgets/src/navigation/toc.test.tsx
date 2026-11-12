@@ -53,9 +53,10 @@ describe("createTOC", () => {
 	});
 
 	/**
-	 * The metrics of a 900 pixel viewport whose reading line stands at 300, the sections starting at the offsets given.
+	 * The metrics of a 900 pixel viewport, the sections starting at the offsets given below its top, short of the end
+	 * of the page unless `end` is set, where the last section in view is taken as current.
 	 */
-	function metrics(tops: Readonly<Record<string, number>>, end = false): TOCMetrics {
+	function metrics(tops: Readonly<Record<string, number>>, { end = false }: { end?: boolean } = {}): TOCMetrics {
 		return { tops, height: 900, end };
 	}
 
@@ -64,27 +65,51 @@ describe("createTOC", () => {
 
 		const toc = createTOC({ sections: ["one", "two", "three"] });
 
-		it("takes the last section scrolled up to the line as current", async () => {
+		it("takes the last section scrolled up to the top edge as current", async () => {
 
-			expect(toc.scroll(metrics({ one: -100, two: 290, three: 600 })).current).toBe("two");
-
-		});
-
-		it("takes a section starting exactly on the line as current", async () => {
-
-			expect(toc.scroll(metrics({ one: -100, two: 300, three: 600 })).current).toBe("two");
+			expect(toc.scroll(metrics({ one: -400, two: -100, three: 400 })).current).toBe("two");
 
 		});
 
-		it("takes no section as current above the first one", async () => {
+		it("takes a section starting exactly on the top edge as current", async () => {
 
-			expect(toc.scroll(metrics({ one: 310, two: 600, three: 900 })).current).toBeUndefined();
+			expect(toc.scroll(metrics({ one: -400, two: 0, three: 200 })).current).toBe("two");
+
+		});
+
+		it("takes the first section starting in the top third of the view as current", async () => {
+
+			expect(toc.scroll(metrics({ one: -400, two: 120, three: 250 })).current).toBe("two");
+
+		});
+
+		it("keeps the section at the top edge current while the next ones come into view below the top third", async () => {
+
+			expect(toc.scroll(metrics({ one: -10, two: 350, three: 600 })).current).toBe("one");
+
+		});
+
+		it("takes the first section starting in the top third as current just short of the end of the page", async () => {
+
+			expect(toc.scroll(metrics({ one: -134, two: 154, three: 503 })).current).toBe("two");
+
+		});
+
+		it("takes the first section in view as current before any reaches the top", async () => {
+
+			expect(toc.scroll(metrics({ one: 420, two: 600, three: 700 })).current).toBe("one");
+
+		});
+
+		it("takes no section as current while the first one starts below the view", async () => {
+
+			expect(toc.scroll(metrics({ one: 950, two: 1200 })).current).toBeUndefined();
 
 		});
 
 		it("goes by page order rather than by offset", async () => {
 
-			expect(toc.scroll(metrics({ one: 290, two: -100, three: 600 })).current).toBe("two");
+			expect(toc.scroll(metrics({ one: 350, two: -100, three: 600 })).current).toBe("two");
 
 		});
 
@@ -96,21 +121,21 @@ describe("createTOC", () => {
 
 		it("ignores offsets of elements it does not list", async () => {
 
-			expect(toc.scroll(metrics({ one: 310, stray: -100 })).current).toBeUndefined();
+			expect(toc.scroll(metrics({ one: 950, stray: -100 })).current).toBeUndefined();
 
 		});
 
 		it("yields itself when the current section is unchanged", async () => {
 
-			const scrolled = toc.scroll(metrics({ one: 290, two: 600 }));
+			const scrolled = toc.scroll(metrics({ one: -10, two: 600 }));
 
-			expect(scrolled.scroll(metrics({ one: 250, two: 560 }))).toBe(scrolled);
+			expect(scrolled.scroll(metrics({ one: -50, two: 560 }))).toBe(scrolled);
 
 		});
 
 		it("leaves the outline it was called on as it stands", async () => {
 
-			toc.scroll(metrics({ one: 290 }));
+			toc.scroll(metrics({ one: -10 }));
 
 			expect(toc.current).toBeUndefined();
 
@@ -124,19 +149,73 @@ describe("createTOC", () => {
 
 		it("takes the last section in view as current", async () => {
 
-			expect(toc.scroll(metrics({ one: -400, two: 100, three: 700 }, true)).current).toBe("three");
+			expect(toc.scroll(metrics({ one: -400, two: 100, three: 700 }, { end: true })).current).toBe("three");
 
 		});
 
 		it("passes over sections below the viewport", async () => {
 
-			expect(toc.scroll(metrics({ one: -400, two: 100, three: 950 }, true)).current).toBe("two");
+			expect(toc.scroll(metrics({ one: -400, two: 100, three: 950 }, { end: true })).current).toBe("two");
 
 		});
 
-		it("goes by the reading line short of the end", async () => {
+		it("takes the section at the top edge as current with no section in view", async () => {
 
-			expect(toc.scroll(metrics({ one: -400, two: 100, three: 700 })).current).toBe("two");
+			expect(toc.scroll(metrics({ one: -400, two: -100 }, { end: true })).current).toBe("two");
+
+		});
+
+		it("goes by the top of the view short of the end", async () => {
+
+			expect(toc.scroll(metrics({ one: -400, two: 400, three: 700 })).current).toBe("one");
+
+		});
+
+	});
+
+	describe("following a released choice", () => {
+
+		const toc = createTOC({ sections: ["one", "two", "three"] });
+
+		it("keeps the section chosen current while its start is in view", async () => {
+
+			const released = toc.select("three").release();
+
+			expect(released.chosen).toBe("three");
+			expect(released.scroll(metrics({ one: -400, two: 100, three: 700 })).current).toBe("three");
+
+		});
+
+		it("keeps it current at the end of the page as well", async () => {
+
+			const released = toc.select("two").release();
+
+			expect(released.scroll(metrics({ one: -400, two: 100, three: 700 }, { end: true })).current).toBe("two");
+
+		});
+
+		it("follows the page once its start leaves the view", async () => {
+
+			const scrolled = toc.select("one").release().scroll(metrics({ one: -400, two: -100, three: 950 }));
+
+			expect(scrolled.current).toBe("two");
+			expect(scrolled.chosen).toBeUndefined();
+
+		});
+
+		it("never moves back to an earlier section as its start leaves the view", async () => {
+
+			const scrolled = toc.select("two").release().scroll(metrics({ one: -400, two: -10, three: 600 }));
+
+			expect(scrolled.current).toBe("two");
+
+		});
+
+		it("lets the choice lapse for good once its start has left the view", async () => {
+
+			const lapsed = toc.select("three").release().scroll(metrics({ one: -400, two: 100, three: 950 }));
+
+			expect(lapsed.scroll(metrics({ one: -800, two: -300, three: 600 })).current).toBe("two");
 
 		});
 
@@ -152,6 +231,7 @@ describe("createTOC", () => {
 
 			expect(chosen.current).toBe("three");
 			expect(chosen.pinned).toBe(true);
+			expect(chosen.chosen).toBe("three");
 
 		});
 
@@ -174,7 +254,7 @@ describe("createTOC", () => {
 			const released = toc.select("three").release();
 
 			expect(released.pinned).toBe(false);
-			expect(released.scroll(metrics({ one: -400, two: 100, three: 600 })).current).toBe("two");
+			expect(released.scroll(metrics({ one: -400, two: -100, three: 950 })).current).toBe("two");
 
 		});
 
@@ -208,7 +288,7 @@ describe("TOC", () => {
 
 	/**
 	 * Mounts the outline beside the sections it names, each starting at the offset below the top of the viewport given
-	 * for it; the reading line stands a third of the way down the 900 pixel viewport, at 300.
+	 * for it, in a 900 pixel viewport, and waits out the render the outline takes after measuring them.
 	 */
 	async function mount(
 		tops: Readonly<Record<string, number>> = {}, outline: readonly TOCEntry[] | TOCEntries = entries, compact?: boolean
@@ -244,6 +324,27 @@ describe("TOC", () => {
 		Object.entries(tops).forEach(([id, top]) => place(id, top));
 
 		await act(async () => { window.dispatchEvent(new Event("scroll")); });
+
+	}
+
+	/**
+	 * Clicks a link with the main button, then waits for the outline to settle the click and for the render that
+	 * follows. The link itself is never followed. happy-dom follows every link a click passes through, modifiers and
+	 * downloads included, and changes the fragment where a browser would leave it alone. For the rest of the test,
+	 * anchors therefore dispatch events like any other element, following nothing, and the fragment stays as it was.
+	 */
+	async function click(link: Element | null, init: MouseEventInit = {}): Promise<void> {
+
+		const { dispatchEvent } = HTMLElement.prototype;
+
+		vi.spyOn(HTMLAnchorElement.prototype, "dispatchEvent").mockImplementation(function (this: HTMLAnchorElement, event) {
+			return dispatchEvent.call(this, event);
+		});
+
+		await act(async () => {
+			link?.dispatchEvent(new MouseEvent("click", { bubbles: true, cancelable: true, ...init }));
+			await new Promise(resolve => setTimeout(resolve));
+		});
 
 	}
 
@@ -438,9 +539,9 @@ describe("TOC", () => {
 
 		});
 
-		it("sums up the folded outline with its name above the first section", async () => {
+		it("sums up the folded outline with its name while the first section starts below the view", async () => {
 
-			await mount({ colours: 400, spacing: 800 });
+			await mount({ colours: 1000, spacing: 1400 });
 
 			expect(summary()).toBe("Contents");
 
@@ -549,9 +650,9 @@ describe("TOC", () => {
 
 		});
 
-		it("keeps every group folded above the first section", async () => {
+		it("keeps every group folded while the first section starts below the view", async () => {
 
-			await mount({ colours: 400, spacing: 800, buttons: 1200 }, groups, true);
+			await mount({ colours: 1000, spacing: 1400, buttons: 1800 }, groups, true);
 
 			expect(open()).toEqual([]);
 
@@ -568,7 +669,7 @@ describe("TOC", () => {
 		it("opens the group the reader scrolls into, folding the one they leave", async () => {
 
 			await mount({ colours: 100, spacing: 800, buttons: 1200 }, groups, true);
-			await scroll({ colours: -1000, spacing: -500, buttons: 200 });
+			await scroll({ colours: -1000, spacing: -500, buttons: -10 });
 
 			expect(open()).toEqual(["Components"]);
 
@@ -656,9 +757,9 @@ describe("TOC", () => {
 
 		});
 
-		it("offers the name of the folded outline as a tooltip above the first section", async () => {
+		it("offers the name of the folded outline as a tooltip while the first section starts below the view", async () => {
 
-			await mount({ colours: 400, credential: 800 }, groups);
+			await mount({ colours: 1000, credential: 1400 }, groups);
 
 			expect(tooltips("clay-toc > details > summary")).toEqual(["Contents"]);
 
@@ -685,9 +786,25 @@ describe("TOC", () => {
 
 		});
 
-		it("marks no link above the first section", async () => {
+		it("marks the first section in view at the start of the page", async () => {
+
+			await mount({ colours: 0, spacing: 150 });
+
+			expect(marked()).toEqual(["Colours"]);
+
+		});
+
+		it("marks the first section in view before any reaches the top", async () => {
 
 			await mount({ colours: 400, spacing: 800 });
+
+			expect(marked()).toEqual(["Colours"]);
+
+		});
+
+		it("marks no link while the first section starts below the view", async () => {
+
+			await mount({ colours: 1000, spacing: 1400 });
 
 			expect(marked()).toEqual([]);
 
@@ -696,9 +813,67 @@ describe("TOC", () => {
 		it("follows the reader as the page scrolls", async () => {
 
 			await mount({ colours: 100, spacing: 800 });
+			await scroll({ colours: -500, spacing: -10 });
+
+			expect(marked()).toEqual(["Spacing"]);
+
+		});
+
+		it("marks the section starting in the top third of the view", async () => {
+
+			await mount({ colours: 100, spacing: 800 });
 			await scroll({ colours: -500, spacing: 200 });
 
 			expect(marked()).toEqual(["Spacing"]);
+
+		});
+
+		it("keeps the section at the top edge marked while the next one comes into view below the top third", async () => {
+
+			await mount({ colours: 100, spacing: 800 });
+			await scroll({ colours: -500, spacing: 400 });
+
+			expect(marked()).toEqual(["Colours"]);
+
+		});
+
+		it("keeps the section the fragment names marked while its start is in view", async () => {
+
+			history.replaceState(history.state, "", "#spacing");
+
+			await mount({ colours: 100, spacing: 800 });
+
+			await act(async () => { window.dispatchEvent(new Event("wheel")); });
+			await scroll({ colours: -500, spacing: 200 });
+
+			expect(marked()).toEqual(["Spacing"]);
+
+		});
+
+		it("follows the page once the start of the section the fragment names leaves the view", async () => {
+
+			history.replaceState(history.state, "", "#colours");
+
+			await mount({ colours: 100, spacing: 800 });
+
+			await act(async () => { window.dispatchEvent(new Event("wheel")); });
+			await scroll({ colours: -500, spacing: -10 });
+
+			expect(marked()).toEqual(["Spacing"]);
+
+		});
+
+		it("stops preferring the section the fragment names once its start has left the view", async () => {
+
+			history.replaceState(history.state, "", "#spacing");
+
+			await mount({ colours: -500, spacing: 100 });
+
+			await act(async () => { window.dispatchEvent(new Event("wheel")); });
+			await scroll({ colours: 100, spacing: 950 });
+			await scroll({ colours: -500, spacing: 600 });
+
+			expect(marked()).toEqual(["Colours"]);
 
 		});
 
@@ -726,8 +901,8 @@ describe("TOC", () => {
 
 		/**
 		 * Mounts the outline beside sections scrolling within a box standing 100 pixels below the top of the viewport,
-		 * 600 pixels tall with 60 pixels of scroll padding at its top, so its reading line stands at 100 + 60 + 540 /
-		 * 3.
+		 * 600 pixels tall with 60 pixels of scroll padding at its top, so its top edge stands at 160, scrolled partway
+		 * down its 2400 pixels of content, or to their end if asked, where the last section in view is marked.
 		 */
 		async function boxed(tops: Readonly<Record<string, number>>, end = false): Promise<void> {
 
@@ -743,8 +918,8 @@ describe("TOC", () => {
 			if ( box ) {
 				vi.spyOn(box, "getBoundingClientRect").mockReturnValue(new DOMRect(0, 100, 800, 600));
 				vi.spyOn(box, "clientHeight", "get").mockReturnValue(600);
-				vi.spyOn(box, "scrollHeight", "get").mockReturnValue(2000);
-				vi.spyOn(box, "scrollTop", "get").mockReturnValue(end ? 1400 : 0);
+				vi.spyOn(box, "scrollHeight", "get").mockReturnValue(2400);
+				vi.spyOn(box, "scrollTop", "get").mockReturnValue(end ? 1800 : 600);
 			}
 
 			Object.entries(tops).forEach(([id, top]) => place(id, top));
@@ -762,9 +937,9 @@ describe("TOC", () => {
 
 		});
 
-		it("measures the reading line on the part of the box left in view", async () => {
+		it("measures the top edge on the part of the box left in view", async () => {
 
-			await boxed({ colours: 200, spacing: 330 });
+			await boxed({ colours: 120, spacing: 150 });
 
 			expect(marked()).toEqual(["Spacing"]);
 
@@ -875,9 +1050,97 @@ describe("TOC", () => {
 			await follow("#spacing", { colours: -100, spacing: 600 });
 
 			await act(async () => { window.dispatchEvent(new Event("wheel")); });
-			await scroll({ colours: -150, spacing: 550 });
+			await scroll({ colours: -150, spacing: 950 });
 
 			expect(marked()).toEqual(["Colours"]);
+
+		});
+
+		it("marks a section followed again through a link to the fragment already in the location", async () => {
+
+			const outline: readonly TOCEntry[] = [
+				{ label: "Colours", href: "#colours" },
+				{ label: "Spacing", href: "#spacing" },
+				{ label: "Buttons", href: "#buttons" }
+			];
+
+			history.replaceState(history.state, "", "#spacing");
+
+			await mount({ colours: -1500, spacing: -1000, buttons: -500 }, outline);
+
+			await act(async () => { window.dispatchEvent(new Event("wheel")); });
+			await scroll({ colours: -2000, spacing: -1500, buttons: -1000 });
+
+			end();
+
+			const link = document.querySelector<HTMLAnchorElement>("clay-toc a[href='#spacing']");
+
+			await click(link);
+			await scroll({ colours: -100, spacing: 400, buttons: 700 });
+
+			expect(location.hash).toBe("#spacing");
+			expect(marked()).toEqual(["Spacing"]);
+
+		});
+
+		it("leaves a link clicked with a modifier to the browser", async () => {
+
+			await mount({ colours: -100, spacing: 400 });
+
+			const link = document.querySelector<HTMLAnchorElement>("clay-toc a[href='#spacing']");
+
+			await click(link, { metaKey: true });
+
+			expect(marked()).toEqual(["Colours"]);
+
+		});
+
+		it("leaves a link whose click is cancelled to whatever cancelled it", async () => {
+
+			await mount({ colours: -100, spacing: 400 });
+
+			const cancel = (event: Event) => event.preventDefault();
+
+			document.addEventListener("click", cancel);
+
+			try {
+				await click(document.querySelector("clay-toc a[href='#spacing']"));
+			} finally {
+				document.removeEventListener("click", cancel);
+			}
+
+			expect(marked()).toEqual(["Colours"]);
+
+		});
+
+		it.each([
+			["a new browsing context", (link: HTMLAnchorElement) => link.setAttribute("target", "_blank")],
+			["a download", (link: HTMLAnchorElement) => link.setAttribute("download", "")]
+		])("leaves a link opening %s to the browser", async (_, open) => {
+
+			await mount({ colours: -100, spacing: 400 });
+
+			const link = document.body.appendChild(Object.assign(document.createElement("a"), { href: "#spacing", textContent: "Spacing" }));
+
+			open(link);
+
+			await click(link);
+
+			expect(marked()).toEqual(["Colours"]);
+
+		});
+
+		it("follows a link clicked within a shadow tree", async () => {
+
+			await mount({ colours: -100, spacing: 400 });
+
+			const host = document.body.appendChild(document.createElement("div"));
+			const link = host.attachShadow({ mode: "open" })
+				.appendChild(Object.assign(document.createElement("a"), { href: "#spacing", textContent: "Spacing" }));
+
+			await click(link, { composed: true });
+
+			expect(marked()).toEqual(["Spacing"]);
 
 		});
 
@@ -885,16 +1148,29 @@ describe("TOC", () => {
 
 	describe("fragment", () => {
 
-		it("follows the section marked as the page scrolls", async () => {
+		it("is left alone as the page scrolls into a section", async () => {
 
 			await mount({ colours: 100, spacing: 800 });
 			await scroll({ colours: -500, spacing: 200 });
 
-			expect(location.hash).toBe("#spacing");
+			expect(location.hash).toBe("");
 
 		});
 
-		it("is cleared above the first section", async () => {
+		it("is left alone as the reader scrolls away from the section it names", async () => {
+
+			history.replaceState(history.state, "", "#colours");
+
+			await mount({ colours: 100, spacing: 800 });
+
+			await act(async () => { window.dispatchEvent(new Event("wheel")); });
+			await scroll({ colours: -500, spacing: 200 });
+
+			expect(location.hash).toBe("#colours");
+
+		});
+
+		it("is left alone as the reader scrolls back up", async () => {
 
 			history.replaceState(history.state, "", "#colours");
 
@@ -903,30 +1179,7 @@ describe("TOC", () => {
 			await act(async () => { window.dispatchEvent(new Event("wheel")); });
 			await scroll({ colours: 400, spacing: 1100 });
 
-			expect(location.hash).toBe("");
-
-		});
-
-		it("is left alone by an outline linking to no section on the page", async () => {
-
-			history.replaceState(history.state, "", "#colours");
-
-			await mount({}, [{ label: "Guide", href: "/guide" }]);
-			await scroll({});
-
 			expect(location.hash).toBe("#colours");
-
-		});
-
-		it("adds no entries to the history", async () => {
-
-			await mount({ colours: 100, spacing: 800 });
-
-			const entries = history.length;
-
-			await scroll({ colours: -500, spacing: 200 });
-
-			expect(history.length).toBe(entries);
 
 		});
 

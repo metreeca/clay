@@ -115,8 +115,8 @@ export interface Meta {
  * - **table of contents**: the headings of the first three levels of the outline, as a navigation landmark of nested
  *   lists linking each to the matching heading, set as the design system sets any outline, so it reads as quiet
  *   navigation beside the document; nothing at all for a text without headings. While the document is on the page,
- *   the entry of the last heading scrolled into the top third of the viewport is marked as the current location, and
- *   followed as the reader scrolls, so the outline shows where they stand; no entry is marked above the first heading.
+ *   the entry of the heading at the top of the viewport is marked as the current location and followed as the reader
+ *   scrolls, so the outline shows where they stand; no entry is marked while the first heading is below the view.
  *   Below the large viewport the outline folds behind a single line naming the section the reader is in. Each entry
  *   keeps its heading to one line, cut short with an ellipsis where the heading outruns the column
  * - **front matter**: the values the YAML front matter declares, the text itself left unrendered
@@ -156,7 +156,7 @@ export function Markdown({
 
 	/**
 	 * The accessible name of the table of contents, such as `Contents`, telling it apart from other navigation
-	 * landmarks and naming the folded outline above the first heading; unnamed if omitted, and ignored in other modes.
+	 * landmarks and naming the folded outline while no heading is marked; unnamed if omitted, ignored in other modes.
 	 */
 	name?: string
 

@@ -38,16 +38,14 @@ export function Contents() {
 	return <>
 
 		<p>The outline in the tray is a table of contents: entries grouped under labels leading nowhere, set by the
-			outline rules of the design system alone. It marks the section the reader is in as the page scrolls, the
-			last
-			one whose heading has passed a line a third of the way down the window, or the last one in view once the
-			page reaches its end.</p>
+			outline rules of the design system alone. It marks the section the reader is in as the page scrolls: the
+			first one whose heading stands in the top third of the window, failing that the last one whose heading has
+			passed the top of the window, and the last one in view once the page reaches its end. The section a followed
+			link names stays marked for as long as its heading is in view.</p>
 
 		<p>Following one of its links marks that section at once and holds it while the page scrolls there, until the
-			reader scrolls on their own. The location fragment follows the section marked, replaced rather than pushed,
-			so a reload or a shared address lands where the reader stood. Below the large viewport the outline folds
-			behind
-			a single line naming the section the reader is in, and unfolds on demand.</p>
+			reader scrolls on their own, leaving the location as it stands. Below the large viewport the outline folds
+			behind a single line naming the section the reader is in, and unfolds on demand.</p>
 
 		<p>The outline here is <code>compact</code>, so each group folds behind its label and only one is open at a
 			time. The group holding the section the reader is in opens as they reach it, and any other opens on demand.

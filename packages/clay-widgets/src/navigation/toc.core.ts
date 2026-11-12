@@ -30,26 +30,37 @@ import { createState } from "@metreeca/core/state";
 
 
 /**
- * The share of the viewport height, from its top, where the reading line stands: a section becomes current once its
- * start is scrolled up to the line, and stays current until the start of the next one is.
+ * The share of the view height, from its top, where a section start counts as standing at the top of the view.
  */
-const Line = 1/3;
+const Top = 1/3;
 
+/**
+ * The distance, in pixels, within which a section start counts as standing on the top edge of the view, absorbing the
+ * fractional offsets layout leaves a start brought to the edge by a followed link.
+ */
+const Edge = 1;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /**
  * Headless table of contents.
  *
- * Holds the sections an outline lists and the one the reader is in, followed as the page scrolls: the last section, in
- * page order, whose start has been scrolled up to the reading line, so a section counts as current from the moment its
- * heading reaches the line until the heading of the next one does. Once the page is scrolled to its end, the sections
- * left below the line could never reach it, so the last section whose start is in view counts as current instead.
- * Above the first section, no section is current, whatever the position of the reading line or the end of the page.
+ * Holds the sections an outline lists and the one the reader is in, followed as the page scrolls.
  *
- * A section the reader asks for, by following a link to it, is current as soon as it is chosen, and stays current
- * while the page scrolls to bring it into view, which might never carry it to the line: the choice is pinned until it
- * is released, as the reader scrolls on their own, and following the page resumes from there.
+ * A reader takes in a page from the top of the view down, so the current section is the one at the top of the view.
+ * That is the first section starting in the top third of the view, or failing that the last one scrolled up past the
+ * top edge. Before any has been, it is the first section in view. No section is current while the first one still
+ * starts below the view, as it does beneath a long introduction or a cover image.
+ *
+ * The current section changes only as a section start crosses the top edge of the view or the bottom of its top third,
+ * or as the page reaches its end or leaves it. Sections starting too low in the last screenful of the page to ever be
+ * scrolled into the top third are left to the end of the page, where the last section in view is current instead.
+ *
+ * A section the reader asks for, by following a link to it, is current as soon as it is chosen. It stays current while
+ * the page scrolls to bring it into view, smoothly or at once. The choice is pinned until it is released, as the reader
+ * scrolls on their own. After that, the section chosen keeps precedence over the scroll position while its start is
+ * in view, so it stays current while the reader reads on around it. Once its start leaves the view, the choice lapses
+ * for good and the current section follows the page under the rules above, however often the section comes back.
  *
  * A transition yields a new outline and leaves this one as it stands. One that changes nothing yields this outline
  * itself, which a rendering layer takes as nothing to redraw, so scrolling within a section costs no render.
@@ -62,7 +73,7 @@ export interface TOC {
 	readonly sections: readonly string[];
 
 	/**
-	 * The id of the section the reader is in, or `undefined` above the first section.
+	 * The id of the section the reader is in, or `undefined` while the first section starts below the view.
 	 */
 	readonly current: Optional<string>;
 
@@ -70,6 +81,12 @@ export interface TOC {
 	 * Whether the current section was chosen by the reader and is held against the scroll position of the page.
 	 */
 	readonly pinned: boolean;
+
+	/**
+	 * The id of the section the reader chose, held as current while its start is in view, or `undefined` if no choice
+	 * holds, either because none was made or because the section chosen has since left the view.
+	 */
+	readonly chosen: Optional<string>;
 
 
 	/**
@@ -96,7 +113,7 @@ export interface TOC {
 	 * Releases a chosen section, as the reader does by scrolling on their own.
 	 *
 	 * @returns An outline following the page again from the next {@link TOC.scroll scroll}, or this outline itself if
-	 * no section is pinned; the section released stays current until the page is scrolled again
+	 * no section is pinned; the section released stays current for as long as its start is in view
 	 */
 	release(): this;
 
@@ -114,12 +131,13 @@ export interface TOCMetrics {
 	readonly tops: Readonly<Record<string, number>>;
 
 	/**
-	 * The height of the viewport; the reading line stands a third of the way down from its top.
+	 * The height of the viewport, the distance below its top within which a section start stands in view.
 	 */
 	readonly height: number;
 
 	/**
-	 * Whether the page has been scrolled to its end, leaving the sections below the reading line no way to reach it.
+	 * Whether the page has been scrolled to its end, leaving the sections starting low in its last screenful no way to
+	 * reach the top third; `false` for a page with nothing to scroll, which is followed from the top of the view alone.
 	 */
 	readonly end: boolean;
 
@@ -154,21 +172,29 @@ export function createTOC({
 		sections: unique(sections),
 		current: undefined,
 		pinned: false,
+		chosen: undefined,
 
 
 		scroll({ tops, height, end }: TOCMetrics) {
 
-			// at the end of the page the sections below the line can't reach it, so the edge of the viewport stands in
+			const top = (id: string) => tops[id] ?? Infinity;
 
-			const limit = end ? height : height*Line;
+			const visible = this.sections.filter(id => top(id) >= -Edge && top(id) < height);
+			const leading = visible.find(id => top(id) <= height*Top+Edge);
+			const reached = this.sections.filter(id => top(id) < -Edge).at(-1);
 
-			return this.pinned ? {} : { current: this.sections.filter(id => (tops[id] ?? Infinity) <= limit).at(-1) };
+			const chosen = this.chosen !== undefined && visible.includes(this.chosen) ? this.chosen : undefined;
+
+			return this.pinned ? {} : {
+				chosen,
+				current: chosen ?? (end ? visible.at(-1) ?? reached : leading ?? reached ?? visible[0])
+			};
 
 		},
 
 		select(id: string) {
 
-			return this.sections.includes(id) ? { current: id, pinned: true } : {};
+			return this.sections.includes(id) ? { current: id, pinned: true, chosen: id } : {};
 
 		},
 

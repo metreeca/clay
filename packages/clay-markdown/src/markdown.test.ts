@@ -438,9 +438,9 @@ describe("Markdown", () => {
 				return texts("clay-toc a[aria-current='location']");
 			}
 
-			it("should mark the entry of the last heading scrolled above the top band", async () => {
+			it("should mark the entry of the last heading scrolled up to the top edge", async () => {
 
-				place({ a: -400, b: 10, c: 900 });
+				place({ a: -400, b: -10, c: 900 });
 
 				await page();
 
@@ -448,9 +448,9 @@ describe("Markdown", () => {
 
 			});
 
-			it("should mark no entry above the first heading", async () => {
+			it("should mark no entry while the first heading is below the view", async () => {
 
-				place({ a: 700, b: 900, c: 1100 });
+				place({ a: 1000, b: 1200, c: 1400 });
 
 				await page();
 
@@ -464,7 +464,7 @@ describe("Markdown", () => {
 
 				await page();
 
-				place({ a: -900, b: -600, c: 50 });
+				place({ a: -900, b: -600, c: -10 });
 
 				await scroll();
 

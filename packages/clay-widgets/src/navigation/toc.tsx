@@ -93,28 +93,33 @@ export type TOCEntries = {
  * Its full wording is still read out by assistive technology, and a plain string label shows it as a tooltip too.
  *
  * While the page scrolls, the link whose section the reader is in is marked as the current location, which the design
- * system sets in the strong accent and weight and assistive technology reads as such: the section is the last one, in
- * page order, whose start has been scrolled up to a reading line standing a third of the way down the view, and
- * once the page is scrolled to its end, the last one whose start is in view, so a short closing section is still
- * reached. No link is marked above the first section. Only links naming an element on the page by fragment take part;
- * any other link is listed and never marked, as it names no section the scroll position could put the reader in.
+ * system sets in the strong accent and weight and assistive technology reads as such. The section marked is the one
+ * at the top of the view: the first starting in its top third, or failing that the last scrolled past the top edge.
+ * Once the page is scrolled to its end, it is the last one in view, so a short closing section is still reached. No
+ * link is marked while the first section starts below the view, and short of the end of the page the mark moves only
+ * as a section start crosses the top edge of the view or the bottom of its top third, so reading on holds it steady.
+ * Only links naming an element on the page by fragment take part. Any other link is listed but never marked, as it
+ * leads away from the page, to no section the reader could ever scroll into from where they are.
  *
- * A section the reader asks for, by following one of its links or by arriving with a fragment naming it, is marked at
- * once and stays marked while the page scrolls to it, until the reader scrolls on their own with the wheel, by touch,
- * with the pointer or from the keyboard. A section named on arrival is scrolled into view by the outline, even where
- * the page renders its sections after loading or scrolls them in a box of its own. The location fragment follows the
- * section marked in turn, replaced rather than pushed so that scrolling adds no entries to the history, and cleared
- * above the first section, so a reload or a shared address lands where the reader stood when the address was taken.
- * An outline linking to no section by fragment leaves the location alone, so it may stand beside the page outline.
+ * A section the reader asks for, by following a link to it or by arriving with a fragment naming it, is marked at once
+ * and stays marked while the page scrolls to it, smoothly or at once, until the reader scrolls on their own with the
+ * wheel, by touch, with the pointer or from the keyboard; after that, it stays marked for as long as its start is in
+ * view, and once its start has left the view, the scroll position alone decides the mark, even when the section comes
+ * back into view later on. Any link to a section counts, in the outline or elsewhere on the page, shadow trees
+ * included. A link opening a new browsing context or a download, a click with a modifier key, and a click cancelled by
+ * a handler on the page all leave the page where it stands, so they leave the mark alone as well. A section named on
+ * arrival is scrolled into view by the outline, even where the page renders its sections after loading or scrolls them
+ * in a box of its own. The outline never changes the location: the fragment stays whatever the reader followed or
+ * arrived with, however far the page is scrolled, so a shared or bookmarked address names the section the reader chose.
  *
  * From the large viewport up, the outline stands as a column of entries; below it, the outline folds behind a single
- * line naming the section the reader is in, or the outline itself above the first section, and unfolds into the same
+ * line naming the section the reader is in, or the outline itself while none is marked, and unfolds into the same
  * column on demand, folding again as soon as one of its links is followed, so it takes one line above the content.
  *
  * The outline follows the box its sections scroll in, whatever lays the page out: the nearest scrolling ancestor of
  * the first section on the page, such as the main column of a {@link @metreeca/clay-widgets!tool.Tool tool}, or
- * the document where no ancestor scrolls. The reading line and the end of the page are measured on the part of that
- * box left in view, short of its scroll padding, so a header standing over the box is not counted as room to read in.
+ * the document where no ancestor scrolls. The view is measured on the part of that box left in view, short of its
+ * scroll padding, so a header standing over the box is not counted as room to read in.
  *
  * @param options The widget configuration
  *
@@ -149,7 +154,7 @@ export function TOC({
 
 	/**
 	 * The accessible name of the outline, such as `Contents`, telling it apart from other navigation landmarks and
-	 * naming the folded outline above the first section; unnamed if omitted, for a page with no other such landmark.
+	 * naming the folded outline while no section is marked; unnamed if omitted, for a page with no other such landmark.
 	 */
 	name?: string
 
@@ -189,16 +194,23 @@ export function TOC({
 
 		let latest = outline; // ;(let) the outline as the events of this subscription have left it
 
-		const take = (next: Outline) => {
-			latest = next;
-			sync(next);
-		};
-
 		// a fragment naming no section is left alone, as it may lead anywhere else on the page
 
-		const select = () => opt(fragment(location.hash), id => latest.sections.includes(id) ? take(latest.select(id)) : undefined);
-		const scroll = () => take(latest.scroll(metrics(latest.sections)));
-		const release = () => take(latest.release());
+		const select = () => opt(fragment(location.hash), id => {
+			latest = latest.select(id);
+		});
+
+		const follow = (event: Event) => opt(followed(event), id => setTimeout(() => {
+			latest = event.defaultPrevented ? latest : latest.select(id);
+		}));
+
+		const scroll = () => {
+			latest = latest.scroll(metrics(latest.sections));
+		};
+
+		const release = () => {
+			latest = latest.release();
+		};
 
 		/*
 		 * A section the fragment names on arrival is pinned, and following the page leaves a pinned section alone. The
@@ -216,10 +228,14 @@ export function TOC({
 		 * where following once does, so the page scrolling heard on both costs nothing.
 		 *
 		 * Sections moving without a scroll, as the page settles its styles, fonts and images after mounting or grows
-		 * under the reader, move the reading line across them all the same, so the outline follows their sizes too.
+		 * under the reader, move them across the top edge all the same, so the outline follows their sizes too.
 		 *
 		 * The reader scrolling on their own, with the wheel, by touch, with the pointer or from the keyboard, as opposed
 		 * to the scroll a followed link sets off, releases the section chosen.
+		 *
+		 * A link to the fragment the location already names changes nothing the window could hear, while the browser
+		 * still scrolls to its section. Links are therefore heard as they are clicked, before anything on the page can
+		 * hide the click, but settled only once every handler has had its say: a click a handler cancels is left to it.
 		 */
 
 		const stops = [
@@ -231,6 +247,7 @@ export function TOC({
 			observe(latest.sections, scroll),
 
 			listen(window, "hashchange", select),
+			listen(document, "click", follow, { capture: true }),
 
 			...["wheel", "touchmove", "pointerdown", "keydown"].map(gesture =>
 				listen(window, gesture, release, { passive: true, capture: true })
@@ -255,7 +272,7 @@ export function TOC({
 
 /**
  * Measures where the sections stand in the part of their scrolling box left in view, and whether the box has been
- * scrolled to its end, leaving no section below the reading line a way to reach it.
+ * scrolled to its end, leaving the sections starting low in its last screenful no way to reach the top third.
  *
  * The box is the nearest scrolling ancestor of the first section on the page, or the document where none scrolls; the
  * part left in view stops short of its scroll padding, which is where whatever stands over the box is accounted for.
@@ -292,7 +309,7 @@ function metrics(sections: readonly string[]): TOCMetrics {
 
 		height,
 
-		// a box with nothing to scroll is at its start as much as at its end, and is read by the reading line
+		// a box with nothing to scroll is at its start as much as at its end, and is read from its top
 
 		end: scrolled > 0 && scrolled+client >= total-1
 
@@ -324,7 +341,9 @@ function scroller(element: Element): Optional<HTMLElement> {
  *
  * @returns A function unsubscribing `listener`
  */
-function listen(target: EventTarget, type: string, listener: () => void, options?: AddEventListenerOptions): () => void {
+function listen(
+	target: EventTarget, type: string, listener: (event: Event) => void, options?: AddEventListenerOptions
+): () => void {
 
 	target.addEventListener(type, listener, options);
 
@@ -355,21 +374,6 @@ function reveal({ current, pinned }: Outline): void {
 }
 
 /**
- * Brings the location fragment in step with the section the page puts the reader in, replacing the entry on show so
- * that scrolling leaves the history alone, and handing the router the state it keeps there unchanged. An outline
- * linking to no section leaves the fragment to whatever else on the page keeps it.
- */
-function sync({ sections, current, pinned }: Outline): void {
-
-	const hash = current === undefined ? "" : `#${encodeURIComponent(current)}`;
-
-	if ( sections.length > 0 && !pinned && location.hash !== hash ) {
-		history.replaceState(history.state, "", `${location.pathname}${location.search}${hash}`);
-	}
-
-}
-
-/**
  * An entry of a table of contents with its nested entries settled as an array, whichever form they were given in.
  */
 type Entry = Omit<TOCEntry, "entries"> & {
@@ -395,6 +399,26 @@ function normalise(entries: readonly TOCEntry[] | TOCEntries): readonly Entry[] 
  */
 function targets(entries: readonly Entry[]): readonly string[] {
 	return entries.flatMap(({ href, entries }) => [fragment(href), ...targets(entries)]).filter(id => id !== undefined);
+}
+
+/**
+ * Identifies the element a click follows a link to on this page, as a plain click with the main button does, wherever
+ * the link stands, shadow trees included. A click with a modifier, or on a link opening a new browsing context or a
+ * download, is left to the browser, which opens the link elsewhere and leaves this page where it stands.
+ *
+ * @returns The id the clicked link names by fragment, or `undefined` for a click following no link on this page
+ */
+function followed(event: Event): Optional<string> {
+
+	const link = event.composedPath().find(node => node instanceof HTMLAnchorElement && node.hasAttribute("href"));
+
+	return event instanceof MouseEvent && event.button === 0
+	&& !(event.metaKey || event.ctrlKey || event.shiftKey || event.altKey)
+	&& link instanceof HTMLAnchorElement && /^(_self)?$/i.test(link.target) && !link.hasAttribute("download")
+	&& link.pathname === location.pathname && link.search === location.search
+		? fragment(link.hash)
+		: undefined;
+
 }
 
 /**
