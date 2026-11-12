@@ -45,7 +45,7 @@ clay-tabs {
 
         & > label {
 
-            padding-bottom: var(--skin--spacing-050);
+            padding-bottom: calc(2 * var(--skin--spacing-010));
             margin-bottom: calc(-1 * var(--skin--border-width)); /* The mark sits on the rule, not above it. */
             cursor: pointer;
 
@@ -212,12 +212,6 @@ clay-tabs {
             border-bottom-style: none;
         }
 
-        /* With no rule to clear, the label tightens the room below it, drawing the chosen mark up against its word. */
-
-        & > nav > label {
-            padding-bottom: var(--skin--spacing-025);
-        }
-
     }
 
     & > div {
@@ -257,10 +251,6 @@ clay-tabs {
             & > nav,
             & > span {
                 border-bottom-style: none;
-            }
-
-            & > nav > label {
-                padding-bottom: var(--skin--spacing-025);
             }
 
         }
