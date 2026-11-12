@@ -68,17 +68,17 @@ what it imports.
 - **One widget core**: widgets and layouts share `clay-widgets` whatever their role. A leaf/container split spares
 	nobody anything, since containers build on leaves and an app taking one installs both, and it forces a placement call
 	on every new widget. Concern groups fail the same test: they depend on one another and share no third-party stack, so
-  they multiply manifests, versions and changelogs for no install saving. One package per component pays off only where
-  components are adopted one by one, which a toolkit of this size does not see.
+	they multiply manifests, versions and changelogs for no install saving. One package per component pays off only where
+	components are adopted one by one, which a toolkit of this size does not see.
 - **Heavy stacks apart**: a module group gets a package of its own when it is the only reason its neighbours would
 	install a third-party stack. `clay-markdown` carries the Markdown processing pipeline, keeping the widget core down to
-  Preact, the glyph catalogue and the Metreeca foundations.
+	Preact, the glyph catalogue and the Metreeca foundations.
 - **Glyphs inside**: the `icon` module stays in `clay-widgets`. It is a role mapping over a glyph catalogue taken as a
 	peer dependency, so a package of its own would spare nothing: every widget package needs it, and the catalogue reaches
-  every widget consumer either way.
+	every widget consumer either way.
 - **Services unchanged**: `clay` holds the app-wide contexts and hooks every other package builds on, headless hooks
 	included: a capability reduced to a context and hooks, with no third-party stack, is a module of `clay` rather than a
-  package of its own, as `transfer` is.
+	package of its own, as `transfer` is.
 
 A package holding a collection takes a plural name (`clay-widgets`), and one holding a single capability takes the name
 of that capability (`clay-markdown`). Packages and modules are named after what they contribute, never after the library
@@ -140,12 +140,12 @@ const { labels, active, select } = useModel(() => createTabs({ labels: Object.ke
 ```
 
 - A transition renders the component again on its own, so a handler just calls it; a transition changing nothing renders
-  nothing, and a zero-argument one is passed straight as a handler.
+	nothing, and a zero-argument one is passed straight as a handler.
 - A transition starts from the state the render read and notifies asynchronously: two calls in one handler land where
 	one does, and the data read alongside keeps the earlier value until the next render.
 - The factory runs on the first render only, so the model keeps the props as they stood then: a prop changing later
 	**NEVER** reaches it, unless it is listed as a dependency. A model created from props lists them, and is created again
-  from the factory whenever one changes, losing the state it reached:
+	from the factory whenever one changes, losing the state it reached:
 
 	```tsx
 	const { model: slice, focus } = useModel(() => createWindow({ model }), [model]); // a new query starts from the first items
@@ -223,7 +223,7 @@ elements built from it:
 - **Items run simple to complex**: within a group, an element precedes the elements built on it, as `Stack` precedes
 	`Card`
 - **Shells stand alone**: a shell fills the window, so its outline entry opens a screen of its own in a new tab, laying
-  the shell out and documenting it, rather than a section nesting a second frame inside the page
+	the shell out and documenting it, rather than a section nesting a second frame inside the page
 
 A sample added to a page takes the place these rules give it, never the end of its group by default.
 

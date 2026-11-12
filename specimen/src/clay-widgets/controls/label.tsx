@@ -51,7 +51,8 @@ export function Labels() {
 			<Label><span>Country</span><Select options={countries}/></Label>
 		</div>
 
-		<p>A <code>horizontal</code> label sets the text and the control side by side on one line, centred on each other,
+		<p>A <code>horizontal</code> label sets the text and the control side by side on one line, centred on each
+			other,
 			as a box or a switch stands beside the text naming it. The text goes before or after the control as the
 			children place it.</p>
 

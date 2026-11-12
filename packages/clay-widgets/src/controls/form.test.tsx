@@ -83,7 +83,9 @@ describe("Form", () => {
 		it("checks again on an input event dispatched by a composite field", async () => {
 
 			const onValidate = vi.fn();
-			const form = mount(<Form onValidate={onValidate}><div id="composite"/></Form>);
+			const form = mount(<Form onValidate={onValidate}>
+				<div id="composite"/>
+			</Form>);
 
 			act(() => {
 				form.querySelector("#composite")!.dispatchEvent(new Event("input", { bubbles: true }));
@@ -154,7 +156,9 @@ describe("Form", () => {
 		it("leaves submissions by a submit button to the button", async () => {
 
 			const onSubmit = vi.fn();
-			const form = mount(<Form onSubmit={onSubmit}><button type="submit">Save</button></Form>);
+			const form = mount(<Form onSubmit={onSubmit}>
+				<button type="submit">Save</button>
+			</Form>);
 
 			submit(form, form.querySelector("button")!);
 
@@ -172,7 +176,9 @@ describe("Form", () => {
 
 		it("keeps the page from navigating on a submit button", async () => {
 
-			const form = mount(<Form><button type="submit">Save</button></Form>);
+			const form = mount(<Form>
+				<button type="submit">Save</button>
+			</Form>);
 
 			expect(submit(form, form.querySelector("button")!).defaultPrevented).toBe(true);
 

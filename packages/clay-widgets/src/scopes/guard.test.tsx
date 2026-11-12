@@ -95,7 +95,7 @@ describe("Guard", () => {
 	it("confines a failure to the innermost guard enclosing it", async () => {
 
 		expect(mount(<Guard fallback={<p>outer</p>}><p>held</p><Guard fallback={
-			<p>inner</p>}><Broken/></Guard></Guard>))
+																		   <p>inner</p>}><Broken/></Guard></Guard>))
 			.toBe("<clay-guard><p>held</p><clay-guard><p>inner</p></clay-guard></clay-guard>");
 
 	});

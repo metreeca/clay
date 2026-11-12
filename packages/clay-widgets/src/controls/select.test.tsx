@@ -115,7 +115,8 @@ describe("Select", () => {
 		it("hands over the value of the option picked", async () => {
 
 			const onChange = vi.fn();
-			const select = mount(<Select options={countries} value="it" onChange={onChange}/>)!; // test harness: menu rendered
+			const select = mount(<Select options={countries} value="it" onChange={onChange}/>)!; // test harness: menu
+																								 // rendered
 
 			act(() => {
 				select.value = "de";
