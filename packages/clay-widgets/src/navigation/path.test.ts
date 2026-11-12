@@ -46,6 +46,14 @@ describe("Path", () => {
 
 	});
 
+	it("should expose the steps as a list whatever its styling", async () => {
+
+		mount({ children: ["Home", "Alice"] });
+
+		expect(document.querySelector("clay-path > nav > ol")?.getAttribute("role")).toBe("list");
+
+	});
+
 	it("should drop empty steps", async () => {
 
 		mount({ children: ["Home", undefined, null, false, "Alice"] });

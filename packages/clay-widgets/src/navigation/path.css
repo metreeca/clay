@@ -57,8 +57,6 @@ clay-path {
 
                 margin: 0;
 
-                --clay-path-chevron-height: 0.9ex;
-
                 white-space: nowrap;
 
                 /*
@@ -73,38 +71,20 @@ clay-path {
 
                 /*
                  * Separators, trailing a lone step too, carry empty alternative text, so they are drawn but never
-                 * announced. Each is the lucide right chevron, a little shorter than a lowercase letter and centred on
-                 * the x-height, so it reads as a mark between the words rather than as a letter among them at any
-                 * size. It is painted in the label colour through a mask cropped to the stroke, round caps included.
-                 * The stroke is stated in the glyph, a mask having no way to read a custom property, at a width close
-                 * to the stem of the light text weight. The chevron keeps the label colour under forced colours, which
-                 * would otherwise paint over the whole of the box it is cut from rather than the stroke alone. The
-                 * rules below pick which steps draw one, by giving their pseudo-element its content.
+                 * announced. Each is a single right guillemet set in the text font and painted in the label colour,
+                 * taking the width the font gives it. The rules below pick which steps draw one, giving them content.
                  */
 
                 &::before, &::after {
 
-                    display: inline-block;
+                    margin: 0 var(--skin--spacing-025); /* Between the two steps. */
 
-                    /* The stroke spans 8 by 14 of the units the glyph is drawn on. */
-
-                    width: calc(var(--clay-path-chevron-height) * 8 / 14);
-                    height: var(--clay-path-chevron-height);
-                    margin: 0 calc((var(--skin--spacing-025) + var(--skin--spacing-050)) / 2); /* Between the two steps. */
-
-                    /* Raised off the baseline by half the room the x-height leaves around it. */
-
-                    vertical-align: calc((1ex - var(--clay-path-chevron-height)) / 2);
-
-                    background-color: var(--skin--color-label);
-                    forced-color-adjust: none;
-
-                    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='8 5 8 14' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m9 18 6-6-6-6'/%3E%3C/svg%3E") no-repeat;
+                    color: var(--skin--color-label);
 
                 }
 
                 &:not(:first-child)::before, &:only-child::after {
-                    content: "" / "";
+                    content: "›" / "";
                 }
 
                 &:last-child {
@@ -118,8 +98,8 @@ clay-path {
 
             /*
              * Below the small viewport a phone held upright leaves no room for a row, so the steps stack one per line,
-             * outermost on top, each but the first opening on its chevron. A step too long for the line wraps rather
-             * than clipping, as the whole width is its own, and hangs its later lines under its text, not its chevron.
+             * outermost on top, each but the first opening on its separator. A step too long for the line wraps rather
+             * than clipping, as the whole width is its own, and hangs its later lines under its text, not its mark.
              */
 
             @container style(--skin--viewport-small: off) {
@@ -129,29 +109,23 @@ clay-path {
 
                 & > li {
 
-                    /* The room a chevron takes, the margin to the step it opens included. */
-
-                    --clay-path-chevron-advance: calc(
-                            var(--clay-path-chevron-height) * 8 / 14 + (var(--skin--spacing-025) + var(--skin--spacing-050)) / 2
-                    );
-
                     max-width: 100%;
 
                     white-space: normal;
                     overflow-wrap: anywhere;
 
+                    /*
+                     * The separator takes a column of its own sized to the glyph, and the step the one beside it, so a
+                     * step wrapping onto later lines keeps them under its text whatever width the font gives the mark.
+                     */
+
                     &:not(:first-child) {
 
-                        padding-inline-start: var(--clay-path-chevron-advance);
-                        text-indent: calc(-1 * var(--clay-path-chevron-advance));
+                        display: grid;
+                        grid-template-columns: auto minmax(0, 1fr);
+                        align-items: baseline;
 
-                        /* The indent hangs the step itself, never the lines a block inside it lays out. */
-
-                        & > * {
-                            text-indent: 0;
-                        }
-
-                        /* Flush with the edge, so the chevrons line up under the first step as one column. */
+                        /* Flush with the edge, so the separators line up under the first step as one column. */
 
                         &::before {
                             margin-inline-start: 0;

@@ -72,7 +72,7 @@ export function Path({
 	const steps = toChildArray(children);
 
 	return createElement("clay-path", {}, <nav aria-label={name}>
-		<ol>{steps.map((step, index) =>
+		<ol role="list">{steps.map((step, index) =>
 			<li key={index} aria-current={index === steps.length-1 ? "page" : undefined}>{step}</li>
 		)}</ol>
 	</nav>);
