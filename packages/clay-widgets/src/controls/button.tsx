@@ -90,9 +90,10 @@ export function Button({
 	expanded?: boolean
 
 	/**
-	 * How loud the button appears, told in weight, rule and room rather than in colour, so it stays legible wherever
-	 * colour does not reach: `subtle` keeps no rule and reads as part of the text around it, `strong` is bounded and
-	 * set in the strong weight, and `normal` sits between the two. What the button means is stated apart, by `mode`.
+	 * How loud the button appears. A `subtle` button has no border and reads as part of the text around it. A `normal`
+	 * button is bounded by a border. A `strong` button is filled solid in the colour of its `mode`, and its label is
+	 * set in the strong weight, in a tint of the same hue close to the page colour. What the button means is stated
+	 * apart, by `mode`, and the look only tells how loudly that meaning is put to the reader of the interface.
 	 *
 	 * A button stating nothing takes the look the {@link style!Style styled area} around it assigns as `buttonLook`,
 	 * which is `normal` where nothing assigns it. Stating a look here answers to that alone, so one loud control in a
@@ -104,9 +105,10 @@ export function Button({
 	 * What activating the button will do, told in colour on the five-step scale every meaning in the interface lands
 	 * on: `safe` is the harmless one where another destroys (`note`), `commit` makes a change stick (`pass`), `publish`
 	 * takes the result out to others, worth a moment's attention but not risky (`flag`), `alert` asks for a second
-	 * thought (`warn`), `danger` destroys (`fail`), and `normal`, the default, says nothing in particular and takes no
-	 * colour at all. The five are built alike, a tinted fill ordered by hue, so none of them shouts past its neighbours
-	 * and how loud the button appears stays `look`'s business. A mode is never told in colour alone, so a button
+	 * thought (`warn`), `danger` destroys (`fail`), and `normal`, the default, says nothing in particular and takes the
+	 * subtle accent rather than a step colour. The five steps are built alike: coloured text at the `subtle` look, a
+	 * tinted fill at the `normal` look, and a solid fill at the `strong` one. None of them shouts past its neighbours,
+	 * so how loud the button appears stays the business of `look`. A mode is never told in colour alone, so a button
 	 * carrying one says the same thing in its label or its glyph, for a reader who cannot tell the hues apart.
 	 */
 	mode?: "normal" | "safe" | "commit" | "publish" | "alert" | "danger"

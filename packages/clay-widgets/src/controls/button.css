@@ -111,22 +111,26 @@ clay-button {
     }
 
     /*
-     * How loud the control appears is told in weight, rule and room, and never in colour, so it stays legible in an
-     * interface printed in one ink and leaves the whole colour channel to what the control means. The three steps
-     * keep the same room, so a row mixing them holds its rhythm and the ladder is read off the weight and the rule
-     * rather than off the width of one control against another.
+     * How loud the control appears is told in rule, weight and fill, never in hue, which stays with what the control
+     * means. The three steps keep the same room, so a row mixing them holds its rhythm and the ladder is read off how
+     * the control is drawn rather than off the width of one control against another.
      *
-     * The ordinary step and the loud one are bounded, which is what tells a control from the text it sits in, while
-     * the quiet step keeps no rule and reads as part of that text. The rule is the neutral one the design system
-     * draws every boundary with: the control says what it means through its ink, and a second colour on the edge
-     * would state it twice. The loud step is the one exception, stating its meaning on the edge as well, since a
-     * control a row is meant to lead with is read before it is read closely. It is set strong on top of the rule,
-     * which is what carries it where a row holds several controls and only one of them is the one to take.
+     * The quiet step keeps no rule and reads as part of the text it sits in. The ordinary step is bounded by a rule,
+     * which is what tells a control from that text. Once the control is live the rule takes a share of the colour of
+     * its mode laid over the fill beneath it, so the rule reads as a deeper edge of that fill rather than as a grey
+     * frame drawn around it, while a disabled control keeps the neutral rule the design system draws boundaries with.
+     * The loud step is filled solid in the colour of its mode and set in the strong weight, so it stands out as the one
+     * control a row is meant to lead with. Its rule is laid in the same box and takes the fill once the control is
+     * live, so it keeps the size of its neighbours, while a disabled control keeps the neutral rule.
      */
 
     &[look="normal"] > button,
     &[look="strong"] > button {
         border: var(--skin--border-width) var(--skin--border-style) var(--skin--border-color);
+    }
+
+    &[look="normal"] > button:enabled {
+        border-color: color-mix(in oklab, var(--clay-button-fill) 35%, transparent);
     }
 
     &[look="strong"] {
@@ -139,32 +143,6 @@ clay-button {
                 stroke-width: var(--skin--stroke-width-strong);
             }
 
-        }
-
-        /*
-         * A mark standing alone gives the rule nothing to lean on, where a label set at the strong weight already
-         * bounds the control from inside, so the hairline the design system draws every boundary with reads as an
-         * empty box around the glyph. It is carried twice as far into the ink there, staying the same neutral, which
-         * is what an ordinary control falls back on where it has no step to state.
-         */
-
-        &:not([labelled]) > button {
-            border-color: color-mix(in oklab, var(--skin--border-color) 50%, var(--skin--color));
-        }
-
-        /*
-         * The loud step carrying a meaning draws its rule in its own ink instead, so the edge, the fill and the label
-         * all say the same thing and the control reads as one mark rather than as a coloured face in a neutral frame.
-         * It is the one place a border states what a control means rather than merely bounding it, and the loud step
-         * is where that is worth spending: it is the control a row is meant to lead with.
-         *
-         * Reading the ink off `currentColor` keeps the edge and the label one colour however the step is retuned, and
-         * costs one rule where naming each step would cost five. It holds 3:1 against the page and against the fill in
-         * both schemes, 3.57:1 at the worst, which is the contrast a boundary standing on its own owes.
-         */
-
-        &:not([mode="normal"]) > button:enabled {
-            border-color: currentColor;
         }
 
         /*
@@ -187,9 +165,9 @@ clay-button {
      * would say more about the widget than about the action the reader is about to take.
      *
      * The label takes the stroke role of its step rather than the anchor. In the light scheme the two are one colour
-     * for every step but caution, whose anchor is a yellow fill at 1.73:1 on the page, while in the dark scheme each
-     * stroke is carried towards the page text and reads lighter than its anchor. A stroke role holds AA on the tint
-     * of its step and on the bare page alike, so the quiet step drops the fill and keeps the same ink.
+     * for every step, while in the dark scheme each stroke is carried towards the page text and reads lighter than its
+     * anchor. A stroke role holds AA on the bare page, so the quiet step drops the fill and keeps the same ink, and on
+     * the tint of its step for every step but caution, whose label the rule below darkens to hold AA on its tint.
      *
      * A step paints a control that is live, and one that is not leaves it to the disabled colour the design system
      * greys every control with, which is why each rule is held to `:enabled`.
@@ -203,9 +181,17 @@ clay-button {
      * The neutral pair is the one the design system lays over whatever surface a control stands on, so the gesture
      * reads alike on the page and on the sunken tray. It keeps the label and the focus ring legible everywhere but on
      * an overlay, where a control carrying no step would take the accent states instead.
+     *
+     * A control carrying no step is set in the subtle accent at every look, at rest and under the gesture alike, so
+     * it reads as a control without claiming a meaning: 10.01:1 on the light page and 7.93:1 on the dark one.
      */
 
     &[mode="normal"] > button:enabled {
+
+        --clay-button-fill: var(--skin--color-subtle);
+        --clay-button-ink: color-mix(in oklab, var(--skin--color-subtle) 12%, var(--skin--background-color));
+
+        color: var(--skin--color-subtle);
 
         &:hover {
             background-color: var(--skin--background-color-hover-neutral);
@@ -219,11 +205,15 @@ clay-button {
 
     /*
      * A status button paints its label in the stroke of its step, which holds AA on the step's tint alone: on the fills
-     * the pointer and the press deepen it to, the label takes the page text, and the caution label takes it at rest
-     * too, since the caution stroke is never set on its own tint.
+     * the pointer and the press deepen it to, the label takes the page text. The caution stroke is never set on its
+     * own tint, where it falls to 4.16:1, so the caution label carries it 15% of the way towards the page text at
+     * rest, keeping the gold while holding 5.93:1 on the light tint and 5.84:1 on the dark one.
      */
 
     &[mode="safe"] > button:enabled {
+
+        --clay-button-fill: var(--skin--color-note);
+        --clay-button-ink: var(--skin--background-color-note);
 
         color: var(--skin--color-note-stroke);
         background-color: var(--skin--background-color-note);
@@ -242,6 +232,9 @@ clay-button {
 
     &[mode="commit"] > button:enabled {
 
+        --clay-button-fill: var(--skin--color-pass);
+        --clay-button-ink: var(--skin--background-color-pass);
+
         color: var(--skin--color-pass-stroke);
         background-color: var(--skin--background-color-pass);
 
@@ -258,6 +251,9 @@ clay-button {
     }
 
     &[mode="publish"] > button:enabled {
+
+        --clay-button-fill: var(--skin--color-flag);
+        --clay-button-ink: var(--skin--background-color-flag);
 
         color: var(--skin--color-flag-stroke);
         background-color: var(--skin--background-color-flag);
@@ -276,20 +272,28 @@ clay-button {
 
     &[mode="alert"] > button:enabled {
 
-        color: var(--skin--color);
+        --clay-button-fill: var(--skin--color-warn);
+        --clay-button-ink: var(--skin--color-over);
+
+        color: color-mix(in oklab, var(--skin--color-warn-stroke) 85%, var(--skin--color));
         background-color: var(--skin--background-color-warn);
 
         &:hover {
+            color: var(--skin--color);
             background-color: color-mix(in oklab, var(--skin--color-warn) 12%, var(--skin--background-color-warn));
         }
 
         &:active {
+            color: var(--skin--color);
             background-color: color-mix(in oklab, var(--skin--color-warn) 24%, var(--skin--background-color-warn));
         }
 
     }
 
     &[mode="danger"] > button:enabled {
+
+        --clay-button-fill: var(--skin--color-fail);
+        --clay-button-ink: var(--skin--background-color-fail);
 
         color: var(--skin--color-fail-stroke);
         background-color: var(--skin--background-color-fail);
@@ -302,6 +306,45 @@ clay-button {
         &:active {
             color: var(--skin--color);
             background-color: color-mix(in oklab, var(--skin--color-fail) 24%, var(--skin--background-color-fail));
+        }
+
+    }
+
+    /*
+     * A live loud control is filled solid, so it reads as a block of ink a row is meant to lead with. The fill is the
+     * anchor each mode names above, or the subtle accent where the control carries no step. The label takes the ink
+     * paired with the fill, the tint of the same hue, which holds AA in both schemes, 4.56:1 at the worst, over the
+     * light green. The light gold falls short of its own tint, at 4.16:1, so caution sets its label in the colour the
+     * design system pairs with a solid fill instead, at 4.87:1 light and 5.48:1 dark. The rule takes the fill, keeping
+     * the control the size of its neighbours, while a disabled control keeps the neutral rule and the disabled grey.
+     *
+     * Under the pointer and the press the fill travels by a fifth and by two fifths towards the page text, which
+     * only widens the contrast of the label set over it, so the two states never cost the control its legibility.
+     *
+     * The focus ring is drawn outside the fill, where it meets the page and holds 3:1 in both schemes: the ring the
+     * design system draws inside a control would sit on the fill, against which its grey all but disappears.
+     *
+     * The rules follow the mode rules they override, matching them in specificity and winning by order.
+     */
+
+    &[look="strong"] > button:enabled {
+
+        color: var(--clay-button-ink);
+        background-color: var(--clay-button-fill);
+        border-color: transparent;
+
+        &:focus-visible {
+            outline-offset: var(--skin--border-width);
+        }
+
+        &:hover {
+            color: var(--clay-button-ink);
+            background-color: color-mix(in oklab, var(--clay-button-fill) 80%, var(--skin--color));
+        }
+
+        &:active {
+            color: var(--clay-button-ink);
+            background-color: color-mix(in oklab, var(--clay-button-fill) 60%, var(--skin--color));
         }
 
     }
@@ -326,6 +369,16 @@ clay-button {
     }
 
     /*
+     * Caution sets its label in the page text only to keep it off its own tint. With no tint beneath it at rest, the
+     * quiet step paints the label in the caution stroke, which holds AA on the bare page in both schemes, at 4.87:1
+     * on the light one and 5.48:1 on the dark one, and leaves the page text to the fills of the pointer and the press.
+     */
+
+    &[look="subtle"][mode="alert"] > button:enabled:not(:hover, :active) {
+        color: var(--skin--color-warn-stroke);
+    }
+
+    /*
      * A button stating no look of its own takes the one the area around it sets, read off the `--clay-button-look`
      * knob through a style query: a rule has no other way to branch on a value, and the knob inherits, so every
      * button sits inside a container answering for it without a rule declaring one. The attribute has to be absent
@@ -339,7 +392,13 @@ clay-button {
     @container style(--clay-button-look: normal) {
 
         &:not([look]) > button {
+
             border: var(--skin--border-width) var(--skin--border-style) var(--skin--border-color);
+
+            &:enabled {
+                border-color: color-mix(in oklab, var(--clay-button-fill) 35%, transparent);
+            }
+
         }
 
     }
@@ -359,12 +418,26 @@ clay-button {
 
             }
 
-            &:not([labelled]) > button {
-                border-color: color-mix(in oklab, var(--skin--border-color) 50%, var(--skin--color));
-            }
+            & > button:enabled {
 
-            &:not([mode="normal"]) > button:enabled {
-                border-color: currentColor;
+                color: var(--clay-button-ink);
+                background-color: var(--clay-button-fill);
+                border-color: transparent;
+
+                &:focus-visible {
+                    outline-offset: var(--skin--border-width);
+                }
+
+                &:hover {
+                    color: var(--clay-button-ink);
+                    background-color: color-mix(in oklab, var(--clay-button-fill) 80%, var(--skin--color));
+                }
+
+                &:active {
+                    color: var(--clay-button-ink);
+                    background-color: color-mix(in oklab, var(--clay-button-fill) 60%, var(--skin--color));
+                }
+
             }
 
             &[labelled] > button .lucide {
@@ -386,6 +459,10 @@ clay-button {
                 background-color: transparent;
             }
 
+        }
+
+        &:not([look])[mode="alert"] > button:enabled:not(:hover, :active) {
+            color: var(--skin--color-warn-stroke);
         }
 
     }
