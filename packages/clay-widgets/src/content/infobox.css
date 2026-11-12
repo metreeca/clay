@@ -130,7 +130,7 @@ clay-infobox {
                      * dark one, at 3.09:1; half a point less brings either to the very threshold.
                      */
 
-                    list-style-type: "• ";
+                    list-style-type: "· ";
 
                     & > li::marker {
                         color: light-dark(
