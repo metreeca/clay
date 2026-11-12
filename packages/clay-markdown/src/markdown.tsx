@@ -117,8 +117,7 @@ export interface Meta {
  *   navigation beside the document; nothing at all for a text without headings. While the document is on the page,
  *   the entry of the heading at the top of the viewport is marked as the current location and followed as the reader
  *   scrolls, so the outline shows where they stand; no entry is marked while the first heading is below the view.
- *   Below the large viewport the outline folds behind a single line naming the section the reader is in. Each entry
- *   keeps its heading to one line, cut short with an ellipsis where the heading outruns the column
+ *   Each entry keeps its heading to one line, cut short with an ellipsis where the heading outruns the column
  * - **front matter**: the values the YAML front matter declares, the text itself left unrendered
  *
  * Links to Markdown files are rewritten to the route serving them, `guide.md` to `guide` and `index.md` to the folder
@@ -156,7 +155,7 @@ export function Markdown({
 
 	/**
 	 * The accessible name of the table of contents, such as `Contents`, telling it apart from other navigation
-	 * landmarks and naming the folded outline while no heading is marked; unnamed if omitted, ignored in other modes.
+	 * landmarks on the page, such as the site navigation around a document; unnamed if omitted, ignored in other modes.
 	 */
 	name?: string
 
