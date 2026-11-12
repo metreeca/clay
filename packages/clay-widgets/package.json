@@ -57,6 +57,14 @@
       "@metreeca/source": "./src/controls/button.css",
       "default": "./dist/controls/button.css"
     },
+    "./checkbox": {
+      "@metreeca/source": "./src/controls/checkbox.tsx",
+      "default": "./dist/controls/checkbox.js"
+    },
+    "./checkbox.css": {
+      "@metreeca/source": "./src/controls/checkbox.css",
+      "default": "./dist/controls/checkbox.css"
+    },
     "./choice": {
       "@metreeca/source": "./src/controls/choice.tsx",
       "default": "./dist/controls/choice.js"
@@ -65,29 +73,69 @@
       "@metreeca/source": "./src/controls/choice.css",
       "default": "./dist/controls/choice.css"
     },
-    "./link": {
-      "@metreeca/source": "./src/controls/link.tsx",
-      "default": "./dist/controls/link.js"
+    "./fieldset": {
+      "@metreeca/source": "./src/controls/fieldset.tsx",
+      "default": "./dist/controls/fieldset.js"
     },
-    "./link.css": {
-      "@metreeca/source": "./src/controls/link.css",
-      "default": "./dist/controls/link.css"
+    "./fieldset.css": {
+      "@metreeca/source": "./src/controls/fieldset.css",
+      "default": "./dist/controls/fieldset.css"
     },
-    "./path": {
-      "@metreeca/source": "./src/controls/path.tsx",
-      "default": "./dist/controls/path.js"
+    "./form": {
+      "@metreeca/source": "./src/controls/form.tsx",
+      "default": "./dist/controls/form.js"
     },
-    "./path.css": {
-      "@metreeca/source": "./src/controls/path.css",
-      "default": "./dist/controls/path.css"
+    "./form.css": {
+      "@metreeca/source": "./src/controls/form.css",
+      "default": "./dist/controls/form.css"
     },
-    "./toc": {
-      "@metreeca/source": "./src/controls/toc.tsx",
-      "default": "./dist/controls/toc.js"
+    "./input": {
+      "@metreeca/source": "./src/controls/input.tsx",
+      "default": "./dist/controls/input.js"
     },
-    "./toc.css": {
-      "@metreeca/source": "./src/controls/toc.css",
-      "default": "./dist/controls/toc.css"
+    "./input.css": {
+      "@metreeca/source": "./src/controls/input.css",
+      "default": "./dist/controls/input.css"
+    },
+    "./label": {
+      "@metreeca/source": "./src/controls/label.tsx",
+      "default": "./dist/controls/label.js"
+    },
+    "./label.css": {
+      "@metreeca/source": "./src/controls/label.css",
+      "default": "./dist/controls/label.css"
+    },
+    "./radio": {
+      "@metreeca/source": "./src/controls/radio.tsx",
+      "default": "./dist/controls/radio.js"
+    },
+    "./radio.css": {
+      "@metreeca/source": "./src/controls/radio.css",
+      "default": "./dist/controls/radio.css"
+    },
+    "./select": {
+      "@metreeca/source": "./src/controls/select.tsx",
+      "default": "./dist/controls/select.js"
+    },
+    "./select.css": {
+      "@metreeca/source": "./src/controls/select.css",
+      "default": "./dist/controls/select.css"
+    },
+    "./switch": {
+      "@metreeca/source": "./src/controls/switch.tsx",
+      "default": "./dist/controls/switch.js"
+    },
+    "./switch.css": {
+      "@metreeca/source": "./src/controls/switch.css",
+      "default": "./dist/controls/switch.css"
+    },
+    "./textarea": {
+      "@metreeca/source": "./src/controls/textarea.tsx",
+      "default": "./dist/controls/textarea.js"
+    },
+    "./textarea.css": {
+      "@metreeca/source": "./src/controls/textarea.css",
+      "default": "./dist/controls/textarea.css"
     },
     "./tool": {
       "@metreeca/source": "./src/shells/tool.tsx",
@@ -168,6 +216,30 @@
     "./text.css": {
       "@metreeca/source": "./src/content/text.css",
       "default": "./dist/content/text.css"
+    },
+    "./link": {
+      "@metreeca/source": "./src/navigation/link.tsx",
+      "default": "./dist/navigation/link.js"
+    },
+    "./link.css": {
+      "@metreeca/source": "./src/navigation/link.css",
+      "default": "./dist/navigation/link.css"
+    },
+    "./path": {
+      "@metreeca/source": "./src/navigation/path.tsx",
+      "default": "./dist/navigation/path.js"
+    },
+    "./path.css": {
+      "@metreeca/source": "./src/navigation/path.css",
+      "default": "./dist/navigation/path.css"
+    },
+    "./toc": {
+      "@metreeca/source": "./src/navigation/toc.tsx",
+      "default": "./dist/navigation/toc.js"
+    },
+    "./toc.css": {
+      "@metreeca/source": "./src/navigation/toc.css",
+      "default": "./dist/navigation/toc.css"
     },
     "./more": {
       "@metreeca/source": "./src/signals/more.tsx",

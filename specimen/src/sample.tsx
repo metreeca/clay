@@ -1,5 +1,5 @@
 /*
- * Copyright © 2023-2026 Metreeca srl
+ * Copyright © 2026 Metreeca srl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -80,7 +80,7 @@ export function Samples({ entries, sample = swatch }: {
 
 	return <table class="samples">
 
-		<tbody>{entries.map(([ property, note ]) => <tr key={property}>
+		<tbody>{entries.map(([property, note]) => <tr key={property}>
 
 			<td class="sample">{sample(property)}</td>
 			<td><code>{property}</code></td>
@@ -113,7 +113,7 @@ export function Pairs({ pairs }: {
 
 	return <table class="samples">
 
-		<tbody>{pairs.map(([ color, background, note ]) => <tr key={color}>
+		<tbody>{pairs.map(([color, background, note]) => <tr key={color}>
 
 			<td class="sample">
 				<span class="pair">
@@ -160,7 +160,7 @@ export function Ramp({ chips, stops }: {
 
 }) {
 
-	return <ol class={chips ? "ramp chips" : "ramp"}>{stops.map(([ property, step ]) => <li key={property}>
+	return <ol class={chips ? "ramp chips" : "ramp"}>{stops.map(([property, step]) => <li key={property}>
 
 		<span style={{ backgroundColor: css.var(property) }}/>
 		<code>{step}</code>

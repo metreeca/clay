@@ -1,5 +1,5 @@
 /*
- * Copyright © 2023-2026 Metreeca srl
+ * Copyright © 2026 Metreeca srl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-import { equals, Primitive } from "../Core/src/index.js";
 import { useRouter } from "@metreeca/data/contexts/router";
 import { useStorage } from "@metreeca/data/hooks/storage";
 import { useEffect, useState } from "react";
+import { equals, Primitive } from "../Core/src/index.js";
 
 
 /**
@@ -30,15 +30,15 @@ export interface Parameters {
 }
 
 
-export function useParameters<T extends Parameters=Parameters>(initial: T, storage?: Storage): [T, (parameters: T) => void] {
+export function useParameters<T extends Parameters = Parameters>(initial: T, storage?: Storage): [T, (parameters: T) => void] {
 
-	const [route]=useRouter();
+	const [route] = useRouter();
 
-	const [state, setState]=(storage === undefined)
+	const [state, setState] = (storage === undefined)
 		? useState(initial)
 		: useStorage(storage, route, initial);
 
-	const value={ ...state, ...parameters() };
+	const value = { ...state, ...parameters() };
 
 	useEffect(() => {
 
@@ -61,13 +61,13 @@ export function useParameters<T extends Parameters=Parameters>(initial: T, stora
 export function parameters(query?: Parameters, defaults?: Parameters): Parameters {
 	if ( query === undefined ) { // getter
 
-		const query={};
+		const query = {};
 
 		new URLSearchParams(location.search.substring(1)).forEach((value, key) => {
 
-			const current=(query as any)[key];
+			const current = (query as any)[key];
 
-			(query as any)[key]=current === undefined ? value
+			(query as any)[key] = current === undefined ? value
 				: Array.isArray(current) ? [...current, value]
 					: [current, value];
 
@@ -77,7 +77,7 @@ export function parameters(query?: Parameters, defaults?: Parameters): Parameter
 
 	} else { // setter
 
-		const params=new URLSearchParams();
+		const params = new URLSearchParams();
 
 		Object.entries(query)
 
@@ -87,7 +87,7 @@ export function parameters(query?: Parameters, defaults?: Parameters): Parameter
 				params.append(key, String(value))
 			));
 
-		const search=params.toString();
+		const search = params.toString();
 
 		history.replaceState(history.state, document.title,
 			search ? `${location.pathname}?${search}${location.hash}` : `${location.pathname}${location.hash}`

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2023-2026 Metreeca srl
+ * Copyright © 2026 Metreeca srl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -70,11 +70,11 @@ export function TileAuto<V extends Value>({
 
 }) {
 
-	const [keywords, setKeywords]=useState("");
-	const [offset, setOffset]=useState(0);
-	const [limit, setLimit]=useState(AutoSize);
+	const [keywords, setKeywords] = useState("");
+	const [offset, setOffset] = useState(0);
+	const [limit, setLimit] = useState(AutoSize);
 
-	const [options, setOptions]=useState<V[]>();
+	const [options, setOptions] = useState<V[]>();
 
 
 	function clear() {
@@ -107,11 +107,11 @@ export function TileAuto<V extends Value>({
 
 				if ( e.target instanceof HTMLInputElement ) {
 
-					const select=e.currentTarget.querySelector("select");
+					const select = e.currentTarget.querySelector("select");
 
 					if ( select ) {
 						select.focus();
-						select.selectedIndex=0;
+						select.selectedIndex = 0;
 					}
 
 					return true;
@@ -128,7 +128,7 @@ export function TileAuto<V extends Value>({
 
 		onBlur: e => {
 
-			const memo={ ...e };
+			const memo = { ...e };
 
 			setTimeout(() => {
 
@@ -153,7 +153,7 @@ export function TileAuto<V extends Value>({
 
 					e => {
 
-						const keywords=e.currentTarget.value.trim();
+						const keywords = e.currentTarget.value.trim();
 
 						if ( keywords.length >= AutoLength ) {
 							source({ keywords, offset, limit }).then(setOptions);

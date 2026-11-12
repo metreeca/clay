@@ -1,5 +1,5 @@
 /*
- * Copyright © 2023-2026 Metreeca srl
+ * Copyright © 2026 Metreeca srl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -49,29 +49,29 @@ type Action = readonly [Mode, string, Icon.LucideIcon]
 type Form = readonly [string, (look: Look, action: Action) => ComponentChild]
 
 
-const looks: ReadonlyArray<Look> = [ "subtle", "normal", "strong" ];
+const looks: ReadonlyArray<Look> = ["subtle", "normal", "strong"];
 
 const actions: ReadonlyArray<Action> = [
 
-	[ "normal", "Close", Icon.Close ],
-	[ "safe", "OK", Icon.Accept ],
-	[ "commit", "Save", Icon.Save ],
-	[ "publish", "Share", Icon.Share2 ],
-	[ "alert", "Overwrite", Icon.Alert ],
-	[ "danger", "Delete", Icon.Delete ]
+	["normal", "Close", Icon.Close],
+	["safe", "OK", Icon.Accept],
+	["commit", "Save", Icon.Save],
+	["publish", "Share", Icon.Share2],
+	["alert", "Overwrite", Icon.Alert],
+	["danger", "Delete", Icon.Delete]
 
 ];
 
 const forms: ReadonlyArray<Form> = [
 
-	[ "label and glyph", (look, [ mode, label, Glyph ]) =>
-		<Button look={look} mode={mode} icon={<Glyph/>} label={label}/> ],
+	["label and glyph", (look, [mode, label, Glyph]) =>
+		<Button look={look} mode={mode} icon={<Glyph/>} label={label}/>],
 
-	[ "label", (look, [ mode, label ]) =>
-		<Button look={look} mode={mode} label={label}/> ],
+	["label", (look, [mode, label]) =>
+		<Button look={look} mode={mode} label={label}/>],
 
-	[ "glyph", (look, [ mode, label, Glyph ]) =>
-		<Button look={look} mode={mode} icon={<Glyph/>} name={label}/> ]
+	["glyph", (look, [mode, label, Glyph]) =>
+		<Button look={look} mode={mode} icon={<Glyph/>} name={label}/>]
 
 ];
 
@@ -113,7 +113,7 @@ export function Buttons() {
 			read as five meanings rather than as five degrees of loudness. Since no step is told by colour alone, every
 			button here states the same thing in its glyph and its label.</p>
 
-		{forms.map(([ form, sample ]) => <Matrix key={form} form={form} sample={sample}/>)}
+		{forms.map(([form, sample]) => <Matrix key={form} form={form} sample={sample}/>)}
 
 		<p>A disabled button leaves its mode behind and takes the greyed colour every inactive control shares, since
 			a control that answers nothing has nothing to say about what it would do.</p>

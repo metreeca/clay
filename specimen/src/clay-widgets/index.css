@@ -1,5 +1,5 @@
 /*
- * Copyright © 2025-2026 Metreeca srl
+ * Copyright © 2026 Metreeca srl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,7 +31,57 @@
 }
 
 
-/**** Paths ***********************************************************************************************************/
+/**** Fields **********************************************************************************************************/
+
+/*
+ * Split labels and their fields take two columns, the labels as wide as the longest one and the fields the rest of the
+ * row, so the fields line up whatever the length of the text naming them. A column of options stacks them one per line.
+ */
+
+.fields {
+    display: grid;
+    grid-template-columns: max-content minmax(0, 1fr);
+    align-items: center;
+    gap: var(--skin--spacing-050) var(--skin--spacing-100);
+    margin-bottom: var(--skin--spacing-100);
+}
+
+/*
+ * A grid of fields lays them out in columns of equal width, as many as the panel holds, so fields of different kinds
+ * line up and take the same room whatever the width the platform would give each of them on its own.
+ */
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(calc(12 * var(--skin--spacing-100)), 1fr));
+    align-items: center;
+    gap: var(--skin--spacing-050) var(--skin--spacing-100);
+}
+
+.column {
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    row-gap: var(--skin--spacing-050);
+}
+
+/*
+ * A field group keeps clear of the prose around it as a sample panel does, and the row inside it sits flush with the
+ * frame, whose own room already holds it clear of the line drawn around the fields it gathers.
+ */
+
+fieldset {
+
+    margin-block: var(--skin--spacing-100) var(--skin--spacing-150);
+
+    & :is(.controls, .fields) {
+        margin: 0;
+    }
+
+}
+
+
+/**** Paths***********************************************************************************************************/
 
 /* Trails stack down the page, the narrow one held to a fraction of the measure so that it has to clip. */
 

@@ -1,0 +1,33 @@
+/*
+ * Copyright © 2026 Metreeca srl
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/* A field is drawn as the design system draws every native field, standing wherever the layout places it. */
+
+clay-input {
+
+    display: contents;
+
+    /*
+     * An empty date or time field shows the pattern of its value where a text field shows its placeholder, so the
+     * pattern takes the placeholder colour, telling a field still to be filled from one holding a value. The field
+     * holding the keyboard takes the text colour back, since the parts the reader types land in the pattern itself.
+     */
+
+    &[empty] > input:is([type=date], [type=time]):not(:focus) {
+        color: var(--skin--color-placeholder);
+    }
+
+}

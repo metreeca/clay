@@ -1,5 +1,5 @@
 /*
- * Copyright © 2023-2026 Metreeca srl
+ * Copyright © 2026 Metreeca srl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -94,7 +94,8 @@ describe("Guard", () => {
 
 	it("confines a failure to the innermost guard enclosing it", async () => {
 
-		expect(mount(<Guard fallback={<p>outer</p>}><p>held</p><Guard fallback={<p>inner</p>}><Broken/></Guard></Guard>))
+		expect(mount(<Guard fallback={<p>outer</p>}><p>held</p><Guard fallback={
+			<p>inner</p>}><Broken/></Guard></Guard>))
 			.toBe("<clay-guard><p>held</p><clay-guard><p>inner</p></clay-guard></clay-guard>");
 
 	});
@@ -103,7 +104,10 @@ describe("Guard", () => {
 
 		mount(<Guard><Broken/></Guard>);
 
-		expect(console.error).toHaveBeenCalledWith(expect.objectContaining({ message: "broken", stack: expect.any(String) }));
+		expect(console.error).toHaveBeenCalledWith(expect.objectContaining({
+			message: "broken",
+			stack: expect.any(String)
+		}));
 
 	});
 

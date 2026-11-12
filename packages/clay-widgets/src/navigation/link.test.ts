@@ -1,5 +1,5 @@
 /*
- * Copyright © 2023-2026 Metreeca srl
+ * Copyright © 2026 Metreeca srl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -239,7 +239,10 @@ describe("Link", () => {
 
 		it("should leave elements unwrapped", async () => {
 
-			mount({ href: "/a", children: [createElement("img", { alt: "" }), "Home", createElement("b", {}, "Page")] });
+			mount({
+				href: "/a",
+				children: [createElement("img", { alt: "" }), "Home", createElement("b", {}, "Page")]
+			});
 
 			expect(content()).toBe(`<img alt=""><span>Home</span><b>Page</b>`);
 

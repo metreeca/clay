@@ -1,5 +1,5 @@
 /*
- * Copyright © 2023-2026 Metreeca srl
+ * Copyright © 2026 Metreeca srl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -88,7 +88,6 @@ const pipeline = unified()
 	.use(rehypeAccess);
 
 
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /**
@@ -156,8 +155,8 @@ export function Markdown({
 	meta?: "toc" | string | ((meta: Meta) => ComponentChildren)
 
 	/**
-	 * The accessible name of the table of contents, such as `Contents`, telling it apart from other navigation landmarks
-	 * and naming the folded outline above the first heading; unnamed if omitted, and ignored in other modes.
+	 * The accessible name of the table of contents, such as `Contents`, telling it apart from other navigation
+	 * landmarks and naming the folded outline above the first heading; unnamed if omitted, and ignored in other modes.
 	 */
 	name?: string
 
@@ -197,10 +196,10 @@ export function Markdown({
 	}, [meta]);
 
 	return useMemo(() => meta === undefined ? createElement("clay-markdown", {}, render(transform(children)))
-		: meta === "toc" ? outline(transform(children), name)
-			: typeof meta === "function" ? meta(entries(children))
-				: entries(children)[meta]
-	, [meta, children, name]);
+			: meta === "toc" ? outline(transform(children), name)
+				: typeof meta === "function" ? meta(entries(children))
+					: entries(children)[meta]
+		, [meta, children, name]);
 
 }
 
@@ -212,8 +211,8 @@ export function Markdown({
  */
 interface Section {
 
-	readonly heading: Element
-	readonly nested: readonly Section[]
+	readonly heading: Element;
+	readonly nested: readonly Section[];
 
 }
 
@@ -270,7 +269,7 @@ function nest(headings: readonly Element[], level: number = 1): readonly Section
 	const [heading, ...rest] = headings;
 
 	return heading === undefined ? [] : [
-		{ heading, nested: level < Depth ? nest(rest.slice(0, boundary(heading, rest)), level + 1) : [] },
+		{ heading, nested: level < Depth ? nest(rest.slice(0, boundary(heading, rest)), level+1) : [] },
 		...nest(rest.slice(boundary(heading, rest)), level)
 	];
 
@@ -335,7 +334,7 @@ function rehypeAlerts() {
 
 		if ( classes(node).includes("markdown-alert-title") ) {
 			node.children = node.children.map(child => child.type === "text"
-				? { ...child, value: child.value.replace(/\p{L}+/u, word => word[0] + word.slice(1).toLowerCase()) }
+				? { ...child, value: child.value.replace(/\p{L}+/u, word => word[0]+word.slice(1).toLowerCase()) }
 				: child
 			);
 		}

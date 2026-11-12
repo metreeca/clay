@@ -1,5 +1,5 @@
 /*
- * Copyright © 2023-2026 Metreeca srl
+ * Copyright © 2026 Metreeca srl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,8 +22,8 @@
 
 import { Board } from "@metreeca/specimen/clay/board.js";
 import { Fetch } from "@metreeca/specimen/clay/fetch.js";
-import { Model } from "@metreeca/specimen/clay/model.js";
 import { Focus } from "@metreeca/specimen/clay/focus.js";
+import { Model } from "@metreeca/specimen/clay/model.js";
 import { Storage } from "@metreeca/specimen/clay/storage.js";
 import { Transfer } from "@metreeca/specimen/clay/transfer.js";
 import { Page, type Sample } from "@metreeca/specimen/index.core.js";

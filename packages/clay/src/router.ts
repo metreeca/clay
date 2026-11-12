@@ -1,5 +1,5 @@
 /*
- * Copyright © 2023-2026 Metreeca srl
+ * Copyright © 2026 Metreeca srl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -620,7 +620,7 @@ export function Routes({
 
 		if ( isDefined(target) ) {
 
-			navigate({ route: target, replace: true }); // replacing the entry moved from, so going back never lands on it
+			navigate({ route: target, replace: true }); // replacing the entry, so going back never lands on it
 
 		} else {
 
@@ -716,7 +716,7 @@ export function Routes({
 
 			return attach(
 				isDefined(tail) && route.endsWith("/") ? `${route.slice(0, -1)}${tail}` : route,
-				route === filled ? split(section).annex : annex // a target naming no annex carries the current one along
+				route === filled ? split(section).annex : annex // a target with no annex keeps the current one
 			);
 
 		} else {

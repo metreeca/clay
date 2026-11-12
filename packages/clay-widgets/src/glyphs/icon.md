@@ -7,10 +7,10 @@ for Lucide itself, and MIT for the icons it derives from [Feather](https://feath
 reproduced below, as Lucide ships them.
 
 An application distributing a build that includes any glyph carries both notices with it. A bundle does not carry them
-on its own: the `@license` banners in the `lucide-preact` sources survive an unminified build, but not the minifier
-this repository's toolchain runs by default, and an `esbuild.legalComments` setting does not bring them back under
-Vite 8. Copy the text below into a `NOTICE` or `THIRD-PARTY` file shipped beside the application, or configure the
-bundler to keep legal comments and verify the built file actually contains them.
+on its own: the `@license` banners in the `lucide-preact` sources survive an unminified build, but not the minifier this
+repository's toolchain runs by default, and an `esbuild.legalComments` setting does not bring them back under Vite 8.
+Copy the text below into a `NOTICE` or `THIRD-PARTY` file shipped beside the application, or configure the bundler to
+keep legal comments and verify the built file actually contains them.
 
 # Lucide
 

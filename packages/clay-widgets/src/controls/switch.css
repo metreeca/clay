@@ -1,0 +1,154 @@
+/*
+ * Copyright © 2026 Metreeca srl
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/*
+ * A switch is drawn as a thumb sliding along a track, standing at the start while off and at the end while on, so its
+ * state reads by position as well as by colour. The track is a pill as tall as a checkbox and a little over half as
+ * wide again, edged in the field border and sunk into the page as an empty field is; switched on, it fills in the
+ * colour of a control that answers, as a ticked box does. The native checkbox carrying the state is drawn on
+ * directly, so the platform keeps its keys, its focus and its state, and the focus mark the design system gives a
+ * checkbox follows the rounded outline of the pill rather than squaring off around it as a drawn ring would.
+ */
+
+clay-switch {
+
+    display: contents;
+
+    & > input {
+
+        appearance: none;
+
+        position: relative;
+        flex-shrink: 0;
+
+        inline-size: calc(1.6 * var(--skin--scaling-100));
+        block-size: var(--skin--scaling-100);
+        margin: 0;
+
+        border: var(--skin--border-width) var(--skin--border-style) var(--skin--border-color-field);
+        border-radius: calc(var(--skin--scaling-100) / 2);
+        background-color: var(--skin--background-color-sunken);
+
+        vertical-align: middle;
+        cursor: pointer;
+
+        transition-property: border-color, background-color;
+        transition-duration: var(--skin--duration-fast);
+        transition-timing-function: var(--skin--easing-standard);
+
+        /*
+         * The thumb is a disc set inside the track by one border width on every side and drawn a little smaller, an
+         * optical nudge below the spacing scale, so a clear ring parts it from the edge of the pill in every state,
+         * the disabled one included, where a grey thumb would otherwise merge with the grey line around it. It is
+         * painted in the label colour while off, standing out from the sunken track without claiming the colour a live
+         * setting is painted in once the reader switches it on and the thumb slides to the far end.
+         */
+
+        &::before {
+
+            content: "";
+
+            position: absolute;
+            inset-block: var(--skin--border-width);
+            inset-inline-start: var(--skin--border-width);
+
+            aspect-ratio: 1;
+            border-radius: 50%;
+            scale: 0.9;
+            background-color: var(--skin--color-label);
+
+            transition-property: inset-inline-start, background-color;
+            transition-duration: var(--skin--duration-fast);
+            transition-timing-function: var(--skin--easing-standard);
+
+        }
+
+        /*
+         * Switched on, the track fills in the colour of a control that answers and the thumb slides to its end,
+         * painted in the colour set over a saturated fill. The thumb is placed by its logical start alone, so the
+         * switch mirrors in right-to-left text, standing at the right while off and at the left while on, as
+         * platforms mirror their switches. It lands as far from the end of the pill as it starts from the beginning
+         * whatever the width the pill is drawn at: the room inside the border, less the thumb, as tall as the track
+         * less its border and inner room on both sides, and less the inner room at the end.
+         */
+
+        &:checked {
+
+            border-color: var(--skin--color-enabled);
+            background-color: var(--skin--color-enabled);
+
+            &::before {
+                inset-inline-start: calc(100% - var(--skin--scaling-100) + 3 * var(--skin--border-width));
+                background-color: var(--skin--color-over);
+            }
+
+        }
+
+        /*
+         * A switch taking no flip recedes as a disabled field does, track and thumb falling back to neutral lines.
+         * Switched on, its track fills in the disabled colour, edge included, as a live track fills in its own, so the
+         * thumb keeps the same room from the visible edge of the pill whether the switch is live or not.
+         */
+
+        &:disabled {
+
+            border-color: var(--skin--border-color);
+            background-color: transparent;
+            cursor: default;
+
+            &::before {
+                background-color: var(--skin--color-disabled);
+            }
+
+            /*
+             * Off, the grey thumb sits against a grey line with no fill behind it, and reads as hugging the start of
+             * the pill, so it is moved inwards by one more border width, an optical nudge balancing the room around it.
+             */
+
+            &:not(:checked)::before {
+                inset-inline-start: calc(2 * var(--skin--border-width));
+            }
+
+            &:checked {
+
+                border-color: var(--skin--color-disabled);
+                background-color: var(--skin--color-disabled);
+
+                &::before {
+                    background-color: var(--skin--color-over);
+                }
+
+            }
+
+        }
+
+        /*
+         * Forced colours repaint every background in the page colour, which would wipe out the thumb, so the thumb is
+         * painted in the text colour of the system palette and the state is read from its position alone.
+         */
+
+        @media (forced-colors: active) {
+
+            &::before {
+                forced-color-adjust: none;
+                background-color: CanvasText;
+            }
+
+        }
+
+    }
+
+}

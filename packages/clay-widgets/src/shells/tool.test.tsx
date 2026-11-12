@@ -1,5 +1,5 @@
 /*
- * Copyright © 2023-2026 Metreeca srl
+ * Copyright © 2026 Metreeca srl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -119,7 +119,9 @@ describe("Tool", () => {
 
 			vi.stubGlobal("ResizeObserver", class {
 				constructor(callback: () => void) { resized.push(callback); }
+
 				observe() {}
+
 				disconnect() {}
 			});
 
@@ -172,7 +174,8 @@ describe("Tool", () => {
 
 		it("carries no name without a head", async () => {
 
-			expect(rendered(<Tool>content</Tool>).querySelector(":scope > main")?.hasAttribute("aria-labelledby")).toBe(false);
+			expect(rendered(
+				<Tool>content</Tool>).querySelector(":scope > main")?.hasAttribute("aria-labelledby")).toBe(false);
 
 		});
 

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2023-2026 Metreeca srl
+ * Copyright © 2026 Metreeca srl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -66,11 +66,12 @@ export function Choice<V extends string>({
 	name: string
 
 	/**
-	 * How loud the choice appears. `subtle` drops the box and keeps the options one line tall, so they fit inside a line
-	 * of text and read as part of it; the chosen one is inked and underlined in the selection accent. `normal` sinks the
-	 * options into a track boxed and sized as a select is, each as wide as the widest, and raises the chosen one out of
-	 * the track as a card. `strong` also sets the options in the strong weight and inks the chosen one in the accent, so
-	 * the choice stands out from the fields and selects around it while matching their height, borders and corners.
+	 * How loud the choice appears. `subtle` drops the box and keeps the options one line tall, so they fit inside a
+	 * line of text and read as part of it; the chosen one is inked and underlined in the selection accent. `normal`
+	 * sinks the options into a track boxed and sized as a {@link select!Select Select} is, each as wide as the widest,
+	 * and raises the chosen one out of the track as a card. `strong` also sets the options in the strong weight and
+	 * inks the chosen one in the accent, so the choice stands out from the fields and menus around it while matching
+	 * their height, borders and corners, and a row mixing them still lines up as one.
 	 *
 	 * A choice stating nothing takes the look the {@link style!Style styled area} around it assigns as `choiceLook`,
 	 * which is `normal` where nothing assigns it. Stating a look here answers to that alone, whatever the area says.

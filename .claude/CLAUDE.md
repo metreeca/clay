@@ -11,23 +11,23 @@
 
 # Overview
 
-Metreeca Clay is the general-purpose component layer of the Metreeca stack: the app-wide services, widgets, layouts
-and movable items an interface is assembled from, with no commitment to a data model. The monorepo collects the
+Metreeca Clay is the general-purpose component layer of the Metreeca stack: the app-wide services, widgets, layouts and
+movable items an interface is assembled from, with no commitment to a data model. The monorepo collects the
 rendering-layer packages, each sitting directly under `packages/` (for example `packages/clay/`).
 
-Clay **NEVER** depends on `@metreeca/blue`, `@metreeca/qest` or `@metreeca/keep`: a component needing a shape or a
-query is out of scope, and belongs to a linked data layer built outside this repository.
+Clay **NEVER** depends on `@metreeca/blue`, `@metreeca/qest` or `@metreeca/keep`: a component needing a shape or a query
+is out of scope, and belongs to a linked data layer built outside this repository.
 
 # References
 
 - [Preact](https://preactjs.com/guide/v10/getting-started) - Fast 3kB alternative to React with the same API, the
-  rendering layer every package renders with and takes as a peer dependency
+	rendering layer every package renders with and takes as a peer dependency
 - [@metreeca/core](https://github.com/metreeca/core) - Core utilities and shared types, providing the state primitives
-  the headless components are built on
+	the headless components are built on
 - [@metreeca/http](https://github.com/metreeca/http) - Composable middleware for the standard fetch API, providing the
-  client the shared fetch context wraps
+	client the shared fetch context wraps
 - [@metreeca/skin](https://github.com/metreeca/skin) - Essential design tokens and styles, providing the token contract
-  and the stylesheet every component sheet reads from
+	and the stylesheet every component sheet reads from
 
 # NPM Scripts
 
@@ -41,25 +41,23 @@ query is out of scope, and belongs to a linked data layer built outside this rep
 
 # Package Layout
 
-The root `package.json` `workspaces` glob (`packages/*`) covers the packages, each in its own directory
-immediately under `packages/` (for example `packages/clay`). The private `specimen` is a workspace too, so it
-installs the packages from their working trees rather than from the registry, and shares the root lockfile.
+The root `package.json` `workspaces` glob (`packages/*`) covers the packages, each in its own directory immediately
+under `packages/` (for example `packages/clay`). The private `specimen` is a workspace too, so it installs the packages
+from their working trees rather than from the registry, and shares the root lockfile.
 
 A package compiles against its siblings through their `dist`, so each `tsconfig.build.json` is `composite` and names
 those siblings under `references`, and the package `build` runs `tsc -b`: the compiler settles the order and brings a
-stale sibling up to date first, whatever order the workspaces are visited in. A package added here declares a
-reference for every `@metreeca/clay*` dependency it takes, or it compiles against whatever its sibling last left
-behind. The build is incremental, its cache being the `tsconfig.build.tsbuildinfo` each package's `clean` removes
-alongside `dist`: deleting `dist` by hand leaves that cache claiming the outputs are current, and the next build
-emits nothing.
+stale sibling up to date first, whatever order the workspaces are visited in. A package added here declares a reference
+for every `@metreeca/clay*` dependency it takes, or it compiles against whatever its sibling last left behind. The build
+is incremental, its cache being the `tsconfig.build.tsbuildinfo` each package's `clean` removes alongside `dist`:
+deleting `dist` by hand leaves that cache claiming the outputs are current, and the next build emits nothing.
 
 Every package is a Preact binding: `clay` for the app-wide services a component is wired to, `clay-widgets` for the
-widgets, layouts and glyphs an interface is assembled from, and `clay-markdown` for Markdown documents.
-Headless behaviour carries **NO** dependency on a rendering framework: it lives in `@metreeca/core` and in `*.core.ts`
-modules, and any other rendering layer added later gets binding packages of its own. A binding package adds
-observation and rendering over state it never redefines: behaviour lives in
-framework-agnostic `@metreeca/core` state objects, so a second binding reaches the same behaviour without restating
-it.
+widgets, layouts and glyphs an interface is assembled from, and `clay-markdown` for Markdown documents. Headless
+behaviour carries **NO** dependency on a rendering framework: it lives in `@metreeca/core` and in `*.core.ts`
+modules, and any other rendering layer added later gets binding packages of its own. A binding package adds observation
+and rendering over state it never redefines: behaviour lives in framework-agnostic `@metreeca/core` state objects, so a
+second binding reaches the same behaviour without restating it.
 
 ## Package Distribution
 
@@ -68,23 +66,23 @@ track. Bundle weight never justifies a split, since every module keeps its own s
 what it imports.
 
 - **One widget core**: widgets and layouts share `clay-widgets` whatever their role. A leaf/container split spares
-  nobody anything, since containers build on leaves and an app taking one installs both, and it forces a placement call
-  on every new widget. Concern groups fail the same test: they depend on one another and share no third-party stack,
-  so they multiply manifests, versions and changelogs for no install saving. One package per component pays off only
-  where components are adopted one by one, which a toolkit of this size does not see.
+	nobody anything, since containers build on leaves and an app taking one installs both, and it forces a placement call
+	on every new widget. Concern groups fail the same test: they depend on one another and share no third-party stack, so
+  they multiply manifests, versions and changelogs for no install saving. One package per component pays off only where
+  components are adopted one by one, which a toolkit of this size does not see.
 - **Heavy stacks apart**: a module group gets a package of its own when it is the only reason its neighbours would
-  install a third-party stack. `clay-markdown` carries the Markdown processing pipeline, keeping the widget core down
-  to Preact, the glyph catalogue and the Metreeca foundations.
+	install a third-party stack. `clay-markdown` carries the Markdown processing pipeline, keeping the widget core down to
+  Preact, the glyph catalogue and the Metreeca foundations.
 - **Glyphs inside**: the `icon` module stays in `clay-widgets`. It is a role mapping over a glyph catalogue taken as a
-  peer dependency, so a package of its own would spare nothing: every widget package needs it, and the catalogue
-  reaches every widget consumer either way.
+	peer dependency, so a package of its own would spare nothing: every widget package needs it, and the catalogue reaches
+  every widget consumer either way.
 - **Services unchanged**: `clay` holds the app-wide contexts and hooks every other package builds on, headless hooks
-  included: a capability reduced to a context and hooks, with no third-party stack, is a module of `clay` rather than
-  a package of its own, as `transfer` is.
+	included: a capability reduced to a context and hooks, with no third-party stack, is a module of `clay` rather than a
+  package of its own, as `transfer` is.
 
-A package holding a collection takes a plural name (`clay-widgets`), and one holding a single capability takes the
-name of that capability (`clay-markdown`). Packages and modules are named after what they contribute, never after the
-library or the gesture they contribute it with: `transfer` names moving items, whether by drag or by menu.
+A package holding a collection takes a plural name (`clay-widgets`), and one holding a single capability takes the name
+of that capability (`clay-markdown`). Packages and modules are named after what they contribute, never after the library
+or the gesture they contribute it with: `transfer` names moving items, whether by drag or by menu.
 
 # Transfers
 
@@ -94,10 +92,10 @@ behind it (no keyboard dragging, menus as the single-pointer path, native drag a
 module documentation, which also lists what the module guarantees and what each widget still owes for WCAG 2.2 AA.
 
 - A widget offers every move it allows through a visible control: the grip doubling as the menu button where moving is
-  the item's sole action, or an overflow (⋯) menu button where the item is dragged by its whole surface; never both on
-  one item
+	the item's sole action, or an overflow (⋯) menu button where the item is dragged by its whole surface; never both on
+	one item
 - A widget accepting files beside a drop zone offers a native file input as well, WCAG 2.5.7 asking a single-pointer
-  path for every drag
+	path for every drag
 
 # Package Summaries
 
@@ -105,9 +103,9 @@ Every package states its summary in three places, which **MUST** be kept aligned
 
 - `packages/<package>/package.json` `description` - `<summary> for @metreeca/clay.`
 - `packages/<package>/README.md`, first line after the badge - the same sentence, with `@metreeca/clay` linked to the
-  project repository
+	project repository
 - the root `README.md` package table - `<summary>` with the rendering layer left off, since the rows sit under prose
-  that already states it (`Contexts and hooks`, not `Preact contexts and hooks`)
+	that already states it (`Contexts and hooks`, not `Preact contexts and hooks`)
 
 The suffix names the project repository as `@metreeca/clay`, for every package alike.
 
@@ -125,9 +123,9 @@ the site root, a module page, or a table of them.
 contract or a theming question:
 
 - A **component question** goes to the [Forge UI Kit](https://developer.atlassian.com/platform/forge/ui-kit/components/)
-  for how a component surface is cut, and to the design system for the behaviour a component owes
+	for how a component surface is cut, and to the design system for the behaviour a component owes
 - A **theming question** goes to the [token layer](https://atlassian.design/foundations/tokens): where upstream solves a
-  variant through tokens, a Clay component solving it through props is a tell worth questioning
+	variant through tokens, a Clay component solving it through props is a tell worth questioning
 
 Upstream precedent is an argument, never a mandate. Ideas travel freely, while prose, tables and figures stay upstream:
 link them, never reproduce them, and write whatever is borrowed in the Metreeca register.
@@ -141,31 +139,32 @@ A component holding state declares it as a `@metreeca/core` state object and ado
 const { labels, active, select } = useModel(() => createTabs({ labels: Object.keys(panels) }));
 ```
 
-- A transition renders the component again on its own, so a handler just calls it; a transition changing nothing
-  renders nothing, and a zero-argument one is passed straight as a handler.
+- A transition renders the component again on its own, so a handler just calls it; a transition changing nothing renders
+  nothing, and a zero-argument one is passed straight as a handler.
 - A transition starts from the state the render read and notifies asynchronously: two calls in one handler land where
-  one does, and the data read alongside keeps the earlier value until the next render.
+	one does, and the data read alongside keeps the earlier value until the next render.
 - The factory runs on the first render only, so the model keeps the props as they stood then: a prop changing later
-  **NEVER** reaches it, unless it is listed as a dependency. A model created from props lists them, and is created
-  again from the factory whenever one changes, losing the state it reached:
+	**NEVER** reaches it, unless it is listed as a dependency. A model created from props lists them, and is created again
+  from the factory whenever one changes, losing the state it reached:
 
-  ```tsx
-  const { model: slice, focus } = useModel(() => createWindow({ model }), [model]); // a new query starts from the first items
-  ```
+	```tsx
+	const { model: slice, focus } = useModel(() => createWindow({ model }), [model]); // a new query starts from the first items
+	```
 - Behaviour outgrowing a single widget moves to a sibling `*.core.ts` module as a headless component of its own, leaving
-  the widget only what it renders: `Tabs` in `tabs.tsx`, the state it adopts in `tabs.core.ts`.
+	the widget only what it renders: `Tabs` in `tabs.tsx`, the state it adopts in `tabs.core.ts`.
 
 A `*.core.ts` module carries what the module beside it is built on. Where that is behaviour, the module is a headless
 component in its own right and **NEVER** an internal appendix of the widget: it carries **NO** dependency on Preact, is
 tested without a DOM, and is documented and versioned like any other module.
 
-A `*.core.ts` module is **NEVER** exported: every package `exports` blocks the `.core` subpaths with a `"./*.core": null`
+A `*.core.ts` module is **NEVER** exported: every package `exports` blocks the `.core` subpaths with a
+`"./*.core": null`
 entry, so a consumer meets its types only through the published signatures naming them. The generated reference still
 carries it like any other module, a type declared there being public wherever a published signature names it: TypeDoc
 drops a symbol whose module is excluded, re-exported or not, so excluding these would leave a public type undocumented.
 
-A binding package whose widgets draw the same parts alike keeps them in an `index.tsx` module: it holds rendering,
-never behaviour, offers consumers nothing, and so is left out of the reference by `typedoc.json` and blocked by a
+A binding package whose widgets draw the same parts alike keeps them in an `index.tsx` module: it holds rendering, never
+behaviour, offers consumers nothing, and so is left out of the reference by `typedoc.json` and blocked by a
 `"./index": null` entry, the package declaring no root entry point. Its rules sit in the package `index.css`
 stylesheet, which the module imports.
 
@@ -210,8 +209,8 @@ against `src/` without a prior build. Packages installed from the registry keep 
 > condition breaks every package installed from the registry that declares it, as happens under `npm ci` in CI.
 
 The root `vitest.config.ts` also sets the `happy-dom` environment for every test, so a suite runs alike under
-`npm run check` and from the IDE, which reads the config but not the flags a package script passes. Environment
-settings belong there, never on the `check` command line. Headless state still never relies on the DOM it is given.
+`npm run check` and from the IDE, which reads the config but not the flags a package script passes. Environment settings
+belong there, never on the `check` command line. Headless state still never relies on the DOM it is given.
 
 # Specimen
 
@@ -219,11 +218,12 @@ Each specimen page lists its samples in the order its outline shows them, so a r
 elements built from it:
 
 - **Groups run top-down**: from the structure of a screen to the parts it holds, as shells, then layouts, content,
-  controls and signals, then glyphs; helpers wrapping other elements rather than drawing anything, such as scopes, last
+	navigation, controls and signals, then glyphs; helpers wrapping other elements rather than drawing anything, such as
+	scopes, last
 - **Items run simple to complex**: within a group, an element precedes the elements built on it, as `Stack` precedes
-  `Card`
-- **Shells stand alone**: a shell fills the window, so its outline entry opens a screen of its own in a new tab,
-  laying the shell out and documenting it, rather than a section nesting a second frame inside the page
+	`Card`
+- **Shells stand alone**: a shell fills the window, so its outline entry opens a screen of its own in a new tab, laying
+  the shell out and documenting it, rather than a section nesting a second frame inside the page
 
 A sample added to a page takes the place these rules give it, never the end of its group by default.
 

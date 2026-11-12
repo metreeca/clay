@@ -1,5 +1,5 @@
 /*
- * Copyright © 2023-2026 Metreeca srl
+ * Copyright © 2026 Metreeca srl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,7 +36,8 @@ export function Empties() {
 	return <>
 
 		<p>An empty state holds the place of content an area has not got, while it loads, when it turns out empty or
-			when it could not be fetched, so a table or a list keeps its place rather than collapsing. A leading glyph is
+			when it could not be fetched, so a table or a list keeps its place rather than collapsing. A leading glyph
+			is
 			drawn large as the mark of the area, with the wording beneath it; the look sets how far the area stands
 			apart, from flush through outlined to outlined and recessed.</p>
 

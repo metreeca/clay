@@ -1,5 +1,5 @@
 /*
- * Copyright © 2023-2026 Metreeca srl
+ * Copyright © 2026 Metreeca srl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -91,7 +91,7 @@ describe("keys", () => {
 
 		keys({ Enter: () => { taken.push("Enter"); } })(event("Enter"));
 
-		expect(taken).toEqual([ "Enter" ]);
+		expect(taken).toEqual(["Enter"]);
 
 	});
 

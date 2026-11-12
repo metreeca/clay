@@ -1,5 +1,5 @@
 /*
- * Copyright © 2023-2026 Metreeca srl
+ * Copyright © 2026 Metreeca srl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,11 +20,11 @@
  * @module
  */
 
-import { Board, usePosts } from "@metreeca/clay/board";
 import { Button } from "@metreeca/clay-widgets/button";
 import { Empty } from "@metreeca/clay-widgets/empty";
 import { Guard } from "@metreeca/clay-widgets/guard";
 import { Icon } from "@metreeca/clay-widgets/icon";
+import { Board, usePosts } from "@metreeca/clay/board";
 import { useState } from "preact/hooks";
 import "../index.css";
 
@@ -59,7 +59,7 @@ export function Guards() {
 			</div>
 
 			<div class="controls">
-				<Button look="subtle" label="Reset" onClick={() => setRound(round + 1)}/>
+				<Button look="subtle" label="Reset" onClick={() => setRound(round+1)}/>
 			</div>
 
 		</Board>
@@ -95,6 +95,7 @@ function Posts() {
 	const posts = usePosts();
 
 	return posts.length === 0 ? <p><em>No failures raised.</em></p>
-		: <ul>{posts.map(({ instance, status, message }) => <li key={instance}><code>{status}</code> {message}</li>)}</ul>;
+		: <ul>{posts.map(({ instance, status, message }) => <li key={instance}><code>{status}</code> {message}
+		</li>)}</ul>;
 
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2023-2026 Metreeca srl
+ * Copyright © 2026 Metreeca srl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,8 +20,8 @@
  * @module
  */
 
-import { useModel } from "@metreeca/clay/model";
 import { Button } from "@metreeca/clay-widgets/button";
+import { useModel } from "@metreeca/clay/model";
 import { createState } from "@metreeca/core/state";
 import "../clay-widgets/index.css";
 
@@ -50,11 +50,11 @@ function createCounter({ limit }: { limit: number }): Counter {
 		limit,
 
 		increment() {
-			return { count: Math.min(this.count + 1, this.limit) };
+			return { count: Math.min(this.count+1, this.limit) };
 		},
 
 		decrement() {
-			return { count: Math.max(this.count - 1, 0) };
+			return { count: Math.max(this.count-1, 0) };
 		},
 
 		reset() {
@@ -80,8 +80,10 @@ export function Model() {
 
 		<p>Behaviour is stated once as an immutable state object, here a counter bounded between zero and five, and
 			adopted by a component with <code>useModel</code>. Its transitions go straight to the buttons as handlers;
-			each one renders the component again, while one changing nothing, such as stepping past either bound, renders
-			nothing at all. The widgets keeping state, tabs and tables of contents among them, are built the same way.</p>
+			each one renders the component again, while one changing nothing, such as stepping past either bound,
+			renders
+			nothing at all. The widgets keeping state, tabs and tables of contents among them, are built the same way.
+		</p>
 
 		<div class="controls">
 			<Button label="Less" onClick={decrement}/>

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2023-2026 Metreeca srl
+ * Copyright © 2026 Metreeca srl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,8 +23,8 @@
  * @module card
  */
 
-import { isContent } from "../index.js";
 import { type ComponentChildren, createElement } from "preact";
+import { isContent } from "../index.js";
 import "./card.css";
 
 
@@ -79,7 +79,7 @@ export function Card({
 
 	/**
 	 * The image standing for the item, under the badge in the side column: a picture, captioned or not, as set by an
-	 * {@link image!Image Image}, or an icon or initials, shown as given in the label colour the card sets for the badge.
+	 * {@link image!Image Image}, or an icon or initials, shown as given in the label colour of the badge.
 	 */
 	image?: ComponentChildren
 

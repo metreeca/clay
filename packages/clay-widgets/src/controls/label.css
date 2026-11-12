@@ -1,0 +1,50 @@
+/*
+ * Copyright © 2026 Metreeca srl
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/* A label is the native one, standing wherever the layout around it places it with no box of its own. */
+
+clay-label {
+
+    display: contents;
+
+    /*
+     * A label wrapping its control stacks the text over the control, both aligned to the start, as a field stands
+     * under the text naming it. The two keep apart by a gap of its own in place of the single space between words,
+     * which would read as one run of text rather than as a name beside its control.
+     *
+     * The text is set in the quieter colour of a label, so the value a field holds, which the design system keeps in
+     * the text colour, stands out from the name the field is given by the label wrapping it.
+     */
+
+    & > label {
+        display: inline-flex;
+        flex-direction: column;
+        align-items: start;
+        gap: var(--skin--spacing-025) var(--skin--spacing-050);
+        color: var(--skin--color-label);
+    }
+
+    /*
+     * A horizontal label sets the text beside the control and lines it up with the middle of the control rather than
+     * with its foot, where a drawn box or switch would otherwise ride above the text it stands with on one line.
+     */
+
+    &[orientation="horizontal"] > label {
+        flex-direction: row;
+        align-items: center;
+    }
+
+}

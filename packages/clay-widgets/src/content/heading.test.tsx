@@ -1,5 +1,5 @@
 /*
- * Copyright © 2023-2026 Metreeca srl
+ * Copyright © 2026 Metreeca srl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -61,7 +61,8 @@ describe("Heading", () => {
 
 		it("carries the id given", async () => {
 
-			expect(markup(<Heading id="colours">Colours</Heading>)).toBe(`<clay-heading id="colours">Colours</clay-heading>`);
+			expect(markup(
+				<Heading id="colours">Colours</Heading>)).toBe(`<clay-heading id="colours">Colours</clay-heading>`);
 			expect(markup(<Heading id="colours" level={1}>Colours</Heading>)).toBe(`<h1 id="colours">Colours</h1>`);
 
 		});

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2023-2026 Metreeca srl
+ * Copyright © 2026 Metreeca srl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -312,8 +312,8 @@ function glyph(status: Status) {
 	return status === "pending" ? <Icon.RefreshCw/>
 		: status === "success" ? <Icon.CircleCheck/>
 			: status === "paused" ? <Icon.CirclePause/>
-			: status === "warning" ? <Icon.Alert/>
-				: status === "failure" ? <Icon.CircleAlert/>
-					: status === "defect" ? <Icon.Bug/>
-						: <Icon.Info/>;
+				: status === "warning" ? <Icon.Alert/>
+					: status === "failure" ? <Icon.CircleAlert/>
+						: status === "defect" ? <Icon.Bug/>
+							: <Icon.Info/>;
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2023-2026 Metreeca srl
+ * Copyright © 2026 Metreeca srl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -62,7 +62,8 @@ export function Choices() {
 			the ones below share one in component state.</p>
 
 		<p>How loud a choice appears is set by <code>look</code>: <code>subtle</code> drops the box and inks and
-			underlines the chosen option in the selection accent, <code>normal</code> sinks the options into a track boxed
+			underlines the chosen option in the selection accent, <code>normal</code> sinks the options into a track
+			boxed
 			as a select is, the chosen one raised out of it as a card, and <code>strong</code> also sets the options
 			bold and inks the chosen one in the accent, whether they carry labels or glyphs.</p>
 

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2023-2026 Metreeca srl
+ * Copyright © 2026 Metreeca srl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,17 +38,20 @@ export function Contents() {
 	return <>
 
 		<p>The outline in the tray is a table of contents: entries grouped under labels leading nowhere, set by the
-			outline rules of the design system alone. It marks the section the reader is in as the page scrolls, the last
+			outline rules of the design system alone. It marks the section the reader is in as the page scrolls, the
+			last
 			one whose heading has passed a line a third of the way down the window, or the last one in view once the
 			page reaches its end.</p>
 
 		<p>Following one of its links marks that section at once and holds it while the page scrolls there, until the
 			reader scrolls on their own. The location fragment follows the section marked, replaced rather than pushed,
-			so a reload or a shared address lands where the reader stood. Below the large viewport the outline folds behind
+			so a reload or a shared address lands where the reader stood. Below the large viewport the outline folds
+			behind
 			a single line naming the section the reader is in, and unfolds on demand.</p>
 
 		<p>The outline here is <code>compact</code>, so each group folds behind its label and only one is open at a
-			time. The group holding the section the reader is in opens as they reach it, and any other opens on demand.</p>
+			time. The group holding the section the reader is in opens as they reach it, and any other opens on demand.
+		</p>
 
 		<p>An outline also serves as a sidebar of reference links, such as the shapes a data model relates to one
 			another. Labels are kept to one line by default, clipped with an ellipsis where they outrun the column and

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2023-2026 Metreeca srl
+ * Copyright © 2026 Metreeca srl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,7 +28,7 @@ import "../index.css";
 type Options = Parameters<typeof Tabs>[0]
 
 
-const looks: ReadonlyArray<NonNullable<Options["look"]>> = [ "subtle", "normal" ];
+const looks: ReadonlyArray<NonNullable<Options["look"]>> = ["subtle", "normal"];
 
 
 /**
@@ -67,7 +67,8 @@ export function Tabbed() {
 			</Frame>
 		</div>
 
-		<p>Given a <code>look</code>, tabs close the strip off with a rule (<code>normal</code>), or drop it so the labels
+		<p>Given a <code>look</code>, tabs close the strip off with a rule (<code>normal</code>), or drop it so the
+			labels
 			read as part of what surrounds them (<code>subtle</code>); the mark on the chosen tab stays either way.</p>
 
 		<div class="frames">{looks.map(look =>
@@ -78,10 +79,11 @@ export function Tabbed() {
 		)}</div>
 
 		<p>Where the labels would not fit on one line, the strip gives way to a menu offering the same choice, and comes
-			back as soon as they fit again. The same tabs are set below in a wide box and in a narrow one, where the menu
+			back as soon as they fit again. The same tabs are set below in a wide box and in a narrow one, where the
+			menu
 			stands in; narrowing the window turns the wide one over to the menu as well.</p>
 
-		<div class="columns">{[ "wide", "narrow" ].map(width =>
+		<div class="columns">{["wide", "narrow"].map(width =>
 
 			<Frame key={width} label={width}>
 				<Tabs name={`Guide, ${width}`} panels={guide}/>

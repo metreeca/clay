@@ -1,5 +1,5 @@
 /*
- * Copyright © 2023-2026 Metreeca srl
+ * Copyright © 2026 Metreeca srl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@ import "./spin.css";
 
 export function TileSpin({
 
-	icon=<Loader2/>,
+	icon = <Loader2/>,
 	title,
 
 	size,

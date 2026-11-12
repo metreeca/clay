@@ -1,5 +1,5 @@
 /*
- * Copyright © 2023-2026 Metreeca srl
+ * Copyright © 2026 Metreeca srl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,28 +20,37 @@
  * @module
  */
 
-import { Page, type Sample, ToolPath } from "@metreeca/specimen/index.core.js";
-import { Buttons } from "@metreeca/specimen/clay-widgets/controls/button.js";
-import { Cards } from "@metreeca/specimen/clay-widgets/layouts/card.js";
-import { Choices } from "@metreeca/specimen/clay-widgets/controls/choice.js";
 import { Empties } from "@metreeca/specimen/clay-widgets/content/empty.js";
-import { Guards } from "@metreeca/specimen/clay-widgets/scopes/guard.js";
 import { Headings } from "@metreeca/specimen/clay-widgets/content/heading.js";
-import { Icons } from "@metreeca/specimen/clay-widgets/glyphs/icon.js";
 import { Images } from "@metreeca/specimen/clay-widgets/content/image.js";
 import { Infoboxes } from "@metreeca/specimen/clay-widgets/content/infobox.js";
-import { Links } from "@metreeca/specimen/clay-widgets/controls/link.js";
+import { Texts } from "@metreeca/specimen/clay-widgets/content/text.js";
+import { Buttons } from "@metreeca/specimen/clay-widgets/controls/button.js";
+import { Checkboxes } from "@metreeca/specimen/clay-widgets/controls/checkbox.js";
+import { Choices } from "@metreeca/specimen/clay-widgets/controls/choice.js";
+import { Fieldsets } from "@metreeca/specimen/clay-widgets/controls/fieldset.js";
+import { Forms } from "@metreeca/specimen/clay-widgets/controls/form.js";
+import { Inputs } from "@metreeca/specimen/clay-widgets/controls/input.js";
+import { Labels } from "@metreeca/specimen/clay-widgets/controls/label.js";
+import { Links } from "@metreeca/specimen/clay-widgets/navigation/link.js";
+import { Paths } from "@metreeca/specimen/clay-widgets/navigation/path.js";
+import { Radios } from "@metreeca/specimen/clay-widgets/controls/radio.js";
+import { Selects } from "@metreeca/specimen/clay-widgets/controls/select.js";
+import { Switches } from "@metreeca/specimen/clay-widgets/controls/switch.js";
+import { Textareas } from "@metreeca/specimen/clay-widgets/controls/textarea.js";
+import { Contents } from "@metreeca/specimen/clay-widgets/navigation/toc.js";
+import { Icons } from "@metreeca/specimen/clay-widgets/glyphs/icon.js";
 import { Logos } from "@metreeca/specimen/clay-widgets/glyphs/logo.js";
-import { Triggers } from "@metreeca/specimen/clay-widgets/signals/more.js";
-import { Notes } from "@metreeca/specimen/clay-widgets/signals/note.js";
-import { Paths } from "@metreeca/specimen/clay-widgets/controls/path.js";
+import { Cards } from "@metreeca/specimen/clay-widgets/layouts/card.js";
 import { Stacks } from "@metreeca/specimen/clay-widgets/layouts/stack.js";
 import { Strips } from "@metreeca/specimen/clay-widgets/layouts/strip.js";
-import { Styles } from "@metreeca/specimen/clay-widgets/scopes/style.js";
 import { Tabbed } from "@metreeca/specimen/clay-widgets/layouts/tabs.js";
-import { Texts } from "@metreeca/specimen/clay-widgets/content/text.js";
+import { Guards } from "@metreeca/specimen/clay-widgets/scopes/guard.js";
+import { Styles } from "@metreeca/specimen/clay-widgets/scopes/style.js";
+import { Triggers } from "@metreeca/specimen/clay-widgets/signals/more.js";
+import { Notes } from "@metreeca/specimen/clay-widgets/signals/note.js";
 import { Toasted } from "@metreeca/specimen/clay-widgets/signals/toasts.js";
-import { Contents } from "@metreeca/specimen/clay-widgets/controls/toc.js";
+import { Page, type Sample, ToolPath } from "@metreeca/specimen/index.core.js";
 
 
 const samples: readonly Sample[] = [
@@ -59,9 +68,19 @@ const samples: readonly Sample[] = [
 	{ id: "infobox", group: "Content", title: "Infobox", view: <Infoboxes/> },
 	{ id: "empty", group: "Content", title: "Empty", view: <Empties/> },
 
-	{ id: "link", group: "Controls", title: "Link", view: <Links/> },
-	{ id: "path", group: "Controls", title: "Path", view: <Paths/> },
-	{ id: "contents", group: "Controls", title: "Table of Contents", label: "ToC", view: <Contents/> },
+	{ id: "link", group: "Navigation", title: "Link", view: <Links/> },
+	{ id: "path", group: "Navigation", title: "Path", view: <Paths/> },
+	{ id: "contents", group: "Navigation", title: "Table of Contents", label: "ToC", view: <Contents/> },
+
+	{ id: "form", group: "Controls", title: "Form", view: <Forms/> },
+	{ id: "fieldset", group: "Controls", title: "Fieldset", view: <Fieldsets/> },
+	{ id: "label", group: "Controls", title: "Label", view: <Labels/> },
+	{ id: "input", group: "Controls", title: "Input", view: <Inputs/> },
+	{ id: "textarea", group: "Controls", title: "Textarea", view: <Textareas/> },
+	{ id: "select", group: "Controls", title: "Select", view: <Selects/> },
+	{ id: "radio", group: "Controls", title: "Radio", view: <Radios/> },
+	{ id: "checkbox", group: "Controls", title: "Checkbox", view: <Checkboxes/> },
+	{ id: "switch", group: "Controls", title: "Switch", view: <Switches/> },
 	{ id: "button", group: "Controls", title: "Button", view: <Buttons/> },
 	{ id: "choice", group: "Controls", title: "Choice", view: <Choices/> },
 
@@ -88,7 +107,8 @@ export function ClayWidgets() {
 		title="Interface Components"
 		lead={<>
 			The pieces an interface is assembled from, each drawn from the design system tokens alone. Every sample on
-			this page is a live widget, laid out in a tool shell; the shells listed first in the outline open on screens of their own.
+			this page is a live widget, laid out in a tool shell; the shells listed first in the outline open on screens
+			of their own.
 		</>}
 
 		samples={samples}

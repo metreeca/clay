@@ -4,8 +4,8 @@
 
 Preact Markdown documents for [@metreeca/clay](https://github.com/metreeca/clay).
 
-Markdown sources rendered as the documents they describe, with a table of contents leading into their sections and
-the values their front matter declares, so a page built from Markdown needs no rendering pipeline of its own.
+Markdown sources rendered as the documents they describe, with a table of contents leading into their sections and the
+values their front matter declares, so a page built from Markdown needs no rendering pipeline of its own.
 
 Styling is structural only: what a widget needs to work, with colour, type and spacing left to
 [@metreeca/skin](https://github.com/metreeca/skin) or to whoever styles the app.

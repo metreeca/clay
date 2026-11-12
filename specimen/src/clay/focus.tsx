@@ -1,5 +1,5 @@
 /*
- * Copyright © 2023-2026 Metreeca srl
+ * Copyright © 2026 Metreeca srl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,14 +43,21 @@ export function Focus() {
 	const [pressed, setPressed] = useState<string>();
 
 	const { tabIndex, onKeyDown, onFocus } = useFocus({
-		wrap: true, orientation: "horizontal", items: tools, active, identify: tool => `${id}-${tools.indexOf(tool)}`, onMove: setActive
+		wrap: true,
+		orientation: "horizontal",
+		items: tools,
+		active,
+		identify: tool => `${id}-${tools.indexOf(tool)}`,
+		onMove: setActive
 	});
 
 	return <>
 
 		<p>A group of controls takes a single stop with <code>useFocus</code>: <kbd>Tab</kbd> lands on the item last
-			moved to, the arrow keys move from item to item, wrapping at both ends, and <kbd>Home</kbd> and <kbd>End</kbd>
-			reach either end. Tabs, cards and menus build on the same hook. Tab into the toolbar below and try the keys.</p>
+			moved to, the arrow keys move from item to item, wrapping at both ends,
+			and <kbd>Home</kbd> and <kbd>End</kbd>
+			reach either end. Tabs, cards and menus build on the same hook. Tab into the toolbar below and try the keys.
+		</p>
 
 		<div class="controls" role="toolbar" aria-label="Formatting" onKeyDown={onKeyDown}>{tools.map((tool, index) =>
 			<button

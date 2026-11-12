@@ -1,5 +1,5 @@
 /*
- * Copyright © 2023-2026 Metreeca srl
+ * Copyright © 2026 Metreeca srl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,7 +30,7 @@ import "../index.css";
 type Options = Parameters<typeof Card>[0]
 
 
-const looks: ReadonlyArray<NonNullable<Options["look"]>> = [ "subtle", "normal", "strong" ];
+const looks: ReadonlyArray<NonNullable<Options["look"]>> = ["subtle", "normal", "strong"];
 
 
 /**
@@ -85,7 +85,8 @@ export function Cards() {
 
 	return <>
 
-		<p>A card sums up an item: its title over a description, beside its badge over an image standing for it at the end
+		<p>A card sums up an item: its title over a description, beside its badge over an image standing for it at the
+			end
 			of the card. The image may be a picture, captioned with its credits, or an icon or initials set in the label
 			colour; a description with no image beneath the side column runs on under the badge.</p>
 
@@ -93,7 +94,8 @@ export function Cards() {
 			<Frame label="pictures, icons, initials and no image">{entries}</Frame>
 		</div>
 
-		<p>The side column grows as wide as what it holds, up to a third of the card, so in a narrow box pictures are scaled
+		<p>The side column grows as wide as what it holds, up to a third of the card, so in a narrow box pictures are
+			scaled
 			down and long badges are clipped, while the main column keeps the rest.</p>
 
 		<div class="columns">
@@ -101,7 +103,8 @@ export function Cards() {
 			<Frame label="narrow">{survey}{minutes}{plan}</Frame>
 		</div>
 
-		<p>Empty parts are left out: a card may carry a title alone, and a picture failing to load leaves the layout.</p>
+		<p>Empty parts are left out: a card may carry a title alone, and a picture failing to load leaves the
+			layout.</p>
 
 		<div class="frames">
 			<Frame label="partial cards">

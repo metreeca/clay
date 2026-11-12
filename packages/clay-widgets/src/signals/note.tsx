@@ -1,5 +1,5 @@
 /*
- * Copyright © 2023-2026 Metreeca srl
+ * Copyright © 2026 Metreeca srl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -112,9 +112,9 @@ export function Note({
 
 	const $icon = icon ?? (level === "positive" ? <Icon.CircleCheck/>
 			: level === "notable" ? <Icon.Star/>
-			: level === "negative" ? <Icon.Alert/>
-				: level === "critical" ? <Icon.CircleAlert/>
-					: <Icon.Info/>
+				: level === "negative" ? <Icon.Alert/>
+					: level === "critical" ? <Icon.CircleAlert/>
+						: <Icon.Info/>
 	);
 
 	/*

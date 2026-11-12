@@ -1,5 +1,5 @@
 /*
- * Copyright © 2023-2026 Metreeca srl
+ * Copyright © 2026 Metreeca srl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,9 +20,9 @@
  * @module
  */
 
-import { type Post, usePosts, useBoard, Board } from "@metreeca/clay/board";
 import { Button } from "@metreeca/clay-widgets/button";
 import { Toasts } from "@metreeca/clay-widgets/toasts";
+import { Board, type Post, useBoard, usePosts } from "@metreeca/clay/board";
 import "../index.css";
 
 
@@ -167,7 +167,11 @@ function Batch() {
 			if ( outcome === "failure" ) {
 
 				clear(progress);
-				raise({ status: 503, title: "Service Unavailable", detail: `${name} failed, the service is unavailable` });
+				raise({
+					status: 503,
+					title: "Service Unavailable",
+					detail: `${name} failed, the service is unavailable`
+				});
 
 			} else {
 

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2023-2026 Metreeca srl
+ * Copyright © 2026 Metreeca srl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,8 +20,8 @@
  * @module
  */
 
-import { Page, type Sample } from "@metreeca/specimen/index.core.js";
 import { Marks } from "@metreeca/specimen/clay-markdown/markdown.js";
+import { Page, type Sample } from "@metreeca/specimen/index.core.js";
 
 
 const samples: readonly Sample[] = [

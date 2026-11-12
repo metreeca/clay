@@ -1,5 +1,5 @@
 /*
- * Copyright © 2023-2026 Metreeca srl
+ * Copyright © 2026 Metreeca srl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -332,8 +332,8 @@ clay-tool {
 
             border-block-end-style: var(--skin--border-style);
             border-block-end-color: color-mix(in oklab,
-                var(--skin--border-color) calc(min(var(--clay-tool-head-rule), var(--clay-tool-scrollable)) * 100%),
-                transparent
+            var(--skin--border-color) calc(min(var(--clay-tool-head-rule), var(--clay-tool-scrollable)) * 100%),
+            transparent
             );
 
             animation: clay-tool-head-rule linear both, clay-tool-scrollable linear both;

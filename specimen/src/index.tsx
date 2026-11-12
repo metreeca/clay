@@ -1,5 +1,5 @@
 /*
- * Copyright © 2023-2026 Metreeca srl
+ * Copyright © 2026 Metreeca srl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,11 +30,11 @@ import { Router, Routes } from "@metreeca/clay/router";
 import { Transfer } from "@metreeca/clay/transfer";
 import { createFetch } from "@metreeca/http";
 import { mock } from "@metreeca/http/mock";
-import { ClayMarkdownPath, ClayPath, ClayWidgetsPath, Root, ToolPath } from "@metreeca/specimen/index.core.js";
-import { Clay } from "@metreeca/specimen/clay/index.js";
 import { ClayMarkdown } from "@metreeca/specimen/clay-markdown/index.js";
 import { ClayWidgets } from "@metreeca/specimen/clay-widgets/index.js";
 import { ToolScreen } from "@metreeca/specimen/clay-widgets/shells/tool.js";
+import { Clay } from "@metreeca/specimen/clay/index.js";
+import { ClayMarkdownPath, ClayPath, ClayWidgetsPath, Root, ToolPath } from "@metreeca/specimen/index.core.js";
 import { render } from "preact";
 import "./index.css";
 

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2023-2026 Metreeca srl
+ * Copyright © 2026 Metreeca srl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -54,7 +54,7 @@ export function TileSearch({
 
 }) {
 
-	const [input, setInput]=useCache(keywords);
+	const [input, setInput] = useCache(keywords);
 
 
 	function search(keywords: string) {
@@ -62,7 +62,7 @@ export function TileSearch({
 	}
 
 	function clear() {
-		setKeywords("")
+		setKeywords("");
 	}
 
 

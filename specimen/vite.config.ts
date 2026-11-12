@@ -1,5 +1,5 @@
 /*
- * Copyright © 2023-2026 Metreeca srl
+ * Copyright © 2026 Metreeca srl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,34 +23,34 @@ import pkg from "./package.json" with { type: "json" };
 
 export default defineConfig(() => ({ // https://vite.dev/config/
 
-    root: resolve("src"),
-    base: "./",
+	root: resolve("src"),
+	base: "./",
 
-    define: {
-        VERSION: JSON.stringify(pkg.version)
-    },
+	define: {
+		VERSION: JSON.stringify(pkg.version)
+	},
 
-    plugins: [
-        symlinks({ conditions: "@metreeca/source" }), // workspace packages from their sources
-        preact()
-    ],
+	plugins: [
+		symlinks({ conditions: "@metreeca/source" }), // workspace packages from their sources
+		preact()
+	],
 
-    build: {
+	build: {
 
-        outDir: resolve("dist"),
-        assetsDir: ".",
-        emptyOutDir: true,
+		outDir: resolve("dist"),
+		assetsDir: ".",
+		emptyOutDir: true,
 
-        rollupOptions: {
-            output: { manualChunks: undefined } // no vendor chunks
-        }
+		rollupOptions: {
+			output: { manualChunks: undefined } // no vendor chunks
+		}
 
-    },
+	},
 
-    resolve: {
-        alias: [
-            { find: /^@metreeca\/specimen\/(.*)$/, replacement: resolve("src", "$1") }
-        ]
-    }
+	resolve: {
+		alias: [
+			{ find: /^@metreeca\/specimen\/(.*)$/, replacement: resolve("src", "$1") }
+		]
+	}
 
 }));

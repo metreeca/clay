@@ -1,5 +1,5 @@
 /*
- * Copyright © 2023-2026 Metreeca srl
+ * Copyright © 2026 Metreeca srl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,7 +35,7 @@ function createCounter({ start }: { start: number }) {
 
 		value: start,
 
-		up() { return { value: this.value + 1 }; }
+		up() { return { value: this.value+1 }; }
 
 	});
 }

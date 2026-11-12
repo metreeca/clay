@@ -1,5 +1,5 @@
 /*
- * Copyright © 2023-2026 Metreeca srl
+ * Copyright © 2026 Metreeca srl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -385,7 +385,11 @@ describe("Markdown", () => {
 
 		it("should name the navigation landmark", async () => {
 
-			act(() => render(createElement(Markdown, { meta: "toc", name: "Contents", children: "# A" }), document.body));
+			act(() => render(createElement(Markdown, {
+				meta: "toc",
+				name: "Contents",
+				children: "# A"
+			}), document.body));
 
 			expect(attributes("clay-toc nav", "aria-label")).toEqual(["Contents"]);
 
@@ -423,7 +427,8 @@ describe("Markdown", () => {
 			}
 
 			/**
-			 * Scrolls the page, waiting out the render the outline takes after it, as its model notifies asynchronously.
+			 * Scrolls the page, waiting out the render the outline takes after it, as its model notifies
+			 * asynchronously.
 			 */
 			async function scroll(): Promise<void> {
 				await act(async () => { window.dispatchEvent(new Event("scroll")); });

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2023-2026 Metreeca srl
+ * Copyright © 2026 Metreeca srl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,7 +31,7 @@ import "./tree.css";
  */
 export function TileTree({
 
-	expanded=false,
+	expanded = false,
 
 	label,
 
@@ -47,13 +47,13 @@ export function TileTree({
 
 }) {
 
-	const parent=children !== undefined;
+	const parent = children !== undefined;
 
-	const [expanded_, setExpanded_]=useCache(expanded === "force" || parent && expanded);
+	const [expanded_, setExpanded_] = useCache(expanded === "force" || parent && expanded);
 
 
 	function toggle() {
-		setExpanded_(!expanded_)
+		setExpanded_(!expanded_);
 	}
 
 

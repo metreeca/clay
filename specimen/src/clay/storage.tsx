@@ -1,5 +1,5 @@
 /*
- * Copyright © 2023-2026 Metreeca srl
+ * Copyright © 2026 Metreeca srl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,8 +20,8 @@
  * @module
  */
 
-import { useStorage } from "@metreeca/clay/storage";
 import { Button } from "@metreeca/clay-widgets/button";
+import { useStorage } from "@metreeca/clay/storage";
 import "../clay-widgets/index.css";
 
 
@@ -40,8 +40,10 @@ export function Storage() {
 
 	return <>
 
-		<p>A value kept with <code>useStorage</code> survives a reload. In <code>localStorage</code> it is shared by every
-			tab of the site and stays in step whichever tab writes it: open this page in a second tab and type in the first
+		<p>A value kept with <code>useStorage</code> survives a reload. In <code>localStorage</code> it is shared by
+			every
+			tab of the site and stays in step whichever tab writes it: open this page in a second tab and type in the
+			first
 			field to watch it follow. In <code>sessionStorage</code> it lasts as long as the tab and stays with it.
 			Clearing a value removes it from storage, bringing the initial one back.</p>
 

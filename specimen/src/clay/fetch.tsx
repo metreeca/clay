@@ -1,5 +1,5 @@
 /*
- * Copyright © 2023-2026 Metreeca srl
+ * Copyright © 2026 Metreeca srl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,9 +21,9 @@
  */
 
 import { app } from "@metreeca/clay";
-import { useFetch, useFetching } from "@metreeca/clay/fetch";
 import { Button } from "@metreeca/clay-widgets/button";
 import { Icon } from "@metreeca/clay-widgets/icon";
+import { useFetch, useFetching } from "@metreeca/clay/fetch";
 import { useState } from "preact/hooks";
 import "../clay-widgets/index.css";
 
@@ -47,7 +47,7 @@ export function Fetch() {
 		const started = performance.now();
 
 		void fetch(app.base).then(response => setAnswers(answers => [
-			`${response.status} ${response.headers.get("Content-Type") ?? ""} in ${Math.round(performance.now() - started)} ms`,
+			`${response.status} ${response.headers.get("Content-Type") ?? ""} in ${Math.round(performance.now()-started)} ms`,
 			...answers
 		].slice(0, 3)));
 
@@ -66,7 +66,8 @@ export function Fetch() {
 			<span>{fetching ? "Busy…" : "Idle"}</span>
 		</div>
 
-		{answers.length > 0 && <ul>{answers.map((answer, index) => <li key={`${index}:${answer}`}><code>{answer}</code></li>)}</ul>}
+		{answers.length > 0 &&
+            <ul>{answers.map((answer, index) => <li key={`${index}:${answer}`}><code>{answer}</code></li>)}</ul>}
 
 	</>;
 

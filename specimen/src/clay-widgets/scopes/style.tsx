@@ -1,5 +1,5 @@
 /*
- * Copyright © 2023-2026 Metreeca srl
+ * Copyright © 2026 Metreeca srl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -59,7 +59,8 @@ export function Styles() {
 
 		<Style css={{ buttonLook: "subtle" }}><Toolbar/></Style>
 
-		<p>An accent assigned to an area repaints whatever the area draws with it, here the mark on the chosen tab, while
+		<p>An accent assigned to an area repaints whatever the area draws with it, here the mark on the chosen tab,
+			while
 			an area nested inside another settles what the wider one left.</p>
 
 		<Style css={{ colorStrong: "#2A9D8F" }}>

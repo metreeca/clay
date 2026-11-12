@@ -1,5 +1,5 @@
 /*
- * Copyright © 2023-2026 Metreeca srl
+ * Copyright © 2026 Metreeca srl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -108,13 +108,13 @@ describe("Image", () => {
 
 		it("bounds both sides by a single length", async () => {
 
-			expect(bounds(<Image src={src} within="20rem"/>)).toEqual([ "20rem", "20rem" ]);
+			expect(bounds(<Image src={src} within="20rem"/>)).toEqual(["20rem", "20rem"]);
 
 		});
 
 		it("bounds width and height by a pair of lengths", async () => {
 
-			expect(bounds(<Image src={src} within={[ "20rem", "12rem" ]}/>)).toEqual([ "20rem", "12rem" ]);
+			expect(bounds(<Image src={src} within={["20rem", "12rem"]}/>)).toEqual(["20rem", "12rem"]);
 
 		});
 
@@ -130,7 +130,7 @@ describe("Image", () => {
 
 		it("shows a bare picture with no caption", async () => {
 
-			expect(structure(<Image src={src}/>)).toEqual([ "img" ]);
+			expect(structure(<Image src={src}/>)).toEqual(["img"]);
 
 		});
 
@@ -138,17 +138,17 @@ describe("Image", () => {
 
 			const image = rendered(<Image src={src} caption="© Credits"/>);
 
-			expect(structure(<Image src={src} caption="© Credits"/>)).toEqual([ "figure", "img", "figcaption" ]);
+			expect(structure(<Image src={src} caption="© Credits"/>)).toEqual(["figure", "img", "figcaption"]);
 			expect(image?.querySelector("figure > figcaption")?.textContent).toBe("© Credits");
 
 		});
 
 		it("leaves out undefined, null, empty string and boolean captions", async () => {
 
-			expect(structure(<Image src={src} caption={undefined}/>)).toEqual([ "img" ]);
-			expect(structure(<Image src={src} caption={null}/>)).toEqual([ "img" ]);
-			expect(structure(<Image src={src} caption=""/>)).toEqual([ "img" ]);
-			expect(structure(<Image src={src} caption={false}/>)).toEqual([ "img" ]);
+			expect(structure(<Image src={src} caption={undefined}/>)).toEqual(["img"]);
+			expect(structure(<Image src={src} caption={null}/>)).toEqual(["img"]);
+			expect(structure(<Image src={src} caption=""/>)).toEqual(["img"]);
+			expect(structure(<Image src={src} caption={false}/>)).toEqual(["img"]);
 
 		});
 

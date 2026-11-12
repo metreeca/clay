@@ -1,5 +1,5 @@
 /*
- * Copyright © 2023-2026 Metreeca srl
+ * Copyright © 2026 Metreeca srl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -134,10 +134,12 @@ export function Moves({
 			<li key={choice.label} role="none">
 				<button id={item(choice.label)} type="button" role="menuitem" tabIndex={tabIndex(choice.label)}
 					onFocus={() => onFocus(choice.label)}
-					onClick={() => { choice.action(); close(); }}
+					onClick={() => {
+						choice.action();
+						close();
+					}}
 				>{choice.label}</button>
 			</li>
-
 		)}</ul>
 
 	</span>;

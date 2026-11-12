@@ -1,5 +1,5 @@
 /*
- * Copyright © 2023-2026 Metreeca srl
+ * Copyright © 2026 Metreeca srl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -89,10 +89,11 @@ clay-tool {
 
     /*
      * A row of samples stands in a framed panel, rounded and ruled, so the widgets it holds read against a surface of
-     * their own; the panel keeps clear of the prose before and after it, as a figure does.
+     * their own; the panel keeps clear of the prose before and after it, as a figure does. A row inside a field group
+     * takes the frame of the group instead, which would otherwise stand doubled around it.
      */
 
-    & :is(.controls, .toolbar, .columns, .frames, .paths, .notes) {
+    & :is(.controls, .toolbar, .columns, .frames, .paths, .notes, .fields, .grid):not(fieldset *) {
         padding: var(--skin--spacing-150);
         border-style: var(--skin--border-style);
         border-radius: var(--skin--border-radius-075);

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2023-2026 Metreeca srl
+ * Copyright © 2026 Metreeca srl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -74,7 +74,15 @@ function Zone({ id, accept = [Card], sides, onDrop, at, children }: {
 	children?: ComponentChildren
 }) {
 
-	targets.set(id, useTransferTarget({ id, name: `Zone ${id}`, element: `zone-${id}`, data: { zone: id }, accept, sides, onDrop }));
+	targets.set(id, useTransferTarget({
+		id,
+		name: `Zone ${id}`,
+		element: `zone-${id}`,
+		data: { zone: id },
+		accept,
+		sides,
+		onDrop
+	}));
 
 	return createElement("div", { id: `zone-${id}`, "data-at": at }, children);
 
@@ -184,7 +192,12 @@ describe("Transfer", () => {
 
 			vi.stubGlobal("DragEvent", class extends Event {
 
-				constructor(type: string, { clientX = 0, clientY = 0, dataTransfer = null, ...init }: DragEventInit = {}) {
+				constructor(type: string, {
+					clientX = 0,
+					clientY = 0,
+					dataTransfer = null,
+					...init
+				}: DragEventInit = {}) {
 					super(type, init);
 					Object.assign(this, { clientX, clientY, dataTransfer });
 				}
@@ -540,7 +553,10 @@ describe("useTransferSource()", () => {
 
 		it("takes its new place at once where the reader prefers reduced motion", async () => {
 
-			vi.spyOn(window, "matchMedia").mockImplementation(() => ({ matches: true } as MediaQueryList)); // ;(mock) only matches is read
+			vi.spyOn(window, "matchMedia").mockImplementation(() => ({ matches: true } as MediaQueryList)); // ;(mock)
+																											// only
+																											// matches
+																											// is read
 
 			mount(createElement(Item, { id: "a", at: 0 }), createElement(Zone, { id: "x" }));
 

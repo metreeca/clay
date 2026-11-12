@@ -1,5 +1,5 @@
 /*
- * Copyright © 2023-2026 Metreeca srl
+ * Copyright © 2026 Metreeca srl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,8 +21,8 @@
  */
 
 import { Icon } from "@metreeca/clay-widgets/icon";
-import { type Entry } from "@metreeca/specimen/sample";
 import { css, skin } from "@metreeca/skin";
+import { type Entry } from "@metreeca/specimen/sample";
 import "./icon.css";
 
 
@@ -42,108 +42,108 @@ type Area = readonly [string, ReadonlyArray<Glyph>]
  */
 const scalings: ReadonlyArray<Entry> = [
 
-	[ skin.scaling025, "a dot no larger than the full stop beside it" ],
-	[ skin.scaling050, "a bullet or a caret, half the height of the text" ],
-	[ skin.scaling075, "a mark subordinate to its text" ],
-	[ skin.scaling090, "a mark set a shade below the text" ],
-	[ skin.scaling100, "an icon beside a label" ],
-	[ skin.scaling110, "a mark set a shade above it" ],
-	[ skin.scaling125, "a roundel or a swatch" ],
-	[ skin.scaling150, "a glyph standing without a label" ],
-	[ skin.scaling200, "a mark heading a panel" ],
-	[ skin.scaling250, "a display mark on an empty or failed screen" ]
+	[skin.scaling025, "a dot no larger than the full stop beside it"],
+	[skin.scaling050, "a bullet or a caret, half the height of the text"],
+	[skin.scaling075, "a mark subordinate to its text"],
+	[skin.scaling090, "a mark set a shade below the text"],
+	[skin.scaling100, "an icon beside a label"],
+	[skin.scaling110, "a mark set a shade above it"],
+	[skin.scaling125, "a roundel or a swatch"],
+	[skin.scaling150, "a glyph standing without a label"],
+	[skin.scaling200, "a mark heading a panel"],
+	[skin.scaling250, "a display mark on an empty or failed screen"]
 
 ];
 
 const areas: ReadonlyArray<Area> = [
 
-	[ "Session", [
-		[ "LogIn", Icon.LogIn ],
-		[ "LogOut", Icon.LogOut ]
-	] ],
+	["Session", [
+		["LogIn", Icon.LogIn],
+		["LogOut", Icon.LogOut]
+	]],
 
-	[ "Navigation", [
-		[ "Link", Icon.Link ],
-		[ "Open", Icon.Open ],
-		[ "Back", Icon.Back ]
-	] ],
+	["Navigation", [
+		["Link", Icon.Link],
+		["Open", Icon.Open],
+		["Back", Icon.Back]
+	]],
 
-	[ "Disclosure", [
-		[ "Expand", Icon.Expand ],
-		[ "Collapse", Icon.Collapse ],
-		[ "Unfold", Icon.Unfold ],
-		[ "Fold", Icon.Fold ],
-		[ "UnfoldAll", Icon.UnfoldAll ],
-		[ "FoldAll", Icon.FoldAll ]
-	] ],
+	["Disclosure", [
+		["Expand", Icon.Expand],
+		["Collapse", Icon.Collapse],
+		["Unfold", Icon.Unfold],
+		["Fold", Icon.Fold],
+		["UnfoldAll", Icon.UnfoldAll],
+		["FoldAll", Icon.FoldAll]
+	]],
 
-	[ "Search", [
-		[ "Search", Icon.Search ],
-		[ "Clear", Icon.Clear ],
-		[ "Reset", Icon.Reset ],
-		[ "Options", Icon.Options ]
-	] ],
+	["Search", [
+		["Search", Icon.Search],
+		["Clear", Icon.Clear],
+		["Reset", Icon.Reset],
+		["Options", Icon.Options]
+	]],
 
-	[ "Ordering", [
-		[ "Sort", Icon.Sort ],
-		[ "Increasing", Icon.Increasing ],
-		[ "Decreasing", Icon.Decreasing ]
-	] ],
+	["Ordering", [
+		["Sort", Icon.Sort],
+		["Increasing", Icon.Increasing],
+		["Decreasing", Icon.Decreasing]
+	]],
 
-	[ "Collections", [
-		[ "Insert", Icon.Insert ],
-		[ "Remove", Icon.Remove ]
-	] ],
+	["Collections", [
+		["Insert", Icon.Insert],
+		["Remove", Icon.Remove]
+	]],
 
-	[ "Records", [
-		[ "Create", Icon.Create ],
-		[ "Update", Icon.Update ],
-		[ "Save", Icon.Save ],
-		[ "Delete", Icon.Delete ]
-	] ],
+	["Records", [
+		["Create", Icon.Create],
+		["Update", Icon.Update],
+		["Save", Icon.Save],
+		["Delete", Icon.Delete]
+	]],
 
-	[ "Confirmation", [
-		[ "Accept", Icon.Accept ],
-		[ "Cancel", Icon.Cancel ],
-		[ "Close", Icon.Close ]
-	] ],
+	["Confirmation", [
+		["Accept", Icon.Accept],
+		["Cancel", Icon.Cancel],
+		["Close", Icon.Close]
+	]],
 
-	[ "Items", [
-		[ "Grip", Icon.Grip ],
-		[ "More", Icon.More ]
-	] ],
+	["Items", [
+		["Grip", Icon.Grip],
+		["More", Icon.More]
+	]],
 
-	[ "Modes", [
-		[ "Menu", Icon.Menu ],
-		[ "Done", Icon.Done ]
-	] ],
+	["Modes", [
+		["Menu", Icon.Menu],
+		["Done", Icon.Done]
+	]],
 
-	[ "Notices", [
-		[ "About", Icon.About ],
-		[ "Info", Icon.Info ],
-		[ "Alert", Icon.Alert ],
-		[ "Help", Icon.Help ]
-	] ],
+	["Notices", [
+		["About", Icon.About],
+		["Info", Icon.Info],
+		["Alert", Icon.Alert],
+		["Help", Icon.Help]
+	]],
 
-	[ "Failures", [
-		[ "Unauthorized", Icon.Unauthorized ],
-		[ "Forbidden", Icon.Forbidden ],
-		[ "NotFound", Icon.NotFound ],
-		[ "Error", Icon.Error ]
-	] ]
+	["Failures", [
+		["Unauthorized", Icon.Unauthorized],
+		["Forbidden", Icon.Forbidden],
+		["NotFound", Icon.NotFound],
+		["Error", Icon.Error]
+	]]
 
 ];
 
-const strokes: ReadonlyArray<number> = [ 1, 1.5, 2, 3 ];
+const strokes: ReadonlyArray<number> = [1, 1.5, 2, 3];
 
 const tints: ReadonlyArray<Entry> = [
 
-	[ skin.color, "a mark in the text colour, which it takes by inheritance" ],
-	[ skin.colorEnabled, "a mark on an enabled control" ],
-	[ skin.colorHover, "a mark under the pointer" ],
-	[ skin.colorLabel, "a mark beside secondary text" ],
-	[ skin.colorDisabled, "a mark on a control taking no input" ],
-	[ skin.colorFail, "a mark telling a failure" ]
+	[skin.color, "a mark in the text colour, which it takes by inheritance"],
+	[skin.colorEnabled, "a mark on an enabled control"],
+	[skin.colorHover, "a mark under the pointer"],
+	[skin.colorLabel, "a mark beside secondary text"],
+	[skin.colorDisabled, "a mark on a control taking no input"],
+	[skin.colorFail, "a mark telling a failure"]
 
 ];
 
@@ -167,11 +167,11 @@ export function Icons() {
 
 		<h3>Roles</h3>
 
-		<div class="icon-areas">{areas.map(([ area, marks ]) => <section key={area}>
+		<div class="icon-areas">{areas.map(([area, marks]) => <section key={area}>
 
 			<h4>{area}</h4>
 
-			<div class="icon-tiles">{marks.map(([ name, Mark ]) =>
+			<div class="icon-tiles">{marks.map(([name, Mark]) =>
 				<figure key={name} class="icon-tile">
 					<span><Mark/></span>
 					<figcaption>{name}</figcaption>
@@ -185,7 +185,7 @@ export function Icons() {
 		<p>A glyph is drawn at <code>{skin.scaling100}</code>, so it rides with the text around it; any other step of
 			the ladder is a size stated on purpose. Hover a step for what it is meant for.</p>
 
-		<ol class="icon-band">{scalings.map(([ property, note ]) =>
+		<ol class="icon-band">{scalings.map(([property, note]) =>
 			<li key={property} title={note} class={property === skin.scaling100 ? "icon-default" : undefined}>
 				<span><Icon.Rocket style={{ width: css.var(property), height: css.var(property) }}/></span>
 				<code>{property.slice(-3)}</code>
@@ -199,7 +199,11 @@ export function Icons() {
 
 		<ol class="icon-band">{strokes.map(width =>
 			<li key={width} class={width === 2 ? "icon-default" : undefined}>
-				<span><Icon.Alert style={{ width: css.var(skin.scaling200), height: css.var(skin.scaling200), strokeWidth: width }}/></span>
+				<span><Icon.Alert style={{
+					width: css.var(skin.scaling200),
+					height: css.var(skin.scaling200),
+					strokeWidth: width
+				}}/></span>
 				<code>{width}</code>
 			</li>
 		)}</ol>
@@ -209,7 +213,7 @@ export function Icons() {
 		<p>A glyph strokes <code>currentColor</code>, so it takes the colour of whatever it sits in and matches its
 			label through every state.</p>
 
-		<div class="icon-tiles wide">{tints.map(([ property, note ]) =>
+		<div class="icon-tiles wide">{tints.map(([property, note]) =>
 			<figure key={property} class="icon-tile" style={{ color: css.var(property) }}>
 				<span><Icon.Alert/></span>
 				<figcaption><code>{property.replace(/^--skin--/, "")}</code><small>{note}</small></figcaption>

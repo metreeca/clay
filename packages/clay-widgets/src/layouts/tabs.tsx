@@ -1,5 +1,5 @@
 /*
- * Copyright © 2023-2026 Metreeca srl
+ * Copyright © 2026 Metreeca srl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,8 +23,8 @@
  * @module tabs
  */
 
-import { useModel } from "@metreeca/clay/model";
 import { useFocus } from "@metreeca/clay/focus";
+import { useModel } from "@metreeca/clay/model";
 import { opt, type Optional } from "@metreeca/core";
 import { type ComponentChildren, createElement } from "preact";
 import { useEffect, useId, useState } from "preact/hooks";
@@ -71,7 +71,7 @@ export function Tabs({
 }: {
 
 	/**
-	 * The accessible name of the tabs, as a strip or as a menu, telling apart several on one screen; unnamed if omitted.
+	 * The accessible name of the tabs as a strip or as a menu, telling several on a screen apart; unnamed if omitted.
 	 */
 	name?: string
 
@@ -119,7 +119,12 @@ export function Tabs({
 	const enabled = order.filter(label => labels[label]);
 
 	const { tabIndex, onKeyDown } = useFocus({
-		wrap: true, orientation: "horizontal", items: enabled, active, identify: label => tab(order.indexOf(label)), onMove: select
+		wrap: true,
+		orientation: "horizontal",
+		items: enabled,
+		active,
+		identify: label => tab(order.indexOf(label)),
+		onMove: select
 	});
 
 	/*
@@ -186,13 +191,13 @@ export function Tabs({
 
 		collapsed && <span><select
 
-			aria-label={name}
+            aria-label={name}
 
-			value={active}
+            value={active}
 
-			onChange={event => select(event.currentTarget.value)}
+            onChange={event => select(event.currentTarget.value)}
 
-		>{order.map(label =>
+        >{order.map(label =>
 
 			<option
 

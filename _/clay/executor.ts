@@ -1,5 +1,5 @@
 /*
- * Copyright © 2020-2023 Metreeca srl
+ * Copyright © 2026 Metreeca srl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -66,14 +66,14 @@ export default function executor(tile: Tile, opts?: Partial<typeof Options>) {
 
 					function undo(tile: Tile): () => void {
 
-						const memo:{ [property: string]: any}={};
+						const memo: { [property: string]: any } = {};
 
 						const descriptors: { [property: string]: PropertyDescriptor }
-							=(<any>Object).getOwnPropertyDescriptors((<any>tile).constructor.prototype);
+							= (<any>Object).getOwnPropertyDescriptors((<any>tile).constructor.prototype);
 
 						for (const property in descriptors) {
 							if ( descriptors[property].set ) {
-								memo[property]=(<any>tile)[property]
+								memo[property] = (<any>tile)[property];
 							}
 						}
 
@@ -116,7 +116,7 @@ export interface Task {
 /**
  * Executor options.
  */
-export const Options={
+export const Options = {
 
 	/**
 	 * The maximum depth of undo/redo stacks; must be greater than or equal to 0; 0 for no depth limit.
@@ -133,8 +133,8 @@ export const Options={
  */
 export class Executor {
 
-	private _undo: ({ name: string } & Task)[]=[];
-	private _redo: ({ name: string } & Task)[]=[];
+	private _undo: ({ name: string } & Task)[] = [];
+	private _redo: ({ name: string } & Task)[] = [];
 
 
 	constructor(public readonly tile: Tile, public readonly opts: typeof Options) {}
@@ -175,7 +175,7 @@ export class Executor {
 
 			if ( this._undo.push({ name, ...task }) > this.opts.limit && this.opts.limit > 0 ) { this._undo.shift(); }
 
-			this._redo=[];
+			this._redo = [];
 
 			this.tile.requestUpdate().then(() => task.exec());
 
@@ -186,7 +186,7 @@ export class Executor {
 
 	undo() {
 
-		const task=this._undo.pop();
+		const task = this._undo.pop();
 
 		if ( task ) {
 
@@ -199,7 +199,7 @@ export class Executor {
 
 	redo() {
 
-		const task=this._redo.pop();
+		const task = this._redo.pop();
 
 		if ( task ) {
 
@@ -211,4 +211,3 @@ export class Executor {
 	}
 
 }
-

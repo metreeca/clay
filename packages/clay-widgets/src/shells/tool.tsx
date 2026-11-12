@@ -1,5 +1,5 @@
 /*
- * Copyright © 2023-2026 Metreeca srl
+ * Copyright © 2026 Metreeca srl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,8 +23,8 @@
  * @module tool
  */
 
-import type { Optional } from "@metreeca/core";
 import { useModel } from "@metreeca/clay/model";
+import type { Optional } from "@metreeca/core";
 import { createState } from "@metreeca/core/state";
 import { skin } from "@metreeca/skin";
 import { type ComponentChildren, createElement, type TargetedEvent, type TargetedMouseEvent } from "preact";
@@ -311,30 +311,30 @@ export function Tool({
 		 */}
 
 		{!tucked && <aside
-			id={side}
-			aria-label="Menu"
-			popover={locked ? "manual" : "auto"}
-			inert={locked}
-			onClick={follow}
-			onToggle={event => {
+            id={side}
+            aria-label="Menu"
+            popover={locked ? "manual" : "auto"}
+            inert={locked}
+            onClick={follow}
+            onToggle={event => {
 				reveal(event);
 				toggle(opened(event));
 			}}
-		>
+        >
 
-			<header>
+            <header>
 				{meta}
-				<button type="button" popovertarget={side} popovertargetaction="hide" aria-label="Close menu">
-					<Icon.Close/>
-				</button>
-			</header>
+                <button type="button" popovertarget={side} popovertargetaction="hide" aria-label="Close menu">
+                    <Icon.Close/>
+                </button>
+            </header>
 
-			<div tabIndex={0}>
-				<div>{tray}</div>
-			</div>
+            <div tabIndex={0}>
+                <div>{tray}</div>
+            </div>
 			{more && <footer>{more}</footer>}
 
-		</aside>}
+        </aside>}
 
 		{/*
 		 * The main column takes the focus from code alone, so a navigation can land the focus on it and a reader hears
@@ -347,8 +347,8 @@ export function Tool({
 
 			<header>
 				{!tucked && <button type="button" popovertarget={side} disabled={locked} aria-label="Open menu">
-					<Icon.Menu/>
-				</button>}
+                    <Icon.Menu/>
+                </button>}
 				{split && head && <div id={title}>{head}</div>}
 
 				{/*

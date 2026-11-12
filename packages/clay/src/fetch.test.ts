@@ -1,5 +1,5 @@
 /*
- * Copyright © 2023-2026 Metreeca srl
+ * Copyright © 2026 Metreeca srl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -234,7 +234,7 @@ describe("useFetching()", () => {
 
 		await vi.waitFor(() => expect(busy()).toBe(false));
 
-		expect(seen.mock.calls.map(([, busy]) => busy).filter((busy, index, all) => busy !== all[index - 1]))
+		expect(seen.mock.calls.map(([, busy]) => busy).filter((busy, index, all) => busy !== all[index-1]))
 			.toEqual([false, true, false]);
 
 	});

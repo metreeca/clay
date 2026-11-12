@@ -1,5 +1,5 @@
 /*
- * Copyright © 2023-2026 Metreeca srl
+ * Copyright © 2026 Metreeca srl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,8 +20,8 @@
  * @module
  */
 
-import { type Drop, type Side, useTransferSource, useTransferTarget } from "@metreeca/clay/transfer";
 import { Icon } from "@metreeca/clay-widgets/icon";
+import { type Drop, type Side, useTransferSource, useTransferTarget } from "@metreeca/clay/transfer";
 import { Moves, opening } from "@metreeca/specimen/clay/moves.js";
 import { useId, useState } from "preact/hooks";
 import "./transfer.css";
@@ -95,9 +95,12 @@ function Columns() {
 
 	return <>
 
-		<p>Cards are dragged by their whole surface, with the pointer or by touch after a brief hold, into another column.
-			Each card carries a <em>More</em> button listing the same moves, for the keyboard and for a single tap. A move
-			waits for the store, the card standing faded meanwhile; this store refuses a card skipping straight from to do
+		<p>Cards are dragged by their whole surface, with the pointer or by touch after a brief hold, into another
+			column.
+			Each card carries a <em>More</em> button listing the same moves, for the keyboard and for a single tap. A
+			move
+			waits for the store, the card standing faded meanwhile; this store refuses a card skipping straight from to
+			do
 			to done.</p>
 
 		<div class="transfer-board">{columns.map(column =>
@@ -105,7 +108,6 @@ function Columns() {
 			<Column key={column} column={column} items={items.filter(item => item.column === column)}
 				onDrop={drop => drop.source ? move(drop.source.id, column) : false}
 			/>
-
 		)}</div>
 
 	</>;
@@ -223,7 +225,6 @@ function List() {
 				previous={items[index-1]} next={items[index+1]}
 				onDrop={drop => onDrop(drop, item)}
 			/>
-
 		)}</ol>
 
 	</>;
@@ -251,7 +252,14 @@ function Step({
 	const handle = useId();
 	const grip = useId();
 
-	const { dragging, dropping, move } = useTransferSource({ id: item, name: item, element, handle, focus: grip, type: StepType });
+	const { dragging, dropping, move } = useTransferSource({
+		id: item,
+		name: item,
+		element,
+		handle,
+		focus: grip,
+		type: StepType
+	});
 	const { side } = useTransferTarget({ id: item, name: item, element, accept: [StepType], sides: true, onDrop });
 
 	const choices = [

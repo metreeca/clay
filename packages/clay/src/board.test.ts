@@ -1,5 +1,5 @@
 /*
- * Copyright © 2023-2026 Metreeca srl
+ * Copyright © 2026 Metreeca srl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@ import { createElement, Fragment, render } from "preact";
 import { act } from "preact/test-utils";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
-import { type Post, usePosts, useBoard, Board } from "./board.js";
+import { Board, type Post, useBoard, usePosts } from "./board.js";
 
 
 const saving: Post = { instance: "urn:test:saving", status: "pending", message: "Saving" };

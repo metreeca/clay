@@ -1,5 +1,5 @@
 /*
- * Copyright © 2023-2026 Metreeca srl
+ * Copyright © 2026 Metreeca srl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -82,8 +82,8 @@ export function isContent(value: unknown): boolean {
 export function classes(classes: Readonly<{ [name: string]: Optional<boolean> }>): Optional<string> {
 
 	return Object.entries(classes)
-		.filter(([ , state ]) => state)
-		.map(([ name ]) => name)
+		.filter(([, state]) => state)
+		.map(([name]) => name)
 		.join(" ") || undefined;
 
 }

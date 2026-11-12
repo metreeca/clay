@@ -1,5 +1,5 @@
 /*
- * Copyright © 2023-2026 Metreeca srl
+ * Copyright © 2026 Metreeca srl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -147,7 +147,8 @@ export function ToolScreen() {
 			</div>
 
 			<figcaption>Where each slot stands: the side column beside the main one, each a head over a body over a
-				foot.</figcaption>
+				foot.
+			</figcaption>
 
 		</figure>
 
@@ -162,13 +163,41 @@ export function ToolScreen() {
 			</thead>
 
 			<tbody>
-				<tr><td><code>meta</code></td><td>the head of the side column</td><td>the lockup, leading back to the specimen</td></tr>
-				<tr><td><code>tray</code></td><td>the body of the side column</td><td>the outline of this screen</td></tr>
-				<tr><td><code>more</code></td><td>the foot of the side column</td><td>the settings</td></tr>
-				<tr><td><code>head</code></td><td>the head of the main column, or the top of its body where two columns do not fit</td><td>the name of the screen</td></tr>
-				<tr><td><code>menu</code></td><td>the end of the head of the main column</td><td>the switches and the send button</td></tr>
-				<tr><td><code>children</code></td><td>the body of the main column</td><td>this documentation</td></tr>
-				<tr><td><code>foot</code></td><td>the foot of the main column</td><td>the module</td></tr>
+				<tr>
+					<td><code>meta</code></td>
+					<td>the head of the side column</td>
+					<td>the lockup, leading back to the specimen</td>
+				</tr>
+				<tr>
+					<td><code>tray</code></td>
+					<td>the body of the side column</td>
+					<td>the outline of this screen</td>
+				</tr>
+				<tr>
+					<td><code>more</code></td>
+					<td>the foot of the side column</td>
+					<td>the settings</td>
+				</tr>
+				<tr>
+					<td><code>head</code></td>
+					<td>the head of the main column, or the top of its body where two columns do not fit</td>
+					<td>the name of the screen</td>
+				</tr>
+				<tr>
+					<td><code>menu</code></td>
+					<td>the end of the head of the main column</td>
+					<td>the switches and the send button</td>
+				</tr>
+				<tr>
+					<td><code>children</code></td>
+					<td>the body of the main column</td>
+					<td>this documentation</td>
+				</tr>
+				<tr>
+					<td><code>foot</code></td>
+					<td>the foot of the main column</td>
+					<td>the module</td>
+				</tr>
 			</tbody>
 
 		</table>
@@ -181,16 +210,21 @@ export function ToolScreen() {
 		<p>Three switches reshape the frame, each worked from the buttons in the menu at the end of the main head:</p>
 
 		<ul>
-			<li><code>tucked</code> leaves the side column out of the frame, for a screen meant to be seen through rather
-				than moved around in; the panel button sets it</li>
+			<li><code>tucked</code> leaves the side column out of the frame, for a screen meant to be seen through
+				rather
+				than moved around in; the panel button sets it
+			</li>
 			<li><code>locked</code> takes the side column out of reach for pointer and keyboard alike, fading what it
-				holds; the padlock sets it</li>
+				holds; the padlock sets it
+			</li>
 			<li><code>wide</code> lets the main column take the whole width of the frame, past its width limit; the
-				chevrons set it</li>
+				chevrons set it
+			</li>
 		</ul>
 
 		<p>Waiting is stated by the app through <code>busy</code>, which this screen sets while the shared fetch client
-			has a request in flight: the frame ignores input aimed inside it, leaving the focus where it stands, then fades
+			has a request in flight: the frame ignores input aimed inside it, leaving the focus where it stands, then
+			fades
 			and announces waiting to screen readers. The send button runs a request against a mock answering after two
 			seconds, so the whole of it can be watched.</p>
 
@@ -212,16 +246,46 @@ export function ToolScreen() {
 			</thead>
 
 			<tbody>
-				<tr><td><code>--clay-tool-side-width</code></td><td>the width of the side column</td></tr>
-				<tr><td><code>--clay-tool-main-width</code></td><td>the widest the main column grows before the columns centre</td></tr>
-				<tr><td><code>--clay-tool-frame-gutter</code></td><td>the inline gutter of the frame, against the window edges</td></tr>
-				<tr><td><code>--clay-tool-side-gutter</code></td><td>the inline gutter of the side column</td></tr>
-				<tr><td><code>--clay-tool-main-gutter</code></td><td>the inline gutter of the main column</td></tr>
-				<tr><td><code>--clay-tool-head-gutter</code></td><td>the block gutter of the heads</td></tr>
-				<tr><td><code>--clay-tool-body-gutter</code></td><td>the block gutter of the bodies</td></tr>
-				<tr><td><code>--clay-tool-foot-gutter</code></td><td>the block gutter of the feet</td></tr>
-				<tr><td><code>--clay-tool-head-font-size</code></td><td>the font size of the heads, the text size unless set</td></tr>
-				<tr><td><code>--clay-tool-foot-font-size</code></td><td>the font size of the feet, the text size unless set</td></tr>
+				<tr>
+					<td><code>--clay-tool-side-width</code></td>
+					<td>the width of the side column</td>
+				</tr>
+				<tr>
+					<td><code>--clay-tool-main-width</code></td>
+					<td>the widest the main column grows before the columns centre</td>
+				</tr>
+				<tr>
+					<td><code>--clay-tool-frame-gutter</code></td>
+					<td>the inline gutter of the frame, against the window edges</td>
+				</tr>
+				<tr>
+					<td><code>--clay-tool-side-gutter</code></td>
+					<td>the inline gutter of the side column</td>
+				</tr>
+				<tr>
+					<td><code>--clay-tool-main-gutter</code></td>
+					<td>the inline gutter of the main column</td>
+				</tr>
+				<tr>
+					<td><code>--clay-tool-head-gutter</code></td>
+					<td>the block gutter of the heads</td>
+				</tr>
+				<tr>
+					<td><code>--clay-tool-body-gutter</code></td>
+					<td>the block gutter of the bodies</td>
+				</tr>
+				<tr>
+					<td><code>--clay-tool-foot-gutter</code></td>
+					<td>the block gutter of the feet</td>
+				</tr>
+				<tr>
+					<td><code>--clay-tool-head-font-size</code></td>
+					<td>the font size of the heads, the text size unless set</td>
+				</tr>
+				<tr>
+					<td><code>--clay-tool-foot-font-size</code></td>
+					<td>the font size of the feet, the text size unless set</td>
+				</tr>
 			</tbody>
 
 		</table>

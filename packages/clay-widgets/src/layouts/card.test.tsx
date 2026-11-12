@@ -1,5 +1,5 @@
 /*
- * Copyright © 2023-2026 Metreeca srl
+ * Copyright © 2026 Metreeca srl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,8 +16,8 @@
 
 import { type JSX, render } from "preact";
 import { describe, expect, it } from "vitest";
-import { Card } from "./card.js";
 import { Image } from "../content/image.js";
+import { Card } from "./card.js";
 
 
 describe("Card", () => {
@@ -41,21 +41,21 @@ describe("Card", () => {
 		it("shows every part given", async () => {
 
 			expect(parts(<Card title="Title" badge="Badge" image={<b>T</b>}>Description</Card>))
-				.toEqual([ "span", "span", "div", "i" ]);
+				.toEqual(["span", "span", "div", "i"]);
 
 		});
 
 		it("leaves out parts not given", async () => {
 
-			expect(parts(<Card>Description</Card>)).toEqual([ "div" ]);
-			expect(parts(<Card title="Title"/>)).toEqual([ "span" ]);
+			expect(parts(<Card>Description</Card>)).toEqual(["div"]);
+			expect(parts(<Card title="Title"/>)).toEqual(["span"]);
 
 		});
 
 		it("leaves out undefined, null, empty string and boolean parts", async () => {
 
 			expect(parts(<Card title={undefined} badge={null} image={false}>{""}</Card>)).toEqual([]);
-			expect(parts(<Card title="" badge={true}>Description</Card>)).toEqual([ "div" ]);
+			expect(parts(<Card title="" badge={true}>Description</Card>)).toEqual(["div"]);
 
 		});
 

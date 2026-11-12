@@ -1,5 +1,5 @@
 /*
- * Copyright © 2023-2026 Metreeca srl
+ * Copyright © 2026 Metreeca srl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -396,7 +396,10 @@ describe("Router", () => {
 			mount({
 				"/": createElement("p", {},
 					createElement("a", { href: "#fragment" }, createElement("img", { src: "a.png", alt: "a" })),
-					createElement("a", { href: "/other", target: "_blank" }, createElement("img", { src: "b.png", alt: "b" }))
+					createElement("a", { href: "/other", target: "_blank" }, createElement("img", {
+						src: "b.png",
+						alt: "b"
+					}))
 				)
 			});
 
@@ -518,7 +521,7 @@ describe("Routes", () => {
 
 			history.replaceState(null, "", "/other");
 
-			mount({ "/": createElement("p", {}, "home"), "*":createElement(Here, {}) });
+			mount({ "/": createElement("p", {}, "home"), "*": createElement(Here, {}) });
 
 			expect(text()).toBe("/other");
 
@@ -528,7 +531,7 @@ describe("Routes", () => {
 
 			history.replaceState(null, "", "/users/123/posts");
 
-			mount({ "/users/:id": createElement("p", {}, "user"), "*":createElement(Here, {}) });
+			mount({ "/users/:id": createElement("p", {}, "user"), "*": createElement(Here, {}) });
 
 			expect(text()).toBe("/users/123/posts");
 
@@ -584,7 +587,7 @@ describe("Routes", () => {
 
 			history.replaceState(null, "", "/a/b/c");
 
-			mount({ "/": createElement("p", {}, "home"), "*":createElement(Here, {}) });
+			mount({ "/": createElement("p", {}, "home"), "*": createElement(Here, {}) });
 
 			expect(text()).toBe("/a/b/c");
 
@@ -592,7 +595,7 @@ describe("Routes", () => {
 
 		it("should match the catch-all pattern in table order", async () => {
 
-			mount({ "/": createElement("p", {}, "home"), "*":createElement(Here, {}) });
+			mount({ "/": createElement("p", {}, "home"), "*": createElement(Here, {}) });
 
 			expect(text()).toBe("home");
 
@@ -602,7 +605,7 @@ describe("Routes", () => {
 
 			history.replaceState(null, "", "/old");
 
-			mount({ "/old": "/missing", "*":createElement(Here, {}) });
+			mount({ "/old": "/missing", "*": createElement(Here, {}) });
 
 			expect(location.pathname).toBe("/missing");
 			expect(text()).toBe("/missing");
@@ -615,7 +618,7 @@ describe("Routes", () => {
 
 			const length = history.length;
 
-			mount({ "/": createElement("p", {}, "home"), "*":"/" });
+			mount({ "/": createElement("p", {}, "home"), "*": "/" });
 
 			expect(location.pathname).toBe("/");
 			expect(history.length).toBe(length);
@@ -633,7 +636,7 @@ describe("Routes", () => {
 
 			history.replaceState(null, "", "/other");
 
-			expect(() => mount({ "/": createElement("p", {}), "*":"/missing" })).toThrow("redirection loop");
+			expect(() => mount({ "/": createElement("p", {}), "*": "/missing" })).toThrow("redirection loop");
 
 		});
 
@@ -982,238 +985,238 @@ describe("Routes", () => {
 
 	describe("sections", () => {
 
-	it("should match the trailing path left over by the enclosing pattern", async () => {
+		it("should match the trailing path left over by the enclosing pattern", async () => {
 
-		history.replaceState(null, "", "/users/123");
+			history.replaceState(null, "", "/users/123");
 
-		mount({
-			"/users/": createElement(section({
-				"/": createElement("p", {}, "list"),
-				"/:id": createElement(Here, {})
-			}), {})
+			mount({
+				"/users/": createElement(section({
+					"/": createElement("p", {}, "list"),
+					"/:id": createElement(Here, {})
+				}), {})
+			});
+
+			expect(text()).toBe("/users/123");
+
 		});
 
-		expect(text()).toBe("/users/123");
+		it("should match the root of the section", async () => {
 
-	});
+			history.replaceState(null, "", "/users/");
 
-	it("should match the root of the section", async () => {
+			mount({ "/users/": createElement(section({ "/": createElement("p", {}, "list") }), {}) });
 
-		history.replaceState(null, "", "/users/");
+			expect(text()).toBe("list");
 
-		mount({ "/users/": createElement(section({ "/": createElement("p", {}, "list") }), {}) });
-
-		expect(text()).toBe("list");
-
-	});
-
-	it("should nest to any depth", async () => {
-
-		history.replaceState(null, "", "/a/b/c");
-
-		mount({
-			"/a/": createElement(section({
-				"/b/": createElement(section({ "/c": createElement(Here, {}) }), {})
-			}), {})
 		});
 
-		expect(text()).toBe("/a/b/c");
+		it("should nest to any depth", async () => {
 
-	});
+			history.replaceState(null, "", "/a/b/c");
 
-	it("should render the section catch-all view for a route not handled within the section", async () => {
+			mount({
+				"/a/": createElement(section({
+					"/b/": createElement(section({ "/c": createElement(Here, {}) }), {})
+				}), {})
+			});
 
-		history.replaceState(null, "", "/users/123/posts");
+			expect(text()).toBe("/a/b/c");
 
-		mount({
-			"/users/": createElement("main", {}, "users ", createElement(section({
-				"/": createElement("p", {}, "list"),
-				"*":createElement(Here, {})
-			}), {}))
 		});
 
-		expect(text()).toBe("users /users/123/posts");
+		it("should render the section catch-all view for a route not handled within the section", async () => {
 
-	});
+			history.replaceState(null, "", "/users/123/posts");
 
-	it("should move the location along the section catch-all redirection, relative to the section", async () => {
+			mount({
+				"/users/": createElement("main", {}, "users ", createElement(section({
+					"/": createElement("p", {}, "list"),
+					"*": createElement(Here, {})
+				}), {}))
+			});
 
-		history.replaceState(null, "", "/users/123/posts");
+			expect(text()).toBe("users /users/123/posts");
 
-		mount({
-			"/": createElement("p", {}, "home"),
-			"/users/": createElement(section({ "/": createElement("p", {}, "list"), "*":"/" }), {})
 		});
 
-		expect(location.pathname).toBe("/users/");
-		expect(text()).toBe("list");
+		it("should move the location along the section catch-all redirection, relative to the section", async () => {
 
-	});
+			history.replaceState(null, "", "/users/123/posts");
 
-	it("should see the root route below the root pattern", async () => {
+			mount({
+				"/": createElement("p", {}, "home"),
+				"/users/": createElement(section({ "/": createElement("p", {}, "list"), "*": "/" }), {})
+			});
 
-		mount({ "/": createElement(section({ "/": createElement("p", {}, "root") }), {}) });
+			expect(location.pathname).toBe("/users/");
+			expect(text()).toBe("list");
 
-		expect(text()).toBe("root");
-
-	});
-
-	it("should see the root route below a pattern other than a subtree", async () => {
-
-		history.replaceState(null, "", "/users/123");
-
-		mount({ "/users/:id": createElement(section({ "/": createElement(Here, {}) }), {}) });
-
-		expect(text()).toBe("/users/123");
-
-	});
-
-	it("should see the route unchanged below the catch-all pattern", async () => {
-
-		history.replaceState(null, "", "/users/123");
-
-		mount({ "*":createElement(section({ "/users/:id": createElement(Here, {}) }), {}) });
-
-		expect(text()).toBe("/users/123");
-
-	});
-
-	it("should see the route left over by the enclosing section below a nested catch-all pattern", async () => {
-
-		history.replaceState(null, "", "/users/123");
-
-		mount({
-			"/users/": createElement(section({
-				"*":createElement(section({ "/:id": createElement(Here, {}) }), {})
-			}), {})
 		});
 
-		expect(text()).toBe("/users/123");
+		it("should see the root route below the root pattern", async () => {
 
-	});
+			mount({ "/": createElement(section({ "/": createElement("p", {}, "root") }), {}) });
 
-	it("should redirect relative to the section, replacing the history entry", async () => {
+			expect(text()).toBe("root");
 
-		history.replaceState(null, "", "/users/");
-
-		const length = history.length;
-
-		mount({
-			"/users/": createElement(section({
-				"/": "/all",
-				"/all": createElement(Here, {})
-			}), {})
 		});
 
-		expect(location.pathname).toBe("/users/all");
-		expect(history.length).toBe(length);
-		expect(text()).toBe("/users/all");
+		it("should see the root route below a pattern other than a subtree", async () => {
 
-	});
+			history.replaceState(null, "", "/users/123");
 
-	it("should follow a section redirection reached through an enclosing redirection", async () => {
+			mount({ "/users/:id": createElement(section({ "/": createElement(Here, {}) }), {}) });
 
-		history.replaceState(null, "", "/");
+			expect(text()).toBe("/users/123");
 
-		const length = history.length;
-
-		mount({
-			"/": "/users/",
-			"/users/": createElement(section({
-				"/": "/all",
-				"/all": createElement(Here, {})
-			}), {})
 		});
 
-		expect(location.pathname).toBe("/users/all");
-		expect(history.length).toBe(length);
-		expect(text()).toBe("/users/all");
+		it("should see the route unchanged below the catch-all pattern", async () => {
 
-	});
+			history.replaceState(null, "", "/users/123");
 
-	it("should reject a route not handled within the section", async () => {
+			mount({ "*": createElement(section({ "/users/:id": createElement(Here, {}) }), {}) });
 
-		history.replaceState(null, "", "/users/123");
+			expect(text()).toBe("/users/123");
 
-		expect(() => mount({
-			"/users/": createElement(section({ "/": createElement("p", {}) }), {})
-		})).toThrow("unhandled route /123");
-
-	});
-
-	it("should render the enclosing catch-all view for a route not handled within the section", async () => {
-
-		history.replaceState(null, "", "/users/123/posts");
-
-		mount({
-			"/users/": createElement("main", {}, "users ", createElement(section({ "/": createElement("p", {}, "list") }), {})),
-			"*":createElement(Here, {})
 		});
 
-		expect(text()).toBe("users /users/123/posts");
+		it("should see the route left over by the enclosing section below a nested catch-all pattern", async () => {
 
-	});
+			history.replaceState(null, "", "/users/123");
 
-	it("should move the location along the enclosing catch-all redirection, relative to the section", async () => {
+			mount({
+				"/users/": createElement(section({
+					"*": createElement(section({ "/:id": createElement(Here, {}) }), {})
+				}), {})
+			});
 
-		history.replaceState(null, "", "/users/123/posts");
+			expect(text()).toBe("/users/123");
 
-		const length = history.length;
-
-		mount({
-			"/": createElement("p", {}, "home"),
-			"/users/": createElement(section({ "/": createElement("p", {}, "list") }), {}),
-			"*":"/"
 		});
 
-		expect(location.pathname).toBe("/users/");
-		expect(history.length).toBe(length);
-		expect(text()).toBe("list");
+		it("should redirect relative to the section, replacing the history entry", async () => {
 
-	});
+			history.replaceState(null, "", "/users/");
 
-	it("should prefer the catch-all of the section to the enclosing one", async () => {
+			const length = history.length;
 
-		history.replaceState(null, "", "/users/123/posts");
+			mount({
+				"/users/": createElement(section({
+					"/": "/all",
+					"/all": createElement(Here, {})
+				}), {})
+			});
 
-		mount({
-			"/users/": createElement(section({
-				"/": createElement("p", {}, "list"),
-				"*":createElement("p", {}, "section")
-			}), {}),
-			"*":createElement("p", {}, "root")
+			expect(location.pathname).toBe("/users/all");
+			expect(history.length).toBe(length);
+			expect(text()).toBe("/users/all");
+
 		});
 
-		expect(text()).toBe("section");
+		it("should follow a section redirection reached through an enclosing redirection", async () => {
 
-	});
+			history.replaceState(null, "", "/");
 
-	it("should fall back to the catch-all of the nearest enclosing table declaring one", async () => {
+			const length = history.length;
 
-		history.replaceState(null, "", "/a/b/c");
+			mount({
+				"/": "/users/",
+				"/users/": createElement(section({
+					"/": "/all",
+					"/all": createElement(Here, {})
+				}), {})
+			});
 
-		mount({
-			"/a/": createElement(section({
-				"/b/": createElement(section({ "/": createElement("p", {}, "b") }), {}),
-				"*":createElement("p", {}, "a")
-			}), {}),
-			"*":createElement("p", {}, "root")
+			expect(location.pathname).toBe("/users/all");
+			expect(history.length).toBe(length);
+			expect(text()).toBe("/users/all");
+
 		});
 
-		expect(text()).toBe("a");
+		it("should reject a route not handled within the section", async () => {
 
-	});
+			history.replaceState(null, "", "/users/123");
 
-	it("should reject an enclosing catch-all redirection to a route not handled within the section", async () => {
+			expect(() => mount({
+				"/users/": createElement(section({ "/": createElement("p", {}) }), {})
+			})).toThrow("unhandled route /123");
 
-		history.replaceState(null, "", "/users/123");
+		});
 
-		expect(() => mount({
-			"/users/": createElement(section({ "/": createElement("p", {}) }), {}),
-			"*":"/missing"
-		})).toThrow("redirection loop");
+		it("should render the enclosing catch-all view for a route not handled within the section", async () => {
 
-	});
+			history.replaceState(null, "", "/users/123/posts");
+
+			mount({
+				"/users/": createElement("main", {}, "users ", createElement(section({ "/": createElement("p", {}, "list") }), {})),
+				"*": createElement(Here, {})
+			});
+
+			expect(text()).toBe("users /users/123/posts");
+
+		});
+
+		it("should move the location along the enclosing catch-all redirection, relative to the section", async () => {
+
+			history.replaceState(null, "", "/users/123/posts");
+
+			const length = history.length;
+
+			mount({
+				"/": createElement("p", {}, "home"),
+				"/users/": createElement(section({ "/": createElement("p", {}, "list") }), {}),
+				"*": "/"
+			});
+
+			expect(location.pathname).toBe("/users/");
+			expect(history.length).toBe(length);
+			expect(text()).toBe("list");
+
+		});
+
+		it("should prefer the catch-all of the section to the enclosing one", async () => {
+
+			history.replaceState(null, "", "/users/123/posts");
+
+			mount({
+				"/users/": createElement(section({
+					"/": createElement("p", {}, "list"),
+					"*": createElement("p", {}, "section")
+				}), {}),
+				"*": createElement("p", {}, "root")
+			});
+
+			expect(text()).toBe("section");
+
+		});
+
+		it("should fall back to the catch-all of the nearest enclosing table declaring one", async () => {
+
+			history.replaceState(null, "", "/a/b/c");
+
+			mount({
+				"/a/": createElement(section({
+					"/b/": createElement(section({ "/": createElement("p", {}, "b") }), {}),
+					"*": createElement("p", {}, "a")
+				}), {}),
+				"*": createElement("p", {}, "root")
+			});
+
+			expect(text()).toBe("a");
+
+		});
+
+		it("should reject an enclosing catch-all redirection to a route not handled within the section", async () => {
+
+			history.replaceState(null, "", "/users/123");
+
+			expect(() => mount({
+				"/users/": createElement(section({ "/": createElement("p", {}) }), {}),
+				"*": "/missing"
+			})).toThrow("redirection loop");
+
+		});
 
 	});
 
@@ -1393,7 +1396,7 @@ describe("useRouter", () => {
 		navigate(navigators, "/other");
 
 		expect(location.pathname).toBe("/other");
-		expect(history.length).toBe(length + 1);
+		expect(history.length).toBe(length+1);
 		expect(text()).toBe("/other");
 
 	});
@@ -1515,7 +1518,7 @@ describe("useRouter", () => {
 			expect(location.pathname).toBe("/courses/;table");
 			expect(location.search).toBe("");
 			expect(location.hash).toBe("");
-			expect(history.length).toBe(length + 1);
+			expect(history.length).toBe(length+1);
 
 		});
 
@@ -1597,39 +1600,38 @@ describe("location", () => {
 
 	it("should draw routes from the location path", async () => {
 
-			history.replaceState(null, "", "/a/b?q=1#h");
+		history.replaceState(null, "", "/a/b?q=1#h");
 
-			shell(createElement(Here, {}));
+		shell(createElement(Here, {}));
 
-			expect(text()).toBe("/a/b");
+		expect(text()).toBe("/a/b");
 
-		});
+	});
 
-		it("should navigate to absolute routes", async () => {
+	it("should navigate to absolute routes", async () => {
 
-			history.replaceState(null, "", "/a/b");
+		history.replaceState(null, "", "/a/b");
 
-			shell(createElement(Nav, { route: "/c/d" }));
+		shell(createElement(Nav, { route: "/c/d" }));
 
-			click();
+		click();
 
-			expect(location.pathname).toBe("/c/d");
-			expect(text()).toBe("/c/d");
+		expect(location.pathname).toBe("/c/d");
+		expect(text()).toBe("/c/d");
 
-		});
+	});
 
-		it("should resolve relative routes against the current location", async () => {
+	it("should resolve relative routes against the current location", async () => {
 
-			history.replaceState(null, "", "/a/b?q=1#h");
+		history.replaceState(null, "", "/a/b?q=1#h");
 
-			shell(createElement(Nav, { route: "c" }));
+		shell(createElement(Nav, { route: "c" }));
 
-			click();
+		click();
 
-			expect(location.pathname).toBe("/a/c");
-			expect(text()).toBe("/a/c");
+		expect(location.pathname).toBe("/a/c");
+		expect(text()).toBe("/a/c");
 
 	});
 
 });
-

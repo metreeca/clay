@@ -1,5 +1,5 @@
 /*
- * Copyright © 2023-2026 Metreeca srl
+ * Copyright © 2026 Metreeca srl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,8 +23,8 @@
  * @module image
  */
 
-import { isContent } from "../index.js";
 import { type ComponentChildren, createElement } from "preact";
+import { isContent } from "../index.js";
 import "./image.css";
 
 
@@ -108,13 +108,15 @@ export function Image({
 
 	return createElement("clay-image", {
 
-		look,
-		float,
-		style: within === undefined ? undefined : bounds(within)
+			look,
+			float,
+			style: within === undefined ? undefined : bounds(within)
 
-	}, isContent(caption)
-		? <figure>{picture}<figcaption>{caption}</figcaption></figure>
-		: picture
+		}, isContent(caption)
+			? <figure>{picture}
+				<figcaption>{caption}</figcaption>
+			</figure>
+			: picture
 	);
 
 

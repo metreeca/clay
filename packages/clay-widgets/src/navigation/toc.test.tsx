@@ -1,5 +1,5 @@
 /*
- * Copyright © 2023-2026 Metreeca srl
+ * Copyright © 2026 Metreeca srl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -726,7 +726,8 @@ describe("TOC", () => {
 
 		/**
 		 * Mounts the outline beside sections scrolling within a box standing 100 pixels below the top of the viewport,
-		 * 600 pixels tall with 60 pixels of scroll padding at its top, so its reading line stands at 100 + 60 + 540 / 3.
+		 * 600 pixels tall with 60 pixels of scroll padding at its top, so its reading line stands at 100 + 60 + 540 /
+		 * 3.
 		 */
 		async function boxed(tops: Readonly<Record<string, number>>, end = false): Promise<void> {
 

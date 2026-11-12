@@ -1,5 +1,5 @@
 /*
- * Copyright © 2023-2026 Metreeca srl
+ * Copyright © 2026 Metreeca srl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,8 +24,8 @@
  * @module heading
  */
 
-import { isContent } from "../index.js";
 import { type ComponentChildren, createElement } from "preact";
+import { isContent } from "../index.js";
 import "./heading.css";
 
 
@@ -62,8 +62,8 @@ export function Heading({
 
 	/**
 	 * The rank of the title in the outline of the page: `1` for a heading of the page itself, `2` for a heading nested
-	 * under one of them, `3` for one nested a level deeper. If omitted, the title still reads as a heading, but takes no
-	 * place in the outline and keeps the size of the running text, titling a minor stretch within a ranked one.
+	 * under one of them, `3` for one nested a level deeper. If omitted, the title still reads as a heading, but takes
+	 * no place in the outline and keeps the size of the running text, titling a minor stretch within a ranked one.
 	 */
 	level?: 1 | 2 | 3
 

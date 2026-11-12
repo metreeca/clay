@@ -1,5 +1,5 @@
 /*
- * Copyright © 2023-2026 Metreeca srl
+ * Copyright © 2026 Metreeca srl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,8 +38,12 @@ export function Notes() {
 			say: an aside, a failure, or a question the reader answers by activating the head.</p>
 
 		<div class="notes">
-			<Note><div>Nothing to show here</div></Note>
-			<Note level="critical"><div>{"The resource you're\nlooking for is missing"}</div></Note>
+			<Note>
+				<div>Nothing to show here</div>
+			</Note>
+			<Note level="critical">
+				<div>{"The resource you're\nlooking for is missing"}</div>
+			</Note>
 			<Note text="Discard the changes?" onAccept={() => {}}/>
 		</div>
 

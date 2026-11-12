@@ -1,5 +1,5 @@
 /*
- * Copyright © 2023-2026 Metreeca srl
+ * Copyright © 2026 Metreeca srl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -118,10 +118,7 @@ clay-infobox {
                     padding-left: 0;
 
                     clip-path: inset(
-                        calc(-1 * var(--skin--spacing-050))
-                        0
-                        calc(-1 * var(--skin--spacing-050))
-                        calc(-1 * var(--skin--spacing-100))
+                            calc(-1 * var(--skin--spacing-050)) 0 calc(-1 * var(--skin--spacing-050)) calc(-1 * var(--skin--spacing-100))
                     );
 
                     /*
@@ -137,8 +134,8 @@ clay-infobox {
 
                     & > li::marker {
                         color: light-dark(
-                            color-mix(in oklab, var(--skin--color) 36%, var(--skin--background-color)),
-                            color-mix(in oklab, var(--skin--color) 47%, var(--skin--background-color))
+                                color-mix(in oklab, var(--skin--color) 36%, var(--skin--background-color)),
+                                color-mix(in oklab, var(--skin--color) 47%, var(--skin--background-color))
                         );
                     }
 

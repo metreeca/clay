@@ -136,8 +136,8 @@ export function Link({
 	 * Wording running out of room is cut short with an ellipsis wherever the area around it keeps it to one line. A
 	 * glyph shown without wording has no text to underline, so under the pointer it is laid on the hover fill of a
 	 * control instead, without moving the content around it, and the focus ring encloses both the glyph and the fill.
-	 * The `--clay-link-inset` custom property sets how far the fill and the ring reach past the glyph, a quarter step if
-	 * unset. Set on an area, it reaches every link the area holds, and a length in `em` is measured on each link.
+	 * The `--clay-link-inset` custom property sets how far the fill and the ring reach past the glyph, a quarter step
+	 * if unset. Set on an area, it reaches every link the area holds, and a length in `em` is measured on each link.
 	 */
 	children?: ComponentChildren
 
@@ -151,8 +151,7 @@ export function Link({
 	const path = target.replace(/\?.*$/, ""); // the route carries no query, so marking compares the path alone
 
 	const entries = Object.entries(query ?? {})
-		.map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`) // `+` would not read as a
-																						  // space
+		.map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`) // spaces stay %20, not `+`
 		.join("&");
 
 	const marked = active && (section ? route.startsWith(path) : route === path);

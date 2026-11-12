@@ -1,5 +1,5 @@
 /*
- * Copyright © 2023-2026 Metreeca srl
+ * Copyright © 2026 Metreeca srl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -148,9 +148,9 @@ export function Page({
 		<Intro eyebrow={eyebrow} title={title} lead={lead}/>
 
 		{samples.map(sample => "view" in sample && <Fragment key={sample.id}>
-			<Intro id={sample.id} level={2} eyebrow={sample.group} title={sample.title} lead={sample.lead}/>
+            <Intro id={sample.id} level={2} eyebrow={sample.group} title={sample.title} lead={sample.lead}/>
 			{sample.view}
-		</Fragment>)}
+        </Fragment>)}
 
 	</Tool>;
 

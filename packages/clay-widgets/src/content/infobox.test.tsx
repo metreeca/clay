@@ -1,5 +1,5 @@
 /*
- * Copyright © 2023-2026 Metreeca srl
+ * Copyright © 2026 Metreeca srl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -81,7 +81,7 @@ describe("Infobox", () => {
 		it("renders a record as a single section", async () => {
 
 			expect(sections(<Infobox>{{ first: "value", second: "value" }}</Infobox>))
-				.toEqual([ [ "first", "second" ] ]);
+				.toEqual([["first", "second"]]);
 
 		});
 
@@ -90,16 +90,16 @@ describe("Infobox", () => {
 			expect(sections(<Infobox>{[
 				{ label: "second", value: "value" },
 				{ label: "first", value: "value" }
-			]}</Infobox>)).toEqual([ [ "second", "first" ] ]);
+			]}</Infobox>)).toEqual([["second", "first"]]);
 
 		});
 
 		it("renders an array of entry arrays as a section for each", async () => {
 
 			expect(sections(<Infobox>{[
-				[ { label: "first", value: "value" } ],
-				[ { label: "second", value: "value" } ]
-			]}</Infobox>)).toEqual([ [ "first" ], [ "second" ] ]);
+				[{ label: "first", value: "value" }],
+				[{ label: "second", value: "value" }]
+			]}</Infobox>)).toEqual([["first"], ["second"]]);
 
 		});
 
@@ -108,7 +108,7 @@ describe("Infobox", () => {
 			expect(sections(<Infobox>{[
 				{ first: "value" },
 				{ second: "value", third: "value" }
-			]}</Infobox>)).toEqual([ [ "first" ], [ "second", "third" ] ]);
+			]}</Infobox>)).toEqual([["first"], ["second", "third"]]);
 
 		});
 
@@ -116,8 +116,8 @@ describe("Infobox", () => {
 
 			expect(sections(<Infobox>{[
 				{ first: "value" },
-				[ { label: "second", value: "value" } ]
-			]}</Infobox>)).toEqual([ [ "first" ], [ "second" ] ]);
+				[{ label: "second", value: "value" }]
+			]}</Infobox>)).toEqual([["first"], ["second"]]);
 
 		});
 
@@ -125,8 +125,8 @@ describe("Infobox", () => {
 
 			expect(sections(<Infobox>{[
 				{ empty: undefined },
-				[ { label: "shown", value: "value" } ]
-			]}</Infobox>)).toEqual([ [ "shown" ] ]);
+				[{ label: "shown", value: "value" }]
+			]}</Infobox>)).toEqual([["shown"]]);
 
 		});
 
@@ -134,7 +134,7 @@ describe("Infobox", () => {
 
 			expect(rendered(<Infobox>{[
 				{ empty: undefined },
-				[ { label: "empty", value: null } ]
+				[{ label: "empty", value: null }]
 			]}</Infobox>)).toBeNull();
 
 		});
@@ -150,19 +150,19 @@ describe("Infobox", () => {
 				null: null,
 				empty: "",
 				shown: "value"
-			}}</Infobox>)).toEqual([ "shown" ]);
+			}}</Infobox>)).toEqual(["shown"]);
 
 		});
 
 		it("shows zero", async () => {
 
-			expect(values(<Infobox>{{ count: 0 }}</Infobox>)).toEqual([ "0" ]);
+			expect(values(<Infobox>{{ count: 0 }}</Infobox>)).toEqual(["0"]);
 
 		});
 
 		it("shows booleans by name", async () => {
 
-			expect(values(<Infobox>{{ draft: false, published: true }}</Infobox>)).toEqual([ "false", "true" ]);
+			expect(values(<Infobox>{{ draft: false, published: true }}</Infobox>)).toEqual(["false", "true"]);
 
 		});
 

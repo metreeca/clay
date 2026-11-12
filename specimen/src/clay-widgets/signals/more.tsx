@@ -1,5 +1,5 @@
 /*
- * Copyright © 2023-2026 Metreeca srl
+ * Copyright © 2026 Metreeca srl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -45,7 +45,7 @@ export function Triggers() {
 	 * before the batch lands asks for the same one, so the second request changes nothing.
 	 */
 
-	const load = () => setTimeout(() => setCount(Math.min(count + Batch, Total)), Delay);
+	const load = () => setTimeout(() => setCount(Math.min(count+Batch, Total)), Delay);
 
 	return <>
 
@@ -53,7 +53,7 @@ export function Triggers() {
 			batch, and the list stops rendering it once there is nothing left to fetch.</p>
 
 		<ol>
-			{Array.from({ length: count }, (_, index) => <li key={index}>Item {index + 1}</li>)}
+			{Array.from({ length: count }, (_, index) => <li key={index}>Item {index+1}</li>)}
 		</ol>
 
 		{count < Total && <More onLoad={load}/>}

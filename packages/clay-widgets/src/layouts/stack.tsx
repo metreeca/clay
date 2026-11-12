@@ -1,5 +1,5 @@
 /*
- * Copyright © 2023-2026 Metreeca srl
+ * Copyright © 2026 Metreeca srl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@
  */
 
 import { opt } from "@metreeca/core";
-import { css, type Spacing, skin } from "@metreeca/skin";
+import { css, skin, type Spacing } from "@metreeca/skin";
 import { type ComponentChildren, createElement } from "preact";
 import "./stack.css";
 

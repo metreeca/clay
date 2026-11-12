@@ -1,0 +1,51 @@
+/*
+ * Copyright © 2026 Metreeca srl
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/*
+ * A group is framed by a rounded box in the decorative line, its caption set into the top edge where the platform
+ * breaks the border around it, so the fields inside read as one set and the caption reads as the name of that set.
+ */
+
+clay-fieldset {
+
+    display: contents;
+
+    /*
+     * The frame keeps its fields clear of the line by the room a panel keeps from its content, and drops the grooved
+     * border and the uneven room the platform frames a field set with in favour of the decorative line.
+     */
+
+    & > fieldset {
+
+        padding: var(--skin--spacing-075) var(--skin--spacing-100) var(--skin--spacing-100);
+        border-style: var(--skin--border-style);
+        border-radius: var(--skin--border-radius-050);
+
+        /*
+         * The caption is set in the quieter size and colour of a label, in the regular weight in place of the strong
+         * one the design system gives a legend, and keeps a narrow gap on either side where it breaks the border.
+         */
+
+        & > legend {
+            padding-inline: var(--skin--spacing-025);
+            font-size: var(--skin--font-size-small);
+            font-weight: var(--skin--font-weight);
+            color: var(--skin--color-label);
+        }
+
+    }
+
+}

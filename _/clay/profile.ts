@@ -1,5 +1,5 @@
 /*
- * Copyright © 2023-2026 Metreeca srl
+ * Copyright © 2026 Metreeca srl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,14 +19,14 @@ import { useStorage } from "@metreeca/data/hooks/storage";
 import { createContext, createElement, ReactNode, useContext } from "react";
 
 
-export type Value<P>=null | P
-export type Delta<P, C>=(credentials: null | C) => Promise<null | P>
-export type State<P, C>=[Value<P>, Delta<P, C>]
+export type Value<P> = null | P
+export type Delta<P, C> = (credentials: null | C) => Promise<null | P>
+export type State<P, C> = [Value<P>, Delta<P, C>]
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-const Context=createContext<State<any, any>>([
+const Context = createContext<State<any, any>>([
 	null, () => Promise.resolve(null)
 ]);
 
@@ -59,9 +59,9 @@ export function TileProfile<P, C>({
 
 }) {
 
-	const fetcher=useFetcher();
+	const fetcher = useFetcher();
 
-	const [profile, setProfile]=useStorage<null | P>(sessionStorage, "profile", null);
+	const [profile, setProfile] = useStorage<null | P>(sessionStorage, "profile", null);
 
 
 	return TileFetcher({

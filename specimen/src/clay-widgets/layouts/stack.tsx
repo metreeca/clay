@@ -1,5 +1,5 @@
 /*
- * Copyright © 2025-2026 Metreeca srl
+ * Copyright © 2026 Metreeca srl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,12 +28,12 @@ import "../index.css";
 type Options = Parameters<typeof Stack>[0]
 
 
-const labels = [ "One", "Two", "Three" ];
-const ragged = [ "A", "Bravo", "Charlie Delta" ];
+const labels = ["One", "Two", "Three"];
+const ragged = ["A", "Bravo", "Charlie Delta"];
 
-const places: ReadonlyArray<NonNullable<Options["place"]>> = [ "start", "center", "end", "spread", "head", "tail" ];
-const aligns: ReadonlyArray<NonNullable<Options["align"]>> = [ "start", "center", "end", "stretch" ];
-const looks: ReadonlyArray<NonNullable<Options["look"]>> = [ "subtle", "normal", "strong" ];
+const places: ReadonlyArray<NonNullable<Options["place"]>> = ["start", "center", "end", "spread", "head", "tail"];
+const aligns: ReadonlyArray<NonNullable<Options["align"]>> = ["start", "center", "end", "stretch"];
+const looks: ReadonlyArray<NonNullable<Options["look"]>> = ["subtle", "normal", "strong"];
 
 
 /**
