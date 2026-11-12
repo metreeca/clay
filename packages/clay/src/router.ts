@@ -292,9 +292,10 @@ export interface Router {
  *   page or targets another browsing context through a `target` attribute other than `_self`; a link leading to
  *   another route, or back to the current place, then lands the page as a page loaded afresh would, at its top or on
  *   the element its fragment names once the view shows it, so the reader is never left halfway down the view they
- *   left; the top is the start of the document and of the `main` landmark alike, so an app scrolling its content in a
- *   box of its own lands there as well; a link changing the query or the annex alone, as a filter or an alternate
- *   view does, keeps the reader in place on whatever they were reading before following it
+ *   left; the top is the start of the document, of the `main` landmark and of every box scrolling inside it, so an app
+ *   scrolling its content in a box of its own lands there as well, while a box scrolling outside the landmark, such
+ *   as a side column, keeps its place; a link changing the query or the annex alone, as a filter or an alternate view
+ *   does, keeps the reader in place on whatever they were reading before following it
  * - a page landed afresh also moves the focus to its `main` landmark, so a screen reader announces the page arrived
  *   on; the landmark takes the focus only if it is focusable, as a `tabindex` of `-1` makes it without adding a tab
  *   stop; otherwise the focus is cleared, so the next keystroke never acts on a control of the page left behind
@@ -345,9 +346,13 @@ export function Router({
 
 			const target = landing.hash ? document.getElementById(decodeURIComponent(landing.hash.slice(1))) : null;
 			const main = document.querySelector("main");
+			const boxes = main ? [main, ...main.querySelectorAll("*")] : []; // an app may scroll its content in a box of its own
 
 			window.scrollTo(0, 0);
-			main?.scrollTo(0, 0); // an app may scroll its content in a box of its own
+
+			boxes
+				.filter(box => box.scrollTop !== 0 || box.scrollLeft !== 0)
+				.forEach(box => box.scrollTo(0, 0));
 
 			target?.scrollIntoView();
 

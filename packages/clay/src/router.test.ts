@@ -117,21 +117,76 @@ describe("Router", () => {
 
 		});
 
-		it("should bring the main landmark to its top when following a link", async () => {
+		describe("boxes", () => {
 
-			vi.spyOn(window, "scrollTo").mockImplementation(() => {});
+			const routes: Routing = {
+				"/": createElement("a", { href: "/other" }, "link"),
+				"/other": createElement("p", {}, "other")
+			};
 
-			const scroll = vi.spyOn(HTMLElement.prototype, "scrollTo").mockImplementation(() => {});
+			function frame(): void {
+				shell([
+					createElement("aside", {}, "side"),
+					createElement("main", {}, createElement("div", {}, createElement(Routes, { children: routes })))
+				]);
+			}
 
-			mount({
-				"/": createElement("main", {}, createElement("a", { href: "/other" }, "link")),
-				"/other": createElement("main", {}, "other")
+			function scroll(selector: string): Element | null {
+
+				const box = document.querySelector(selector);
+
+				box?.scrollTo(30, 120);
+
+				return box;
+
+			}
+
+			function offsets(box: Element | null): readonly [number, number] | undefined {
+				return box ? [box.scrollLeft, box.scrollTop] : undefined;
+			}
+
+
+			it("should bring the main landmark to its top when following a link", async () => {
+
+				vi.spyOn(window, "scrollTo").mockImplementation(() => {});
+
+				frame();
+
+				const main = scroll("main");
+
+				await act(async () => document.querySelector("a")?.click());
+
+				expect(offsets(main)).toEqual([0, 0]);
+
 			});
 
-			await act(async () => document.querySelector("a")?.click());
+			it("should bring every box scrolling inside the main landmark to its top when following a link", async () => {
 
-			expect(scroll.mock.contexts.map(element => element instanceof Element ? element.localName : undefined))
-				.toEqual(["main"]);
+				vi.spyOn(window, "scrollTo").mockImplementation(() => {});
+
+				frame();
+
+				const body = scroll("main > div");
+
+				await act(async () => document.querySelector("a")?.click());
+
+				expect(offsets(body)).toEqual([0, 0]);
+
+			});
+
+			it("should leave boxes scrolling outside the main landmark in place when following a link", async () => {
+
+				vi.spyOn(window, "scrollTo").mockImplementation(() => {});
+
+				frame();
+
+				const side = scroll("aside");
+
+				await act(async () => document.querySelector("a")?.click());
+
+				expect(offsets(side)).toEqual([30, 120]);
+
+			});
 
 		});
 
