@@ -17,7 +17,7 @@
 /*
  * The stack floats over the screen, raised as an overlay, hanging from the edge it is placed on with its toasts piled
  * away from it, newest nearest the edge, and answers no gesture but the dismiss control on each toast, leaving the
- * pointer to the screen beneath. A status colours the mark alone, so a message reads the same whatever it tells.
+ * pointer to the screen beneath. A status colours the mark and the start edge alone, so every message reads alike.
  */
 
 
@@ -224,13 +224,18 @@ clay-toasts {
                 /*
                  * Each toast is a card of its own on the glass, lighter than the page where the glass is darker,
                  * rounded well short of the tray so the cards read as nested within it, with the glass showing in the
-                 * gap between. A neutral border, the same whatever the status, sets the card off from the glass.
+                 * gap between. The surface and the neutral border are the same whatever the status, so the cards read
+                 * as one stack rather than a patchwork of tints; the status is told by the mark and by a strip along
+                 * the start edge, both in the ink of its step. Every card draws the strip, a plain one in the colour of
+                 * its border, so the marks and the messages line up from one toast to the next whatever each tells.
                  */
 
-                --clay-toasts-tint: var(--skin--background-color-overlay);
+                --clay-toasts-ink: var(--skin--border-color);
 
-                background-color: color-mix(in oklab, var(--clay-toasts-tint) 60%, var(--skin--background-color-overlay));
+                background-color: var(--skin--background-color-overlay);
                 border: var(--skin--border-width) var(--skin--border-style) var(--skin--border-color);
+                border-inline-start-width: calc(3 * var(--skin--border-width));
+                border-inline-start-color: var(--clay-toasts-ink);
                 border-radius: var(--skin--border-radius-050);
 
                 /*
@@ -322,19 +327,18 @@ clay-toasts {
         }
 
         /*
-         * A card telling of a status is laid in the tint of its step, the fill the design system gives a notice on the
-         * meaning scale, mixed well down into the bare surface so it only hints at the status the mark tells, its
-         * message keeping the ink of the text; a plain post keeps the bare surface.
+         * A card telling of a status colours its mark and its strip in the ink of its step, its glyph and its wording
+         * telling the same status, so no reader depends on the colour; a plain post keeps the mark in the ink of text.
          */
 
         &[status="pending"] > div > div {
 
-            --clay-toasts-tint: var(--skin--background-color-note);
+            --clay-toasts-ink: var(--skin--color-note);
 
             /* The mark turns at the spin period whatever motion the reader asked for. */
 
             & > svg {
-                color: var(--skin--color-note);
+                color: var(--clay-toasts-ink);
                 animation: clay-toasts-turn var(--skin--duration-spin) linear infinite;
             }
 
@@ -342,30 +346,30 @@ clay-toasts {
 
         &[status="success"] > div > div {
 
-            --clay-toasts-tint: var(--skin--background-color-pass);
+            --clay-toasts-ink: var(--skin--color-pass);
 
             & > svg {
-                color: var(--skin--color-pass);
+                color: var(--clay-toasts-ink);
             }
 
         }
 
         &[status="paused"] > div > div {
 
-            --clay-toasts-tint: var(--skin--background-color-flag);
+            --clay-toasts-ink: var(--skin--color-flag);
 
             & > svg {
-                color: var(--skin--color-flag);
+                color: var(--clay-toasts-ink);
             }
 
         }
 
         &[status="warning"] > div > div {
 
-            --clay-toasts-tint: var(--skin--background-color-warn);
+            --clay-toasts-ink: var(--skin--color-warn);
 
             & > svg {
-                color: var(--skin--color-warn);
+                color: var(--clay-toasts-ink);
             }
 
         }
@@ -374,10 +378,10 @@ clay-toasts {
 
         &:is([status="failure"], [status="defect"]) > div > div {
 
-            --clay-toasts-tint: var(--skin--background-color-fail);
+            --clay-toasts-ink: var(--skin--color-fail);
 
             & > svg {
-                color: var(--skin--color-fail);
+                color: var(--clay-toasts-ink);
             }
 
         }
