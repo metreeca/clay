@@ -16,7 +16,7 @@
 
 /* An empty state fills its space and centres a large glyph over the wording saying why the content is missing. */
 
-/* The size of the glyph, falling back to twice the wording when unset. */
+/* The size of the glyph, falling back to 2.5 times the wording when unset. */
 
 @property --clay-empty-icon-size {
     syntax: "*";
@@ -42,14 +42,11 @@ clay-empty {
     width: 100%;
     height: 100%;
 
-    /* Set on the area rather than on a sibling of the glyph, since the wording is usually a bare text node. */
-
-    font-size: var(--skin--font-size-large);
     text-align: center;
 
-    /* The wording carries meaning, so it takes the label colour, which holds its contrast. */
+    /* The wording stands in for missing content, so it takes the placeholder colour, which still holds AA contrast. */
 
-    color: var(--skin--color-label);
+    color: var(--skin--color-placeholder);
 
     &[look="normal"],
     &[look="strong"] {
@@ -63,7 +60,7 @@ clay-empty {
 
     &[look="strong"] {
 
-        /* The label holds 4.84:1 over the recess in the light scheme and 5.04:1 in the dark one. */
+        /* The placeholder holds 4.64:1 over the recess in the light scheme and 5.19:1 in the dark one. */
 
         background-color: var(--skin--background-color-sunken);
 
@@ -73,12 +70,12 @@ clay-empty {
 
         flex: none;
 
-        width: var(--clay-empty-icon-size, var(--skin--scaling-200));
-        height: var(--clay-empty-icon-size, var(--skin--scaling-200));
+        width: var(--clay-empty-icon-size, var(--skin--scaling-250));
+        height: var(--clay-empty-icon-size, var(--skin--scaling-250));
 
         color: var(--skin--color-disabled);
 
-        /* A little over the inverse of the 2× scaling above, so the strokes draw a shade heavier than inline glyphs. */
+        /* Half again the inverse of the 2.5× scaling above, so the strokes draw a shade heavier than inline glyphs. */
 
         stroke-width: calc(0.6 * var(--skin--stroke-width));
 
