@@ -58,13 +58,15 @@ export function ToolScreen() {
 		locked={locked}
 		tucked={tucked}
 
-		meta={<Button
+		mark={<Button
 			icon={<Logo/>}
 			look="subtle"
 			name="@metreeca/clay"
 			title="@metreeca/clay"
 			onClick={() => router(`${ClayWidgetsPath}#tool`)}
 		/>}
+
+		meta={<small>v{VERSION}</small>}
 
 		tray={<TOC name="Sections" compact entries={{
 			Slots: "#slots",
@@ -135,7 +137,7 @@ export function ToolScreen() {
 		<figure class="schema">
 
 			<div>
-				<header><code>meta</code></header>
+				<header><code>mark</code><code>meta</code></header>
 				<section><code>tray</code></section>
 				<footer><code>more</code></footer>
 			</div>
@@ -164,9 +166,14 @@ export function ToolScreen() {
 
 			<tbody>
 				<tr>
-					<td><code>meta</code></td>
+					<td><code>mark</code></td>
 					<td>the head of the side column</td>
 					<td>the lockup, leading back to the specimen</td>
+				</tr>
+				<tr>
+					<td><code>meta</code></td>
+					<td>the end of the head of the side column</td>
+					<td>the release</td>
 				</tr>
 				<tr>
 					<td><code>tray</code></td>
@@ -268,7 +275,7 @@ export function ToolScreen() {
 				</tr>
 				<tr>
 					<td><code>--clay-tool-head-gutter</code></td>
-					<td>the block gutter of the heads, only below them where two columns do not fit</td>
+					<td>the block gutter of the heads where two columns fit</td>
 				</tr>
 				<tr>
 					<td><code>--clay-tool-body-gutter</code></td>

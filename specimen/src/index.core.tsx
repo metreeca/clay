@@ -120,7 +120,7 @@ export function Page({
 
 		busy={useFetching()}
 
-		meta={<Button
+		mark={<Button
 			icon={<span class="brand">@metreeca/<strong>clay</strong></span>}
 			look="subtle"
 			name="@metreeca/clay"

@@ -201,6 +201,78 @@ describe("Tool", () => {
 	});
 
 
+	describe("side column", () => {
+
+		it("leads its head with the mark and follows it with the meta where two columns fit", async () => {
+
+			viewport(true);
+
+			const tool = rendered(<Tool mark={<span>mark</span>} meta={<span>meta</span>}>content</Tool>);
+			const header = side(tool)!.querySelector(":scope > header")!;
+
+			expect(header.firstElementChild?.textContent).toBe("mark");
+			expect(header.querySelector(":scope > .meta")?.textContent).toBe("meta");
+			expect(header.querySelector(":scope > .meta")?.previousElementSibling?.textContent).toBe("mark");
+			expect(header.lastElementChild?.className).toBe("meta");
+			expect(tool.querySelector(":scope > main > header")?.textContent).not.toContain("mark");
+
+		});
+
+		it("moves the mark next to the menu button where two columns do not fit", async () => {
+
+			viewport(false);
+
+			const tool = rendered(<Tool mark={<span>mark</span>} meta={<span>meta</span>}>content</Tool>);
+
+			expect(menu(tool)?.nextElementSibling?.textContent).toBe("mark");
+			expect(side(tool)!.querySelector(":scope > header")?.textContent).not.toContain("mark");
+			expect(side(tool)!.querySelector(":scope > header")?.firstElementChild).toBe(close(tool));
+			expect(side(tool)!.querySelector(":scope > header")?.lastElementChild?.className).toBe("meta");
+
+		});
+
+		it("takes the mark in the main head out of reach while the side column is locked", async () => {
+
+			viewport(false);
+
+			const mark = (locked: boolean) => menu(rendered(
+				<Tool locked={locked} mark={<span>mark</span>}>content</Tool>
+			))?.nextElementSibling;
+
+			expect(mark(true)?.hasAttribute("inert")).toBe(true);
+			expect(mark(false)?.hasAttribute("inert")).toBe(false);
+
+		});
+
+		it("shows no mark while the side column is tucked away", async () => {
+
+			viewport(false);
+
+			expect(rendered(<Tool tucked mark={<span>mark</span>}>content</Tool>).textContent).not.toContain("mark");
+
+		});
+
+		it("leads its head with the meta without a mark where two columns fit", async () => {
+
+			viewport(true);
+
+			const tool = rendered(<Tool meta={<span>meta</span>}>content</Tool>);
+
+			expect(side(tool)!.querySelector(":scope > header")?.firstElementChild?.className).toBe("meta");
+
+		});
+
+		it("renders no meta box without a meta", async () => {
+
+			const tool = rendered(<Tool mark={<span>mark</span>}>content</Tool>);
+
+			expect(side(tool)!.querySelector(":scope > header > .meta")).toBeNull();
+
+		});
+
+	});
+
+
 	describe("waiting", () => {
 
 		beforeEach(() => { vi.useFakeTimers(); });
@@ -548,17 +620,25 @@ describe("Tool", () => {
 
 		});
 
-		it("closes the side column from a button closing the side head", async () => {
+		it("closes the side column from a button leading the side head", async () => {
 
-			const tool = rendered(<Tool meta={<span>meta</span>}>content</Tool>);
+			const tool = rendered(<Tool mark={<span>mark</span>} meta={<span>meta</span>}>content</Tool>);
 			const button = close(tool);
 
 			expect(button).not.toBeNull();
 			expect(button?.getAttribute("popovertarget")).toBe(side(tool)?.id);
 			expect(button?.getAttribute("popovertargetaction")).toBe("hide");
 			expect(button?.getAttribute("aria-label")).toBe("Close menu");
-			expect(button?.previousElementSibling?.textContent).toBe("meta");
-			expect(button?.nextElementSibling).toBeNull();
+			expect(button?.previousElementSibling).toBeNull();
+			expect(button?.nextElementSibling?.textContent).toBe("meta");
+
+		});
+
+		it("offers no close button where two columns fit", async () => {
+
+			viewport(true);
+
+			expect(close(rendered(<Tool mark={<span>mark</span>}>content</Tool>))).toBeNull();
 
 		});
 

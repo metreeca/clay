@@ -69,7 +69,7 @@
     inherits: true;
 }
 
-/* The block gutter of the head row, kept only below the heads where two columns do not fit. */
+/* The block gutter of the head row, where two columns fit; narrower heads take the edge inset of the frame. */
 
 @property --clay-tool-head-gutter {
     syntax: "*";
@@ -227,9 +227,10 @@ clay-tool {
         caret-color: transparent;
     }
 
-    /* A locked side column fades what it holds, while the column itself keeps its place. */
+    /* A locked side column fades what it holds while keeping its place, and the mark in the main head fades too. */
 
-    &[locked] > aside > * {
+    &[locked] > aside > *,
+    &[locked] > main > header > .mark > * {
         opacity: var(--skin--opacity-locked);
     }
 
@@ -297,7 +298,7 @@ clay-tool {
              * A button at either end of a bar, standing in it or in the row filling it, reaches into the gutter by the
              * padding around what it carries, so its glyph or label stands on the edge the rest of the column starts
              * from rather than inset by a padding showing only on hover. The box naming the main column counts as the
-             * bar it stands aside in, so a row it holds is reached through it, and a turning mark is not counted as an
+             * bar it stands aside in, so a row it holds is reached through it, and a turning glyph is not counted as an
              * end. The ends are matched without weight, so a control reaching out by a measure of its own states it.
              */
 
@@ -348,19 +349,19 @@ clay-tool {
             animation-range: 0 var(--skin--spacing-100), 0% calc(100% + 1px);
 
             /*
-             * Where two columns do not fit, the heads hold only the buttons of the drawer and the menu. They take the
-             * edge inset from the top of the window rather than the head gutter, which is sized for a heading and
-             * still parts them from the body below. The menu button reaches up by its padding, so its glyph stands
-             * at the edge inset, a little below the diagonal of the corner, where the eye reads it as level.
+             * Where two columns do not fit, the heads hold only the buttons of the drawer, the mark and the menu, and
+             * take the edge inset above and below in place of the head gutter, which is sized for a heading, so a
+             * retuned gutter leaves them alone. The buttons reach out by their padding, so the menu glyph stands at
+             * the edge inset, a little below the diagonal of the corner, where the eye reads it as level.
              */
 
             @container style(--skin--viewport-medium: off) {
-                padding-block-start: calc(var(--clay-tool-edge-inset) - var(--skin--spacing-025));
+                padding-block: calc(var(--clay-tool-edge-inset) - var(--skin--spacing-025));
             }
 
             /*
              * The menu and close buttons are bare glyphs shown only where the side column is a drawer, the menu button
-             * leading the main head and the close button ending the side head, clear of what the head holds. Their
+             * leading the main head and the close button leading the side head, clear of what the head holds. Their
              * padding widens the target past the glyph, and the menu button keeps that distance from the title too.
              */
 
@@ -457,6 +458,19 @@ clay-tool {
         }
 
         /*
+         * The meta stands apart from what leads the head, the mark or the close button of the drawer, pushed to its
+         * end. Never shrinking, it clips nothing, while the mark gives way to it where the head runs short.
+         */
+
+        & > header > .meta {
+            display: flex;
+            flex: none;
+            align-items: center;
+            margin-inline-start: auto;
+            overflow: visible;
+        }
+
+        /*
          * The tray stands in a box of its own, carrying the inset without touching the margins of what it holds. The
          * box fills the body and lays what it holds out as a column, so an item can grow, shrink or align with the flex
          * properties it states, as a filter list pushing the controls after it to the bottom of the column.
@@ -533,12 +547,12 @@ clay-tool {
             /*
              * The close glyph is drawn in the middle half of its square, so beyond the padding every edge button
              * gives up it reaches out by an eighth of the glyph, short of the quarter left blank, so the width of the
-             * stroke stays inside the edge of the drawer rather than spilling past it.
+             * stroke stays inside the edge of the drawer rather than spilling past it, as the menu stroke does.
              */
 
             & > header > button {
                 display: inline-flex;
-                margin-inline: auto calc(-1 * (var(--skin--spacing-025) + var(--skin--scaling-100) / 8));
+                margin-inline-start: calc(-1 * (var(--skin--spacing-025) + var(--skin--scaling-100) / 8));
             }
 
             &::backdrop {
@@ -576,7 +590,7 @@ clay-tool {
 
             position: relative;
 
-            /* The box naming the column stands aside from the layout, what it holds clipped as items of the bar. */
+            /* The boxes of the title and the mark stand aside from the layout, what they hold clipped as bar items. */
 
             & > div:not(.menu) {
 
@@ -598,7 +612,7 @@ clay-tool {
 
             /*
              * The menu stands apart from the head, pushed to its end whatever the head holds. Never shrinking, it clips
-             * nothing, so the button ending it reaches into the gutter as at the end of any bar. While a turning mark
+             * nothing, so the button ending it reaches into the gutter as at the end of any bar. While a turning glyph
              * stands over it, the menu keeps its box hidden beneath, so the head neither shrinks nor shifts.
              */
 
@@ -630,7 +644,7 @@ clay-tool {
             }
 
             /*
-             * The turning mark stands over the end of the head, above the veil and out of the flow, so the head keeps
+             * The turning glyph stands over the end of the head, above the veil and out of the flow, so the head keeps
              * its height and layout; it takes the box an edge button takes, glyph and padding reaching into the gutter
              * alike. It turns at the spin period of the design system whatever motion the reader asked for.
              */
@@ -659,9 +673,9 @@ clay-tool {
 
         /*
          * The body holds the content in a block of its own, laid out in the plain flow of a page, so floats wrap text
-         * and margins collapse. The block grows to the room the body leaves, so its height is definite, and a lone item
-         * stating `block-size: 100%` fills it whole, as a map does. The first part of the body carries its inset, as a
-         * box of the column rather than content, and the content ends on that inset too.
+         * and margins collapse. The block carries the inset of the body, as a box of the column rather than content,
+         * and is at least as tall as the body, so its height is definite and a lone item stating `block-size: 100%`
+         * fills it whole, as a map does, while longer content grows the block past the body and scrolls as usual.
          */
 
         & > div {
@@ -669,22 +683,18 @@ clay-tool {
             display: flex;
             flex-direction: column;
 
-            & > :first-child {
-                padding-block-start: var(--clay-tool-body-inset);
-            }
-
             & > div {
-                flex: auto;
-                padding-block-end: var(--clay-tool-body-inset);
+                flex: 1 0 100%;
+                padding-block: var(--clay-tool-body-inset);
             }
 
             /*
-             * A head opening the body, where two columns do not fit, keeps the type it takes in the head, and stands
-             * apart from the content below it by a step of spacing, as a heading stands apart from its section.
+             * A head opening the body, where two columns do not fit, keeps the type it takes in the head and stands
+             * above the block, which keeps the full height of the body: scrolling down takes the head out of view and
+             * leaves the block filling the body, as it does where the head stands in the main head.
              */
 
             & > header {
-                padding-block-end: var(--skin--spacing-150);
                 font-size: var(--clay-tool-head-font-size, var(--skin--font-size));
             }
 

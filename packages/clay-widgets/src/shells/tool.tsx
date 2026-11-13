@@ -84,7 +84,7 @@ const Ignored = Object.fromEntries([
  * Waiting is stated by the app through `busy`, as when it has to let its state settle before the reader acts again:
  * the frame marks itself busy for assistive technology and ignores pointer and keyboard input aimed inside it, while
  * the focus stays where it stands and the content stays readable. After a short delay, the frame is also veiled, shows
- * a turning mark at the end of the main head in place of the menu, and announces waiting to screen readers.
+ * a turning glyph at the end of the main head in place of the menu, and announces waiting to screen readers.
  *
  * The main column is named after `head` and takes the focus as the {@link @metreeca/clay!router.Router router} lands a
  * screen, without adding a tab stop, so a reader hears which screen they are on rather than a control of the last one.
@@ -94,12 +94,13 @@ const Ignored = Object.fromEntries([
  * On a viewport too narrow for two columns, the main column takes the whole frame and the side column becomes a drawer
  * opened from a menu button leading the main head. The drawer covers the main column, across the whole width of a
  * phone and as wide as the side column on a tablet, while the main column stays in place underneath and keeps its
- * state. A close button ends the head of the drawer, and focus moves to it as the drawer opens. Escape, a click
+ * state. A close button leads the head of the drawer, and focus moves to it as the drawer opens. Escape, a click
  * outside the drawer, or a link followed inside it closes the drawer and returns focus to the menu button.
  *
  * On such a viewport the heading of the screen also moves from the main head to the top of the main body, and scrolls
- * away with the content it names. The main head keeps only the menu button and the menu, leaving the room to content.
- * Both heads stand close to the top of the window, keeping the head gutter only between them and the bodies below.
+ * away with the content it names, while the mark moves from the side head to stand next to the menu button. The main
+ * head keeps only the menu button, the mark and the menu, leaving the room to content. Both heads stand close to the
+ * top of the window, with the same narrow spacing above and below them, whatever head gutter the shell is tuned to.
  *
  * @param options The widget configuration
  *
@@ -113,6 +114,7 @@ export function Tool({
 	locked = false,
 	tucked = false,
 
+	mark,
 	meta,
 	tray,
 	more,
@@ -146,20 +148,30 @@ export function Tool({
 	 * Whether the side column stays in view but takes no input, as while the main column needs the full attention of
 	 * the reader. What it holds fades while the column keeps its place, and drops out of the tab order and the
 	 * accessibility tree until it is unlocked. A control inside it loses the focus as it is locked. On a narrow
-	 * viewport locking closes the drawer and disables the menu button, so the drawer stays shut. Usable if omitted.
+	 * viewport locking closes the drawer and disables the menu button, so the drawer stays shut, while the `mark`
+	 * standing in the main head fades and takes no input, as it would in the side column. Usable if omitted.
 	 */
 	locked?: boolean
 
 	/**
 	 * Whether the side column is tucked away, left out of the frame rather than locked, until the app brings it back.
-	 * The main column takes the room the side column held, and nothing passed to `meta`, `tray` or `more` is shown.
-	 * Set it for screens seen through rather than moved around in, such as a sign-in or a splash. Shown if omitted.
+	 * The main column takes the room the side column held, and nothing passed to `mark`, `meta`, `tray` or `more` is
+	 * shown. Set it for screens seen through rather than moved around in, such as a sign-in or a splash. Shown if
+	 * omitted, so every screen leaving it off keeps the standing controls of the app within reach of the reader.
 	 */
 	tucked?: boolean
 
 
 	/**
-	 * The identity of the app, such as its mark and release, in the head of the side column.
+	 * The identity of the app, such as its logo and name linking to its home, in the head of the side column. On a
+	 * viewport too narrow for two columns it stands next to the menu button in the main head instead, so the app stays
+	 * named while the drawer is closed; it fades and takes no input there while the side column is locked.
+	 */
+	mark?: ComponentChildren
+
+	/**
+	 * The details of the app, such as its release or the environment it runs in, at the end of the head of the side
+	 * column. It keeps its full width and is never clipped, while the other items of the head give way to it.
 	 */
 	meta?: ComponentChildren
 
@@ -187,7 +199,7 @@ export function Tool({
 	/**
 	 * The menu of the screen, such as its actions, at the end of the head of the main column. It keeps its full width
 	 * and is never clipped, while the other items of the head give way to it. While the shell shows waiting, a turning
-	 * mark stands in its place, and the head keeps its height and layout until waiting ends.
+	 * glyph stands in its place, and the head keeps its height and layout until waiting ends.
 	 */
 	menu?: ComponentChildren
 
@@ -313,6 +325,8 @@ export function Tool({
 		 *
 		 * The drawer is named after the button opening it, so a reader hears what has opened. A locked side column is
 		 * taken out of light dismiss: the switch closes a drawer left open, and the disabled menu button keeps it shut.
+		 * Its head is led by the mark where two columns fit, and by the close button of the drawer elsewhere, as the
+		 * mark has then moved to the main head; the meta keeps the end of the head either way.
 		 */}
 
 		{!tucked && <aside
@@ -328,10 +342,10 @@ export function Tool({
         >
 
             <header>
-				{meta}
-                <button type="button" popovertarget={side} popovertargetaction="hide" aria-label="Close menu">
+				{split ? mark : <button type="button" popovertarget={side} popovertargetaction="hide" aria-label="Close menu">
                     <Icon.Close/>
-                </button>
+                </button>}
+				{meta && <div class="meta">{meta}</div>}
             </header>
 
             <div tabIndex={0}>
@@ -345,7 +359,8 @@ export function Tool({
 		 * The main column takes the focus from code alone, so a navigation can land the focus on it and a reader hears
 		 * its name, taken from the head, without a tab stop being added. The head is held in a box of its own only to
 		 * be referenced as that name, standing aside from the layout so the head lays out what it holds directly. Where
-		 * two columns do not fit, the head opens the body instead, scrolling away with the content below it.
+		 * two columns do not fit, the head opens the body instead, scrolling away with the content below it, and the
+		 * mark of the side column takes its place, held in a box of its own to be locked along with the side column.
 		 */}
 
 		<main id={column} aria-labelledby={title} tabIndex={-1} inert={open}>
@@ -354,12 +369,13 @@ export function Tool({
 				{!tucked && <button type="button" popovertarget={side} disabled={locked} aria-label="Open menu">
                     <Icon.Menu/>
                 </button>}
+				{!tucked && !split && mark && <div class="mark" inert={locked}>{mark}</div>}
 				{split && head && <div id={title}>{head}</div>}
 
 				{/*
-				 * The turning mark stands over the menu, which keeps its place hidden beneath, so the head holds its
+				 * The turning glyph stands over the menu, which keeps its place hidden beneath, so the head holds its
 				 * height. It is a bare glyph rather than a control: it offers nothing to press, and waiting is told by
-				 * the status message, so the mark is inert and a reader meets nothing where it stands.
+				 * the status message, so the glyph is inert and a reader meets nothing where it stands.
 				 */}
 
 				{menu && <div class="menu">{menu}</div>}
@@ -394,7 +410,7 @@ export function Tool({
 interface Waiting {
 
 	/**
-	 * Whether the frame is veiled, shows the turning mark and announces waiting to screen readers.
+	 * Whether the frame is veiled, shows the turning glyph and announces waiting to screen readers.
 	 */
 	readonly waiting: boolean;
 

@@ -58,7 +58,7 @@ export function Fetch() {
 		<p>The page is assembled with one shared client, configured once with <code>Fetch</code> and reached anywhere
 			below it with <code>useFetch</code>; here it answers every exchange from a mock after a second. While any
 			exchange is in flight <code>useFetching</code> says so, and the page hands that status to the shell as
-			<code>busy</code>, fading it and turning its mark: start a couple at once and watch the frame wait for the
+			<code>busy</code>, fading it and turning its glyph: start a couple at once and watch the frame wait for the
 			last.</p>
 
 		<div class="controls">
