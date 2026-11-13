@@ -102,6 +102,10 @@ const Ignored = Object.fromEntries([
  * head keeps only the menu button, the mark and the menu, leaving the room to content. Both heads stand close to the
  * top of the window, with the same narrow spacing above and below them, whatever head gutter the shell is tuned to.
  *
+ * While the side column is locked on such a viewport, the menu button is left out and the mark leads the main head.
+ * The heading of the screen keeps its place in the main head, as on a wider viewport, so the actions it holds, such
+ * as unsafe ones, stay apart from those in the menu rather than scrolling away with the content.
+ *
  * @param options The widget configuration
  *
  * @returns The tool shell
@@ -148,8 +152,9 @@ export function Tool({
 	 * Whether the side column stays in view but takes no input, as while the main column needs the full attention of
 	 * the reader. What it holds fades while the column keeps its place, and drops out of the tab order and the
 	 * accessibility tree until it is unlocked. A control inside it loses the focus as it is locked. On a narrow
-	 * viewport locking closes the drawer and disables the menu button, so the drawer stays shut, while the `mark`
-	 * standing in the main head fades and takes no input, as it would in the side column. Usable if omitted.
+	 * viewport locking closes the drawer and leaves the menu button out, so the drawer stays shut. The `mark` in the
+	 * main head fades and takes no input, as in the side column. The `head` keeps its place in the main head, so the
+	 * actions it holds, such as unsafe ones, stay apart from those in the `menu`. Usable if omitted.
 	 */
 	locked?: boolean
 
@@ -164,8 +169,9 @@ export function Tool({
 
 	/**
 	 * The identity of the app, such as its logo and name linking to its home, in the head of the side column. On a
-	 * viewport too narrow for two columns it stands next to the menu button in the main head instead, so the app stays
-	 * named while the drawer is closed; it fades and takes no input there while the side column is locked.
+	 * viewport too narrow for two columns it moves to the main head instead, so the app stays named while the drawer is
+	 * closed. There it stands next to the menu button, or leads the head while the side column is locked, fading and
+	 * taking no input as it would in the side column, so it never offers a way out of a locked screen.
 	 */
 	mark?: ComponentChildren
 
@@ -192,7 +198,8 @@ export function Tool({
 	/**
 	 * The heading of the screen, such as its title, in the head of the main column. On a viewport too narrow for two
 	 * columns it opens the body of the main column instead, scrolling away with the content rather than standing over
-	 * it, so the narrow screen gives its whole height to the content once the reader starts scrolling.
+	 * it, so the narrow screen gives its whole height to the content once the reader starts scrolling. While the side
+	 * column is locked it keeps its place in the main head whatever the viewport, standing beside the `menu`.
 	 */
 	head?: ComponentChildren
 
@@ -238,9 +245,7 @@ export function Tool({
 
 	}));
 
-	/*
-	 * Only what waiting shows follows `busy` after the delay, while input is ignored as soon as it is set.
-	 */
+	// only what waiting shows follows `busy` after the delay, while input is ignored as soon as it is set
 
 	useEffect(() => {
 
@@ -250,10 +255,8 @@ export function Tool({
 
 	}, [busy]);
 
-	/*
-	 * A locked side column drops the control holding the focus, as browsers do on their own as it turns inert, so the
-	 * focus leaves it at once and alike everywhere rather than whenever the browser gets round to it.
-	 */
+	// a locked side column drops the control holding the focus, as browsers do on their own as it turns inert, so the
+	// focus leaves it at once and alike everywhere rather than whenever the browser gets round to it
 
 	useEffect(() => {
 
@@ -283,10 +286,12 @@ export function Tool({
 
 	}));
 
-	/*
-	 * The switch lives in the cascade, which notifies no change, so the shell reads it again as the window is resized.
-	 * A transition starts from the state the render read, so the observer is renewed with every crossing it reports.
-	 */
+	// the head stays in the main head where two columns fit or the side column is locked
+
+	const headed = split || locked;
+
+	// the switch lives in the cascade, which notifies no change, so the shell reads it again as the window is resized;
+	// a transition starts from the state the render read, so the observer is renewed with every crossing it reports
 
 	useEffect(() => {
 
@@ -298,11 +303,9 @@ export function Tool({
 
 	}, [sync]);
 
-	/*
-	 * Input is ignored rather than the columns turned inert, as an inert column drops the focus: a field switching
-	 * between reading and editing as it loses and takes the focus would flicker across every stretch of waiting.
-	 * The handlers sit on the frame, so they see only input aimed inside it, the drawer included.
-	 */
+	// input is ignored rather than the columns turned inert, as an inert column drops the focus: a field switching
+	// between reading and editing as it loses and takes the focus would flicker across every stretch of waiting;
+	// the handlers sit on the frame, so they see only input aimed inside it, the drawer included
 
 	return createElement("clay-tool", {
 
@@ -324,7 +327,7 @@ export function Tool({
 		 * Each body takes the focus, so a keyboard scrolls it in every browser, holding focusable content or not.
 		 *
 		 * The drawer is named after the button opening it, so a reader hears what has opened. A locked side column is
-		 * taken out of light dismiss: the switch closes a drawer left open, and the disabled menu button keeps it shut.
+		 * taken out of light dismiss: the switch closes a drawer left open, and no menu button is left to reopen it.
 		 * Its head is led by the mark where two columns fit, and by the close button of the drawer elsewhere, as the
 		 * mark has then moved to the main head; the meta keeps the end of the head either way.
 		 */}
@@ -358,19 +361,21 @@ export function Tool({
 		{/*
 		 * The main column takes the focus from code alone, so a navigation can land the focus on it and a reader hears
 		 * its name, taken from the head, without a tab stop being added. The head is held in a box of its own only to
-		 * be referenced as that name, standing aside from the layout so the head lays out what it holds directly. Where
-		 * two columns do not fit, the head opens the body instead, scrolling away with the content below it, and the
-		 * mark of the side column takes its place, held in a box of its own to be locked along with the side column.
+		 * be referenced as that name, standing aside from the layout so the head lays out what it holds directly.
+		 *
+		 * Where two columns do not fit, the mark of the side column joins the main head, in a box of its own so it is
+		 * locked along with the side column. The head then opens the body instead, scrolling away with the content
+		 * below it, unless a locked side column keeps it in the main head, apart from the menu as on a wide viewport.
 		 */}
 
 		<main id={column} aria-labelledby={title} tabIndex={-1} inert={open}>
 
 			<header>
-				{!tucked && <button type="button" popovertarget={side} disabled={locked} aria-label="Open menu">
+				{!tucked && !locked && <button type="button" popovertarget={side} aria-label="Open menu">
                     <Icon.Menu/>
                 </button>}
 				{!tucked && !split && mark && <div class="mark" inert={locked}>{mark}</div>}
-				{split && head && <div id={title}>{head}</div>}
+				{headed && head && <div id={title}>{head}</div>}
 
 				{/*
 				 * The turning glyph stands over the menu, which keeps its place hidden beneath, so the head holds its
@@ -384,7 +389,7 @@ export function Tool({
 			</header>
 
 			<div tabIndex={0}>
-				{!split && head && <header id={title}>{head}</header>}
+				{!headed && head && <header id={title}>{head}</header>}
 				<div>{children}</div>
 			</div>
 			{foot && <footer>{foot}</footer>}
@@ -403,6 +408,8 @@ export function Tool({
 
 }
 
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /**
  * Whether the shell states waiting, as it follows `busy` once the delay has elapsed.
@@ -465,6 +472,8 @@ interface Viewport {
 
 }
 
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /**
  * Tells whether the viewport fits two columns, reading the switch the design system turns on from the medium width up,

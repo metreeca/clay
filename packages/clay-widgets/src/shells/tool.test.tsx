@@ -113,6 +113,23 @@ describe("Tool", () => {
 
 		});
 
+		it("stays in the main head while the side column is locked where two columns do not fit", async () => {
+
+			viewport(false);
+
+			const tool = rendered(
+				<Tool locked head={<span>Projects</span>} menu={<button>Edit</button>}>content</Tool>
+			);
+
+			const header = tool.querySelector(":scope > main > header")!;
+
+			expect(heading(tool)?.parentElement).toBe(header);
+			expect(heading(tool)?.textContent).toBe("Projects");
+			expect(header.lastElementChild?.textContent).toBe("Edit");
+			expect(tool.querySelector(":scope > main > div")?.textContent).toBe("content");
+
+		});
+
 		it("follows the viewport across the threshold", async () => {
 
 			const resized: Array<() => void> = []; // test harness: collects the observer callbacks the shell registers
@@ -235,9 +252,9 @@ describe("Tool", () => {
 
 			viewport(false);
 
-			const mark = (locked: boolean) => menu(rendered(
+			const mark = (locked: boolean) => rendered(
 				<Tool locked={locked} mark={<span>mark</span>}>content</Tool>
-			))?.nextElementSibling;
+			).querySelector(":scope > main > header > .mark");
 
 			expect(mark(true)?.hasAttribute("inert")).toBe(true);
 			expect(mark(false)?.hasAttribute("inert")).toBe(false);
@@ -750,10 +767,20 @@ describe("Tool", () => {
 
 		});
 
-		it("disables the menu button while the side column is locked", async () => {
+		it("offers no menu button while the side column is locked", async () => {
 
-			expect(menu(rendered(<Tool locked>content</Tool>))?.disabled).toBe(true);
-			expect(menu(rendered(<Tool>content</Tool>))?.disabled).toBe(false);
+			expect(menu(rendered(<Tool locked>content</Tool>))).toBeNull();
+			expect(menu(rendered(<Tool>content</Tool>))).not.toBeNull();
+
+		});
+
+		it("leads the main head with the mark while the side column is locked", async () => {
+
+			viewport(false);
+
+			const tool = rendered(<Tool locked mark={<span>mark</span>}>content</Tool>);
+
+			expect(tool.querySelector(":scope > main > header")?.firstElementChild?.textContent).toBe("mark");
 
 		});
 

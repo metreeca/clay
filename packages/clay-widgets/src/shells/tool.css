@@ -382,17 +382,12 @@ clay-tool {
                  * their surface, so the reader sees the whole target rather than the glyph alone.
                  */
 
-                &:enabled:hover {
+                &:hover {
                     background-color: var(--skin--background-color-hover-neutral);
                 }
 
-                &:enabled:active {
+                &:active {
                     background-color: var(--skin--background-color-pressed-neutral);
-                }
-
-                &:disabled {
-                    opacity: var(--skin--opacity-disabled);
-                    cursor: default;
                 }
 
             }
@@ -614,7 +609,9 @@ clay-tool {
             /*
              * The menu stands apart from the head, pushed to its end whatever the head holds. Never shrinking, it clips
              * nothing, so the button ending it reaches into the gutter as at the end of any bar. While a turning glyph
-             * stands over it, the menu keeps its box hidden beneath, so the head neither shrinks nor shifts.
+             * stands over it, the menu keeps its box hidden beneath, so the head neither shrinks nor shifts. It takes
+             * the height of a single line of the head, what it holds centred on it and overhanging into the gutter
+             * above and below, so buttons and their padding leave the height of the head row unchanged.
              */
 
             & > .menu {
@@ -622,6 +619,7 @@ clay-tool {
                 display: flex;
                 flex: none;
                 align-items: center;
+                block-size: 1lh;
                 margin-inline-start: auto;
                 overflow: visible;
 
