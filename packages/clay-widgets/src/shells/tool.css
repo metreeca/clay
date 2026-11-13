@@ -400,9 +400,7 @@ clay-tool {
         /*
          * The body scrolls with no padding of its own, so content made sticky pins flush with the bars: the inset is
          * carried by the boxes scrolling inside it, each column setting it on what its body holds. A column with no foot
-         * runs its body down to the end of the frame, leaving no empty bar beside the foot of the other column, and ends
-         * what the body holds on the inset of a foot, overriding the inset the column sets, so the end of its content
-         * stands level with the end of the foot beside it, whatever gutters the bodies and the feet are given. Content
+         * runs its body down to the end of the frame, leaving no empty bar beside the foot of the other column. Content
          * scrolled into view, as the target of a link is, stops on the inset rather than flush with the head, so the
          * first heading of the body lands where it stands before any scrolling.
          */
@@ -415,13 +413,7 @@ clay-tool {
             scroll-timeline: var(--clay-tool-scroll) block;
 
             &:last-child {
-
                 grid-row: 2 / -1;
-
-                & > div:last-child {
-                    padding-block-end: var(--clay-tool-foot-inset);
-                }
-
             }
 
         }
