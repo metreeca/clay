@@ -65,10 +65,13 @@ const Ignored = Object.fromEntries([
  * Lays a screen out as two columns, the side column beside the main one, each with a head, a body and a foot. The
  * heads of the two columns share one row, so they always match in height, and the feet do the same. A column with
  * nothing for its foot shows none, its body running down to the bottom of the frame. The body of each column scrolls
- * on its own, while its head and foot stay in view, so what they hold is always within reach. Heads and feet keep
- * the height of a single line: text too wide for them is clipped and ends with an ellipsis. Content made sticky in a
+ * on its own, while its head and foot stay in view, so what they hold is always within reach. Content made sticky in a
  * body pins flush against the head or foot of its column, leaving no strip of scrolled content showing between them,
  * while the body keeps its gutter around everything else, so only what is meant to stand pinned meets the bars.
+ *
+ * Heads and feet lay what they hold out as a single row of flex items, centred vertically and never wrapping, so each
+ * bar keeps the height of a single line. An item keeps its own width unless it states flex properties of its own, as
+ * one growing to fill the bar does, and an item too wide for the bar shrinks, ending its clipped text with an ellipsis.
  *
  * The shell fills the height its host gives it and sets none of its own. Without a definite height, the bodies grow
  * with their content instead of scrolling, and the heads and feet scroll out of view with the page.

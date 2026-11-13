@@ -661,7 +661,7 @@ clay-tool {
          * The body holds the content in a block of its own, laid out in the plain flow of a page, so floats wrap text
          * and margins collapse. The block grows to the room the body leaves, so its height is definite, and a lone item
          * stating `block-size: 100%` fills it whole, as a map does. The first part of the body carries its inset, as a
-         * box of the column rather than content, and the content ends on that inset too, unless the column has no foot.
+         * box of the column rather than content, and the content ends on that inset too.
          */
 
         & > div {
