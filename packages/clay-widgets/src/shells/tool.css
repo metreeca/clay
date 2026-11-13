@@ -76,7 +76,7 @@
     inherits: true;
 }
 
-/* The block gutter of the body row. */
+/* The block gutter of the body row, where two columns fit; narrower bodies take none. */
 
 @property --clay-tool-body-gutter {
     syntax: "*";
@@ -237,10 +237,11 @@ clay-tool {
     /*
      * Below the medium viewport two columns no longer fit: the main column takes the whole frame, and the side column
      * stays out of view until the menu button leading the main head opens it as a drawer. From the medium viewport up
-     * the frame keeps its two columns.
+     * the frame keeps its two columns. The bodies drop their block gutter, giving the narrow screen all their height.
      */
 
     @container style(--skin--viewport-medium: off) {
+        --clay-tool-body-inset: 0px;
         grid-template-columns: var(--clay-tool-main-track);
     }
 
