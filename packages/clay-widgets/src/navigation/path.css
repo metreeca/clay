@@ -41,7 +41,6 @@ clay-path {
         & > ol {
 
             display: flex;
-            flex-direction: row;
             align-items: baseline;
 
             overflow: hidden;
@@ -70,21 +69,19 @@ clay-path {
                 }
 
                 /*
-                 * Separators, trailing a lone step too, carry empty alternative text, so they are drawn but never
-                 * announced. Each is a single right guillemet set in the text font and painted in the label colour,
-                 * taking the width the font gives it. The rules below pick which steps draw one, giving them content.
+                 * Every step ends on a separator, save plain text closing the trail, which names the current page and
+                 * leads nowhere further. Separators carry empty alternative text, so they are drawn but never
+                 * announced: each is a single right guillemet set in the text font and painted in the label colour.
                  */
 
-                &::before, &::after {
+                &:not(:last-child:not(:has(> clay-link)))::after {
+
+                    content: "›" / "";
 
                     margin: 0 var(--skin--spacing-025); /* Between the two steps. */
 
                     color: var(--skin--color-label);
 
-                }
-
-                &:not(:first-child)::before, &:only-child::after {
-                    content: "›" / "";
                 }
 
                 &:last-child {
@@ -98,8 +95,8 @@ clay-path {
 
             /*
              * Below the small viewport a phone held upright leaves no room for a row, so the steps stack one per line,
-             * outermost on top, each but the first opening on its separator. A step too long for the line wraps rather
-             * than clipping, as the whole width is its own, and hangs its later lines under its text, not its mark.
+             * outermost on top, each closing on its separator. A step too long for the line wraps rather than being
+             * clipped, as the whole width is its own, and carries its separator at the end of its last line.
              */
 
             @container style(--skin--viewport-small: off) {
@@ -113,25 +110,6 @@ clay-path {
 
                     white-space: normal;
                     overflow-wrap: anywhere;
-
-                    /*
-                     * The separator takes a column of its own sized to the glyph, and the step the one beside it, so a
-                     * step wrapping onto later lines keeps them under its text whatever width the font gives the mark.
-                     */
-
-                    &:not(:first-child) {
-
-                        display: grid;
-                        grid-template-columns: auto minmax(0, 1fr);
-                        align-items: baseline;
-
-                        /* Flush with the edge, so the separators line up under the first step as one column. */
-
-                        &::before {
-                            margin-inline-start: 0;
-                        }
-
-                    }
 
                 }
 

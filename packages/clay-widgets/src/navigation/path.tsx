@@ -29,15 +29,15 @@ import "./path.css";
 /**
  * Creates a breadcrumb path.
  *
- * Shows its steps in a row, from the outermost level to the current page. The separators between steps, and after a
- * lone step, are supplied by the widget and never announced: a step carries only its link or its plain text.
+ * Shows its steps in a row, from the outermost level to the current page. The separators closing every step but a
+ * plain one at the end are supplied by the widget and never announced: a step carries only its link or its text.
  *
  * The trail is a navigation landmark holding an ordered list, and its last step is announced as the current page. A
  * reader thus learns where they stand whether or not they see the trail. A trail too long for its row clips its last
  * step with an ellipsis and keeps the levels above it whole, so the page name is best stated in full elsewhere.
  *
- * On a phone held upright the steps stack one per line instead, outermost on top, each but the first opening on its
- * separator, and a step too long for the line wraps rather than being clipped, so the whole trail stays legible.
+ * On a phone held upright the steps stack one per line instead, outermost on top, each closing on its separator, and
+ * a step too long for the line wraps rather than being clipped, so the whole trail stays legible.
  *
  * @param options The widget configuration
  *
