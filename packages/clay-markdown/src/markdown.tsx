@@ -24,6 +24,7 @@
  */
 
 import { TOC, type TOCEntry } from "@metreeca/clay-widgets/toc";
+import { assert } from "@metreeca/core";
 import type { Element, Root as Tree } from "hast";
 import { headingRank } from "hast-util-heading-rank";
 import { toJsxRuntime } from "hast-util-to-jsx-runtime";
@@ -63,10 +64,12 @@ const SafeProtocol = /^(https?|ircs?|mailto|xmpp)$/i;
 const WidthHint = /^(.*)#([1-9]\d?|100)$/;
 
 /**
- * The levels of the outline the table of contents lists, deeper headings left out.
+ * The deepest heading level Markdown offers.
  */
-const Depth = 3;
+const Depth = 6;
 
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 const front = unified()
 	.use(remarkParse)
@@ -112,12 +115,12 @@ export interface Meta {
  * - **document**, the default: the text in full, with GitHub Flavored Markdown tables, task lists and footnotes,
  *   GitHub alerts (`> [!NOTE]`), emoji shortcodes, fenced code highlighted by language and stripped of surrounding
  *   blank lines, and headings carrying the ids GitHub would give them, so links into the document resolve
- * - **table of contents**: the headings of the first three levels of the outline, as a navigation landmark of nested
- *   lists linking each to the matching heading, set as the design system sets any outline, so it reads as quiet
- *   navigation beside the document; nothing at all for a text without headings. While the document is on the page,
- *   the entry of the heading at the top of the viewport is marked as the current location and followed as the reader
- *   scrolls, so the outline shows where they stand; no entry is marked while the first heading is below the view.
- *   Each entry keeps its heading to one line, cut short with an ellipsis where the heading outruns the column
+ * - **table of contents**: the headings of the outline, at every level or down to the level `meta` names, as a
+ *   navigation landmark of nested lists linking each to the matching heading. It is set as the design system sets any
+ *   outline, so it reads as quiet navigation beside the document, and is left out for a text without headings. While
+ *   the document is on the page, the entry of the heading at the top of the viewport is marked as the current location
+ *   and followed as the reader scrolls, so the outline shows where they stand; no entry is marked while the first
+ *   heading is below the view. Each entry keeps its heading to one line, ending it with an ellipsis if it is too wide
  * - **front matter**: the values the YAML front matter declares, the text itself left unrendered
  *
  * Links to Markdown files are rewritten to the route serving them, `guide.md` to `guide` and `index.md` to the folder
@@ -136,6 +139,8 @@ export interface Meta {
  * @param options The widget configuration
  *
  * @returns The rendered document, outline or front matter value
+ *
+ * @throws {@link !TypeError TypeError} If `meta` names a table of contents depth that is not an integer between 1 and 6
  */
 export function Markdown({
 
@@ -147,11 +152,18 @@ export function Markdown({
 }: {
 
 	/**
-	 * What is rendered of the text: `"toc"` for the table of contents, the key of a front matter value for that value
-	 * alone, nothing if the text does not declare it, or a function turning the front matter values into content; the
-	 * document in full if omitted, the only mode following the location fragment to the heading it names.
+	 * The part of the text to render; the full document if omitted.
+	 *
+	 * - `"toc"`: the table of contents, listing every heading level
+	 * - `"toc-{depth}"`: the table of contents, listing the heading levels from 1 to `depth`, at most 6
+	 * - a front matter key: the value the text declares for that key, or nothing if it declares none
+	 * - a function: the content it builds from the front matter values
+	 *
+	 * Only the full document scrolls to the heading named by the location fragment.
+	 *
+	 * @throws {@link !TypeError TypeError} If `depth` is not an integer between 1 and 6
 	 */
-	meta?: "toc" | string | ((meta: Meta) => ComponentChildren)
+	meta?: "toc" | `toc-${number}` | string | ((meta: Meta) => ComponentChildren)
 
 	/**
 	 * The accessible name of the table of contents, such as `Contents`, telling it apart from other navigation
@@ -195,9 +207,10 @@ export function Markdown({
 	}, [meta]);
 
 	return useMemo(() => meta === undefined ? createElement("clay-markdown", {}, render(transform(children)))
-			: meta === "toc" ? outline(transform(children), name)
+			: meta === "toc" ? outline(transform(children), Depth, name)
 				: typeof meta === "function" ? meta(entries(children))
-					: entries(children)[meta]
+					: meta.startsWith("toc-") ? outline(transform(children), depth(meta), name)
+						: entries(children)[meta]
 		, [meta, children, name]);
 
 }
@@ -242,14 +255,27 @@ function transform(text: string): Tree {
 }
 
 /**
- * Reduces a document to its table of contents, one entry for each heading, linking to that heading and listing the
- * entries of the headings it introduces, so the outline mirrors the nesting a reader sees in the document itself.
+ * Reads the depth of the outline from a `toc-{depth}` selector.
+ *
+ * @throws {@link !TypeError TypeError} If the depth is not a heading level
+ */
+function depth(meta: string): number {
+	return assert(
+		Number(meta.slice("toc-".length)),
+		value => Number.isInteger(value) && value >= 1 && value <= Depth,
+		`illegal table of contents depth <${meta}>`
+	);
+}
+
+/**
+ * Reduces a document to its table of contents, with one entry for each heading down to `depth`. Each entry links to its
+ * heading and lists the entries of the headings it introduces, so the outline mirrors the nesting of the document.
  *
  * The ids are left to the document, so an outline shown beside it adds no duplicate ids to the page.
  */
-function outline(tree: Tree, name: string | undefined): ComponentChildren {
+function outline(tree: Tree, depth: number, name: string | undefined): ComponentChildren {
 
-	const sections = nest(headings(tree));
+	const sections = nest(headings(tree), depth);
 
 	return sections.length > 0 ? <TOC name={name} entries={contents(sections)}/> : null;
 
@@ -260,16 +286,18 @@ function headings(tree: Tree): readonly Element[] {
 }
 
 /**
- * Nests headings, each holding the headings that follow it up to the next one of the same or a higher level, down to
- * the deepest level the outline lists, so headings below it are left out of the outline rather than hidden.
+ * Groups headings into nested sections, down to `depth`.
+ *
+ * A section holds the headings that follow its own, up to the next heading of the same or a higher level. Headings
+ * below `depth` are left out of the outline rather than hidden in it, so the page carries no entries for them.
  */
-function nest(headings: readonly Element[], level: number = 1): readonly Section[] {
+function nest(headings: readonly Element[], depth: number, level: number = 1): readonly Section[] {
 
 	const [heading, ...rest] = headings;
 
 	return heading === undefined ? [] : [
-		{ heading, nested: level < Depth ? nest(rest.slice(0, boundary(heading, rest)), level+1) : [] },
-		...nest(rest.slice(boundary(heading, rest)), level)
+		{ heading, nested: level < depth ? nest(rest.slice(0, boundary(heading, rest)), depth, level+1) : [] },
+		...nest(rest.slice(boundary(heading, rest)), depth, level)
 	];
 
 }

@@ -53,6 +53,7 @@
   },
   "dependencies": {
     "@metreeca/clay-widgets": "^0.1.0",
+    "@metreeca/core": "^0.13.0",
     "hast-util-heading-rank": "^3.0.0",
     "hast-util-to-jsx-runtime": "^2.3.7",
     "rehype-highlight": "^7.0.2",

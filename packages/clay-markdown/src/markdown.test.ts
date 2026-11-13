@@ -375,11 +375,48 @@ describe("Markdown", () => {
 
 		});
 
-		it("should leave headings below the third level of the outline out", async () => {
+		it("should list every heading level of the outline", async () => {
 
-			mount("# A\n\n## B\n\n### C\n\n#### D\n\n##### E", "toc");
+			mount("# A\n\n## B\n\n### C\n\n#### D\n\n##### E\n\n###### F", "toc");
 
-			expect(texts("clay-toc a")).toEqual(["A", "B", "C"]);
+			expect(texts("clay-toc a")).toEqual(["A", "B", "C", "D", "E", "F"]);
+
+		});
+
+		describe("depth", () => {
+
+			const text = "# A\n\n## B\n\n### C\n\n#### D\n\n##### E\n\n###### F";
+
+			it("should list only the levels up to the given depth", async () => {
+
+				mount(text, "toc-2");
+
+				expect(texts("clay-toc a")).toEqual(["A", "B"]);
+
+			});
+
+			it("should list only top level headings at depth 1", async () => {
+
+				mount(text, "toc-1");
+
+				expect(texts("clay-toc a")).toEqual(["A"]);
+				expect(document.querySelectorAll("clay-toc li > ul").length).toBe(0);
+
+			});
+
+			it("should list every heading level at depth 6", async () => {
+
+				mount(text, "toc-6");
+
+				expect(texts("clay-toc a")).toEqual(["A", "B", "C", "D", "E", "F"]);
+
+			});
+
+			it.each(["toc-0", "toc-7", "toc-1.5", "toc-x"])("should reject illegal depth <%s>", async meta => {
+
+				expect(() => mount(text, meta)).toThrow(TypeError);
+
+			});
 
 		});
 
